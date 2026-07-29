@@ -54,10 +54,8 @@ private slots:
     void onToggleTheme();
     void onToggleLanguage();
     void onToggleSidebar();
-    void onUserProfile();
     void onChangePassword();
     void onBackup();
-    void onAbout();
     void onAutoBackupTick();
     void onLanguageChanged(const QString& langCode);
 
