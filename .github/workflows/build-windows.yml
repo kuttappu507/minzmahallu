@@ -46,18 +46,32 @@ jobs:
       - name: Set OpenSSL path
         shell: pwsh
         run: |
-          # install-qt-action puts tools at $RUNNER_WORKSPACE/Qt/Tools/OpenSSL/Win_x64
           $opensslRoot = "${{ runner.workspace }}\Qt\Tools\OpenSSLv3\Win_x64"
           Write-Host "OpenSSL root: $opensslRoot"
           if (Test-Path "$opensslRoot\include\openssl\evp.h") {
             Write-Host "OpenSSL found"
           } else {
-            Write-Host "ERROR: OpenSSL not found at $opensslRoot"
-            Get-ChildItem "${{ runner.workspace }}\Qt\Tools" -Recurse -Filter evp.h -ErrorAction SilentlyContinue
+            Write-Host "ERROR: OpenSSL not found"
             exit 1
           }
           echo "OPENSSL_ROOT_DIR=$opensslRoot" >> $env:GITHUB_ENV
           echo "OPENSSL_INCLUDE_DIR=$opensslRoot\include" >> $env:GITHUB_ENV
+
+      - name: Install zlib (pre-built for MSVC)
+        shell: pwsh
+        run: |
+          # Download pre-built zlib for MSVC from the zlib for Windows project
+          $zlibUrl = "https://github.com/madler/zlib/releases/download/v1.3.1/zlib13-dll.zip"
+          $zlibZip = "$env:TEMP\zlib.zip"
+          $zlibDir = "C:\zlib"
+          Invoke-WebRequest -Uri $zlibUrl -OutFile $zlibZip -UseBasicParsing
+          New-Item -ItemType Directory -Force -Path $zlibDir | Out-Null
+          Expand-Archive -Path $zlibZip -DestinationPath $zlibDir -Force
+          # The zip has dll/ include/ lib/ — set the env vars
+          echo "ZLIB_ROOT=$zlibDir" >> $env:GITHUB_ENV
+          echo "ZLIB_INCLUDE_DIR=$zlibDir\include" >> $env:GITHUB_ENV
+          echo "ZLIB_LIBRARY=$zlibDir\lib\zlib.lib" >> $env:GITHUB_ENV
+          Get-ChildItem $zlibDir -Recurse | Select-Object FullName | Select-Object -First 10
 
       - name: Set up MSVC developer environment
         uses: ilammy/msvc-dev-cmd@v1
@@ -72,7 +86,10 @@ jobs:
             -DCMAKE_C_COMPILER=cl ^
             -DCMAKE_CXX_COMPILER=cl ^
             -DOPENSSL_ROOT_DIR=%OPENSSL_ROOT_DIR% ^
-            -DOPENSSL_INCLUDE_DIR=%OPENSSL_INCLUDE_DIR%
+            -DOPENSSL_INCLUDE_DIR=%OPENSSL_INCLUDE_DIR% ^
+            -DZLIB_ROOT=%ZLIB_ROOT% ^
+            -DZLIB_INCLUDE_DIR=%ZLIB_INCLUDE_DIR% ^
+            -DZLIB_LIBRARY=%ZLIB_LIBRARY%
 
       - name: Build MMS.exe
         shell: cmd
