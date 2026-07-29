@@ -22,6 +22,8 @@
 #include <QDesktopServices>
 #include <QUrl>
 #include "../core/I18N.h"
+#include "../core/StyleProps.h"
+#include "../core/ThemeColors.h"
 
 namespace mms {
 
@@ -79,17 +81,17 @@ void SubscriptionView::setupUi() {
 
     auto* btnBar = new QHBoxLayout();
     addBtn_ = new QPushButton(TR("sub_record_payment"), this);
-    addBtn_->setObjectName("action_add");
+    StyleProps::set(addBtn_, "primary");
     editBtn_ = new QPushButton(TR("action_edit"), this);
-    editBtn_->setObjectName("action_edit");
+    StyleProps::set(editBtn_, "chip");
     deleteBtn_ = new QPushButton(TR("action_delete"), this);
-    deleteBtn_->setObjectName("action_delete");
+    StyleProps::set(deleteBtn_, "ghostDanger");
     markOverdueBtn_ = new QPushButton(TR("sub_mark_overdue"), this);
-    markOverdueBtn_->setObjectName("action_reset");
+    StyleProps::set(markOverdueBtn_, "ghostDanger");
     printBtn_ = new QPushButton(TR("action_print"), this);
-    printBtn_->setObjectName("action_print");
+    StyleProps::set(printBtn_, "chip");
     exportBtn_ = new QPushButton(TR("action_export"), this);
-    exportBtn_->setObjectName("action_export");
+    StyleProps::set(exportBtn_, "chip");
     for (auto* b : {addBtn_, editBtn_, deleteBtn_, markOverdueBtn_, printBtn_, exportBtn_}) {
         b->setMinimumHeight(32);
         btnBar->addWidget(b);
@@ -109,9 +111,9 @@ void SubscriptionView::setupUi() {
 
     auto* pageBar = new QHBoxLayout();
     prevBtn_ = new QPushButton(TR("action_previous"), this);
-    prevBtn_->setObjectName("action_prev");
+    StyleProps::set(prevBtn_, "chip");
     nextBtn_ = new QPushButton(TR("action_next") + " ", this);
-    nextBtn_->setObjectName("action_next");
+    StyleProps::set(nextBtn_, "chip");
     pageLabel_ = new QLabel(this);
     pageLabel_->setAlignment(Qt::AlignCenter);
     connect(prevBtn_, &QPushButton::clicked, this, &SubscriptionView::onPrevPage);
@@ -182,10 +184,10 @@ void SubscriptionView::loadTable() {
         table_->setItem(r, 5, new QTableWidgetItem(QString::number(s.amount, 'f', 2)));
         table_->setItem(r, 6, new QTableWidgetItem(QString::number(s.amountPaid, 'f', 2)));
         auto* statusItem = new QTableWidgetItem(s.status);
-        if (s.status == "Paid") statusItem->setForeground(QColor("#2a7a3a"));
-        else if (s.status == "Overdue") statusItem->setForeground(QColor("#c0392b"));
-        else if (s.status == "Pending") statusItem->setForeground(QColor("#8a5a1a"));
-        else statusItem->setForeground(QColor("#5a1a8a"));
+        if (s.status == "Paid") statusItem->setForeground(colors::cellPositive);
+        else if (s.status == "Overdue") statusItem->setForeground(colors::cellNegative);
+        else if (s.status == "Pending") statusItem->setForeground(colors::cellWarning);
+        else statusItem->setForeground(colors::cellAccent);
         table_->setItem(r, 7, statusItem);
     }
     int totalPages = std::max(1, (total_ + pageSize_ - 1) / pageSize_);
@@ -207,7 +209,7 @@ void SubscriptionView::loadDefaulters() {
         defaultersTable_->setItem(r, 2, new QTableWidgetItem(d.phone));
         defaultersTable_->setItem(r, 3, new QTableWidgetItem(QString::number(d.pendingCount)));
         auto* amtItem = new QTableWidgetItem(QString::number(d.dueAmount, 'f', 2));
-        amtItem->setForeground(QColor("#c0392b"));
+        amtItem->setForeground(colors::cellNegative);
         defaultersTable_->setItem(r, 4, amtItem);
         totalDue += d.dueAmount;
     }

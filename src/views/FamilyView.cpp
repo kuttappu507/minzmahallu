@@ -27,6 +27,8 @@
 #include <QDesktopServices>
 #include <QUrl>
 #include "../core/I18N.h"
+#include "../core/StyleProps.h"
+#include "../core/ThemeColors.h"
 
 namespace mms {
 
@@ -72,17 +74,17 @@ void FamilyView::setupUi() {
     // Action buttons
     auto* btnBar = new QHBoxLayout();
     addBtn_     = new QPushButton("Add Family", this);
-    addBtn_->setObjectName("action_add");
+    StyleProps::set(addBtn_, "primary");
     editBtn_    = new QPushButton(TR("action_edit"), this);
-    editBtn_->setObjectName("action_edit");
+    StyleProps::set(editBtn_, "chip");
     archiveBtn_ = new QPushButton(TR("action_archive"), this);
-    archiveBtn_->setObjectName("action_archive");
+    StyleProps::set(archiveBtn_, "chip");
     deleteBtn_  = new QPushButton(TR("action_delete"), this);
-    deleteBtn_->setObjectName("action_delete");
+    StyleProps::set(deleteBtn_, "ghostDanger");
     printBtn_   = new QPushButton(TR("action_print"), this);
-    printBtn_->setObjectName("action_print");
+    StyleProps::set(printBtn_, "chip");
     exportBtn_  = new QPushButton(TR("action_export"), this);
-    exportBtn_->setObjectName("action_export");
+    StyleProps::set(exportBtn_, "chip");
 
     for (auto* b : {addBtn_, editBtn_, archiveBtn_, deleteBtn_, printBtn_, exportBtn_}) {
         b->setMinimumHeight(32);
@@ -111,9 +113,9 @@ void FamilyView::setupUi() {
     // Pagination
     auto* pageBar = new QHBoxLayout();
     prevBtn_ = new QPushButton(TR("action_previous"), this);
-    prevBtn_->setObjectName("action_prev");
+    StyleProps::set(prevBtn_, "chip");
     nextBtn_ = new QPushButton(TR("action_next") + " ", this);
-    nextBtn_->setObjectName("action_next");
+    StyleProps::set(nextBtn_, "chip");
     pageLabel_ = new QLabel(TR("action_page") + " 1", this);
     pageLabel_->setAlignment(Qt::AlignCenter);
     connect(prevBtn_, &QPushButton::clicked, this, &FamilyView::onPrevPage);
@@ -173,12 +175,12 @@ void FamilyView::loadTable() {
         // Color status
         if (f.status == "Archived") {
             for (int c = 0; c < 8; ++c) {
-                table_->item(r, c)->setForeground(QColor("#999999"));
+                table_->item(r, c)->setForeground(colors::cellMuted);
             }
         } else if (f.status == "Inactive") {
-            table_->item(r, 7)->setForeground(QColor("#c0392b"));
+            table_->item(r, 7)->setForeground(colors::cellNegative);
         } else {
-            table_->item(r, 7)->setForeground(QColor("#2a7a3a"));
+            table_->item(r, 7)->setForeground(colors::cellPositive);
         }
     }
     table_->setSortingEnabled(true);

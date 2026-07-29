@@ -46,6 +46,8 @@
 #include <QFrame>
 #include <QScrollArea>
 #include "../core/I18N.h"
+#include "../core/StyleProps.h"
+#include "../core/ThemeColors.h"
 
 namespace mms {
 
@@ -63,19 +65,19 @@ void CertificateView::setupUi() {
 
     auto* bb = new QHBoxLayout();
     issueMemBtn_ = new QPushButton(TR("cert_membership"), this);
-    issueMemBtn_->setObjectName("action_add");
+    StyleProps::set(issueMemBtn_, "primary");
     issueResBtn_ = new QPushButton(TR("cert_residence"), this);
-    issueResBtn_->setObjectName("action_edit");
+    StyleProps::set(issueResBtn_, "chip");
     issueMarrBtn_ = new QPushButton(TR("cert_marriage"), this);
-    issueMarrBtn_->setObjectName("action_print");
+    StyleProps::set(issueMarrBtn_, "chip");
     issueDeathBtn_ = new QPushButton(TR("cert_death"), this);
-    issueDeathBtn_->setObjectName("action_export");
+    StyleProps::set(issueDeathBtn_, "chip");
     generateBtn_ = new QPushButton("Generate PDF", this);
-    generateBtn_->setObjectName("action_generate");
+    StyleProps::set(generateBtn_, "primary");
     deleteBtn_ = new QPushButton(TR("action_delete"), this);
-    deleteBtn_->setObjectName("action_delete");
+    StyleProps::set(deleteBtn_, "ghostDanger");
     exportBtn_ = new QPushButton("Export List", this);
-    exportBtn_->setObjectName("action_export");
+    StyleProps::set(exportBtn_, "chip");
     for (auto* b : {issueMemBtn_, issueResBtn_, issueMarrBtn_, issueDeathBtn_,
                     generateBtn_, deleteBtn_, exportBtn_}) {
         b->setMinimumHeight(32); bb->addWidget(b);
@@ -299,11 +301,11 @@ void ReportsView::setupUi() {
     auto* bb = new QHBoxLayout();
     generateBtn_ = new QPushButton(TR("rpt_generate"), this);
     csvBtn_ = new QPushButton(TR("rpt_generate"), this);
-    csvBtn_->setObjectName("action_export");
+    StyleProps::set(csvBtn_, "chip");
     pdfBtn_ = new QPushButton(TR("rpt_generate"), this);
-    pdfBtn_->setObjectName("action_print");
+    StyleProps::set(pdfBtn_, "chip");
     excelBtn_ = new QPushButton(TR("rpt_generate"), this);
-    excelBtn_->setObjectName("action_export");
+    StyleProps::set(excelBtn_, "chip");
     for (auto* b : {generateBtn_, csvBtn_, pdfBtn_, excelBtn_}) {
         b->setMinimumHeight(32); bb->addWidget(b);
     }
@@ -467,7 +469,7 @@ void SettingsView::setupUi() {
     logoLabel_->setAlignment(Qt::AlignCenter);
     logoLabel_->setText("Logo");
     auto* logoBtn = new QPushButton("Upload Logo", content);
-    logoBtn->setObjectName("action_upload");
+    StyleProps::set(logoBtn, "chip");
     connect(logoBtn, &QPushButton::clicked, this, &SettingsView::onUploadLogo);
     logoRow->addWidget(logoLabel_);
     logoRow->addWidget(logoBtn);
@@ -480,7 +482,7 @@ void SettingsView::setupUi() {
     sealLabel_->setAlignment(Qt::AlignCenter);
     sealLabel_->setText("Seal");
     auto* sealBtn = new QPushButton("Upload Seal", content);
-    sealBtn->setObjectName("action_upload");
+    StyleProps::set(sealBtn, "chip");
     connect(sealBtn, &QPushButton::clicked, this, &SettingsView::onUploadSeal);
     sealRow->addWidget(sealLabel_);
     sealRow->addWidget(sealBtn);
@@ -644,9 +646,9 @@ void AuditLogView::setupUi() {
 
     auto* pb = new QHBoxLayout();
     prevBtn_ = new QPushButton(TR("action_previous"), this);
-    prevBtn_->setObjectName("action_prev");
+    StyleProps::set(prevBtn_, "chip");
     nextBtn_ = new QPushButton(TR("action_next") + " ", this);
-    nextBtn_->setObjectName("action_next");
+    StyleProps::set(nextBtn_, "chip");
     pageLabel_ = new QLabel(this); pageLabel_->setAlignment(Qt::AlignCenter);
     connect(prevBtn_, &QPushButton::clicked, this, &AuditLogView::onPrevPage);
     connect(nextBtn_, &QPushButton::clicked, this, &AuditLogView::onNextPage);
@@ -674,11 +676,11 @@ void AuditLogView::loadTable() {
         table_->setItem(r, 1, new QTableWidgetItem(a.username));
         auto* actItem = new QTableWidgetItem(a.action);
         if (a.action == "DELETE" || a.action == "LOGIN_FAILED" || a.action == "REJECT")
-            actItem->setForeground(QColor("#c0392b"));
+            actItem->setForeground(colors::cellNegative);
         else if (a.action == "ADD" || a.action == "APPROVE" || a.action == "LOGIN")
-            actItem->setForeground(QColor("#2a7a3a"));
+            actItem->setForeground(colors::cellPositive);
         else if (a.action == "EDIT")
-            actItem->setForeground(QColor("#8a5a1a"));
+            actItem->setForeground(colors::cellWarning);
         table_->setItem(r, 2, actItem);
         table_->setItem(r, 3, new QTableWidgetItem(a.module));
         table_->setItem(r, 4, new QTableWidgetItem(a.description));
@@ -732,14 +734,14 @@ void BackupView::setupUi() {
 
     auto* bb = new QHBoxLayout();
     backupBtn_ = new QPushButton(TR("bak_create_now"), this);
-    backupBtn_->setObjectName("action_save");
+    StyleProps::set(backupBtn_, "primary");
     restoreBtn_ = new QPushButton(TR("bak_restore"), this);
-    restoreBtn_->setObjectName("action_restore");
+    StyleProps::set(restoreBtn_, "chip");
     verifyBtn_ = new QPushButton(TR("bak_verify"), this);
-    verifyBtn_->setObjectName("action_verify");
+    StyleProps::set(verifyBtn_, "chip");
     deleteBtn_ = new QPushButton(TR("action_delete"), this);
     pruneBtn_ = new QPushButton(TR("bak_prune"), this);
-    pruneBtn_->setObjectName("action_prune");
+    StyleProps::set(pruneBtn_, "ghostDanger");
     for (auto* b : {backupBtn_, restoreBtn_, verifyBtn_, deleteBtn_, pruneBtn_}) {
         b->setMinimumHeight(34); bb->addWidget(b);
     }
@@ -850,14 +852,14 @@ void UserManagementView::setupUi() {
 
     auto* bb = new QHBoxLayout();
     addBtn_ = new QPushButton(TR("usr_add"), this);
-    addBtn_->setObjectName("action_add");
+    StyleProps::set(addBtn_, "primary");
     editBtn_ = new QPushButton(TR("action_edit"), this);
-    editBtn_->setObjectName("action_edit");
+    StyleProps::set(editBtn_, "chip");
     deleteBtn_ = new QPushButton(TR("action_delete"), this);
     unlockBtn_ = new QPushButton(TR("action_unlock"), this);
-    unlockBtn_->setObjectName("action_unlock");
+    StyleProps::set(unlockBtn_, "chip");
     resetBtn_ = new QPushButton(TR("action_reset_password"), this);
-    resetBtn_->setObjectName("action_reset");
+    StyleProps::set(resetBtn_, "ghostDanger");
     for (auto* b : {addBtn_, editBtn_, deleteBtn_, unlockBtn_, resetBtn_}) {
         b->setMinimumHeight(32); bb->addWidget(b);
     }
@@ -894,7 +896,7 @@ void UserManagementView::refresh() {
         table_->setItem(r, 4, new QTableWidgetItem(u.email));
         table_->setItem(r, 5, new QTableWidgetItem(u.isActive ? "Yes" : "No"));
         table_->setItem(r, 6, new QTableWidgetItem(u.isLocked ? "LOCKED" : "—"));
-        if (u.isLocked) table_->item(r, 6)->setForeground(QColor("#c0392b"));
+        if (u.isLocked) table_->item(r, 6)->setForeground(colors::cellNegative);
     }
 }
 

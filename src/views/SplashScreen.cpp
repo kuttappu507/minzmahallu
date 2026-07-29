@@ -1,5 +1,6 @@
 #include "SplashScreen.h"
 #include "../core/I18N.h"
+#include "../core/ThemeColors.h"
 #include <QPainter>
 #include <QPainterPath>
 #include <QScreen>
@@ -57,9 +58,9 @@ void SplashScreen::drawContents(QPainter* painter) {
     int w = width(), h = height();
 
     QLinearGradient bgGrad(0, 0, w, h);
-    bgGrad.setColorAt(0, QColor("#1e3a8a"));
-    bgGrad.setColorAt(0.5, QColor("#2563eb"));
-    bgGrad.setColorAt(1, QColor("#1e3a8a"));
+    bgGrad.setColorAt(0, colors::splashStart);
+    bgGrad.setColorAt(0.5, colors::splashMid);
+    bgGrad.setColorAt(1, colors::splashStart);
     painter->fillRect(0, 0, w, h, bgGrad);
 
     painter->setPen(QPen(QColor(255, 255, 255, 12), 1));
@@ -80,13 +81,13 @@ void SplashScreen::drawContents(QPainter* painter) {
 
     // App name
     painter->setPen(QColor(255, 255, 255));
-    QFont nameFont("Noto Sans", 22, QFont::Bold);
+    QFont nameFont("Space Grotesk", 22, QFont::Bold);
     painter->setFont(nameFont);
     painter->drawText(QRect(0, logoY + logoSize + 15, w, 36), Qt::AlignCenter, "Minz Mahallu Management");
 
     // Subtitle
     painter->setPen(QColor(255, 215, 0, 220));
-    QFont subFont("Noto Sans", 11);
+    QFont subFont("Manrope", 11);
     painter->setFont(subFont);
     QString subtitle = "Mosque Community Administration";
     if (I18N::instance().currentLanguage() == "ml") subtitle = "മസ്ജിദ് കമ്മ്യൂണിറ്റി ഭരണം";
@@ -100,21 +101,21 @@ void SplashScreen::drawContents(QPainter* painter) {
     int fillW = (barW * progress_) / 100;
     if (fillW > 0) {
         QLinearGradient fillGrad(barX, 0, barX + barW, 0);
-        fillGrad.setColorAt(0, QColor("#FFD700"));
-        fillGrad.setColorAt(1, QColor("#FFA500"));
+        fillGrad.setColorAt(0, colors::goldLight);
+        fillGrad.setColorAt(1, colors::gold);
         painter->setBrush(fillGrad);
         painter->drawRoundedRect(barX, barY, fillW, barH, 4, 4);
     }
     painter->setPen(QColor(255, 255, 255, 200));
-    QFont pctFont("Noto Sans", 10, QFont::Bold);
+    QFont pctFont("Space Grotesk", 10, QFont::Bold);
     painter->setFont(pctFont);
     painter->drawText(QRect(barX, barY - 25, barW, 18), Qt::AlignRight, QString::number(progress_) + "%");
     painter->setPen(QColor(255, 255, 255, 230));
-    QFont statusFont("Noto Sans", 10);
+    QFont statusFont("Manrope", 10);
     painter->setFont(statusFont);
     painter->drawText(QRect(barX, barY + 14, barW, 20), Qt::AlignLeft, currentStatus_);
     painter->setPen(QColor(255, 255, 255, 100));
-    QFont verFont("Noto Sans", 9);
+    QFont verFont("Manrope", 9);
     painter->setFont(verFont);
     painter->drawText(QRect(20, h - 26, w - 40, 16), Qt::AlignLeft, "v1.0.0");
 }

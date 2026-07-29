@@ -25,6 +25,8 @@
 #include <QDesktopServices>
 #include <QUrl>
 #include "../core/I18N.h"
+#include "../core/StyleProps.h"
+#include "../core/ThemeColors.h"
 
 namespace mms {
 
@@ -185,15 +187,15 @@ void AccountingView::setupUi() {
 
     auto* bb = new QHBoxLayout();
     addIncomeBtn_ = new QPushButton(TR("acc_add_income"), this);
-    addIncomeBtn_->setObjectName("action_add");
+    StyleProps::set(addIncomeBtn_, "primary");
     addExpenseBtn_ = new QPushButton(TR("acc_add_expense"), this);
-    addExpenseBtn_->setObjectName("action_add");
+    StyleProps::set(addExpenseBtn_, "primary");
     deleteBtn_ = new QPushButton(TR("action_delete"), this);
-    deleteBtn_->setObjectName("action_delete");
+    StyleProps::set(deleteBtn_, "ghostDanger");
     printBtn_ = new QPushButton(TR("action_print"), this);
-    printBtn_->setObjectName("action_print");
+    StyleProps::set(printBtn_, "chip");
     exportBtn_ = new QPushButton(TR("action_export"), this);
-    exportBtn_->setObjectName("action_export");
+    StyleProps::set(exportBtn_, "chip");
     for (auto* b : {addIncomeBtn_, addExpenseBtn_, deleteBtn_, printBtn_, exportBtn_}) {
         b->setMinimumHeight(32); bb->addWidget(b);
     }
@@ -212,9 +214,9 @@ void AccountingView::setupUi() {
 
     auto* pb = new QHBoxLayout();
     prevBtn_ = new QPushButton(TR("action_previous"), this);
-    prevBtn_->setObjectName("action_prev");
+    StyleProps::set(prevBtn_, "chip");
     nextBtn_ = new QPushButton(TR("action_next") + " ", this);
-    nextBtn_->setObjectName("action_next");
+    StyleProps::set(nextBtn_, "chip");
     pageLabel_ = new QLabel(this);
     pageLabel_->setAlignment(Qt::AlignCenter);
     connect(prevBtn_, &QPushButton::clicked, this, &AccountingView::onPrevPage);
@@ -281,7 +283,7 @@ void AccountingView::loadTable() {
         table_->setItem(r, 0, new QTableWidgetItem(QString::number(t.id)));
         table_->setItem(r, 1, new QTableWidgetItem(t.txnDate));
         auto* typeItem = new QTableWidgetItem(t.type);
-        typeItem->setForeground(t.type == "Income" ? QColor("#2a7a3a") : QColor("#c0392b"));
+        typeItem->setForeground(t.type == "Income" ? colors::cellPositive : colors::cellNegative);
         table_->setItem(r, 2, typeItem);
         table_->setItem(r, 3, new QTableWidgetItem(t.accountName));
         table_->setItem(r, 4, new QTableWidgetItem(t.description));
@@ -306,7 +308,7 @@ void AccountingView::loadSummary() {
         summaryTable_->setItem(r, 1, new QTableWidgetItem(a.name));
         summaryTable_->setItem(r, 2, new QTableWidgetItem(a.type));
         auto* amtItem = new QTableWidgetItem(QString::number(a.total, 'f', 2));
-        amtItem->setForeground(a.type == "Income" ? QColor("#2a7a3a") : QColor("#c0392b"));
+        amtItem->setForeground(a.type == "Income" ? colors::cellPositive : colors::cellNegative);
         summaryTable_->setItem(r, 3, amtItem);
     }
 }

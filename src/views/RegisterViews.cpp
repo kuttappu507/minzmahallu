@@ -32,6 +32,8 @@
 #include <QInputDialog>
 #include <QUrl>
 #include "../core/I18N.h"
+#include "../core/StyleProps.h"
+#include "../core/ThemeColors.h"
 
 namespace mms {
 
@@ -186,17 +188,17 @@ void MarriageView::setupUi() {
 
     auto* bb = new QHBoxLayout();
     addBtn_ = new QPushButton(TR("mrg_register"), this);
-    addBtn_->setObjectName("action_add");
+    StyleProps::set(addBtn_, "primary");
     editBtn_ = new QPushButton(TR("action_edit"), this);
-    editBtn_->setObjectName("action_edit");
+    StyleProps::set(editBtn_, "chip");
     deleteBtn_ = new QPushButton(TR("action_delete"), this);
-    deleteBtn_->setObjectName("action_delete");
+    StyleProps::set(deleteBtn_, "ghostDanger");
     certBtn_ = new QPushButton(TR("cert_title"), this);
-    certBtn_->setObjectName("action_generate");
+    StyleProps::set(certBtn_, "primary");
     printBtn_ = new QPushButton(TR("action_print"), this);
-    printBtn_->setObjectName("action_print");
+    StyleProps::set(printBtn_, "chip");
     exportBtn_ = new QPushButton(TR("action_export"), this);
-    exportBtn_->setObjectName("action_export");
+    StyleProps::set(exportBtn_, "chip");
     for (auto* b : {addBtn_, editBtn_, deleteBtn_, certBtn_, printBtn_, exportBtn_}) {
         b->setMinimumHeight(32); bb->addWidget(b);
     }
@@ -215,9 +217,9 @@ void MarriageView::setupUi() {
 
     auto* pb = new QHBoxLayout();
     prevBtn_ = new QPushButton(TR("action_previous"), this);
-    prevBtn_->setObjectName("action_prev");
+    StyleProps::set(prevBtn_, "chip");
     nextBtn_ = new QPushButton(TR("action_next") + " ", this);
-    nextBtn_->setObjectName("action_next");
+    StyleProps::set(nextBtn_, "chip");
     pageLabel_ = new QLabel(this); pageLabel_->setAlignment(Qt::AlignCenter);
     connect(prevBtn_, &QPushButton::clicked, this, &MarriageView::onPrevPage);
     connect(nextBtn_, &QPushButton::clicked, this, &MarriageView::onNextPage);
@@ -686,11 +688,11 @@ void WelfareView::setupUi() {
     editBtn_ = new QPushButton(TR("action_edit"), this);
     deleteBtn_ = new QPushButton(TR("action_delete"), this);
     approveBtn_ = new QPushButton(TR("action_approve"), this);
-    approveBtn_->setObjectName("action_approve");
+    StyleProps::set(approveBtn_, "primary");
     rejectBtn_ = new QPushButton(TR("action_reject"), this);
-    rejectBtn_->setObjectName("action_reject");
+    StyleProps::set(rejectBtn_, "ghostDanger");
     disburseBtn_ = new QPushButton(TR("action_disburse"), this);
-    disburseBtn_->setObjectName("action_disburse");
+    StyleProps::set(disburseBtn_, "primary");
     printBtn_ = new QPushButton(TR("action_print"), this);
     exportBtn_ = new QPushButton(TR("action_export"), this);
     for (auto* b : {addBtn_, editBtn_, deleteBtn_, approveBtn_, rejectBtn_, disburseBtn_, printBtn_, exportBtn_}) {
@@ -747,10 +749,10 @@ void WelfareView::loadTable() {
         table_->setItem(r, 4, new QTableWidgetItem(QString::number(w.amountRequested, 'f', 2)));
         table_->setItem(r, 5, new QTableWidgetItem(QString::number(w.amountApproved, 'f', 2)));
         auto* s = new QTableWidgetItem(w.status);
-        if (w.status == "Approved") s->setForeground(QColor("#2a7a3a"));
-        else if (w.status == "Rejected") s->setForeground(QColor("#c0392b"));
-        else if (w.status == "Disbursed") s->setForeground(QColor("#1a4a8a"));
-        else if (w.status == "Pending") s->setForeground(QColor("#8a5a1a"));
+        if (w.status == "Approved") s->setForeground(colors::cellPositive);
+        else if (w.status == "Rejected") s->setForeground(colors::cellNegative);
+        else if (w.status == "Disbursed") s->setForeground(colors::cellInfo);
+        else if (w.status == "Pending") s->setForeground(colors::cellWarning);
         table_->setItem(r, 6, s);
     }
     int tp = std::max(1, (total_ + pageSize_ - 1) / pageSize_);

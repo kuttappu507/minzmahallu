@@ -91,11 +91,11 @@ private:
     // Top bar
     QWidget* topBar_ = nullptr;
     QLineEdit* searchEdit_ = nullptr;
-    QLabel* userLabel_ = nullptr;
+    QLabel* crumbSmall_ = nullptr;
+    QLabel* crumbBig_ = nullptr;
     QToolButton* userButton_ = nullptr;
     QToolButton* themeButton_ = nullptr;
     QToolButton* langButton_ = nullptr;
-    QToolButton* notifButton_ = nullptr;
     QToolButton* backupButton_ = nullptr;
 
     // Center

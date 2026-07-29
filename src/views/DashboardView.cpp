@@ -4,6 +4,8 @@
 #include "../services/AuthSession.h"
 #include "../core/Database.h"
 #include "../core/I18N.h"
+#include "../core/StyleProps.h"
+#include "../core/ThemeColors.h"
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QGridLayout>
@@ -75,7 +77,7 @@ static QLabel* makeIcon(QWidget* parent, const QString& svgPath, const QString& 
 
 static QPushButton* makeColorBtn(QWidget* parent, const QString& text, const QString& svgPath, const QString& iconColor, const QString& objName = "") {
     auto* btn = new QPushButton(text, parent);
-    if (!objName.isEmpty()) btn->setObjectName(objName);
+    if (!objName.isEmpty()) StyleProps::set(btn, objName.toUtf8().constData());
     btn->setCursor(Qt::PointingHandCursor);
     btn->setMinimumHeight(40);
     QPixmap iconPix(36, 36);
@@ -121,15 +123,15 @@ QWidget* DashboardView::makeStatCard(const QString& title, QLabel*& valueLabel,
     auto* v = new QVBoxLayout();
     v->setSpacing(2);
     auto* lbl = new QLabel(title, card);
-    lbl->setObjectName("chartCardTitle");
+    StyleProps::set(lbl, "statLabel");
     v->addWidget(lbl);
     valueLabel = new QLabel(QString::fromUtf8("\xe2\x80\x94"), card);
-    valueLabel->setObjectName("statCardValue");
+    StyleProps::set(valueLabel, "statValue");
     //old:—", card);
     v->addWidget(valueLabel);
     if (!sub.isEmpty()) {
         auto* subLbl = new QLabel(sub, card);
-        subLbl->setObjectName("statCardSub");
+        StyleProps::set(subLbl, "viewSub");
         v->addWidget(subLbl);
     }
     v->addStretch();
@@ -149,7 +151,7 @@ QWidget* DashboardView::makeChartCard(const QString& title, QWidget* chart) {
     v->setContentsMargins(24, 24, 24, 24);
     v->setSpacing(12);
     auto* lbl = new QLabel(title, card);
-    lbl->setObjectName("statCardTitle");
+    StyleProps::set(lbl, "chartTitle");
     v->addWidget(lbl);
     v->addWidget(chart, 1);
     return card;
@@ -167,15 +169,15 @@ void DashboardView::setupUi() {
     auto* titleCol = new QVBoxLayout();
     titleCol->setSpacing(4);
     auto* title = new QLabel(TR("dash_title"), content);
-    title->setObjectName("dashTitle");
+    StyleProps::set(title, "h1");
     titleCol->addWidget(title);
     auto* welcome = new QLabel("Welcome back, " + AuthSession::instance().user().fullName + "!", content);
-    welcome->setObjectName("dashWelcome");
+    StyleProps::set(welcome, "viewSub");
     titleCol->addWidget(welcome);
     header->addLayout(titleCol);
     header->addStretch();
     refreshBtn_ = new QPushButton(TR("action_refresh"), content);
-    refreshBtn_->setObjectName("action_refresh");
+    StyleProps::set(refreshBtn_, "chip");
     refreshBtn_->setCursor(Qt::PointingHandCursor);
     refreshBtn_->setMinimumHeight(38);
     header->addWidget(refreshBtn_);
@@ -183,11 +185,11 @@ void DashboardView::setupUi() {
     layout->addLayout(header);
     auto* qaLayout = new QHBoxLayout();
     qaLayout->setSpacing(12);
-    qaAddFamily_ = makeColorBtn(content, TR("dash_quick_add_family"), ":/icons/families.svg", "#3b82f6", "dash_qa_blue");
-    qaAddMember_ = makeColorBtn(content, TR("dash_quick_add_member"), ":/icons/members.svg", "#8b5cf6", "dash_qa_purple");
-    qaPayment_ = makeColorBtn(content, TR("dash_quick_record_payment"), ":/icons/subscriptions.svg", "#10b981", "dash_qa_green");
-    qaDonation_ = makeColorBtn(content, TR("dash_quick_add_donation"), ":/icons/donations.svg", "#f59e0b", "dash_qa_orange");
-    qaReport_ = makeColorBtn(content, TR("dash_quick_generate_report"), ":/icons/reports.svg", "#6366f1", "dash_qa_indigo");
+    qaAddFamily_ = makeColorBtn(content, TR("dash_quick_add_family"), ":/icons/families.svg", "#3b82f6", "qaBlue");
+    qaAddMember_ = makeColorBtn(content, TR("dash_quick_add_member"), ":/icons/members.svg", "#8b5cf6", "qaPurple");
+    qaPayment_ = makeColorBtn(content, TR("dash_quick_record_payment"), ":/icons/subscriptions.svg", "#10b981", "qaGreen");
+    qaDonation_ = makeColorBtn(content, TR("dash_quick_add_donation"), ":/icons/donations.svg", "#f59e0b", "qaOrange");
+    qaReport_ = makeColorBtn(content, TR("dash_quick_generate_report"), ":/icons/reports.svg", "#6366f1", "qaIndigo");
     for (auto* b : {qaAddFamily_, qaAddMember_, qaPayment_, qaDonation_, qaReport_}) qaLayout->addWidget(b);
     qaLayout->addStretch();
     layout->addLayout(qaLayout);
@@ -263,12 +265,12 @@ void DashboardView::loadCharts() {
     auto charts = findChildren<QChartView*>(); if (charts.size() < 4) return;
     bool isDark = qApp->palette().color(QPalette::Window).lightness() < 128;
     QChart::ChartTheme chartTheme = isDark ? QChart::ChartThemeDark : QChart::ChartThemeLight;
-    QColor axisTitleColor = isDark ? QColor("#e2e8f0") : QColor("#1e293b");
-    QColor axisLabelColor = isDark ? QColor("#94a3b8") : QColor("#64748b");
-    QColor gridColor = isDark ? QColor("#334155") : QColor("#f1f5f9");
+    QColor axisTitleColor = isDark ? colors::darkText : colors::lightText;
+    QColor axisLabelColor = isDark ? colors::darkTextMuted : colors::lightTextMuted;
+    QColor gridColor = isDark ? colors::darkGrid : colors::lightGrid;
     for (auto* cv : charts) { QChart* ch = cv->chart(); ch->setTheme(chartTheme); ch->setBackgroundVisible(false); ch->setMargins(QMargins(8,8,8,8)); ch->setTitle(""); ch->legend()->setLabelColor(axisLabelColor); }
     auto* cc = charts[0]->chart(); cc->removeAllSeries(); for (auto* a : cc->axes()) cc->removeAxis(a);
-    auto* s1 = new QLineSeries(); s1->setColor(QColor("#3b82f6")); s1->setPointsVisible(true);
+    auto* s1 = new QLineSeries(); s1->setColor(colors::chartBlue); s1->setPointsVisible(true);
     auto cd = svc.monthlyCollections(6); QStringList m1; double mx1 = 0; int i = 0;
     for (const auto& m : cd) { double a = m.toMap().value("amount").toDouble(); s1->append(i, a); m1 << m.toMap().value("month").toString(); if (a > mx1) mx1 = a; ++i; }
     cc->addSeries(s1);
@@ -281,8 +283,8 @@ void DashboardView::loadCharts() {
     dc->addSeries(pie); dc->legend()->setAlignment(Qt::AlignBottom);
     auto* ic = charts[2]->chart(); ic->removeAllSeries(); for (auto* a : ic->axes()) ic->removeAxis(a);
     auto ie = svc.incomeVsExpense(6);
-    auto* is = new QBarSet(TR("acc_income")); is->setColor(QColor("#22c55e"));
-    auto* es = new QBarSet(TR("acc_expense")); es->setColor(QColor("#ef4444"));
+    auto* is = new QBarSet(TR("acc_income")); is->setColor(colors::cellPositive);
+    auto* es = new QBarSet(TR("acc_expense")); es->setColor(colors::cellNegative);
     QStringList m2; double mx2 = 0;
     for (const auto& m : ie) { is->append(m.toMap().value("income").toDouble()); es->append(m.toMap().value("expense").toDouble()); m2 << m.toMap().value("month").toString(); mx2 = std::max({mx2, m.toMap().value("income").toDouble(), m.toMap().value("expense").toDouble()}); }
     auto* bs = new QBarSeries(); bs->append(is); bs->append(es); ic->addSeries(bs);
@@ -290,7 +292,7 @@ void DashboardView::loadCharts() {
     auto* ay2 = new QValueAxis(); ay2->setRange(0, mx2 * 1.2 + 1); ay2->setLabelFormat("%.0f"); ic->addAxis(ay2, Qt::AlignLeft); bs->attachAxis(ay2);
     ic->legend()->setVisible(true); ic->legend()->setAlignment(Qt::AlignBottom);
     auto* mc = charts[3]->chart(); mc->removeAllSeries(); for (auto* a : mc->axes()) mc->removeAxis(a);
-    auto* ms = new QLineSeries(); ms->setColor(QColor("#a855f7"));
+    auto* ms = new QLineSeries(); ms->setColor(colors::chartPurple);
     auto mg = svc.membershipGrowth(12); QStringList m3; double mx3 = 0; int mi = 0;
     for (const auto& m : mg) { double t = m.toMap().value("total").toDouble(); ms->append(mi, t); m3 << m.toMap().value("month").toString(); if (t > mx3) mx3 = t; ++mi; }
     mc->addSeries(ms);

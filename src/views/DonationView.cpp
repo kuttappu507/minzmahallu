@@ -28,6 +28,8 @@
 #include <QDesktopServices>
 #include <QUrl>
 #include "../core/I18N.h"
+#include "../core/StyleProps.h"
+#include "../core/ThemeColors.h"
 
 namespace mms {
 
@@ -182,15 +184,15 @@ void DonationView::setupUi() {
 
     auto* bb = new QHBoxLayout();
     addBtn_ = new QPushButton(TR("don_add"), this);
-    addBtn_->setObjectName("action_add");
+    StyleProps::set(addBtn_, "primary");
     editBtn_ = new QPushButton(TR("action_edit"), this);
-    editBtn_->setObjectName("action_edit");
+    StyleProps::set(editBtn_, "chip");
     deleteBtn_ = new QPushButton(TR("action_delete"), this);
-    deleteBtn_->setObjectName("action_delete");
+    StyleProps::set(deleteBtn_, "ghostDanger");
     printBtn_ = new QPushButton(TR("action_print"), this);
-    printBtn_->setObjectName("action_print");
+    StyleProps::set(printBtn_, "chip");
     exportBtn_ = new QPushButton(TR("action_export"), this);
-    exportBtn_->setObjectName("action_export");
+    StyleProps::set(exportBtn_, "chip");
     for (auto* b : {addBtn_, editBtn_, deleteBtn_, printBtn_, exportBtn_}) {
         b->setMinimumHeight(32); bb->addWidget(b);
     }
@@ -209,9 +211,9 @@ void DonationView::setupUi() {
 
     auto* pb = new QHBoxLayout();
     prevBtn_ = new QPushButton(TR("action_previous"), this);
-    prevBtn_->setObjectName("action_prev");
+    StyleProps::set(prevBtn_, "chip");
     nextBtn_ = new QPushButton(TR("action_next") + " ", this);
-    nextBtn_->setObjectName("action_next");
+    StyleProps::set(nextBtn_, "chip");
     pageLabel_ = new QLabel(this);
     pageLabel_->setAlignment(Qt::AlignCenter);
     connect(prevBtn_, &QPushButton::clicked, this, &DonationView::onPrevPage);
@@ -255,7 +257,7 @@ void DonationView::loadTable() {
         table_->setItem(r, 2, new QTableWidgetItem(d.donorName));
         table_->setItem(r, 3, new QTableWidgetItem(d.categoryName));
         auto* amtItem = new QTableWidgetItem(QString::number(d.amount, 'f', 2));
-        amtItem->setForeground(QColor("#2a7a3a"));
+        amtItem->setForeground(colors::cellPositive);
         table_->setItem(r, 4, new QTableWidgetItem(QString::number(d.amount, 'f', 2)));
         table_->setItem(r, 5, new QTableWidgetItem(d.donationDate));
         table_->setItem(r, 6, new QTableWidgetItem(d.purpose));

@@ -7,6 +7,9 @@
 #include "../core/Logger.h"
 #include "../core/I18N.h"
 #include "../core/Config.h"
+#include "../core/StyleProps.h"
+#include "../core/ThemeColors.h"
+#include "../core/IconUtils.h"
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -24,6 +27,7 @@
 namespace mms {
 
 LoginView::LoginView(QWidget* parent) : QWidget(parent) {
+    setObjectName("loginRight");
     setupUi();
     retranslateUi();
 }
@@ -75,12 +79,12 @@ void LoginView::setupUi() {
     cardLayout->addWidget(logoLabel);
 
     appNameLabel_ = new QLabel(card);
-    appNameLabel_->setObjectName("appName");
+    StyleProps::set(appNameLabel_, "h1");
     appNameLabel_->setAlignment(Qt::AlignCenter);
     cardLayout->addWidget(appNameLabel_);
 
     appSubLabel_ = new QLabel(card);
-    appSubLabel_->setObjectName("appSub");
+    StyleProps::set(appSubLabel_, "viewSub");
     appSubLabel_->setAlignment(Qt::AlignCenter);
     cardLayout->addWidget(appSubLabel_);
 
@@ -101,7 +105,7 @@ void LoginView::setupUi() {
     cardLayout->addLayout(form);
 
     errorLabel_ = new QLabel(card);
-    errorLabel_->setObjectName("errorLabel");
+    StyleProps::set(errorLabel_, "errorBox");
     errorLabel_->setWordWrap(true);
     errorLabel_->hide();
     cardLayout->addWidget(errorLabel_);
@@ -109,7 +113,7 @@ void LoginView::setupUi() {
     cardLayout->addSpacing(8);
 
     loginButton_ = new QPushButton(card);
-    loginButton_->setObjectName("primaryButton");
+    StyleProps::set(loginButton_, "primary");
     loginButton_->setMinimumHeight(44);
     loginButton_->setDefault(true);
     loginButton_->setCursor(Qt::PointingHandCursor);
@@ -124,7 +128,7 @@ void LoginView::setupUi() {
 
     hintLabel_ = new QLabel(card);
     hintLabel_->setAlignment(Qt::AlignCenter);
-    hintLabel_->setObjectName("hintLabel");
+    StyleProps::set(hintLabel_, "loginHintCode");
     cardLayout->addWidget(hintLabel_);
 
     outer->addWidget(card, 0, Qt::AlignCenter);

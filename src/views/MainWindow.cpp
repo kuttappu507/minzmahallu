@@ -1,5 +1,10 @@
 /*
  * MainWindow.cpp - Main application shell implementation
+ *
+ * Styling: All visual styling lives in resources/styles/light.qss and
+ * dark.qss. Widgets are identified by object names (setObjectName) and
+ * dynamic cssClass properties (set via StyleProps::set). No inline
+ * setStyleSheet() calls anywhere in this file.
  */
 #include "MainWindow.h"
 #include "../core/Database.h"
@@ -8,6 +13,8 @@
 #include "../core/I18N.h"
 #include "../core/FontManager.h"
 #include "../core/IconUtils.h"
+#include "../core/StyleProps.h"
+#include "../core/ThemeColors.h"
 #include "../services/AuthService.h"
 #include "../services/AuthSession.h"
 #include "../services/SettingsService.h"
@@ -22,8 +29,8 @@
 #include "SubscriptionView.h"
 #include "DonationView.h"
 #include "AccountingView.h"
-#include "RegisterViews.h"        // MarriageView, DeathView, WelfareView
-#include "OtherViews.h"            // CertificateView, ReportsView, SettingsView, AuditLogView, BackupView, UserManagementView, ChangePasswordDialog
+#include "RegisterViews.h"
+#include "OtherViews.h"
 
 #include <QApplication>
 #include <QCloseEvent>
@@ -62,19 +69,16 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
     setupUi();
     setupStatusBar();
 
-    // Center on screen
     QScreen* screen = QGuiApplication::primaryScreen();
     if (screen) {
         QRect sg = screen->availableGeometry();
         move((sg.width() - width()) / 2, (sg.height() - height()) / 2);
     }
 
-    // Load theme
     currentTheme_ = SettingsService::instance().currentTheme();
     if (currentTheme_.isEmpty()) currentTheme_ = "light";
     applyTheme(currentTheme_);
 
-    // Auto-backup timer
     connect(&autoBackupTimer_, &QTimer::timeout, this, &MainWindow::onAutoBackupTick);
     if (Config::instance().autoBackupEnabled()) {
         int hours = Config::instance().autoBackupIntervalHours();
@@ -95,18 +99,30 @@ QWidget* MainWindow::makeTopBar() {
     layout->setContentsMargins(14, 8, 14, 8);
     layout->setSpacing(10);
 
-    // Search bar
+    crumbSmall_ = new QLabel(bar);
+    crumbSmall_->setText("MMS");
+    StyleProps::set(crumbSmall_, "crumbSmall");
+    layout->addWidget(crumbSmall_);
+
+    crumbBig_ = new QLabel(bar);
+    crumbBig_->setText(TR("nav_dashboard"));
+    StyleProps::set(crumbBig_, "crumbBig");
+    layout->addWidget(crumbBig_);
+
+    layout->addStretch();
+
     searchEdit_ = new QLineEdit(bar);
+    searchEdit_->setObjectName("searchBox");
     searchEdit_->setPlaceholderText(TR("search_placeholder"));
     searchEdit_->setClearButtonEnabled(true);
     searchEdit_->setMinimumHeight(36);
+    searchEdit_->setMaximumWidth(320);
     connect(searchEdit_, &QLineEdit::returnPressed, this, &MainWindow::onSearch);
     layout->addWidget(searchEdit_, 1);
 
-    // Theme toggle button
     themeButton_ = new QToolButton(bar);
     QString savedTheme = Config::instance().theme();
-    themeButton_->setIcon(QIcon(icons::renderSvgIcon(savedTheme == "dark" ? ":/icons/sun.svg" : ":/icons/moon.svg", QString("#1e293b"), 48)));
+    themeButton_->setIcon(QIcon(icons::renderSvgIcon(savedTheme == "dark" ? ":/icons/sun.svg" : ":/icons/moon.svg", colors::topbarIconTint, 48)));
     themeButton_->setIconSize(QSize(22, 22));
     themeButton_->setToolTip(TR("action_toggle_theme"));
     themeButton_->setAutoRaise(true);
@@ -114,19 +130,17 @@ QWidget* MainWindow::makeTopBar() {
     connect(themeButton_, &QToolButton::clicked, this, &MainWindow::onToggleTheme);
     layout->addWidget(themeButton_);
 
-    // Language toggle button
     langButton_ = new QToolButton(bar);
     QString curLang = I18N::instance().currentLanguage();
-    langButton_->setText(curLang == "ml" ? "EN" : "മല");
+    langButton_->setText(curLang == "ml" ? "EN" : QString::fromUtf8("\xe0\xb4\xae\xe0\xb4\xb2"));
     langButton_->setToolTip(TR("action_toggle_language"));
     langButton_->setAutoRaise(true);
     langButton_->setMinimumSize(38, 38);
     connect(langButton_, &QToolButton::clicked, this, &MainWindow::onToggleLanguage);
     layout->addWidget(langButton_);
 
-    // Backup button
     backupButton_ = new QToolButton(bar);
-    backupButton_->setIcon(QIcon(icons::renderSvgIcon(":/icons/backup.svg", QString("#1e293b"), 48)));
+    backupButton_->setIcon(QIcon(icons::renderSvgIcon(":/icons/backup.svg", colors::topbarIconTint, 48)));
     backupButton_->setIconSize(QSize(22, 22));
     backupButton_->setToolTip(TR("bak_create_now"));
     backupButton_->setAutoRaise(true);
@@ -134,7 +148,6 @@ QWidget* MainWindow::makeTopBar() {
     connect(backupButton_, &QToolButton::clicked, this, &MainWindow::onBackup);
     layout->addWidget(backupButton_);
 
-    // User menu button
     userButton_ = new QToolButton(bar);
     userButton_->setPopupMode(QToolButton::InstantPopup);
     userButton_->setAutoRaise(true);
@@ -154,13 +167,12 @@ void MainWindow::setupUi() {
     setupSidebar();
     outer->addWidget(sidebarWidget_, 0);
 
-    // Sidebar collapse/expand flap button
     sidebarToggleBtn_ = new QToolButton(central);
-    sidebarToggleBtn_->setObjectName("sidebarToggleFlap");
+    sidebarToggleBtn_->setObjectName("flap");
     sidebarToggleBtn_->setAutoRaise(false);
     sidebarToggleBtn_->setCursor(Qt::PointingHandCursor);
     sidebarToggleBtn_->setFixedSize(24, 60);
-    sidebarToggleBtn_->setIcon(icons::renderSvgIcon(":/icons/chevron-left.svg", QString("#ffffff"), 16));
+    sidebarToggleBtn_->setIcon(icons::renderSvgIcon(":/icons/chevron-left.svg", colors::sidebarIconTint, 16));
     sidebarToggleBtn_->setIconSize(QSize(16, 16));
     sidebarToggleBtn_->setToolTip(TR("action_collapse_sidebar"));
     connect(sidebarToggleBtn_, &QToolButton::clicked, this, &MainWindow::onToggleSidebar);
@@ -183,17 +195,14 @@ void MainWindow::setupUi() {
 }
 
 void MainWindow::setupSidebar() {
-    // Sidebar container: logo header + nav list + bottom user card
     sidebarWidget_ = new QFrame(this);
-    sidebarWidget_->setObjectName("sidebarWidget");
+    sidebarWidget_->setObjectName("sidebar");
     sidebarWidget_->setFixedWidth(260);
     auto* sbLayout = new QVBoxLayout(sidebarWidget_);
     sbLayout->setContentsMargins(0, 0, 0, 0);
     sbLayout->setSpacing(0);
 
-    // 1) Logo header (logo + app name + subtitle)
     auto* header = new QFrame(sidebarWidget_);
-    header->setObjectName("sidebarHeader");
     auto* hLayout = new QVBoxLayout(header);
     hLayout->setContentsMargins(20, 22, 20, 18);
     hLayout->setSpacing(6);
@@ -213,19 +222,20 @@ void MainWindow::setupSidebar() {
     auto* titleCol = new QVBoxLayout();
     titleCol->setSpacing(1);
     sidebarAppName_ = new QLabel(header);
-    sidebarAppName_->setObjectName("sidebarAppName");
+    StyleProps::set(sidebarAppName_, "logoTitle");
     sidebarAppName_->hide();
     sidebarAppSub_ = new QLabel(header);
-    sidebarAppSub_->setObjectName("sidebarAppSub");
+    StyleProps::set(sidebarAppSub_, "logoSub");
     sidebarAppSub_->hide();
+    titleCol->addWidget(sidebarAppName_);
+    titleCol->addWidget(sidebarAppSub_);
     logoRow->addLayout(titleCol);
     logoRow->addStretch();
     hLayout->addLayout(logoRow);
     sbLayout->addWidget(header);
 
-    // 2) Nav list (icons + labels)
     navList_ = new QListWidget(sidebarWidget_);
-    navList_->setObjectName("sidebar");
+    navList_->setObjectName("sidebarNav");
     navList_->setIconSize(QSize(22, 22));
     navList_->setFrameShape(QFrame::NoFrame);
     navList_->setFocusPolicy(Qt::NoFocus);
@@ -233,9 +243,8 @@ void MainWindow::setupSidebar() {
     connect(navList_, &QListWidget::currentRowChanged, this, &MainWindow::onNavItemChanged);
     sbLayout->addWidget(navList_, 1);
 
-    // 3) Bottom user card
     auto* userCard = new QFrame(sidebarWidget_);
-    userCard->setObjectName("sidebarUserCard");
+    userCard->setObjectName("userCard");
     auto* ucLayout = new QVBoxLayout(userCard);
     ucLayout->setContentsMargins(14, 14, 14, 14);
     ucLayout->setSpacing(10);
@@ -243,30 +252,30 @@ void MainWindow::setupSidebar() {
     auto* userRow = new QHBoxLayout();
     userRow->setSpacing(10);
     sidebarUserInitial_ = new QLabel("A", userCard);
-    sidebarUserInitial_->setObjectName("sidebarUserInitial");
+    StyleProps::set(sidebarUserInitial_, "avatar");
     sidebarUserInitial_->setFixedSize(40, 40);
     sidebarUserInitial_->setAlignment(Qt::AlignCenter);
     userRow->addWidget(sidebarUserInitial_);
     auto* userInfo = new QVBoxLayout();
     userInfo->setSpacing(1);
     sidebarUserName_ = new QLabel("Administrator", userCard);
-    sidebarUserName_->setObjectName("sidebarUserName");
+    StyleProps::set(sidebarUserName_, "userName");
     userInfo->addWidget(sidebarUserName_);
     sidebarUserRole_ = new QLabel("Administrator", userCard);
-    sidebarUserRole_->setObjectName("sidebarUserRole");
+    StyleProps::set(sidebarUserRole_, "userRole");
     userInfo->addWidget(sidebarUserRole_);
     userRow->addLayout(userInfo);
     userRow->addStretch();
     ucLayout->addLayout(userRow);
 
     sidebarLogoutBtn_ = new QPushButton("Logout", userCard);
-    sidebarLogoutBtn_->setObjectName("sidebarLogoutBtn");
+    StyleProps::set(sidebarLogoutBtn_, "primary");
     sidebarLogoutBtn_->setCursor(Qt::PointingHandCursor);
     connect(sidebarLogoutBtn_, &QPushButton::clicked, this, &MainWindow::onLogout);
     ucLayout->addWidget(sidebarLogoutBtn_);
     sbLayout->addWidget(userCard);
 
-    sidebarWidget_->hide();   // hidden until login
+    sidebarWidget_->hide();
 }
 
 void MainWindow::setupStatusBar() {
@@ -292,7 +301,6 @@ void MainWindow::showLogin() {
 }
 
 void MainWindow::showApp() {
-    // Build the sidebar with all permitted views
     navList_->clear();
     if (dashboardView_)    stack_->removeWidget(dashboardView_);
     if (familyView_)      stack_->removeWidget(familyView_);
@@ -310,7 +318,6 @@ void MainWindow::showApp() {
     if (backupView_)      stack_->removeWidget(backupView_);
     if (userMgmtView_)    stack_->removeWidget(userMgmtView_);
 
-    // Create fresh views
     dashboardView_     = new DashboardView(this);
     familyView_        = new FamilyView(this);
     memberView_        = new MemberView(this);
@@ -328,7 +335,6 @@ void MainWindow::showApp() {
     userMgmtView_      = new UserManagementView(this);
 
     auto& session = AuthSession::instance();
-    UserRepository users;
 
     struct NavEntry {
         QString title;
@@ -363,7 +369,6 @@ void MainWindow::showApp() {
                         ? (session.user().role == "Administrator")
                         : session.hasPermission(e.module, e.action);
         if (!allowed) continue;
-        // Render SVG icon as white for dark sidebar
         QPixmap iconPix(48, 48);
         iconPix.fill(Qt::transparent);
         QSvgRenderer renderer(e.iconPath);
@@ -399,7 +404,6 @@ void MainWindow::showApp() {
     QList<QComboBox*> allCombos = findChildren<QComboBox*>();
     for (auto* c2 : allCombos) icons::applyComboShadow(c2);
 
-    // Wire up dashboard quick actions to navigate to other views
     if (dashboardView_) {
         connect(dashboardView_, &DashboardView::navigateToView,
                 this, [this](int index) {
@@ -420,6 +424,7 @@ void MainWindow::onNavItemChanged(int index) {
     auto* view = static_cast<QWidget*>(item->data(Qt::UserRole).value<void*>());
     if (view) {
         stack_->setCurrentWidget(view);
+        if (crumbBig_) crumbBig_->setText(item->text().simplified());
         statusBar()->showMessage(QString("Loaded: %1").arg(item->text().simplified()), 2000);
     }
 }
@@ -428,7 +433,6 @@ void MainWindow::onSearch() {
     QString term = searchEdit_->text().trimmed();
     if (term.isEmpty()) return;
 
-    // Global search: try families first, then members
     QString results;
     QSqlQuery famQ = Database::instance().execute(
         "SELECT family_number, house_name, phone FROM families "
@@ -475,7 +479,7 @@ void MainWindow::onLogout() {
 void MainWindow::onToggleTheme() {
     currentTheme_ = (currentTheme_ == "light") ? "dark" : "light";
     SettingsService::instance().applyTheme(currentTheme_);
-    if (themeButton_) themeButton_->setIcon(QIcon(currentTheme_ == "dark" ? ":/icons/sun.svg" : ":/icons/moon.svg"));
+    if (themeButton_) themeButton_->setIcon(QIcon(icons::renderSvgIcon(currentTheme_ == "dark" ? ":/icons/sun.svg" : ":/icons/moon.svg", colors::topbarIconTint, 48)));
     QSqlQuery q = Database::instance().execute(
         "UPDATE settings SET theme = ? WHERE id = 1", { currentTheme_ });
 }
@@ -502,39 +506,25 @@ void MainWindow::onLanguageChanged(const QString& langCode) {
 }
 
 void MainWindow::retranslateUi() {
-    // Update sidebar item labels WITH emoji icons preserved
     if (navList_) {
         QStringList labels = {
-            TR("nav_dashboard"),
-            TR("nav_families"),
-            TR("nav_members"),
-            TR("nav_subscriptions"),
-            TR("nav_donations"),
-            TR("nav_accounting"),
-            TR("nav_marriage"),
-            TR("nav_death"),
-            TR("nav_welfare"),
-            TR("nav_certificates"),
-            TR("nav_reports"),
-            TR("nav_settings"),
-            TR("nav_users"),
-            TR("nav_audit"),
-            TR("nav_backup"),
+            TR("nav_dashboard"), TR("nav_families"), TR("nav_members"),
+            TR("nav_subscriptions"), TR("nav_donations"), TR("nav_accounting"),
+            TR("nav_marriage"), TR("nav_death"), TR("nav_welfare"),
+            TR("nav_certificates"), TR("nav_reports"), TR("nav_settings"),
+            TR("nav_users"), TR("nav_audit"), TR("nav_backup"),
         };
         int n = (int)labels.size() < (int)navList_->count() ? (int)labels.size() : (int)navList_->count();
         for (int i = 0; i < n; ++i) {
             navList_->item(i)->setText(labels[i]);
         }
     }
-    // Sidebar logo header retranslation
     if (sidebarAppName_) sidebarAppName_->setText(TR("app_name"));
     if (sidebarAppSub_)  sidebarAppSub_->setText(TR("app_subtitle"));
     if (sidebarLogoutBtn_) sidebarLogoutBtn_->setText(TR("action_logout"));
     if (themeButton_) themeButton_->setToolTip(TR("action_toggle_theme"));
     if (langButton_) langButton_->setToolTip(TR("action_toggle_language"));
     if (backupButton_) backupButton_->setToolTip(TR("bak_create_now"));
-
-    // Update status bar
     statusBar()->showMessage(TR("ui_success"));
 }
 
@@ -544,12 +534,10 @@ void MainWindow::applyTheme(const QString& theme) {
 }
 
 void MainWindow::updateUserMenu() {
-    // userButton_ is created in makeTopBar(); just update its text and menu
     auto& s = AuthSession::instance();
     if (userButton_) {
         QString text = QString(" %1 (%2) ").arg(s.user().fullName).arg(s.user().role);
         userButton_->setText(text);
-
         auto* menu = new QMenu(this);
         menu->addAction("Change Password...", this, &MainWindow::onChangePassword);
         menu->addSeparator();
@@ -558,8 +546,6 @@ void MainWindow::updateUserMenu() {
         menu->addAction(" Logout", this, &MainWindow::onLogout);
         userButton_->setMenu(menu);
     }
-
-    // Update sidebar user card
     if (sidebarUserName_) {
         sidebarUserName_->setText(s.user().fullName.isEmpty() ? s.user().username : s.user().fullName);
     }
@@ -573,15 +559,6 @@ void MainWindow::updateUserMenu() {
         else initial = "U";
         sidebarUserInitial_->setText(initial);
     }
-}
-
-void MainWindow::onUserProfile() {
-    QMessageBox::information(this, "User Profile",
-        QString("User: %1\nRole: %2\nUsername: %3\nLast Login: %4")
-            .arg(AuthSession::instance().user().fullName)
-            .arg(AuthSession::instance().user().role)
-            .arg(AuthSession::instance().user().username)
-            .arg(AuthSession::instance().user().lastLoginAt.toString()));
 }
 
 void MainWindow::onChangePassword() {
@@ -604,16 +581,6 @@ void MainWindow::onBackup() {
     }
 }
 
-void MainWindow::onAbout() {
-    QMessageBox::about(this, "About Mahallu Management System",
-        "<h3>Mahallu Management System</h3>"
-        "<p>Version " APP_VERSION_STR "</p>"
-        "<p>A complete desktop application for Mosque Community Administration.</p>"
-        "<p>Built with C++20 + Qt 6 + SQLite</p>"
-        "<p>Modules: Family, Member, Subscription, Donation, Accounting, "
-        "Marriage Register, Death Register, Welfare, Certificates, Reports, Backup, Audit.</p>");
-}
-
 void MainWindow::onAutoBackupTick() {
     if (!AuthSession::instance().isLoggedIn()) return;
     BackupService svc;
@@ -626,7 +593,6 @@ void MainWindow::onAutoBackupTick() {
 }
 
 void MainWindow::checkPermissions() {
-    // Re-evaluate sidebar visibility per permission
     showApp();
 }
 
@@ -655,7 +621,6 @@ void MainWindow::closeEvent(QCloseEvent* event) {
             event->ignore();
             return;
         }
-        // Auto-backup on exit if enabled
         if (Config::instance().autoBackupEnabled()) {
             BackupService svc;
             QString err;
@@ -684,16 +649,18 @@ void MainWindow::applySidebarMode(bool collapsed) {
         if (sidebarUserRole_) sidebarUserRole_->hide();
         if (sidebarLogoutBtn_) {
             sidebarLogoutBtn_->setText("");
-            sidebarLogoutBtn_->setIcon(QIcon(icons::renderSvgIcon(":/icons/log-out.svg", QString("#ffffff"), 20)));
+            sidebarLogoutBtn_->setIcon(QIcon(icons::renderSvgIcon(":/icons/log-out.svg", colors::sidebarIconTint, 20)));
             sidebarLogoutBtn_->setIconSize(QSize(20, 20));
             sidebarLogoutBtn_->setFixedSize(48, 40);
             sidebarLogoutBtn_->setToolTip(TR("action_logout"));
         }
         if (navList_) for (int i = 0; i < navList_->count(); ++i) { auto* it = navList_->item(i); if (it) it->setText(""); }
-        if (sidebarToggleBtn_) { sidebarToggleBtn_->setIcon(icons::renderSvgIcon(":/icons/chevron-right.svg", QString("#ffffff"), 16)); sidebarToggleBtn_->setToolTip(TR("action_expand_sidebar")); }
+        if (sidebarToggleBtn_) { sidebarToggleBtn_->setIcon(icons::renderSvgIcon(":/icons/chevron-right.svg", colors::sidebarIconTint, 16)); sidebarToggleBtn_->setToolTip(TR("action_expand_sidebar")); }
     } else {
         sidebarWidget_->setFixedWidth(260);
         if (sidebarLogoLabel_) sidebarLogoLabel_->setFixedSize(64, 64);
+        if (sidebarAppName_)   sidebarAppName_->show();
+        if (sidebarAppSub_)    sidebarAppSub_->show();
         if (sidebarUserName_) sidebarUserName_->show();
         if (sidebarUserRole_) sidebarUserRole_->show();
         if (sidebarLogoutBtn_) {
@@ -703,7 +670,7 @@ void MainWindow::applySidebarMode(bool collapsed) {
             sidebarLogoutBtn_->setMinimumHeight(32);
         }
         retranslateUi();
-        if (sidebarToggleBtn_) { sidebarToggleBtn_->setIcon(icons::renderSvgIcon(":/icons/chevron-left.svg", QString("#ffffff"), 16)); sidebarToggleBtn_->setToolTip(TR("action_collapse_sidebar")); }
+        if (sidebarToggleBtn_) { sidebarToggleBtn_->setIcon(icons::renderSvgIcon(":/icons/chevron-left.svg", colors::sidebarIconTint, 16)); sidebarToggleBtn_->setToolTip(TR("action_collapse_sidebar")); }
     }
     repositionSidebarFlap();
 }

@@ -19,6 +19,7 @@
 #include <QDesktopServices>
 #include <QUrl>
 #include "../core/I18N.h"
+#include "../core/StyleProps.h"
 
 namespace mms {
 
@@ -60,15 +61,15 @@ void MemberView::setupUi() {
 
     auto* btnBar = new QHBoxLayout();
     addBtn_ = new QPushButton(TR("member_add"), this);
-    addBtn_->setObjectName("action_add");
+    StyleProps::set(addBtn_, "primary");
     editBtn_ = new QPushButton(TR("action_edit"), this);
-    editBtn_->setObjectName("action_edit");
+    StyleProps::set(editBtn_, "chip");
     deleteBtn_ = new QPushButton(TR("action_delete"), this);
-    deleteBtn_->setObjectName("action_delete");
+    StyleProps::set(deleteBtn_, "ghostDanger");
     printBtn_ = new QPushButton(TR("action_print"), this);
-    printBtn_->setObjectName("action_print");
+    StyleProps::set(printBtn_, "chip");
     exportBtn_ = new QPushButton(TR("action_export"), this);
-    exportBtn_->setObjectName("action_export");
+    StyleProps::set(exportBtn_, "chip");
     for (auto* b : {addBtn_, editBtn_, deleteBtn_, printBtn_, exportBtn_}) {
         b->setMinimumHeight(32);
         btnBar->addWidget(b);
@@ -93,9 +94,9 @@ void MemberView::setupUi() {
 
     auto* pageBar = new QHBoxLayout();
     prevBtn_ = new QPushButton(TR("action_previous"), this);
-    prevBtn_->setObjectName("action_prev");
+    StyleProps::set(prevBtn_, "chip");
     nextBtn_ = new QPushButton(TR("action_next") + " ", this);
-    nextBtn_->setObjectName("action_next");
+    StyleProps::set(nextBtn_, "chip");
     pageLabel_ = new QLabel(this);
     pageLabel_->setAlignment(Qt::AlignCenter);
     connect(prevBtn_, &QPushButton::clicked, this, &MemberView::onPrevPage);
