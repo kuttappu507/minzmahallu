@@ -173,9 +173,15 @@ LIBS="$QT_LIBS -lopengl32 -lws2_32 -luser32 -lgdi32 -ladvapi32 -lshell32 -lole32
 LIBS+=" -lssl -lcrypto -lz -lpthread -Wl,--whole-archive -lQt6EntryPoint -Wl,--no-whole-archive"
 
 # Prepend ssp_shim.o so its symbols are available to Qt6EntryPoint
-OBJS="$BUILD/obj/ssp_shim.o $(find "$BUILD/obj" -name "*.o" ! -name "ssp_shim.o" | sort)"
-echo "Linking $(echo "$OBJS" | wc -w) object files..."
-if $CXX $LDFLAGS -o "$BUILD/MMS.exe" $OBJS $LIBS; then
+# Use --start-group / --end-group to resolve the circular dependency:
+# libQt6EntryPoint.a references __stack_chk_fail (defined in ssp_shim.o).
+# Without the group, the linker scans Qt6EntryPoint before ssp_shim.o
+# and discards __stack_chk_fail as unused. With the group, it loops until
+# all symbols are resolved.
+OBJS=$(find "$BUILD/obj" -name "*.o" ! -name "ssp_shim.o" | sort)
+echo "Linking $(echo "$OBJS" | wc -w) object files + ssp_shim.o..."
+if $CXX $LDFLAGS -o "$BUILD/MMS.exe" \
+    -Wl,--start-group $OBJS $BUILD/obj/ssp_shim.o $LIBS -Wl,--end-group; then
     echo "OK: MMS.exe ($(du -h "$BUILD/MMS.exe" | cut -f1))"
 else
     echo "::error::Link failed"
