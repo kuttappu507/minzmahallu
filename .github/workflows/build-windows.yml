@@ -48,7 +48,7 @@ jobs:
           # Use aqtinstall to fetch Qt's pre-built OpenSSL tool (fast, ~30 sec)
           pip install aqtinstall
           $env:OPENSSL_ROOT = "${{ runner.workspace }}\openssl"
-          aqt install-tool windows desktop openssl_3_x64 --outputdir $env:OPENSSL_ROOT
+          aqt install-tool windows desktop opensslv3_x64 --outputdir $env:OPENSSL_ROOT
           # The tool installs to $OPENSSL_ROOT/Tools/OpenSSL/Win_x64
           $opensslPath = Get-ChildItem -Path "$env:OPENSSL_ROOT\Tools" -Recurse -Filter "evp.h" | Select-Object -First 1
           $opensslRoot = $opensslPath.Directory.Parent.Parent.FullName
