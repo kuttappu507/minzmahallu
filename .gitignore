@@ -1,0 +1,50 @@
+# Build outputs
+build-win/
+build/
+dist-win/
+dist-final/
+*.o
+*.obj
+*.exe
+*.dll
+*.lib
+*.a
+!resources/icons/svg/*.svg
+!resources/styles/*.qss
+
+# Generated files
+build-win/generated/
+build-win/obj/
+*_autogen/
+moc_*.cpp
+qrc_*.cpp
+ui_*.h
+
+# IDE / editor
+.vscode/
+.idea/
+*.user
+*.user.*
+*.suo
+.vs/
+CMakeSettings.json
+.cache/
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Logs
+*.log
+last_err.log
+last_link.log
+cc_err.log
+
+# Local tools (installed by build scripts, not version controlled)
+/opt/Qt/
+/opt/openssl-win/
+
+# Backups
+*.bak
+*.orig
+*~
