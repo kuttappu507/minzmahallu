@@ -173,9 +173,17 @@ jobs:
           # (NOT from Ubuntu's mingw-w64 package). The Qt 6.8.0 DLLs were built
           # with MinGW 13.1.0 and expect runtime symbols from that version.
           # Using Ubuntu's older GCC 12 runtime causes "Entry point not found".
-          cp /opt/Qt/Tools/mingw_64/bin/libgcc_s_seh-1.dll dist-final/
-          cp /opt/Qt/Tools/mingw_64/bin/libstdc++-6.dll dist-final/
-          cp /opt/Qt/Tools/mingw_64/bin/libwinpthread-1.dll dist-final/
+          # aqtinstall puts the MinGW toolchain at /opt/Qt/Tools/mingw***/
+          MINGW_RT_DIR=$(find /opt/Qt/Tools -name "libgcc_s_seh-1.dll" -printf "%h\n" | head -1)
+          if [ -z "$MINGW_RT_DIR" ]; then
+            echo "ERROR: MinGW runtime DLLs not found in /opt/Qt/Tools/"
+            find /opt/Qt -name "libgcc_s_seh-1.dll" 2>/dev/null
+            exit 1
+          fi
+          echo "Found MinGW runtime at: $MINGW_RT_DIR"
+          cp "$MINGW_RT_DIR/libgcc_s_seh-1.dll" dist-final/
+          cp "$MINGW_RT_DIR/libstdc++-6.dll" dist-final/
+          cp "$MINGW_RT_DIR/libwinpthread-1.dll" dist-final/"
           # Qt plugins (platforms, styles, sqldrivers)
           mkdir -p dist-final/plugins/platforms dist-final/plugins/styles dist-final/plugins/sqldrivers
           cp /home/z/Qt-win/6.8.0/mingw_64/plugins/platforms/qwindows.dll dist-final/plugins/platforms/
