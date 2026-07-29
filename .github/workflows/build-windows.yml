@@ -174,7 +174,7 @@ jobs:
           # with MinGW 13.1.0 and expect runtime symbols from that version.
           # Using Ubuntu's older GCC 12 runtime causes "Entry point not found".
           # aqtinstall puts the MinGW toolchain at /opt/Qt/Tools/mingw***/
-          MINGW_RT_DIR=$(find /opt/Qt/Tools -name "libgcc_s_seh-1.dll" -printf "%h\n" | head -1)
+          MINGW_RT_DIR=$(find /opt/Qt -name "libgcc_s_seh-1.dll" -printf "%h\n" | head -1)
           if [ -z "$MINGW_RT_DIR" ]; then
             echo "ERROR: MinGW runtime DLLs not found in /opt/Qt/Tools/"
             find /opt/Qt -name "libgcc_s_seh-1.dll" 2>/dev/null
