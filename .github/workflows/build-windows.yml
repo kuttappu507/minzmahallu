@@ -102,7 +102,7 @@ jobs:
           # Qt DLLs (runtime) — windeployqt does this automatically
           # Run windeployqt to copy all required Qt DLLs + plugins
           & "${env:RUNNER_WORKSPACE}\Qt\${env:QT_VERSION}\msvc2022_64\bin\windeployqt.exe" `
-            --release --no-translations --no-system-d3d-compiler --no-opengl-sw `
+            --release --no-translations --no-system-d3d-compiler --no-opengl-sw --no-crt `
             "dist-final\MMS.exe"
 
           # OpenSSL DLLs (from the Qt-bundled OpenSSL tool)
