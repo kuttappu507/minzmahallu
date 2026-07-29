@@ -105,7 +105,7 @@ jobs:
             --release --no-translations --no-system-d3d-compiler --no-opengl-sw `
             "dist-final\MMS.exe"
 
-          # OpenSSL DLLs (from the aqtinstall-fetched Qt tool)
+          # OpenSSL DLLs (from the Qt-bundled OpenSSL tool)
           $openSSLBin = "${{ env.OPENSSL_ROOT_DIR }}\bin"
           if (Test-Path $openSSLBin) {
             Get-ChildItem $openSSLBin -Filter *.dll | ForEach-Object {
@@ -114,7 +114,38 @@ jobs:
             Write-Host "Copied OpenSSL DLLs from $openSSLBin"
           } else {
             Write-Host "WARNING: OpenSSL bin not found at $openSSLBin"
-            Get-ChildItem ${{ env.OPENSSL_ROOT_DIR }} -Recurse -Filter *.dll | Select-Object FullName
+          }
+
+          # zlib1.dll + any other vcpkg runtime DLLs (windeployqt does NOT copy these)
+          $vcpkgBin = "C:\vcpkg\installed\x64-windows\bin"
+          if (Test-Path $vcpkgBin) {
+            Get-ChildItem $vcpkgBin -Filter *.dll | ForEach-Object {
+              Copy-Item $_.FullName dist-final\ -Force
+              Write-Host "Copied vcpkg DLL: $($_.Name)"
+            }
+          } else {
+            Write-Host "WARNING: vcpkg bin not found at $vcpkgBin"
+          }
+
+          # MSVC runtime DLLs (msvcp140.dll, vcruntime140.dll, vcruntime140_1.dll)
+          # These are required because the user may not have MSVC runtime installed.
+          # Find them in the MSVC redist folder.
+          $redistBase = "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Redist\MSVC"
+          if (Test-Path $redistBase) {
+            $crtDir = Get-ChildItem $redistBase -Directory | Sort-Object Name -Descending | Select-Object -First 1
+            $crtPath = "$($crtDir.FullName)\x64\Microsoft.VC143.CRT"
+            Write-Host "MSVC CRT path: $crtPath"
+            if (Test-Path $crtPath) {
+              Get-ChildItem $crtPath -Filter *.dll | ForEach-Object {
+                Copy-Item $_.FullName dist-final\ -Force
+                Write-Host "Copied MSVC runtime DLL: $($_.Name)"
+              }
+            } else {
+              Write-Host "WARNING: MSVC CRT not found at $crtPath"
+            }
+          } else {
+            Write-Host "WARNING: MSVC redist not found — searching for runtime DLLs"
+            Get-ChildItem "C:\Program Files\Microsoft Visual Studio" -Recurse -Filter "msvcp140.dll" -ErrorAction SilentlyContinue | Select-Object -First 3 FullName
           }
 
           # App data
