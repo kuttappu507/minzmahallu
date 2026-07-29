@@ -104,6 +104,21 @@ echo "Generated qrc_mms.cpp ($(du -h "$GEN/qrc_mms.cpp" | cut -f1))"
 echo "::endgroup::"
 
 # ---------------------------------------------------------------------------
+# Step 3a: Compile the libssp shim (provides __stack_chk_fail / __stack_chk_guard
+# needed by Qt6EntryPoint.a, since Ubuntu mingw-w64 doesn't ship libssp).
+# ---------------------------------------------------------------------------
+echo "::group::Step 3a: Compile libssp shim"
+SSP_SHIM="$PROJ/build-scripts/ssp_shim.c"
+SSP_OBJ="$BUILD/obj/ssp_shim.o"
+if ! $CXX $CXXFLAGS "${DEFINES[@]}" $INCLUDES -c "$SSP_SHIM" -o "$SSP_OBJ" 2>/tmp/cc_err.log; then
+    echo "::error::Failed to compile ssp_shim.c"
+    cat /tmp/cc_err.log
+    exit 1
+fi
+echo "  Compiled ssp_shim.o"
+echo "::endgroup::"
+
+# ---------------------------------------------------------------------------
 # Step 3: Compile every .cpp file (incremental — skip up-to-date objects)
 # ---------------------------------------------------------------------------
 echo "::group::Step 3: Compile sources"
@@ -155,9 +170,12 @@ done
 LDFLAGS="-static-libgcc -static-libstdc++ -Wl,--enable-auto-import -Wl,-s -mwindows"
 LDFLAGS+=" -L$QT_WIN/lib -L$OPENSSL/lib -L/home/z/mingw/x86_64-w64-mingw32/lib"
 LIBS="$QT_LIBS -lopengl32 -lws2_32 -luser32 -lgdi32 -ladvapi32 -lshell32 -lole32 -loleaut32 -limm32 -lwinmm -ldwmapi -lsetupapi -lversion"
-LIBS+=" -lssl -lcrypto -lz -lpthread -lssp -Wl,--whole-archive -lQt6EntryPoint -Wl,--no-whole-archive"
+LIBS+=" -lssl -lcrypto -lz -lpthread -Wl,--whole-archive -lQt6EntryPoint -Wl,--no-whole-archive"
 
 OBJS=$(find "$BUILD/obj" -name "*.o" | sort)
+OBJS="$OBP_SSP_SHIM $OBJS"
+# Prepend ssp_shim.o so its symbols are available to Qt6EntryPoint
+OBJS="$BUILD/obj/ssp_shim.o $(find "$BUILD/obj" -name "*.o" ! -name "ssp_shim.o" | sort)"
 echo "Linking $(echo "$OBJS" | wc -w) object files..."
 if $CXX $LDFLAGS -o "$BUILD/MMS.exe" $OBJS $LIBS; then
     echo "OK: MMS.exe ($(du -h "$BUILD/MMS.exe" | cut -f1))"
