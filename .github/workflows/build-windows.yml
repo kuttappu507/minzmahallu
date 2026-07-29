@@ -67,10 +67,17 @@ jobs:
           # Make /opt/Qt/6.5.0/gcc_64 appear as /opt/Qt/6.8.0/gcc_64 so the
           # downstream symlink step (which references ${{ env.QT_VERSION }}) works.
           ln -sfn /opt/Qt/6.5.0/gcc_64 /opt/Qt/6.8.0/gcc_64
+          # aqtinstall leaves the bin/moc + bin/rcc symlinks pointing at absolute
+          # paths that don't exist when installed to a non-standard location. Fix
+          # them by recreating as relative symlinks pointing at ../libexec/<tool>.
+          for tool in moc rcc uic; do
+            ln -sfn "../libexec/$tool" "/opt/Qt/6.5.0/gcc_64/bin/$tool"
+          done
           # List what we got
           ls /opt/Qt/6.8.0
           # Verify the Linux moc binary is there
-          ls /opt/Qt/6.8.0/gcc_64/bin/moc
+          ls -la /opt/Qt/6.8.0/gcc_64/bin/moc
+          /opt/Qt/6.8.0/gcc_64/bin/moc --version
           # Verify the Win Qt6Core lib is there
           ls /opt/Qt/6.8.0/mingw_64/lib/libQt6Core.a
 
