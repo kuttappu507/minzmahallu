@@ -42,37 +42,29 @@ jobs:
           modules: 'qtcharts'
           cache: true
 
-      - name: Install pre-built OpenSSL for MSVC
+      - name: Install OpenSSL (Qt's bundled build for MSVC)
         shell: pwsh
         run: |
-          # Download pre-built OpenSSL 3.x for Windows x64 (MSVC build)
-          # from the shining-light installer mirror — much faster than vcpkg
-          # compiling from source (~30 sec vs ~30 min)
-          $url = "https://slproweb.com/download/Wind64OpenSSL-3_0_15.exe"
-          $installer = "$env:TEMP\openssl-installer.exe"
-          Write-Host "Downloading OpenSSL installer..."
-          Invoke-WebRequest -Uri $url -OutFile $installer -UseBasicParsing
-          # Silent install to a known location
-          Write-Host "Installing OpenSSL silently..."
-          Start-Process -FilePath $installer -ArgumentList "/silent /verysilent /sp- /suppressmsgboxes /norestart /DIR=C:\OpenSSL-Win64" -Wait
-          # Verify
-          if (Test-Path "C:\OpenSSL-Win64\include\openssl\evp.h") {
-            Write-Host "OpenSSL installed successfully"
-          } else {
-            Write-Host "ERROR: OpenSSL install failed"
-            exit 1
-          }
-          echo "OPENSSL_ROOT_DIR=C:\OpenSSL-Win64" >> $env:GITHUB_ENV
+          # Use aqtinstall to fetch Qt's pre-built OpenSSL tool (fast, ~30 sec)
+          pip install aqtinstall
+          $env:OPENSSL_ROOT = "${{ runner.workspace }}\openssl"
+          aqt install-tool windows desktop openssl_3_x64 --outputdir $env:OPENSSL_ROOT
+          # The tool installs to $OPENSSL_ROOT/Tools/OpenSSL/Win_x64
+          $opensslPath = Get-ChildItem -Path "$env:OPENSSL_ROOT\Tools" -Recurse -Filter "evp.h" | Select-Object -First 1
+          $opensslRoot = $opensslPath.Directory.Parent.Parent.FullName
+          Write-Host "OpenSSL root: $opensslRoot"
+          echo "OPENSSL_ROOT_DIR=$opensslRoot" >> $env:GITHUB_ENV
+          echo "OPENSSL_INCLUDE_DIR=$opensslRoot\include" >> $env:GITHUB_ENV
+          ls "$opensslRoot\include\openssl" | Select-Object -First 5
+          ls "$opensslRoot\lib" | Select-Object -First 5
 
       - name: Configure CMake
         shell: cmd
         run: |
           cmake -B build -S . -G "Visual Studio 17 2022" -A x64 ^
             -DCMAKE_BUILD_TYPE=Release ^
-            -DOPENSSL_ROOT_DIR=C:\OpenSSL-Win64 ^
-            -DOPENSSL_INCLUDE_DIR=C:\OpenSSL-Win64\include ^
-            -DOPENSSL_CRYPTO_LIBRARY=C:\OpenSSL-Win64\lib\VC\libcrypto64MD.lib ^
-            -DOPENSSL_SSL_LIBRARY=C:\OpenSSL-Win64\lib\VC\libssl64MD.lib
+            -DOPENSSL_ROOT_DIR=%OPENSSL_ROOT_DIR% ^
+            -DOPENSSL_INCLUDE_DIR=%OPENSSL_INCLUDE_DIR%
 
       - name: Build MMS.exe
         shell: cmd
@@ -95,12 +87,16 @@ jobs:
             --release --no-translations --no-system-d3d-compiler --no-opengl-sw `
             "dist-final\MMS.exe"
 
-          # OpenSSL DLLs (from the pre-built install)
-          $openSSLBin = "C:\OpenSSL-Win64\bin"
+          # OpenSSL DLLs (from the aqtinstall-fetched Qt tool)
+          $openSSLBin = "${{ env.OPENSSL_ROOT_DIR }}\bin"
           if (Test-Path $openSSLBin) {
-            Copy-Item "$openSSLBin\libcrypto-3-x64.dll" dist-final\ -Force
-            Copy-Item "$openSSLBin\libssl-3-x64.dll" dist-final\ -Force
-            Write-Host "Copied OpenSSL DLLs"
+            Get-ChildItem $openSSLBin -Filter *.dll | ForEach-Object {
+              Copy-Item $_.FullName dist-final\ -Force
+            }
+            Write-Host "Copied OpenSSL DLLs from $openSSLBin"
+          } else {
+            Write-Host "WARNING: OpenSSL bin not found at $openSSLBin"
+            Get-ChildItem ${{ env.OPENSSL_ROOT_DIR }} -Recurse -Filter *.dll | Select-Object FullName
           }
 
           # App data
