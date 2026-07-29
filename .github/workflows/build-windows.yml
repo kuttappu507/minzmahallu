@@ -66,7 +66,7 @@ jobs:
           $zlibDir = "C:\vcpkg\installed\x64-windows"
           echo "ZLIB_ROOT=$zlibDir" >> $env:GITHUB_ENV
           echo "ZLIB_INCLUDE_DIR=$zlibDir\include" >> $env:GITHUB_ENV
-          echo "ZLIB_LIBRARY=$zlibDir\lib\zlib1.lib" >> $env:GITHUB_ENV
+          echo "ZLIB_LIBRARY=$zlibDir\lib\zlib.lib" >> $env:GITHUB_ENV
           Get-ChildItem "$zlibDir\lib" -Filter zlib* | Select-Object Name
 
       - name: Set up MSVC developer environment
