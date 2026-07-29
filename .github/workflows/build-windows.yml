@@ -47,7 +47,7 @@ jobs:
         shell: pwsh
         run: |
           # install-qt-action puts tools at $RUNNER_WORKSPACE/Qt/Tools/OpenSSL/Win_x64
-          $opensslRoot = "${{ runner.workspace }}\Qt\Tools\OpenSSL\Win_x64"
+          $opensslRoot = "${{ runner.workspace }}\Qt\Tools\OpenSSLv3\Win_x64"
           Write-Host "OpenSSL root: $opensslRoot"
           if (Test-Path "$opensslRoot\include\openssl\evp.h") {
             Write-Host "OpenSSL found"
