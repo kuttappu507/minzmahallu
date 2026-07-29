@@ -62,23 +62,31 @@ jobs:
           # List what we got
           ls /opt/Qt/${{ env.QT_VERSION }}
 
-      - name: Install OpenSSL for MinGW
+      - name: Install OpenSSL + zlib for MinGW (from MSYS2)
         run: |
-          # Use a prebuilt OpenSSL for MinGW-w64 from the trusted msys2 fork
-          # Alternative: download from curl.se/sbom
-          mkdir -p /opt/openssl-win
-          cd /tmp
-          # Use the official binary packages (mingw-w64-openssl from MSYS2)
-          wget -q https://repo.msys2.org/mingw/mingw64/mingw-w64-x86_64-openssl-3.0.13-1-any.pkg.tar.zst
-          wget -q https://repo.msys2.org/mingw/mingw64/mingw-w64-x86_64-zlib-1.3.1-1-any.pkg.tar.zst
+          # Fetch the latest mingw-w64 OpenSSL + zlib from MSYS2 (always picks the
+          # newest version available, so we don't break when old versions are removed).
+          mkdir -p /opt/openssl-win /tmp/msys-pkgs
+          cd /tmp/msys-pkgs
+          # Discover the latest available version
+          OPENSSL_PKG=$(curl -sS https://repo.msys2.org/mingw/mingw64/ | \
+            grep -oE 'mingw-w64-x86_64-openssl-[0-9.]+-[0-9]+-any\.pkg\.tar\.zst' | \
+            sort -V | tail -1)
+          ZLIB_PKG=$(curl -sS https://repo.msys2.org/mingw/mingw64/ | \
+            grep -oE 'mingw-w64-x86_64-zlib-[0-9.]+-[0-9]+-any\.pkg\.tar\.zst' | \
+            sort -V | tail -1)
+          echo "Downloading: $OPENSSL_PKG"
+          echo "Downloading: $ZLIB_PKG"
+          wget -q "https://repo.msys2.org/mingw/mingw64/$OPENSSL_PKG"
+          wget -q "https://repo.msys2.org/mingw/mingw64/$ZLIB_PKG"
           # Extract using zstd + tar
           sudo apt-get install -y --no-install-recommends zstd
           mkdir -p /tmp/msys-extract
-          for f in mingw-w64-x86_64-openssl-*.pkg.tar.zst mingw-w64-x86_64-zlib-*.pkg.tar.zst; do
+          for f in *.pkg.tar.zst; do
             zstd -d "$f" -o "${f%.zst}" --force
             tar -xf "${f%.zst}" -C /tmp/msys-extract
           done
-          # Move mingw64 contents into /opt/openssl-win/mingw64
+          # Stage into /opt/openssl-win/mingw64
           mkdir -p /opt/openssl-win/mingw64
           cp -r /tmp/msys-extract/mingw64/* /opt/openssl-win/mingw64/
           ls /opt/openssl-win/mingw64/lib | head -5
