@@ -16,22 +16,9 @@ project(MMS
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
-# Disable AUTOMOC/AUTORCC/AUTOUIC when cross-compiling from Linux to Windows.
-# Reason: CMake's AUTOMOC invokes the Qt6 moc binary from Qt6_DIR, which on a
-# cross-compile is the Windows moc.exe — it cannot run on Linux. Instead, we
-# manually generate moc_*.cpp and qrc_*.cpp with the Linux Qt moc/rcc in
-# build-scripts/ci-build.sh. On a native Windows build (MSVC), AUTOMOC works
-# fine and is left enabled.
-if(CMAKE_CROSSCOMPILING)
-    set(CMAKE_AUTOMOC OFF)
-    set(CMAKE_AUTORCC OFF)
-    set(CMAKE_AUTOUIC OFF)
-    message(STATUS "Cross-compiling: AUTOMOC/AUTORCC/AUTOUIC disabled (moc/rcc run manually in ci-build.sh)")
-else()
-    set(CMAKE_AUTOMOC ON)
-    set(CMAKE_AUTORCC ON)
-    set(CMAKE_AUTOUIC ON)
-endif()
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+set(CMAKE_AUTOUIC ON)
 
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release CACHE STRING "Build type" FORCE)

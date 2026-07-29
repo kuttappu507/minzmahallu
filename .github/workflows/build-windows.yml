@@ -1,12 +1,14 @@
 # =============================================================================
-# MMS — Windows Build via Cross-Compilation
+# MMS — Windows Build (Native MSVC)
 # =============================================================================
-# This workflow builds MMS.exe on every push/PR by cross-compiling from
-# Ubuntu to Windows using MinGW-w64 + Qt 6.8.0 (mingw_64) + OpenSSL.
+# Builds MMS.exe natively on GitHub's windows-latest runner using MSVC 2022.
+# No cross-compilation, no MinGW version mismatches, no AUTOMOC workarounds.
 #
-# The resulting portable distribution (MMS.exe + Qt DLLs + SQL + resources)
-# is uploaded as a GitHub Actions artifact that anyone with the link can
-# download. Tag pushes also create a GitHub Release with the binary attached.
+# Triggers:
+#   - Every push to main/master
+#   - Every PR to main/master
+#   - Every v* tag (creates a GitHub Release)
+#   - Manual via workflow_dispatch
 # =============================================================================
 name: Build Windows
 
@@ -20,12 +22,11 @@ on:
 
 env:
   QT_VERSION: '6.8.0'
-  MINGW_ARCH: 'win64_mingw'
 
 jobs:
   build:
-    name: Build MMS.exe (Windows x64)
-    runs-on: ubuntu-22.04
+    name: Build MMS.exe (Windows x64, MSVC)
+    runs-on: windows-latest
 
     steps:
       - name: Checkout source
@@ -33,186 +34,99 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: Install system dependencies
-        run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y --no-install-recommends \
-            mingw-w64 \
-            libz-mingw-w64-dev \
-            cmake \
-            ninja-build \
-            python3 \
-            pipx \
-            ca-certificates
-          # aqtinstall for installing Qt binaries — must be recent (>=3.2) to
-          # handle the current Qt download XML format.
-          pipx install "aqtinstall>=3.2"
-          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+      - name: Install Qt ${{ env.QT_VERSION }} (msvc2022_64)
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: ${{ env.QT_VERSION }}
+          arch: 'win64_msvc2022_64'
+          modules: 'qtcharts'
+          cache: true
 
-      - name: Install Qt (Win target 6.8.0 + Linux host 6.5.0 for moc/rcc)
-        run: |
-          mkdir -p /opt/Qt
-          # Install the Win Qt 6.8.0 (mingw_64) — needed for headers + libs to link against.
-          # qtcharts is an add-on module (NOT bundled by default in mingw_64).
-          # qtsvg and qtprintsupport ARE bundled by default, so don't request them.
-          aqt install-qt windows desktop ${{ env.QT_VERSION }} ${{ env.MINGW_ARCH }} \
-            --outputdir /opt/Qt \
-            --modules qtcharts
-          # Install Linux Qt 6.5.0 (gcc_64) for the host moc/rcc tools ONLY.
-          # We use 6.5.0 here because aqtinstall 3.3.0 cannot parse the package
-          # metadata format introduced in Qt 6.7+ for Linux desktop. moc/rcc are
-          # ABI-stable across Qt 6.x, so this is safe — the generated moc_*.cpp and
-          # qrc_*.cpp files compile fine against Qt 6.8.0 headers.
-          aqt install-qt linux desktop 6.5.0 gcc_64 \
-            --outputdir /opt/Qt
-          # Make /opt/Qt/6.5.0/gcc_64 appear as /opt/Qt/6.8.0/gcc_64 so the
-          # downstream symlink step (which references ${{ env.QT_VERSION }}) works.
-          ln -sfn /opt/Qt/6.5.0/gcc_64 /opt/Qt/6.8.0/gcc_64
-          # aqtinstall leaves the bin/moc + bin/rcc symlinks pointing at absolute
-          # paths that don't exist when installed to a non-standard location. Fix
-          # them by recreating as relative symlinks pointing at ../libexec/<tool>.
-          for tool in moc rcc uic; do
-            ln -sfn "../libexec/$tool" "/opt/Qt/6.5.0/gcc_64/bin/$tool"
-          done
-          # List what we got
-          ls /opt/Qt/6.8.0
-          # Verify the Linux moc binary is there
-          ls -la /opt/Qt/6.8.0/gcc_64/bin/moc
-          /opt/Qt/6.8.0/gcc_64/bin/moc --version
-          # Verify the Win Qt6Core lib is there
-          ls /opt/Qt/6.8.0/mingw_64/lib/libQt6Core.a
-
-      - name: Install OpenSSL + zlib for MinGW (from MSYS2)
-        run: |
-          # Fetch the latest mingw-w64 OpenSSL + zlib from MSYS2 (always picks the
-          # newest version available, so we don't break when old versions are removed).
-          mkdir -p /opt/openssl-win /tmp/msys-pkgs
-          cd /tmp/msys-pkgs
-          # Discover the latest available version
-          OPENSSL_PKG=$(curl -sS https://repo.msys2.org/mingw/mingw64/ | \
-            grep -oE 'mingw-w64-x86_64-openssl-[0-9.]+-[0-9]+-any\.pkg\.tar\.zst' | \
-            sort -V | tail -1)
-          ZLIB_PKG=$(curl -sS https://repo.msys2.org/mingw/mingw64/ | \
-            grep -oE 'mingw-w64-x86_64-zlib-[0-9.]+-[0-9]+-any\.pkg\.tar\.zst' | \
-            sort -V | tail -1)
-          echo "Downloading: $OPENSSL_PKG"
-          echo "Downloading: $ZLIB_PKG"
-          wget -q "https://repo.msys2.org/mingw/mingw64/$OPENSSL_PKG"
-          wget -q "https://repo.msys2.org/mingw/mingw64/$ZLIB_PKG"
-          # Extract using zstd + tar
-          sudo apt-get install -y --no-install-recommends zstd
-          mkdir -p /tmp/msys-extract
-          for f in *.pkg.tar.zst; do
-            zstd -d "$f" -o "${f%.zst}" --force
-            tar -xf "${f%.zst}" -C /tmp/msys-extract
-          done
-          # Stage into /opt/openssl-win/mingw64
-          mkdir -p /opt/openssl-win/mingw64
-          cp -r /tmp/msys-extract/mingw64/* /opt/openssl-win/mingw64/
-          ls /opt/openssl-win/mingw64/lib | head -5
-          ls /opt/openssl-win/mingw64/include/openssl | head -5
-
-      - name: Setup symlinks (match toolchain paths)
-        run: |
-          # The toolchain-mingw.cmake expects:
-          #   /home/z/Qt-win/6.8.0/mingw_64    -> /opt/Qt (Win Qt)
-          #   /home/z/Qt-linux/6.8.0/gcc_64   -> /opt/Qt (Linux Qt, used for moc/rcc)
-          #   /home/z/mingw/usr/bin/...        -> /usr/bin/... (apt-installed mingw-w64)
-          #   /home/z/mingw/usr/x86_64-w64-mingw32/ -> /usr/x86_64-w64-mingw32/
-          #   /home/z/openssl-win/mingw64      -> /opt/openssl-win
-          sudo mkdir -p /home/z
-          sudo ln -sfn /opt/Qt /home/z/Qt-win
-          sudo ln -sfn /opt/Qt /home/z/Qt-linux
-          # Link /home/z/mingw/usr -> /usr so /home/z/mingw/usr/bin -> /usr/bin
-          # (NOT /home/z/mingw -> /usr, which would break the path)
-          sudo mkdir -p /home/z/mingw
-          sudo ln -sfn /usr /home/z/mingw/usr
-          sudo ln -sfn /opt/openssl-win /home/z/openssl-win
-          # Verify all paths resolve
-          ls /home/z/Qt-win/6.8.0/mingw_64/lib/cmake/Qt6/ | head -3
-          ls -la /home/z/mingw/usr/bin/x86_64-w64-mingw32-g++
-          /home/z/mingw/usr/bin/x86_64-w64-mingw32-g++ --version | head -1
-          ls /home/z/openssl-win/mingw64/include/openssl/evp.h
+      - name: Install OpenSSL + zlib via vcpkg
+        uses: lukka/run-vcpkg@v11
+        with:
+          vcpkgJson: |
+            {
+              "name": "mms-deps",
+              "version": "1.0.0",
+              "dependencies": [
+                "openssl",
+                "zlib"
+              ]
+            }
 
       - name: Configure CMake
+        shell: cmd
         run: |
-          export PATH="/home/z/Qt-linux/6.8.0/gcc_64/bin:/home/z/cmake/bin:$PATH"
-          export LD_LIBRARY_PATH="/home/z/cmake/libs:/home/z/mingw/usr/lib/x86_64-linux-gnu:${LD_LIBRARY_PATH:-}"
-          cmake -S . -B build-win \
-            -DCMAKE_TOOLCHAIN_FILE=toolchain-mingw.cmake \
-            -DCMAKE_BUILD_TYPE=Release \
-            -G "Unix Makefiles"
+          call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
+          set VCPKG_ROOT=%VCPKG_INSTALLATION_ROOT%
+          cmake -B build -S . -G "Ninja" ^
+            -DCMAKE_BUILD_TYPE=Release ^
+            -DCMAKE_TOOLCHAIN_FILE=%VCPKG_ROOT%/scripts/buildsystems/vcpkg.cmake ^
+            -DVCPKG_TARGET_TRIPLET=x64-windows
 
-      - name: Build MMS.exe (manual moc/rcc + cross-compile)
+      - name: Build MMS.exe
+        shell: cmd
         run: |
-          chmod +x build-scripts/ci-build.sh
-          ./build-scripts/ci-build.sh
+          call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
+          cmake --build build --config Release --parallel 4
 
       - name: Stage distribution
+        shell: pwsh
         run: |
-          mkdir -p dist-final
-          cp build-win/MMS.exe dist-final/
-          # Copy Qt DLLs (runtime)
-          cp /home/z/Qt-win/6.8.0/mingw_64/bin/Qt6Core.dll \
-             /home/z/Qt-win/6.8.0/mingw_64/bin/Qt6Gui.dll \
-             /home/z/Qt-win/6.8.0/mingw_64/bin/Qt6Widgets.dll \
-             /home/z/Qt-win/6.8.0/mingw_64/bin/Qt6Sql.dll \
-             /home/z/Qt-win/6.8.0/mingw_64/bin/Qt6Charts.dll \
-             /home/z/Qt-win/6.8.0/mingw_64/bin/Qt6PrintSupport.dll \
-             /home/z/Qt-win/6.8.0/mingw_64/bin/Qt6Svg.dll \
-             /home/z/Qt-win/6.8.0/mingw_64/bin/Qt6Network.dll \
-             /home/z/Qt-win/6.8.0/mingw_64/bin/Qt6OpenGL.dll \
-             /home/z/Qt-win/6.8.0/mingw_64/bin/Qt6OpenGLWidgets.dll \
-             dist-final/
-          # Copy OpenSSL + zlib DLLs
-          cp /opt/openssl-win/mingw64/bin/libcrypto-3-x64.dll \
-             /opt/openssl-win/mingw64/bin/libssl-3-x64.dll \
-             /opt/openssl-win/mingw64/bin/zlib1.dll \
-             dist-final/
-          # IMPORTANT: Copy MinGW runtime DLLs from Qt's bundled MinGW 13.1.0
-          # (NOT from Ubuntu's mingw-w64 package). The Qt 6.8.0 DLLs were built
-          # with MinGW 13.1.0 and expect runtime symbols from that version.
-          # Using Ubuntu's older GCC 12 runtime causes "Entry point not found".
-          # aqtinstall puts the MinGW toolchain at /opt/Qt/Tools/mingw***/
-          MINGW_RT_DIR=$(dirname $(find /opt/Qt -name "libgcc_s_seh-1.dll" | head -1))
-          if [ -z "$MINGW_RT_DIR" ]; then
-            echo "ERROR: MinGW runtime DLLs not found in /opt/Qt/"
-            find /opt/Qt -name "libgcc_s_seh-1.dll" 2>/dev/null
-            exit 1
-          fi
-          echo "Found MinGW runtime at: $MINGW_RT_DIR"
-          cp "$MINGW_RT_DIR/libgcc_s_seh-1.dll" dist-final/
-          cp "$MINGW_RT_DIR/libstdc++-6.dll" dist-final/
-          cp "$MINGW_RT_DIR/libwinpthread-1.dll" dist-final/
-          # Qt plugins (platforms, styles, sqldrivers)
-          mkdir -p dist-final/plugins/platforms dist-final/plugins/styles dist-final/plugins/sqldrivers
-          cp /home/z/Qt-win/6.8.0/mingw_64/plugins/platforms/qwindows.dll dist-final/plugins/platforms/
-          cp /home/z/Qt-win/6.8.0/mingw_64/plugins/styles/qwindowsvistastyle.dll dist-final/plugins/styles/ 2>/dev/null || true
-          cp /home/z/Qt-win/6.8.0/mingw_64/plugins/sqldrivers/qsqlite.dll dist-final/plugins/sqldrivers/
+          $ErrorActionPreference = 'Stop'
+          New-Item -ItemType Directory -Force -Path dist-final | Out-Null
+
+          # MMS.exe (built by CMake)
+          Copy-Item build/Release/MMS.exe dist-final/ -ErrorAction SilentlyContinue
+          Copy-Item build/MMS.exe dist-final/ -ErrorAction SilentlyContinue
+
+          # Qt DLLs (runtime) — windeployqt does this automatically
+          # Run windeployqt to copy all required Qt DLLs + plugins
+          & "${env:RUNNER_WORKSPACE}\Qt\${env:QT_VERSION}\msvc2022_64\bin\windeployqt.exe" `
+            --release --no-translations --no-system-d3d-compiler --no-opengl-sw `
+            "dist-final\MMS.exe"
+
+          # OpenSSL + zlib DLLs (installed by vcpkg, copied next to MMS.exe by windeployqt)
+          # windeployqt doesn't handle non-Qt DLLs, so copy them manually from vcpkg bin
+          $vcpkgBin = "${env:VCPKG_INSTALLATION_ROOT}\installed\x64-windows\bin"
+          if (Test-Path $vcpkgBin) {
+            Get-ChildItem $vcpkgBin -Filter *.dll | ForEach-Object {
+              Copy-Item $_.FullName dist-final\ -Force
+            }
+            Write-Host "Copied OpenSSL + zlib DLLs from vcpkg"
+          } else {
+            Write-Host "WARNING: vcpkg bin not found at $vcpkgBin"
+          }
+
           # App data
-          cp -r sql dist-final/
-          mkdir -p dist-final/resources
-          cp -r resources/* dist-final/resources/
-          # Create run batch file
-          cat > dist-final/run_mms.bat << 'BAT'
+          Copy-Item sql dist-final\ -Recurse
+          New-Item -ItemType Directory -Force -Path dist-final\resources | Out-Null
+          Copy-Item resources\* dist-final\resources\ -Recurse
+
+          # Run batch file
+          @"
           @echo off
           cd /d "%~dp0"
           start "" MMS.exe
-          BAT
-          # Marker file
-          echo "portable" > dist-final/mms.portable
+          "@ | Out-File -FilePath dist-final\run_mms.bat -Encoding ASCII
+
+          # Marker
+          "portable" | Out-File -FilePath dist-final\mms.portable -Encoding ASCII
+
           # Zip it
-          cd dist-final
-          zip -r ../MMS-portable-windows-x64.zip .
-          cd ..
-          ls -lh MMS-portable-windows-x64.zip
+          Compress-Archive -Path dist-final\* -DestinationPath MMS-portable-windows-x64.zip -Force
+          Get-ChildItem MMS-portable-windows-x64.zip | Select-Object Name, Length
 
       - name: Verify build
+        shell: pwsh
         run: |
-          file build-win/MMS.exe
-          ls -lh build-win/MMS.exe
-          # Quick sanity check that the QSS is embedded
-          strings build-win/MMS.exe | grep -c "cssClass\|loginCard\|sidebarNav" || true
+          if (Test-Path build\Release\MMS.exe) {
+            $f = Get-Item build\Release\MMS.exe
+          } else {
+            $f = Get-Item build\MMS.exe
+          }
+          Write-Host "MMS.exe size: $($f.Length) bytes ($([math]::Round($f.Length/1MB, 2)) MB)"
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
@@ -220,20 +134,23 @@ jobs:
           name: MMS-portable-windows-x64
           path: MMS-portable-windows-x64.zip
           retention-days: 90
-          compression-level: 0  # already zipped
+          compression-level: 0
 
-      - name: Upload MMS.exe only (smaller, faster download)
+      - name: Upload MMS.exe only
         uses: actions/upload-artifact@v4
         with:
           name: MMS-exe
-          path: build-win/MMS.exe
+          path: |
+            build/Release/MMS.exe
+            build/MMS.exe
+          if-no-files-found: ignore
           retention-days: 90
 
   release:
     name: Publish GitHub Release
     needs: build
     if: startsWith(github.ref, 'refs/tags/v')
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
