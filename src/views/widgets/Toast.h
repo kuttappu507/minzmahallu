@@ -73,7 +73,7 @@ private:
         auto* iconLbl = new QLabel(card);
         QPixmap iconPix(18, 18);
         iconPix.fill(Qt::transparent);
-        QSvgRenderer svg(QString(icons[type]));
+        QSvgRenderer svg{QString{icons[type]}};
         if (svg.isValid()) {
             QPainter ip(&iconPix);
             ip.setRenderHint(QPainter::Antialiasing);
