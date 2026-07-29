@@ -40,23 +40,24 @@ jobs:
           version: ${{ env.QT_VERSION }}
           arch: 'win64_msvc2022_64'
           modules: 'qtcharts'
+          tools: 'tools_opensslv3_x64'
           cache: true
 
-      - name: Install OpenSSL (Qt's bundled build for MSVC)
+      - name: Set OpenSSL path
         shell: pwsh
         run: |
-          # Use aqtinstall to fetch Qt's pre-built OpenSSL tool (fast, ~30 sec)
-          pip install aqtinstall
-          $env:OPENSSL_ROOT = "${{ runner.workspace }}\openssl"
-          aqt install-tool windows desktop opensslv3_x64 --outputdir $env:OPENSSL_ROOT
-          # The tool installs to $OPENSSL_ROOT/Tools/OpenSSL/Win_x64
-          $opensslPath = Get-ChildItem -Path "$env:OPENSSL_ROOT\Tools" -Recurse -Filter "evp.h" | Select-Object -First 1
-          $opensslRoot = $opensslPath.Directory.Parent.Parent.FullName
+          # install-qt-action puts tools at $RUNNER_WORKSPACE/Qt/Tools/OpenSSL/Win_x64
+          $opensslRoot = "${{ runner.workspace }}\Qt\Tools\OpenSSL\Win_x64"
           Write-Host "OpenSSL root: $opensslRoot"
+          if (Test-Path "$opensslRoot\include\openssl\evp.h") {
+            Write-Host "OpenSSL found"
+          } else {
+            Write-Host "ERROR: OpenSSL not found at $opensslRoot"
+            Get-ChildItem "${{ runner.workspace }}\Qt\Tools" -Recurse -Filter evp.h -ErrorAction SilentlyContinue
+            exit 1
+          }
           echo "OPENSSL_ROOT_DIR=$opensslRoot" >> $env:GITHUB_ENV
           echo "OPENSSL_INCLUDE_DIR=$opensslRoot\include" >> $env:GITHUB_ENV
-          ls "$opensslRoot\include\openssl" | Select-Object -First 5
-          ls "$opensslRoot\lib" | Select-Object -First 5
 
       - name: Configure CMake
         shell: cmd
