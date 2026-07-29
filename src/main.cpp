@@ -22,9 +22,10 @@
 #include <QTimer>
 
 #ifdef Q_OS_WIN
-#  ifndef _WIN32_WINNT
-#    define _WIN32_WINNT 0x0600  // Vista+ for SetProcessDPIAware
-#  endif
+#  undef _WIN32_WINNT
+#  define _WIN32_WINNT 0x0600  // Vista+ for SetProcessDPIAware
+#  undef WINVER
+#  define WINVER 0x0600
 #  include <windows.h>
 #endif
 
