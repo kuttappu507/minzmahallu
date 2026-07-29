@@ -51,10 +51,11 @@ jobs:
       - name: Install Qt ${{ env.QT_VERSION }} (MinGW 64-bit, host = Linux)
         run: |
           mkdir -p /opt/Qt
-          # Install the Win Qt (mingw_64) — needed for headers + libs to link against
+          # Install the Win Qt (mingw_64) — needed for headers + libs to link against.
+          # qtcharts, qtsvg, qtprintsupport are all included by default in the
+          # mingw_64 archive (no need to request them as add-on modules).
           aqt install-qt windows desktop ${{ env.QT_VERSION }} ${{ env.MINGW_ARCH }} \
-            --outputdir /opt/Qt \
-            --modules qtcharts qtsvg qtprintsupport
+            --outputdir /opt/Qt
           # Install the Linux Qt (gcc_64) — needed for moc + rcc host tools
           aqt install-qt linux desktop ${{ env.QT_VERSION }} gcc_64 \
             --outputdir /opt/Qt
