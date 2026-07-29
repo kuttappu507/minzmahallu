@@ -179,8 +179,8 @@ jobs:
           cp /home/z/Qt-win/6.8.0/mingw_64/plugins/sqldrivers/qsqlite.dll dist-final/plugins/sqldrivers/
           # App data
           cp -r sql dist-final/
-          cp -r resources/templates dist-final/
-          cp -r resources/fonts dist-final/resources_fonts 2>/dev/null || mkdir -p dist-final/resources && cp -r resources/* dist-final/resources/
+          mkdir -p dist-final/resources
+          cp -r resources/* dist-final/resources/
           # Create run batch file
           cat > dist-final/run_mms.bat << 'BAT'
           @echo off
