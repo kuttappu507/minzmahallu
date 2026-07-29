@@ -164,14 +164,18 @@ jobs:
              /home/z/Qt-win/6.8.0/mingw_64/bin/Qt6OpenGL.dll \
              /home/z/Qt-win/6.8.0/mingw_64/bin/Qt6OpenGLWidgets.dll \
              dist-final/
-          # Copy OpenSSL + zlib + mingw runtime DLLs
+          # Copy OpenSSL + zlib DLLs
           cp /opt/openssl-win/mingw64/bin/libcrypto-3-x64.dll \
              /opt/openssl-win/mingw64/bin/libssl-3-x64.dll \
+             /opt/openssl-win/mingw64/bin/zlib1.dll \
              dist-final/
-          cp /usr/lib/gcc/x86_64-w64-mingw32/*-posix/libgcc_s_seh-1.dll dist-final/ 2>/dev/null || true
-          cp /usr/lib/gcc/x86_64-w64-mingw32/*-posix/libstdc++-6.dll dist-final/ 2>/dev/null || true
-          cp /usr/x86_64-w64-mingw32/lib/libwinpthread-1.dll dist-final/ 2>/dev/null || true
-          cp /opt/openssl-win/mingw64/bin/zlib1.dll dist-final/ 2>/dev/null || true
+          # IMPORTANT: Copy MinGW runtime DLLs from Qt's bundled MinGW 13.1.0
+          # (NOT from Ubuntu's mingw-w64 package). The Qt 6.8.0 DLLs were built
+          # with MinGW 13.1.0 and expect runtime symbols from that version.
+          # Using Ubuntu's older GCC 12 runtime causes "Entry point not found".
+          cp /opt/Qt/Tools/mingw_64/bin/libgcc_s_seh-1.dll dist-final/
+          cp /opt/Qt/Tools/mingw_64/bin/libstdc++-6.dll dist-final/
+          cp /opt/Qt/Tools/mingw_64/bin/libwinpthread-1.dll dist-final/
           # Qt plugins (platforms, styles, sqldrivers)
           mkdir -p dist-final/plugins/platforms dist-final/plugins/styles dist-final/plugins/sqldrivers
           cp /home/z/Qt-win/6.8.0/mingw_64/plugins/platforms/qwindows.dll dist-final/plugins/platforms/
