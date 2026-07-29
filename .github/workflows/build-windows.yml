@@ -57,21 +57,17 @@ jobs:
           echo "OPENSSL_ROOT_DIR=$opensslRoot" >> $env:GITHUB_ENV
           echo "OPENSSL_INCLUDE_DIR=$opensslRoot\include" >> $env:GITHUB_ENV
 
-      - name: Install zlib (pre-built for MSVC)
+      - name: Install zlib via vcpkg (pre-built, fast)
         shell: pwsh
         run: |
-          # Download pre-built zlib for MSVC from the zlib for Windows project
-          $zlibUrl = "https://github.com/madler/zlib/releases/download/v1.3.1/zlib13-dll.zip"
-          $zlibZip = "$env:TEMP\zlib.zip"
-          $zlibDir = "C:\zlib"
-          Invoke-WebRequest -Uri $zlibUrl -OutFile $zlibZip -UseBasicParsing
-          New-Item -ItemType Directory -Force -Path $zlibDir | Out-Null
-          Expand-Archive -Path $zlibZip -DestinationPath $zlibDir -Force
-          # The zip has dll/ include/ lib/ — set the env vars
+          # vcpkg is pre-installed on windows-latest at C:\vcpkg
+          # Install only zlib (has pre-built binary cache, ~10 sec)
+          & "C:\vcpkg\vcpkg.exe" install zlib:x64-windows
+          $zlibDir = "C:\vcpkg\installed\x64-windows"
           echo "ZLIB_ROOT=$zlibDir" >> $env:GITHUB_ENV
           echo "ZLIB_INCLUDE_DIR=$zlibDir\include" >> $env:GITHUB_ENV
-          echo "ZLIB_LIBRARY=$zlibDir\lib\zlib.lib" >> $env:GITHUB_ENV
-          Get-ChildItem $zlibDir -Recurse | Select-Object FullName | Select-Object -First 10
+          echo "ZLIB_LIBRARY=$zlibDir\lib\zlib1.lib" >> $env:GITHUB_ENV
+          Get-ChildItem "$zlibDir\lib" -Filter zlib* | Select-Object Name
 
       - name: Set up MSVC developer environment
         uses: ilammy/msvc-dev-cmd@v1
