@@ -113,16 +113,24 @@ jobs:
 
       - name: Setup symlinks (match toolchain paths)
         run: |
-          # The toolchain-mingw.cmake expects /home/z/Qt-win, /home/z/mingw, etc.
-          # We replicate these as symlinks so the existing toolchain works without modification.
+          # The toolchain-mingw.cmake expects:
+          #   /home/z/Qt-win/6.8.0/mingw_64    -> /opt/Qt (Win Qt)
+          #   /home/z/Qt-linux/6.8.0/gcc_64   -> /opt/Qt (Linux Qt, used for moc/rcc)
+          #   /home/z/mingw/usr/bin/...        -> /usr/bin/... (apt-installed mingw-w64)
+          #   /home/z/mingw/usr/x86_64-w64-mingw32/ -> /usr/x86_64-w64-mingw32/
+          #   /home/z/openssl-win/mingw64      -> /opt/openssl-win
           sudo mkdir -p /home/z
           sudo ln -sfn /opt/Qt /home/z/Qt-win
           sudo ln -sfn /opt/Qt /home/z/Qt-linux
-          sudo ln -sfn /usr /home/z/mingw
+          # Link /home/z/mingw/usr -> /usr so /home/z/mingw/usr/bin -> /usr/bin
+          # (NOT /home/z/mingw -> /usr, which would break the path)
+          sudo mkdir -p /home/z/mingw
+          sudo ln -sfn /usr /home/z/mingw/usr
           sudo ln -sfn /opt/openssl-win /home/z/openssl-win
-          # Verify
+          # Verify all paths resolve
           ls /home/z/Qt-win/6.8.0/mingw_64/lib/cmake/Qt6/ | head -3
-          ls /home/z/mingw/usr/bin/x86_64-w64-mingw32-g++ 
+          ls -la /home/z/mingw/usr/bin/x86_64-w64-mingw32-g++
+          /home/z/mingw/usr/bin/x86_64-w64-mingw32-g++ --version | head -1
           ls /home/z/openssl-win/mingw64/include/openssl/evp.h
 
       - name: Configure CMake
