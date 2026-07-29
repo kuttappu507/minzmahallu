@@ -61,13 +61,11 @@ jobs:
         shell: pwsh
         run: |
           # vcpkg is pre-installed on windows-latest at C:\vcpkg
-          # Install only zlib (has pre-built binary cache, ~10 sec)
           & "C:\vcpkg\vcpkg.exe" install zlib:x64-windows
-          $zlibDir = "C:\vcpkg\installed\x64-windows"
-          echo "ZLIB_ROOT=$zlibDir" >> $env:GITHUB_ENV
-          echo "ZLIB_INCLUDE_DIR=$zlibDir\include" >> $env:GITHUB_ENV
-          echo "ZLIB_LIBRARY=$zlibDir\lib\zlib.lib" >> $env:GITHUB_ENV
-          Get-ChildItem "$zlibDir\lib" -Filter zlib* | Select-Object Name
+          # Verify it installed
+          $zlibLib = "C:\vcpkg\installed\x64-windows\lib"
+          Get-ChildItem $zlibLib -Filter zlib* | Select-Object Name
+          echo "VCPKG_TARGET_TRIPLET=x64-windows" >> $env:GITHUB_ENV
 
       - name: Set up MSVC developer environment
         uses: ilammy/msvc-dev-cmd@v1
@@ -83,9 +81,8 @@ jobs:
             -DCMAKE_CXX_COMPILER=cl ^
             -DOPENSSL_ROOT_DIR=%OPENSSL_ROOT_DIR% ^
             -DOPENSSL_INCLUDE_DIR=%OPENSSL_INCLUDE_DIR% ^
-            -DZLIB_ROOT=%ZLIB_ROOT% ^
-            -DZLIB_INCLUDE_DIR=%ZLIB_INCLUDE_DIR% ^
-            -DZLIB_LIBRARY=%ZLIB_LIBRARY%
+            -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake ^
+            -DVCPKG_TARGET_TRIPLET=x64-windows
 
       - name: Build MMS.exe
         shell: cmd
