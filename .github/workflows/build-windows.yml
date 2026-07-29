@@ -127,30 +127,37 @@ jobs:
             Write-Host "WARNING: vcpkg bin not found at $vcpkgBin"
           }
 
-          # MSVC runtime DLLs (msvcp140.dll, vcruntime140.dll, vcruntime140_1.dll)
-          # These are required because the user may not have MSVC runtime installed.
-          # Use VCToolsRedistDir (set by msvc-dev-cmd) to find the CRT folder.
+          # MSVC runtime DLLs — copy ONLY the 3 essential ones that Qt6Core.dll needs.
+          # DO NOT copy concrt140.dll, vccorlib140.dll, vcruntime140_threads.dll,
+          # msvcp140_atomic_wait.dll, msvcp140_codecvt_ids.dll, msvcp140_2.dll —
+          # these are for UWP/ConcRT and cause 0xc0000142 (DllMain init failure)
+          # when present in a desktop Qt app folder.
           $crtPath = "$env:VCToolsRedistDir\x64\Microsoft.VC143.CRT"
           if (-not (Test-Path $crtPath)) {
-            # Try VC142 (VS 2019) as fallback
-            $crtPath = "$env:VCToolsRedistDir\x64\Microsoft.VC142.CRT"
-          }
-          if (-not (Test-Path $crtPath)) {
-            # Last resort: search for msvcp140.dll under the redist dir
             $found = Get-ChildItem $env:VCToolsRedistDir -Recurse -Filter "msvcp140.dll" -ErrorAction SilentlyContinue | Select-Object -First 1
             if ($found) { $crtPath = $found.DirectoryName }
           }
           Write-Host "MSVC CRT path: $crtPath"
           if (Test-Path $crtPath) {
-            Get-ChildItem $crtPath -Filter *.dll | ForEach-Object {
-              Copy-Item $_.FullName dist-final\ -Force
-              Write-Host "Copied MSVC runtime DLL: $($_.Name)"
+            # Copy ONLY these 3 DLLs (verified via Qt6Core.dll import table)
+            $essentialDlls = @("msvcp140.dll", "vcruntime140.dll", "vcruntime140_1.dll", "msvcp140_1.dll")
+            foreach ($dll in $essentialDlls) {
+              $src = Join-Path $crtPath $dll
+              if (Test-Path $src) {
+                Copy-Item $src dist-final\ -Force
+                Write-Host "Copied MSVC runtime DLL: $dll"
+              }
             }
           } else {
-            Write-Host "WARNING: MSVC CRT DLLs not found — VCToolsRedistDir=$env:VCToolsRedistDir"
-            # Ultimate fallback: search the entire VS install
-            $vsRoot = "C:\Program Files\Microsoft Visual Studio"
-            Get-ChildItem $vsRoot -Recurse -Filter "msvcp140.dll" -ErrorAction SilentlyContinue | Select-Object -First 1 FullName
+            Write-Host "WARNING: MSVC CRT not found — user must install VC++ Redistributable"
+          }
+
+          # Also include the VC++ Redistributable installer so the user can
+          # install it if the app still fails to start (0xc0000142).
+          $redistExe = Get-ChildItem $env:VCToolsRedistDir -Filter "vc_redist.x64.exe" -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1
+          if ($redistExe) {
+            Copy-Item $redistExe.FullName dist-final\ -Force
+            Write-Host "Included VC++ Redistributable installer"
           }
 
           # App data
@@ -158,11 +165,24 @@ jobs:
           New-Item -ItemType Directory -Force -Path dist-final\resources | Out-Null
           Copy-Item resources\* dist-final\resources\ -Recurse
 
-          # Run batch file
+          # Run batch file — installs VC++ Redistributable if MMS.exe fails to start
           @"
           @echo off
           cd /d "%~dp0"
-          start "" MMS.exe
+          MMS.exe
+          if errorlevel 1 (
+            echo.
+            echo MMS.exe failed to start. Installing Visual C++ Redistributable...
+            if exist vc_redist.x64.exe (
+              vc_redist.x64.exe /install /quiet /norestart
+              echo Retrying...
+              start "" MMS.exe
+            ) else (
+              echo Please install Visual C++ Redistributable from Microsoft:
+              echo https://aka.ms/vs/17/release/vc_redist.x64.exe
+              pause
+            )
+          )
           "@ | Out-File -FilePath dist-final\run_mms.bat -Encoding ASCII
 
           # Marker
