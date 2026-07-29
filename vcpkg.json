@@ -1,0 +1,10 @@
+{
+  "name": "mms",
+  "version": "1.0.0",
+  "description": "Mahallu Management System — Mosque Community Administration",
+  "dependencies": [
+    "openssl",
+    "zlib"
+  ],
+  "builtin-baseline": "2024-07-09"
+}

@@ -43,23 +43,20 @@ jobs:
           cache: true
 
       - name: Install OpenSSL + zlib via vcpkg
-        uses: lukka/run-vcpkg@v11
-        with:
-          vcpkgJson: |
-            {
-              "name": "mms-deps",
-              "version": "1.0.0",
-              "dependencies": [
-                "openssl",
-                "zlib"
-              ]
-            }
+        shell: pwsh
+        run: |
+          $env:VCPKG_ROOT = "${{ runner.workspace }}\vcpkg"
+          if (-not (Test-Path $env:VCPKG_ROOT)) {
+            git clone https://github.com/microsoft/vcpkg.git $env:VCPKG_ROOT
+            & "$env:VCPKG_ROOT\bootstrap-vcpkg.bat" -disableMetrics
+          }
+          & "$env:VCPKG_ROOT\vcpkg.exe" install --x-manifest-root=. --x-install-root="${{ runner.workspace }}\vcpkg_installed"
+          echo "VCPKG_ROOT=$env:VCPKG_ROOT" >> $env:GITHUB_ENV
 
       - name: Configure CMake
         shell: cmd
         run: |
           call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
-          set VCPKG_ROOT=%VCPKG_INSTALLATION_ROOT%
           cmake -B build -S . -G "Ninja" ^
             -DCMAKE_BUILD_TYPE=Release ^
             -DCMAKE_TOOLCHAIN_FILE=%VCPKG_ROOT%/scripts/buildsystems/vcpkg.cmake ^
@@ -89,7 +86,7 @@ jobs:
 
           # OpenSSL + zlib DLLs (installed by vcpkg, copied next to MMS.exe by windeployqt)
           # windeployqt doesn't handle non-Qt DLLs, so copy them manually from vcpkg bin
-          $vcpkgBin = "${env:VCPKG_INSTALLATION_ROOT}\installed\x64-windows\bin"
+          $vcpkgBin = "${{ runner.workspace }}\vcpkg_installed\x64-windows\bin"
           if (Test-Path $vcpkgBin) {
             Get-ChildItem $vcpkgBin -Filter *.dll | ForEach-Object {
               Copy-Item $_.FullName dist-final\ -Force
