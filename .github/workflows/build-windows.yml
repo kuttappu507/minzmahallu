@@ -53,10 +53,11 @@ jobs:
         run: |
           mkdir -p /opt/Qt
           # Install the Win Qt 6.8.0 (mingw_64) — needed for headers + libs to link against.
-          # qtcharts, qtsvg, qtprintsupport are all included by default in the
-          # mingw_64 archive (no need to request them as add-on modules).
+          # qtcharts is an add-on module (NOT bundled by default in mingw_64).
+          # qtsvg and qtprintsupport ARE bundled by default, so don't request them.
           aqt install-qt windows desktop ${{ env.QT_VERSION }} ${{ env.MINGW_ARCH }} \
-            --outputdir /opt/Qt
+            --outputdir /opt/Qt \
+            --modules qtcharts
           # Install Linux Qt 6.5.0 (gcc_64) for the host moc/rcc tools ONLY.
           # We use 6.5.0 here because aqtinstall 3.3.0 cannot parse the package
           # metadata format introduced in Qt 6.7+ for Linux desktop. moc/rcc are
