@@ -48,3 +48,5 @@ cc_err.log
 *.bak
 *.orig
 *~
+mms-git.bundle
+.github/workflows/release.yml
