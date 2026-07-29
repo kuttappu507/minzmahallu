@@ -129,23 +129,28 @@ jobs:
 
           # MSVC runtime DLLs (msvcp140.dll, vcruntime140.dll, vcruntime140_1.dll)
           # These are required because the user may not have MSVC runtime installed.
-          # Find them in the MSVC redist folder.
-          $redistBase = "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Redist\MSVC"
-          if (Test-Path $redistBase) {
-            $crtDir = Get-ChildItem $redistBase -Directory | Sort-Object Name -Descending | Select-Object -First 1
-            $crtPath = "$($crtDir.FullName)\x64\Microsoft.VC143.CRT"
-            Write-Host "MSVC CRT path: $crtPath"
-            if (Test-Path $crtPath) {
-              Get-ChildItem $crtPath -Filter *.dll | ForEach-Object {
-                Copy-Item $_.FullName dist-final\ -Force
-                Write-Host "Copied MSVC runtime DLL: $($_.Name)"
-              }
-            } else {
-              Write-Host "WARNING: MSVC CRT not found at $crtPath"
+          # Use VCToolsRedistDir (set by msvc-dev-cmd) to find the CRT folder.
+          $crtPath = "$env:VCToolsRedistDir\x64\Microsoft.VC143.CRT"
+          if (-not (Test-Path $crtPath)) {
+            # Try VC142 (VS 2019) as fallback
+            $crtPath = "$env:VCToolsRedistDir\x64\Microsoft.VC142.CRT"
+          }
+          if (-not (Test-Path $crtPath)) {
+            # Last resort: search for msvcp140.dll under the redist dir
+            $found = Get-ChildItem $env:VCToolsRedistDir -Recurse -Filter "msvcp140.dll" -ErrorAction SilentlyContinue | Select-Object -First 1
+            if ($found) { $crtPath = $found.DirectoryName }
+          }
+          Write-Host "MSVC CRT path: $crtPath"
+          if (Test-Path $crtPath) {
+            Get-ChildItem $crtPath -Filter *.dll | ForEach-Object {
+              Copy-Item $_.FullName dist-final\ -Force
+              Write-Host "Copied MSVC runtime DLL: $($_.Name)"
             }
           } else {
-            Write-Host "WARNING: MSVC redist not found — searching for runtime DLLs"
-            Get-ChildItem "C:\Program Files\Microsoft Visual Studio" -Recurse -Filter "msvcp140.dll" -ErrorAction SilentlyContinue | Select-Object -First 3 FullName
+            Write-Host "WARNING: MSVC CRT DLLs not found — VCToolsRedistDir=$env:VCToolsRedistDir"
+            # Ultimate fallback: search the entire VS install
+            $vsRoot = "C:\Program Files\Microsoft Visual Studio"
+            Get-ChildItem $vsRoot -Recurse -Filter "msvcp140.dll" -ErrorAction SilentlyContinue | Select-Object -First 1 FullName
           }
 
           # App data
