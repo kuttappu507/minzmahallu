@@ -172,8 +172,6 @@ LDFLAGS+=" -L$QT_WIN/lib -L$OPENSSL/lib -L/home/z/mingw/x86_64-w64-mingw32/lib"
 LIBS="$QT_LIBS -lopengl32 -lws2_32 -luser32 -lgdi32 -ladvapi32 -lshell32 -lole32 -loleaut32 -limm32 -lwinmm -ldwmapi -lsetupapi -lversion"
 LIBS+=" -lssl -lcrypto -lz -lpthread -Wl,--whole-archive -lQt6EntryPoint -Wl,--no-whole-archive"
 
-OBJS=$(find "$BUILD/obj" -name "*.o" | sort)
-OBJS="$OBP_SSP_SHIM $OBJS"
 # Prepend ssp_shim.o so its symbols are available to Qt6EntryPoint
 OBJS="$BUILD/obj/ssp_shim.o $(find "$BUILD/obj" -name "*.o" ! -name "ssp_shim.o" | sort)"
 echo "Linking $(echo "$OBJS" | wc -w) object files..."
