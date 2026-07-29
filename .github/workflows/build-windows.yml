@@ -183,7 +183,7 @@ jobs:
           echo "Found MinGW runtime at: $MINGW_RT_DIR"
           cp "$MINGW_RT_DIR/libgcc_s_seh-1.dll" dist-final/
           cp "$MINGW_RT_DIR/libstdc++-6.dll" dist-final/
-          cp "$MINGW_RT_DIR/libwinpthread-1.dll" dist-final/"
+          cp "$MINGW_RT_DIR/libwinpthread-1.dll" dist-final/
           # Qt plugins (platforms, styles, sqldrivers)
           mkdir -p dist-final/plugins/platforms dist-final/plugins/styles dist-final/plugins/sqldrivers
           cp /home/z/Qt-win/6.8.0/mingw_64/plugins/platforms/qwindows.dll dist-final/plugins/platforms/
