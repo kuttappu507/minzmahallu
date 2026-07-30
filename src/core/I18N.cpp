@@ -61,6 +61,9 @@ void I18N::initTranslations() {
     ADD("action_previous","Previous","മുമ്പത്തെ");
     ADD("action_page","Page","പേജ്");
     ADD("dash_title","Dashboard","ഡാഷ്ബോർഡ്");
+    ADD("dash_greeting","Assalamu Alaikum,","അസ്സലാമു അലൈക്കും,");
+    ADD("dash_subtitle","Here's what's happening in your mahallu today.","നിങ്ങളുടെ മഹല്ലിലെ ഇന്നത്തെ അവലോകനം.");
+    ADD("dash_recent_activity_sub","Latest user actions across all modules","എല്ലാ മൊഡ്യൂളുകളിലെയും പുതിയ ഉപയോക്തൃ പ്രവർത്തനങ്ങൾ");
     ADD("dash_total_families","Total Families","മൊത്തം കുടുംബങ്ങൾ");
     ADD("dash_total_members","Total Members","മൊത്തം അംഗങ്ങൾ");
     ADD("dash_active_members","Active Members","സജീവ അംഗങ്ങൾ");
