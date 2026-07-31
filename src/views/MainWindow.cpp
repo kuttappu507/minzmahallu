@@ -204,33 +204,22 @@ void MainWindow::setupSidebar() {
 
     auto* header = new QFrame(sidebarWidget_);
     auto* hLayout = new QVBoxLayout(header);
-    hLayout->setContentsMargins(20, 22, 20, 18);
+    hLayout->setContentsMargins(0, 18, 0, 16);
     hLayout->setSpacing(6);
 
     auto* logoRow = new QHBoxLayout();
-    logoRow->setSpacing(12);
+    logoRow->setSpacing(0);
+    logoRow->setAlignment(Qt::AlignCenter);
     sidebarLogoLabel_ = new QLabel(header);
-    sidebarLogoLabel_->setFixedSize(64, 64);
+    sidebarLogoLabel_->setFixedSize(48, 48);
     sidebarLogoLabel_->setAlignment(Qt::AlignCenter);
     QPixmap logoPix;
     if (QFile::exists(":/icons/mms_white.png")) logoPix.load(":/icons/mms_white.png");
     else if (QFile::exists(":/icons/mms.png")) logoPix.load(":/icons/mms.png");
     if (!logoPix.isNull())
-        sidebarLogoLabel_->setPixmap(logoPix.scaled(64, 64, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+        sidebarLogoLabel_->setPixmap(logoPix.scaled(48, 48, Qt::KeepAspectRatio, Qt::SmoothTransformation));
     else sidebarLogoLabel_->setText("");
     logoRow->addWidget(sidebarLogoLabel_);
-    auto* titleCol = new QVBoxLayout();
-    titleCol->setSpacing(1);
-    sidebarAppName_ = new QLabel(header);
-    StyleProps::set(sidebarAppName_, "logoTitle");
-    sidebarAppName_->hide();
-    sidebarAppSub_ = new QLabel(header);
-    StyleProps::set(sidebarAppSub_, "logoSub");
-    sidebarAppSub_->hide();
-    titleCol->addWidget(sidebarAppName_);
-    titleCol->addWidget(sidebarAppSub_);
-    logoRow->addLayout(titleCol);
-    logoRow->addStretch();
     hLayout->addLayout(logoRow);
     sbLayout->addWidget(header);
 
@@ -519,8 +508,7 @@ void MainWindow::retranslateUi() {
             navList_->item(i)->setText(labels[i]);
         }
     }
-    if (sidebarAppName_) sidebarAppName_->setText(TR("app_name"));
-    if (sidebarAppSub_)  sidebarAppSub_->setText(TR("app_subtitle"));
+    // App name/subtitle removed from sidebar header — logo only
     if (sidebarLogoutBtn_) sidebarLogoutBtn_->setText(TR("action_logout"));
     if (themeButton_) themeButton_->setToolTip(TR("action_toggle_theme"));
     if (langButton_) langButton_->setToolTip(TR("action_toggle_language"));

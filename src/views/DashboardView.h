@@ -18,11 +18,8 @@ private:
     void loadStats();
     void loadCharts();
     void loadRecentActivity();
-    QWidget* makeStatCard(const QString& title, QLabel*& valueLabel,
-                          const QString& deltaText, bool deltaUp,
-                          const QString& iconBg, const QString& iconColor,
-                          const QString& iconPath);
-    QWidget* makeChartCard(const QString& title, const QString& subtitle, QWidget* chart);
+    QWidget* makeStatCard(int index, QLabel*& valueLabel);
+    QWidget* makeChartCard(const QString& title, const QString& subtitle, const QString& borderColor, QWidget* chart);
     QLabel* lblFamilies_=nullptr, *lblMembers_=nullptr, *lblActive_=nullptr, *lblCollection_=nullptr, *lblPending_=nullptr;
     QLabel* lblDonations_=nullptr, *lblWelfare_=nullptr, *lblMarriages_=nullptr, *lblDeaths_=nullptr, *lblBalance_=nullptr;
     QPushButton* qaAddFamily_=nullptr, *qaAddMember_=nullptr, *qaPayment_=nullptr, *qaDonation_=nullptr, *qaReport_=nullptr, *refreshBtn_=nullptr;
