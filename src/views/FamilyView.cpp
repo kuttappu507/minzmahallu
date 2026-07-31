@@ -39,12 +39,14 @@ FamilyView::FamilyView(QWidget* parent) : QWidget(parent) {
 }
 
 void FamilyView::setupUi() {
+    setObjectName("contentArea");
     auto* layout = new QVBoxLayout(this);
-    layout->setContentsMargins(20, 20, 20, 20);
+    layout->setContentsMargins(22, 20, 22, 26);
     layout->setSpacing(12);
 
     // Title
     auto* title = new QLabel(TR("family_title"), this);
+    StyleProps::set(title, "h1");
     layout->addWidget(title);
 
     // Filters bar

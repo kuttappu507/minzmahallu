@@ -171,9 +171,9 @@ void MainWindow::setupUi() {
     sidebarToggleBtn_->setObjectName("flap");
     sidebarToggleBtn_->setAutoRaise(false);
     sidebarToggleBtn_->setCursor(Qt::PointingHandCursor);
-    sidebarToggleBtn_->setFixedSize(24, 60);
-    sidebarToggleBtn_->setIcon(icons::renderSvgIcon(":/icons/chevron-left.svg", colors::sidebarIconTint, 16));
-    sidebarToggleBtn_->setIconSize(QSize(16, 16));
+    sidebarToggleBtn_->setFixedSize(26, 62);
+    sidebarToggleBtn_->setIcon(icons::renderSvgIcon(":/icons/chevron-left.svg", QColor("#ffffff"), 20));
+    sidebarToggleBtn_->setIconSize(QSize(20, 20));
     sidebarToggleBtn_->setToolTip(TR("action_collapse_sidebar"));
     connect(sidebarToggleBtn_, &QToolButton::clicked, this, &MainWindow::onToggleSidebar);
     sidebarToggleBtn_->raise();
@@ -655,7 +655,7 @@ void MainWindow::applySidebarMode(bool collapsed) {
             sidebarLogoutBtn_->setToolTip(TR("action_logout"));
         }
         if (navList_) for (int i = 0; i < navList_->count(); ++i) { auto* it = navList_->item(i); if (it) it->setText(""); }
-        if (sidebarToggleBtn_) { sidebarToggleBtn_->setIcon(icons::renderSvgIcon(":/icons/chevron-right.svg", colors::sidebarIconTint, 16)); sidebarToggleBtn_->setToolTip(TR("action_expand_sidebar")); }
+        if (sidebarToggleBtn_) { sidebarToggleBtn_->setIcon(icons::renderSvgIcon(":/icons/chevron-right.svg", QColor("#ffffff"), 20)); sidebarToggleBtn_->setToolTip(TR("action_expand_sidebar")); }
     } else {
         sidebarWidget_->setFixedWidth(260);
         if (sidebarLogoLabel_) sidebarLogoLabel_->setFixedSize(64, 64);
@@ -670,14 +670,17 @@ void MainWindow::applySidebarMode(bool collapsed) {
             sidebarLogoutBtn_->setMinimumHeight(32);
         }
         retranslateUi();
-        if (sidebarToggleBtn_) { sidebarToggleBtn_->setIcon(icons::renderSvgIcon(":/icons/chevron-left.svg", colors::sidebarIconTint, 16)); sidebarToggleBtn_->setToolTip(TR("action_collapse_sidebar")); }
+        if (sidebarToggleBtn_) { sidebarToggleBtn_->setIcon(icons::renderSvgIcon(":/icons/chevron-left.svg", QColor("#ffffff"), 20)); sidebarToggleBtn_->setToolTip(TR("action_collapse_sidebar")); }
     }
     repositionSidebarFlap();
 }
 
 void MainWindow::repositionSidebarFlap() {
     if (!sidebarToggleBtn_ || !sidebarWidget_) return;
-    sidebarToggleBtn_->move(sidebarWidget_->x() + sidebarWidget_->width() - 10, 22);
+    // Center the flap vertically on the sidebar
+    int x = sidebarWidget_->x() + sidebarWidget_->width() - 13;
+    int y = (sidebarWidget_->height() - sidebarToggleBtn_->height()) / 2;
+    sidebarToggleBtn_->move(x, y);
     sidebarToggleBtn_->raise();
 }
 

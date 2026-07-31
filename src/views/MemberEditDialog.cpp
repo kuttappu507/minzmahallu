@@ -26,6 +26,7 @@
 #include <QPixmap>
 #include <QIntValidator>
 #include "../core/I18N.h"
+#include "../core/StyleProps.h"
 
 namespace mms {
 

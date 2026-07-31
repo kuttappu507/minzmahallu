@@ -5,6 +5,7 @@
 #include "../services/FamilyService.h"
 #include "../repositories/FamilyRepository.h"
 #include "../core/I18N.h"
+#include "../core/StyleProps.h"
 #include <QFormLayout>
 #include <QVBoxLayout>
 #include <QHBoxLayout>

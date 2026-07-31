@@ -248,7 +248,7 @@ TokenView::TokenView(QWidget* parent) : QWidget(parent) {
 void TokenView::setupEventListPage() {
     listPage_ = new QWidget(this);
     auto* layout = new QVBoxLayout(listPage_);
-    layout->setContentsMargins(20, 20, 20, 20);
+    layout->setContentsMargins(22, 20, 22, 26);
     layout->setSpacing(12);
 
     auto* header = new QHBoxLayout();
@@ -284,7 +284,7 @@ void TokenView::setupEventListPage() {
 void TokenView::setupEventDetailPage() {
     detailPage_ = new QWidget(this);
     auto* layout = new QVBoxLayout(detailPage_);
-    layout->setContentsMargins(20, 20, 20, 20);
+    layout->setContentsMargins(22, 20, 22, 26);
     layout->setSpacing(12);
 
     auto* header = new QHBoxLayout();

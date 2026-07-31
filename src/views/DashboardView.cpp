@@ -126,7 +126,8 @@ QWidget* DashboardView::makeStatCard(const QString& title, QLabel*& valueLabel,
                                      const QString& iconPath) {
     auto* card = new QFrame(this);
     card->setObjectName("statCard");
-    card->setMinimumHeight(110);
+    card->setMinimumHeight(115);
+    card->setMaximumHeight(135);
     card->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
     auto* shadow = new QGraphicsDropShadowEffect(card);
@@ -145,9 +146,10 @@ QWidget* DashboardView::makeStatCard(const QString& title, QLabel*& valueLabel,
     srow->addWidget(makeTintIcon(card, iconPath, iconBg, iconColor));
     srow->addStretch();
     auto* delta = new QLabel(QString(deltaUp ? "▲ " : "▼ ") + deltaText, card);
+    delta->setWordWrap(false);
     delta->setStyleSheet(QString(
         "font: 700 10px Manrope; padding: 3px 8px; border-radius: 99px; "
-        "background: %1; color: %2; border: 1px solid %3;")
+        "background: %1; color: %2; border: 1px solid %3; max-width: 140px;")
         .arg(iconBg)
         .arg(deltaUp ? iconColor : "#be123c")
         .arg(iconBg));
@@ -158,11 +160,15 @@ QWidget* DashboardView::makeStatCard(const QString& title, QLabel*& valueLabel,
     // Value (large)
     valueLabel = new QLabel("—", card);
     StyleProps::set(valueLabel, "statValue");
+    valueLabel->setWordWrap(false);
+    valueLabel->setMaximumHeight(30);
     v->addWidget(valueLabel);
 
     // Label (small uppercase)
     auto* lbl = new QLabel(title, card);
     StyleProps::set(lbl, "statLabel");
+    lbl->setWordWrap(true);
+    lbl->setMaximumHeight(20);
     v->addWidget(lbl);
 
     return card;
@@ -215,6 +221,8 @@ static QPushButton* makeQuickAction(QWidget* parent, const QString& title,
     StyleProps::set(btn, cssClass);
     btn->setCursor(Qt::PointingHandCursor);
     btn->setMinimumHeight(56);
+    btn->setMaximumHeight(68);
+    btn->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
     auto* h = new QHBoxLayout(btn);
     h->setContentsMargins(13, 13, 13, 13);
@@ -228,9 +236,13 @@ static QPushButton* makeQuickAction(QWidget* parent, const QString& title,
     auto* textCol = new QVBoxLayout();
     textCol->setSpacing(1);
     auto* titleLbl = new QLabel(title, btn);
-    titleLbl->setStyleSheet("font: 700 12.5px Manrope; color: #0f172a; background: transparent; border: none;");
+    titleLbl->setStyleSheet("font: 700 11px Manrope; color: #0f172a; background: transparent; border: none;");
+    titleLbl->setWordWrap(false);
+    titleLbl->setMaximumHeight(16);
     auto* subLbl = new QLabel(subtitle, btn);
-    subLbl->setStyleSheet("font: 600 10.5px Manrope; color: #8b96a8; background: transparent; border: none;");
+    subLbl->setStyleSheet("font: 600 9px Manrope; color: #8b96a8; background: transparent; border: none;");
+    subLbl->setWordWrap(false);
+    subLbl->setMaximumHeight(14);
     textCol->addWidget(titleLbl);
     textCol->addWidget(subLbl);
     h->addLayout(textCol, 1);

@@ -153,8 +153,9 @@ AccountingView::AccountingView(QWidget* parent) : QWidget(parent) {
 }
 
 void AccountingView::setupUi() {
+    setObjectName("contentArea");
     auto* layout = new QVBoxLayout(this);
-    layout->setContentsMargins(20, 20, 20, 20);
+    layout->setContentsMargins(22, 20, 22, 26);
     layout->setSpacing(12);
     layout->addWidget(new QLabel(TR("acc_title"), this));
 

@@ -33,6 +33,7 @@ LoginView::LoginView(QWidget* parent) : QWidget(parent) {
 }
 
 void LoginView::setupUi() {
+    setObjectName("contentArea");
     auto* outer = new QVBoxLayout(this);
     outer->setAlignment(Qt::AlignCenter);
     outer->setContentsMargins(0, 0, 0, 0);
