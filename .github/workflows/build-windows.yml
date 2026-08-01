@@ -1,6 +1,3 @@
-# =============================================================================
-# MMS — Build, Sign, Package, and Release (Portable ZIP + WiX MSI)
-# =============================================================================
 name: Build Windows
 
 on:
@@ -16,17 +13,14 @@ env:
 
 jobs:
   build:
-    name: Build, Sign & Package
+    name: Build MMS
     runs-on: windows-latest
-    outputs:
-      zip-path: ${{ steps.pack-zip.outputs.zip-path }}
-      msi-path: ${{ steps.build-msi.outputs.msi-path }}
 
     steps:
-      - name: Checkout source
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install Qt ${{ env.QT_VERSION }}
+      - name: Install Qt
         uses: jurplel/install-qt-action@v4
         with:
           version: ${{ env.QT_VERSION }}
@@ -35,254 +29,64 @@ jobs:
           tools: 'tools_opensslv3_x64'
           cache: true
 
-      - name: Install zlib via vcpkg
+      - name: Install zlib
         shell: pwsh
-        run: |
-          & "C:\vcpkg\vcpkg.exe" install zlib:x64-windows
+        run: vcpkg install zlib:x64-windows
 
-      - name: Set up MSVC
+      - name: Setup MSVC
         uses: ilammy/msvc-dev-cmd@v1
         with:
           arch: x64
 
-      - name: Configure CMake
+      - name: Configure
         shell: cmd
-        run: |
-          cmake -B build -S . -G "Ninja" ^
-            -DCMAKE_BUILD_TYPE=Release ^
-            -DCMAKE_C_COMPILER=cl ^
-            -DCMAKE_CXX_COMPILER=cl ^
-            -DOPENSSL_ROOT_DIR=%RUNNER_WORKSPACE%\Qt\Tools\OpenSSLv3\Win_x64 ^
-            -DOPENSSL_INCLUDE_DIR=%RUNNER_WORKSPACE%\Qt\Tools\OpenSSLv3\Win_x64\include ^
-            -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake ^
-            -DVCPKG_TARGET_TRIPLET=x64-windows
+        run: cmake -B build -S . -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl "-DOPENSSL_ROOT_DIR=%RUNNER_WORKSPACE%/Qt/Tools/OpenSSLv3/Win_x64" "-DOPENSSL_INCLUDE_DIR=%RUNNER_WORKSPACE%/Qt/Tools/OpenSSLv3/Win_x64/include" "-DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake" -DVCPKG_TARGET_TRIPLET=x64-windows
 
-      - name: Build MMS.exe
+      - name: Build
         shell: cmd
         run: cmake --build build --config Release --parallel 4
 
-      # ---- VERIFY: check MMS.exe exists and has correct architecture ----
-      - name: Verify MMS.exe
+      - name: Deploy
         shell: pwsh
         run: |
-          $exe = "build\MMS.exe"
-          if (-not (Test-Path $exe)) { Write-Host "ERROR: MMS.exe not found"; exit 1 }
-          $size = (Get-Item $exe).Length
-          Write-Host "MMS.exe size: $size bytes ($([math]::Round($size/1MB, 2)) MB)"
-          # Check it's a valid PE executable
-          $bytes = [System.IO.File]::ReadAllBytes($exe)[0..1]
-          if ($bytes[0] -ne 0x4D -or $bytes[1] -ne 0x5A) {
-            Write-Host "ERROR: MMS.exe is not a valid PE executable"
-            exit 1
-          }
-          Write-Host "OK: MMS.exe is a valid Windows executable"
-
-      # ---- DEPLOY with windeployqt ----
-      - name: Deploy Qt dependencies
-        shell: pwsh
-        run: |
-          New-Item -ItemType Directory -Force -Path dist | Out-Null
-          Copy-Item build\MMS.exe dist\
-          & "${env:RUNNER_WORKSPACE}\Qt\${env:QT_VERSION}\msvc2022_64\bin\windeployqt.exe" `
-            --release --no-translations --no-system-d3d-compiler --no-opengl-sw `
-            --qmldir "${{ github.workspace }}\qml" `
-            "dist\MMS.exe"
-          # Copy OpenSSL + zlib
-          Copy-Item "${env:RUNNER_WORKSPACE}\Qt\Tools\OpenSSLv3\Win_x64\bin\libcrypto-3-x64.dll" dist\
-          Copy-Item "${env:RUNNER_WORKSPACE}\Qt\Tools\OpenSSLv3\Win_x64\bin\libssl-3-x64.dll" dist\
-          Copy-Item "C:\vcpkg\installed\x64-windows\bin\z.dll" dist\
-          # Copy app data
-          Copy-Item sql dist\ -Recurse
-          New-Item -ItemType Directory -Force -Path dist\resources | Out-Null
-          Copy-Item resources\* dist\resources\ -Recurse
-
-          # Copy QML files to filesystem (fallback if qrc loading fails)
-          New-Item -ItemType Directory -Force -Path dist\qml | Out-Null
-          Copy-Item qml\main.qml dist\qml\
-          New-Item -ItemType Directory -Force -Path dist\qml\components | Out-Null
-          Copy-Item qml\components\*.qml dist\qml\components\
-          New-Item -ItemType Directory -Force -Path dist\qml\views | Out-Null
-          Copy-Item qml\views\*.qml dist\qml\views\
-
-      # ---- CODE SIGNING (self-signed) ----
-      - name: Create self-signed certificate
-        shell: pwsh
-        run: |
-          $cert = New-SelfSignedCertificate `
-            -Subject "CN=MMS Code Signing, O=Minz Mahallu, C=IN" `
-            -Type CodeSigningCert `
-            -KeyUsage DigitalSignature `
-            -FriendlyName "MMS Code Signing" `
-            -CertStoreLocation "Cert:\CurrentUser\My" `
-            -KeyAlgorithm RSA -KeyLength 2048 `
-            -NotAfter (Get-Date).AddYears(3)
-          
-          $pwd = ConvertTo-SecureString -String "MmsSign2026!" -Force -AsPlainText
-          Export-PfxCertificate -Cert $cert -FilePath "MMS_signing.pfx" -Password $pwd
-          
-          # Trust the cert so signtool verification works
-          $store = New-Object System.Security.Cryptography.X509Certificates.X509Store("Root","LocalMachine")
-          $store.Open("ReadWrite")
-          $store.Add($cert)
-          $store.Close()
-          
-          Write-Host "Certificate created: $($cert.Thumbprint)"
-
-      - name: Sign MMS.exe
-        shell: pwsh
-        run: |
-          # Find signtool.exe
-          $signtool = Get-ChildItem "C:\Program Files (x86)\Windows Kits\10\bin" -Recurse -Filter "signtool.exe" |
-            Where-Object { $_.FullName -match "x64" } | Sort-Object FullName -Descending | Select-Object -First 1
-          Write-Host "signtool: $($signtool.FullName)"
-          
-          & $signtool.FullName sign /f "MMS_signing.pfx" /p "MmsSign2026!" /tr "http://timestamp.digicert.com" /td sha256 /fd sha256 "dist\MMS.exe"
-          & $signtool.FullName verify /pa "dist\MMS.exe"
-          Write-Host "MMS.exe signed successfully"
-
-      # ---- PACK PORTABLE ZIP ----
-      - name: Create Portable ZIP
-        id: pack-zip
-        shell: pwsh
-        run: |
-          # Create run_mms.bat
-          @"
-          @echo off
+          mkdir dist -Force
+          Copy-Item build/MMS.exe dist/
+          & "$env:RUNNER_WORKSPACE/Qt/$env:QT_VERSION/msvc2022_64/bin/windeployqt.exe" --release --no-translations --no-system-d3d-compiler --no-opengl-sw --qmldir "$PWD/qml" "dist/MMS.exe"
+          Copy-Item "$env:RUNNER_WORKSPACE/Qt/Tools/OpenSSLv3/Win_x64/bin/libcrypto-3-x64.dll" dist/
+          Copy-Item "$env:RUNNER_WORKSPACE/Qt/Tools/OpenSSLv3/Win_x64/bin/libssl-3-x64.dll" dist/
+          Copy-Item "C:/vcpkg/installed/x64-windows/bin/z.dll" dist/
+          Copy-Item sql dist/ -Recurse
+          mkdir dist/resources -Force
+          Copy-Item resources/* dist/resources/ -Recurse
+          mkdir dist/qml -Force
+          Copy-Item qml/main.qml dist/qml/
+          '@echo off
           cd /d "%~dp0"
-          echo Starting MMS...
           MMS.exe 2>&1
-          if errorlevel 1 (
-            echo.
-            echo MMS.exe exited with error code %errorlevel%
-            pause
-          )
-          "@ | Out-File -FilePath dist\run_mms.bat -Encoding ASCII
-          
-          Compress-Archive -Path dist\* -DestinationPath MMS-portable-windows-x64.zip -Force
-          Write-Host "ZIP: $((Get-Item MMS-portable-windows-x64.zip).Length) bytes"
-          echo "zip-path=MMS-portable-windows-x64.zip" >> $env:GITHUB_OUTPUT
+          if errorlevel 1 pause
+          ' | Out-File dist/run_mms.bat -Encoding ASCII
+          Compress-Archive dist/* MMS-portable.zip
 
-      # ---- BUILD WiX MSI INSTALLER ----
-      - name: Install WiX Toolset
-        shell: pwsh
-        run: |
-          choco install wixtoolset -y --no-progress
-          $wixPath = "C:\Program Files (x86)\WiX Toolset v3.14\bin"
-          echo "WIX_PATH=$wixPath" >> $env:GITHUB_ENV
-
-      - name: Create WiX MSI
-        id: build-msi
-        shell: pwsh
-        continue-on-error: true
-        run: |
-          $heat = "$env:WIX_PATH\heat.exe"
-          $candle = "$env:WIX_PATH\candle.exe"
-          $light = "$env:WIX_PATH\light.exe"
-          
-          # Harvest files from dist directory
-          & $heat dir dist -gg -sfrag -template:fragment -out Files.wxs -dr MMSINSTALLDIR -var var.SourceDir
-          
-          # Write WiX main script — single-quoted here-string (no PS expansion)
-          @'
-          <?xml version="1.0" encoding="UTF-8"?>
-          <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-            <Product Id="*" Name="Minz Mahallu Management" Language="1033" Version="1.0.0"
-                     Manufacturer="Minz Mahallu" UpgradeCode="12345678-1234-1234-1234-123456789012">
-              <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" Platform="x64" />
-              <MajorUpgrade DowngradeErrorMessage="A newer version is already installed." />
-              <Media Id="1" Cabinet="MMS.cab" EmbedCab="yes" />
-              <Directory Id="TARGETDIR" Name="SourceDir">
-                <Directory Id="ProgramFiles64Folder">
-                  <Directory Id="MMSINSTALLDIR" Name="Minz Mahallu Management" />
-                </Directory>
-                <Directory Id="ProgramMenuFolder">
-                  <Directory Id="StartMenuDir" Name="Minz Mahallu Management">
-                    <Component Id="StartMenuDirComp" Guid="*" Win64="yes">
-                      <RemoveFolder Id="RemoveStartMenuDir" Directory="StartMenuDir" On="uninstall" />
-                      <RegistryValue Root="HKCU" Key="Software\MinzMahallu\MMS" Name="installed" Type="integer" Value="1" KeyPath="yes" />
-                    </Component>
-                  </Directory>
-                </Directory>
-              </Directory>
-              <DirectoryRef Id="MMSINSTALLDIR">
-                <Component Id="MMS.exe" Guid="*" Win64="yes">
-                  <File Id="MMS_exe" Source="$(var.SourceDir)\MMS.exe" KeyPath="yes">
-                    <Shortcut Id="StartMenuShortcut" Directory="StartMenuDir" Name="MMS" WorkingDirectory="MMSINSTALLDIR" Advertise="yes" />
-                  </File>
-                </Component>
-              </DirectoryRef>
-              <Feature Id="Complete" Title="MMS" Level="1">
-                <ComponentRef Id="MMS.exe" />
-                <ComponentRef Id="StartMenuDirComp" />
-              </Feature>
-            </Product>
-          </Wix>
-          '@ | Out-File -FilePath Main.wxs -Encoding UTF8
-          
-          & $candle Main.wxs -dSourceDir=dist -out Main.wixobj
-          if ($LASTEXITCODE -ne 0) { Write-Host "candle Main failed"; exit 1 }
-          & $candle Files.wxs -dSourceDir=dist -out Files.wixobj
-          if ($LASTEXITCODE -ne 0) { Write-Host "candle Files failed"; exit 1 }
-          & $light Main.wixobj Files.wixobj -out MMS-Setup.msi -ext WixUIExtension
-          if ($LASTEXITCODE -ne 0) { Write-Host "light failed"; exit 1 }
-          
-          Write-Host "MSI: $((Get-Item MMS-Setup.msi).Length) bytes"
-          echo "msi-path=MMS-Setup.msi" >> $env:GITHUB_OUTPUT
-
-      - name: Sign MSI
-        if: steps.build-msi.outputs.msi-path != ''
-        shell: pwsh
-        run: |
-          if (-not (Test-Path MMS-Setup.msi)) { Write-Host "MSI not found, skipping"; exit 0 }
-          $signtool = Get-ChildItem "C:\Program Files (x86)\Windows Kits\10\bin" -Recurse -Filter "signtool.exe" |
-            Where-Object { $_.FullName -match "x64" } | Sort-Object FullName -Descending | Select-Object -First 1
-          & $signtool.FullName sign /f "MMS_signing.pfx" /p "MmsSign2026!" /tr "http://timestamp.digicert.com" /td sha256 /fd sha256 "MMS-Setup.msi"
-          Write-Host "MSI signed successfully"
-
-      - name: Upload ZIP artifact
+      - name: Upload
         uses: actions/upload-artifact@v4
         with:
-          name: MMS-portable-zip
-          path: MMS-portable-windows-x64.zip
-
-      - name: Upload MSI artifact
-        if: steps.build-msi.outputs.msi-path != ''
-        uses: actions/upload-artifact@v4
-        with:
-          name: MMS-installer-msi
-          path: MMS-Setup.msi
+          name: MMS-portable
+          path: MMS-portable.zip
 
   release:
-    name: Publish Release
+    name: Release
     needs: build
     if: startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
-      - name: Download ZIP
-        uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v4
         with:
-          name: MMS-portable-zip
-          path: ./artifacts
-
-      - name: Download MSI
-        uses: actions/download-artifact@v4
+          name: MMS-portable
+          path: artifacts
+      - uses: softprops/action-gh-release@v2
         with:
-          name: MMS-installer-msi
-          path: ./artifacts
-        continue-on-error: true
-
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
-        with:
-          files: |
-            ./artifacts/MMS-portable-windows-x64.zip
-            ./artifacts/MMS-Setup.msi
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          generate_release_notes: true
-          draft: false
-          prerelease: false
+          files: artifacts/MMS-portable.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
