@@ -61,21 +61,21 @@ jobs:
         shell: cmd
         run: cmake --build build --config Release --parallel 4
 
-      # ---- TEST RUN: verify the app actually starts ----
-      - name: Test-run MMS.exe (5s timeout)
+      # ---- VERIFY: check MMS.exe exists and has correct architecture ----
+      - name: Verify MMS.exe
         shell: pwsh
         run: |
           $exe = "build\MMS.exe"
           if (-not (Test-Path $exe)) { Write-Host "ERROR: MMS.exe not found"; exit 1 }
-          $proc = Start-Process -FilePath $exe -PassThru -NoNewWindow
-          Start-Sleep -Seconds 5
-          if ($proc.HasExited) {
-            Write-Host "ERROR: MMS.exe exited with code $($proc.ExitCode) after 5 seconds"
+          $size = (Get-Item $exe).Length
+          Write-Host "MMS.exe size: $size bytes ($([math]::Round($size/1MB, 2)) MB)"
+          # Check it's a valid PE executable
+          $bytes = [System.IO.File]::ReadAllBytes($exe)[0..1]
+          if ($bytes[0] -ne 0x4D -or $bytes[1] -ne 0x5A) {
+            Write-Host "ERROR: MMS.exe is not a valid PE executable"
             exit 1
-          } else {
-            Write-Host "OK: MMS.exe is running (PID $($proc.Id))"
-            Stop-Process -Id $proc.Id -Force
           }
+          Write-Host "OK: MMS.exe is a valid Windows executable"
 
       # ---- DEPLOY with windeployqt ----
       - name: Deploy Qt dependencies

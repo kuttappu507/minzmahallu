@@ -9,7 +9,7 @@
 #include "services/SettingsService.h"
 #include "services/AuthSession.h"
 
-#include <QGuiApplication>
+#include <QApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include <QDir>
@@ -62,8 +62,8 @@ int main(int argc, char* argv[]) {
     qputenv("QT_ENABLE_HIGHDPI_SCALING", "1");
     qputenv("QT_AUTO_SCREEN_SCALE_FACTOR", "1");
 
-    // Use QGuiApplication for pure QML (not QApplication which needs Widgets)
-    QGuiApplication app(argc, argv);
+    // Use QApplication for pure QML (not QApplication which needs Widgets)
+    QApplication app(argc, argv);
     app.setApplicationName("MMS");
     app.setOrganizationName("Mahallu Management System");
 
