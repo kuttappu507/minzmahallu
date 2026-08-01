@@ -69,10 +69,10 @@ int main(int argc, char* argv[]) {
     // Initialize i18n
     I18N::instance().setLanguage("en");
 
-    // Apply theme
+    // QML uses its own Theme.qml singleton — no QSS needed
+    // But we still load the saved theme for backend reference
     QString savedTheme = Config::instance().theme();
     if (savedTheme.isEmpty()) savedTheme = "light";
-    SettingsService::instance().applyTheme(savedTheme);
 
     Logger::info("=== Minz Mahallu Management Starting (QML mode) ===");
 
@@ -80,14 +80,19 @@ int main(int argc, char* argv[]) {
     QQmlApplicationEngine engine;
 
     // Add import paths for QML modules
-    engine.addImportPath("qrc:/qml");
-    QString qmlDir = QCoreApplication::applicationDirPath() + "/qml";
-    if (QDir(qmlDir).exists()) engine.addImportPath(qmlDir);
+    engine.addImportPath("qrc:/");
 
     // Expose backend to QML
     engine.rootContext()->setContextProperty("appVersion", APP_VERSION_STR);
 
     engine.load(QUrl("qrc:/qml/main.qml"));
+    if (engine.rootObjects().isEmpty()) {
+        // Try filesystem path as fallback
+        QString qmlPath = QCoreApplication::applicationDirPath() + "/qml/main.qml";
+        if (QFile::exists(qmlPath)) {
+            engine.load(QUrl::fromLocalFile(qmlPath));
+        }
+    }
     if (engine.rootObjects().isEmpty()) {
         Logger::error("Failed to load QML main.qml");
         return -1;

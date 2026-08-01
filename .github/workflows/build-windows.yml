@@ -104,6 +104,7 @@ jobs:
           # 2. Qt DLLs + plugins via windeployqt (--no-crt = don't copy MSVC runtime)
           & "${env:RUNNER_WORKSPACE}\Qt\${env:QT_VERSION}\msvc2022_64\bin\windeployqt.exe" `
             --release --no-translations --no-system-d3d-compiler --no-opengl-sw `
+            --qmldir "${{ github.workspace }}\qml" `
             "dist-final\MMS.exe"
 
           # 3. OpenSSL DLLs
