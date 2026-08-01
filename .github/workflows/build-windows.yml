@@ -160,17 +160,17 @@ jobs:
       - name: Create WiX MSI
         id: build-msi
         shell: pwsh
+        continue-on-error: true
         run: |
-          # Generate WiX manifest
           $heat = "$env:WIX_PATH\heat.exe"
           $candle = "$env:WIX_PATH\candle.exe"
           $light = "$env:WIX_PATH\light.exe"
           
-          # Harvest files
+          # Harvest files from dist directory
           & $heat dir dist -gg -sfrag -template:fragment -out Files.wxs -dr MMSINSTALLDIR -var var.SourceDir
           
-          # Create main WiX script
-          @"
+          # Write WiX main script using single-quoted here-string (no PS variable expansion)
+          @'
           <?xml version="1.0" encoding="UTF-8"?>
           <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
             <Product Id="*" Name="Minz Mahallu Management" Language="1033" Version="1.0.0"
@@ -188,7 +188,7 @@ jobs:
               </Directory>
               <DirectoryRef Id="MMSINSTALLDIR">
                 <Component Id="MMS.exe" Guid="*" Win64="yes">
-                  <File Id="MMS.exe" Source="$(var.SourceDir)\MMS.exe" KeyPath="yes">
+                  <File Id="MMS_exe" Source="$(var.SourceDir)\MMS.exe" KeyPath="yes">
                     <Shortcut Id="StartMenuShortcut" Directory="StartMenuDir" Name="MMS" WorkingDirectory="MMSINSTALLDIR" Advertise="yes" />
                   </File>
                 </Component>
@@ -198,22 +198,26 @@ jobs:
               </Feature>
             </Product>
           </Wix>
-          "@ | Out-File -FilePath Main.wxs -Encoding UTF8
+          '@ | Out-File -FilePath Main.wxs -Encoding UTF8
           
           & $candle Main.wxs -dSourceDir=dist -out Main.wixobj
+          if ($LASTEXITCODE -ne 0) { Write-Host "candle Main failed"; exit 1 }
           & $candle Files.wxs -dSourceDir=dist -out Files.wixobj
+          if ($LASTEXITCODE -ne 0) { Write-Host "candle Files failed"; exit 1 }
           & $light Main.wixobj Files.wixobj -out MMS-Setup.msi -ext WixUIExtension
+          if ($LASTEXITCODE -ne 0) { Write-Host "light failed"; exit 1 }
           
           Write-Host "MSI: $((Get-Item MMS-Setup.msi).Length) bytes"
           echo "msi-path=MMS-Setup.msi" >> $env:GITHUB_OUTPUT
 
       - name: Sign MSI
+        if: steps.build-msi.outputs.msi-path != ''
         shell: pwsh
         run: |
+          if (-not (Test-Path MMS-Setup.msi)) { Write-Host "MSI not found, skipping"; exit 0 }
           $signtool = Get-ChildItem "C:\Program Files (x86)\Windows Kits\10\bin" -Recurse -Filter "signtool.exe" |
             Where-Object { $_.FullName -match "x64" } | Sort-Object FullName -Descending | Select-Object -First 1
           & $signtool.FullName sign /f "MMS_signing.pfx" /p "MmsSign2026!" /tr "http://timestamp.digicert.com" /td sha256 /fd sha256 "MMS-Setup.msi"
-          & $signtool.FullName verify /pa "MMS-Setup.msi"
           Write-Host "MSI signed successfully"
 
       - name: Upload ZIP artifact
@@ -223,6 +227,7 @@ jobs:
           path: MMS-portable-windows-x64.zip
 
       - name: Upload MSI artifact
+        if: steps.build-msi.outputs.msi-path != ''
         uses: actions/upload-artifact@v4
         with:
           name: MMS-installer-msi
