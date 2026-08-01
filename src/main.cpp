@@ -18,6 +18,7 @@
 #include <QDir>
 #include <QFontDatabase>
 #include <QQuickStyle>
+#include <QStandardPaths>
 
 #ifdef Q_OS_WIN
 #  undef _WIN32_WINNT
@@ -26,6 +27,8 @@
 #  define WINVER 0x0600
 #  include <windows.h>
 #endif
+
+using namespace mms;
 
 int main(int argc, char* argv[]) {
 #ifdef Q_OS_WIN
