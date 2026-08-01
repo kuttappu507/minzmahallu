@@ -70,4 +70,12 @@
         <file alias="marriage_cert.html">templates/marriage_cert.html</file>
         <file alias="death_cert.html">templates/death_cert.html</file>
     </qresource>
+    <qresource prefix="/qml">
+        <file alias="main.qml">../qml/main.qml</file>
+        <file alias="theme/Theme.qml">../qml/theme/Theme.qml</file>
+        <file alias="components/SquircleButton.qml">../qml/components/SquircleButton.qml</file>
+        <file alias="components/StatCard.qml">../qml/components/StatCard.qml</file>
+        <file alias="components/Pill.qml">../qml/components/Pill.qml</file>
+        <file alias="views/DashboardView.qml">../qml/views/DashboardView.qml</file>
+    </qresource>
 </RCC>

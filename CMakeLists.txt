@@ -166,6 +166,11 @@ target_compile_definitions(${APP_NAME} PRIVATE
     QT_DISABLE_DEPRECATED_BEFORE=0x060000
 )
 
+# QML import paths
+set_target_properties(${APP_NAME} PROPERTIES
+    QT_QML_SOURCE_TREE "${CMAKE_CURRENT_SOURCE_DIR}/qml"
+)
+
 # -----------------------------------------------------------------------------
 # Copy SQL files & assets to build dir
 # -----------------------------------------------------------------------------
