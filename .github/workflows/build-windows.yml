@@ -55,6 +55,34 @@ jobs:
           Copy-Item "$env:RUNNER_WORKSPACE/Qt/Tools/OpenSSLv3/Win_x64/bin/libcrypto-3-x64.dll" dist/
           Copy-Item "$env:RUNNER_WORKSPACE/Qt/Tools/OpenSSLv3/Win_x64/bin/libssl-3-x64.dll" dist/
           Copy-Item "C:/vcpkg/installed/x64-windows/bin/z.dll" dist/
+          
+          # Copy MSVC Runtime DLLs (msvcp140.dll, vcruntime140.dll, vcruntime140_1.dll)
+          # Without these, the app silently fails to launch on machines without VS installed
+          $msvcCrt = Get-ChildItem -Path "$env:VCToolsInstallDir\redist\MSVC" -Recurse -Filter "msvcp140.dll" | Where-Object { $_.FullName -match "x64" } | Select-Object -First 1
+          if ($msvcCrt) {
+            $crtDir = $msvcCrt.DirectoryName
+            Write-Host "Copying MSVC CRT from: $crtDir"
+            Get-ChildItem "$crtDir\*.dll" | Copy-Item -Destination dist/ -Force
+            Write-Host "Copied MSVC runtime DLLs:"
+            Get-ChildItem "dist/msvcp*.dll", "dist/vcruntime*.dll" | ForEach-Object { Write-Host "  $($_.Name)" }
+          } else {
+            Write-Host "WARNING: MSVC CRT not found via VCToolsInstallDir, trying VCToolsRedistDir"
+            $redistDir = Get-ChildItem "$env:VCToolsRedistDir" -Recurse -Filter "msvcp140.dll" | Where-Object { $_.FullName -match "x64" } | Select-Object -First 1
+            if ($redistDir) {
+              Get-ChildItem "$($redistDir.DirectoryName)\*.dll" | Copy-Item -Destination dist/ -Force
+              Write-Host "Copied MSVC runtime DLLs from VCToolsRedistDir"
+            } else {
+              Write-Host "ERROR: Could not find MSVC runtime DLLs!"
+            }
+          }
+          
+          # Also include the VC++ Redistributable installer
+          $redistExe = Get-ChildItem "$env:VCToolsRedistDir" -Filter "vc_redist.x64.exe" -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1
+          if ($redistExe) {
+            Copy-Item $redistExe.FullName dist/ -Force
+            Write-Host "Included vc_redist.x64.exe"
+          }
+          
           Copy-Item sql dist/ -Recurse
           mkdir dist/resources -Force
           Copy-Item resources/* dist/resources/ -Recurse
@@ -67,8 +95,21 @@ jobs:
           @"
           @echo off
           cd /d "%~dp0"
-          MMS.exe 2>&1
-          if errorlevel 1 pause
+          echo Starting MMS...
+          MMS.exe
+          if errorlevel 1 (
+            echo.
+            echo MMS.exe failed (exit code %errorlevel%).
+            echo Installing VC++ Redistributable...
+            if exist vc_redist.x64.exe (
+              vc_redist.x64.exe /install /quiet /norestart
+              echo Retrying...
+              start "" MMS.exe
+            ) else (
+              echo Please install Visual C++ Redistributable from Microsoft.
+              pause
+            )
+          )
           "@ | Out-File dist/run_mms.bat -Encoding ASCII
           Compress-Archive dist/* MMS-portable.zip
 
