@@ -104,7 +104,7 @@ ApplicationWindow {
                 anchors.verticalCenter: parent.verticalCenter
                 color: flapMA.containsMouse ? "#0aa06f" : "#047857"
                 border.width: 1; border.color: "#0a7f5d"; z: 50
-                Text { anchors.centerIn: parent; text: sidebarCollapsed ? "▶" : "◀"; color: "#ffffff"; font.pixelSize: 14 }
+                Text { anchors.centerIn: parent; text: sidebarCollapsed ? ">" : "<"; color: "#ffffff"; font.pixelSize: 14 }
                 MouseArea { id: flapMA; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: sidebarCollapsed = !sidebarCollapsed }
             }
         }
