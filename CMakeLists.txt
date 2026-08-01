@@ -63,11 +63,22 @@ set(APP_COMPANY "Mahallu Management System")
 # -----------------------------------------------------------------------------
 # Sources
 # -----------------------------------------------------------------------------
-file(GLOB_RECURSE MMS_SOURCES
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp"
+file(GLOB MMS_CORE_SOURCES
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/core/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp"
 )
-file(GLOB_RECURSE MMS_HEADERS
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/*.h"
+file(GLOB MMS_REPO_SOURCES
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/repositories/*.cpp"
+)
+file(GLOB MMS_SVC_SOURCES
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/services/*.cpp"
+)
+set(MMS_SOURCES ${MMS_CORE_SOURCES} ${MMS_REPO_SOURCES} ${MMS_SVC_SOURCES})
+file(GLOB MMS_HEADERS
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/core/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/models/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/repositories/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/services/*.h"
 )
 
 # Resource file (Windows only)

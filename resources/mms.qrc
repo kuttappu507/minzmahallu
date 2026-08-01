@@ -77,8 +77,4 @@
         <file alias="components/Pill.qml">../qml/components/Pill.qml</file>
         <file alias="views/DashboardView.qml">../qml/views/DashboardView.qml</file>
     </qresource>
-    <qresource prefix="/Theme">
-        <file alias="qmldir">../qml/theme/qmldir</file>
-        <file alias="Theme.qml">../qml/theme/Theme.qml</file>
-    </qresource>
 </RCC>

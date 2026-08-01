@@ -1,6 +1,5 @@
 import QtQuick
 import QtQuick.Layouts
-import Theme
 import "../components"
 
 ScrollView {

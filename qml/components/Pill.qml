@@ -1,5 +1,4 @@
 import QtQuick
-import Theme
 
 Rectangle {
     property string status: "Active"
