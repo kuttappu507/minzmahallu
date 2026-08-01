@@ -87,7 +87,7 @@ void SplashScreen::drawContents(QPainter* painter) {
 
     // Subtitle
     painter->setPen(QColor(255, 215, 0, 220));
-    QFont subFont("Manrope", 11);
+    QFont subFont("Poppins", 11);
     painter->setFont(subFont);
     QString subtitle = "Mosque Community Administration";
     if (I18N::instance().currentLanguage() == "ml") subtitle = "മസ്ജിദ് കമ്മ്യൂണിറ്റി ഭരണം";
@@ -111,11 +111,11 @@ void SplashScreen::drawContents(QPainter* painter) {
     painter->setFont(pctFont);
     painter->drawText(QRect(barX, barY - 25, barW, 18), Qt::AlignRight, QString::number(progress_) + "%");
     painter->setPen(QColor(255, 255, 255, 230));
-    QFont statusFont("Manrope", 10);
+    QFont statusFont("Poppins", 10);
     painter->setFont(statusFont);
     painter->drawText(QRect(barX, barY + 14, barW, 20), Qt::AlignLeft, currentStatus_);
     painter->setPen(QColor(255, 255, 255, 100));
-    QFont verFont("Manrope", 9);
+    QFont verFont("Poppins", 9);
     painter->setFont(verFont);
     painter->drawText(QRect(20, h - 26, w - 40, 16), Qt::AlignLeft, "v1.0.0");
 }

@@ -1,9 +1,7 @@
 /*
- * DashboardView.cpp — Flat emerald dashboard matching HTML mockup
- *
- * Stat cards: solid tint background + colored border (not white card)
- * QA buttons: white card with solid colored icon square
- * Chart cards: white card with colored left-border on title
+ * DashboardView.cpp — Flat emerald dashboard
+ * ZERO inline setStyleSheet() — all styling via QSS cssClass properties.
+ * Fonts: Poppins (English) + Gayathri (Malayalam)
  */
 #include "DashboardView.h"
 #include "../services/DashboardService.h"
@@ -30,7 +28,6 @@
 #include <QGraphicsDropShadowEffect>
 #include <QPalette>
 #include <QApplication>
-#include <QBrush>
 #include <QSizePolicy>
 #include <QDate>
 #include <QtCharts/QChart>
@@ -40,8 +37,6 @@
 #include <QtCharts/QBarSet>
 #include <QtCharts/QBarCategoryAxis>
 #include <QtCharts/QValueAxis>
-#include <QtCharts/QPieSeries>
-#include <QtCharts/QPieSlice>
 
 namespace mms {
 
@@ -69,7 +64,7 @@ static QPixmap renderSvg(const QString& svgPath, const QString& color, int size)
     return pix;
 }
 
-// Solid color icon square (flat design — colored background, white icon)
+// Solid color icon square (flat design — colored bg, white icon)
 static QLabel* makeSolidIcon(QWidget* parent, const QString& svgPath,
                              const QString& bgColor, int size = 37) {
     auto* lbl = new QLabel(parent);
@@ -82,7 +77,6 @@ static QLabel* makeSolidIcon(QWidget* parent, const QString& svgPath,
     p.setBrush(QColor(bgColor));
     p.setPen(Qt::NoPen);
     p.drawRoundedRect(0, 0, S, S, S*0.25, S*0.25);
-    // Render icon in white
     QSvgRenderer svg(svgPath);
     if (svg.isValid()) {
         int is = size;
@@ -105,38 +99,35 @@ static QLabel* makeSolidIcon(QWidget* parent, const QString& svgPath,
     return lbl;
 }
 
-// Flat tinted stat card — entire card has tint background + colored border
+// Stat card definitions with tint names
 struct StatDef {
     const char* i18nKey;
     const char* iconPath;
-    const char* tintBg;     // background color (light pastel)
-    const char* tintBorder; // border color (solid)
-    const char* tintText;   // text color (dark version of tint)
+    const char* solidColor;  // for icon bg
     const char* deltaText;
     bool deltaUp;
+    const char* tintName;   // "em", "teal", etc.
 };
 
 static const StatDef STAT_DEFS[] = {
-    {"dash_total_families",     ":/icons/families.svg",      "#d3f5e6", "#059669", "#04543c", "+6 this month",      true},
-    {"dash_total_members",      ":/icons/members.svg",       "#c8f6f1", "#0d9488", "#0f5e54", "+18 this month",     true},
-    {"dash_active_members",     ":/icons/check.svg",         "#d7edfb", "#0284c7", "#0a5480", "86.3% active",       true},
-    {"dash_monthly_collection", ":/icons/dollar.svg",        "#fcebc8", "#d97706", "#7c4403", "+9.1% vs June",      true},
-    {"dash_pending_dues",       ":/icons/alert.svg",         "#fddfe5", "#e11d48", "#95102e", "7 families overdue", false},
-    {"dash_donations_month",    ":/icons/donations.svg",     "#fadfeb", "#db2777", "#93184f", "+12.4% vs June",     true},
-    {"dash_welfare_disbursed",  ":/icons/welfare.svg",       "#e7defc", "#7c3aed", "#5423b7", "14 beneficiaries",   true},
-    {"dash_marriages_year",     ":/icons/marriage.svg",      "#ffe4cf", "#ea580c", "#8f3708", "2 this quarter",     true},
-    {"dash_deaths_year",        ":/icons/death.svg",         "#e6ebf2", "#64748b", "#33415c", "1 this month",       false},
-    {"dash_balance_month",      ":/icons/reports.svg",       "#dbe7fd", "#2563eb", "#1e3fae", "across all funds",   true},
+    {"dash_total_families",     ":/icons/families.svg",      "#059669", "+6 this month",      true,  "em"},
+    {"dash_total_members",      ":/icons/members.svg",       "#0d9488", "+18 this month",     true,  "teal"},
+    {"dash_active_members",     ":/icons/check.svg",         "#0284c7", "86.3% active",       true,  "sky"},
+    {"dash_monthly_collection", ":/icons/dollar.svg",        "#d97706", "+9.1% vs June",      true,  "gold"},
+    {"dash_pending_dues",       ":/icons/alert.svg",         "#e11d48", "7 families overdue", false, "rose"},
+    {"dash_donations_month",    ":/icons/donations.svg",     "#db2777", "+12.4% vs June",     true,  "pink"},
+    {"dash_welfare_disbursed",  ":/icons/welfare.svg",       "#7c3aed", "14 beneficiaries",   true,  "violet"},
+    {"dash_marriages_year",     ":/icons/marriage.svg",      "#ea580c", "2 this quarter",     true,  "orange"},
+    {"dash_deaths_year",        ":/icons/death.svg",         "#64748b", "1 this month",       false, "slate"},
+    {"dash_balance_month",      ":/icons/reports.svg",       "#2563eb", "across all funds",   true,  "blue"},
 };
 
 QWidget* DashboardView::makeStatCard(int index, QLabel*& valueLabel) {
     const auto& s = STAT_DEFS[index];
     auto* card = new QFrame(this);
-    card->setObjectName("statCard");
-    // Flat tint: entire card background is the tint color
-    card->setStyleSheet(QString(
-        "QFrame#statCard { background: %1; border: 1.5px solid %2; border-radius: 10px; }"
-    ).arg(s.tintBg, s.tintBorder));
+    // Use cssClass for tint background+border — NO inline setStyleSheet
+    QString tintClass = QString("statTint-%1").arg(s.tintName);
+    StyleProps::set(card, tintClass.toUtf8().constData());
     card->setMinimumHeight(115);
     card->setMaximumHeight(135);
     card->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
@@ -148,31 +139,25 @@ QWidget* DashboardView::makeStatCard(int index, QLabel*& valueLabel) {
     // Top row: solid icon (left) + delta badge (right)
     auto* srow = new QHBoxLayout();
     srow->setSpacing(8);
-    srow->addWidget(makeSolidIcon(card, s.iconPath, s.tintBorder, 37));
+    srow->addWidget(makeSolidIcon(card, s.iconPath, s.solidColor, 37));
     srow->addStretch();
     auto* delta = new QLabel(QString(s.deltaUp ? "▲ " : "▼ ") + s.deltaText, card);
-    delta->setStyleSheet(QString(
-        "font: 800 9.5px Manrope; padding: 3px 8px; border-radius: 99px; "
-        "background: #ffffff; color: %1; border: 1.5px solid %2; max-width: 140px;"
-    ).arg(s.tintText, s.tintBorder));
+    StyleProps::set(delta, s.deltaUp ? "deltaUp" : "deltaDown");
     delta->setWordWrap(false);
     srow->addWidget(delta);
     v->addLayout(srow);
 
-    // Value (large, colored)
+    // Value (large, colored) — cssClass drives the color
     valueLabel = new QLabel("—", card);
-    valueLabel->setStyleSheet(QString(
-        "font: 700 18pt 'Space Grotesk'; color: %1; background: transparent; max-height: 30px;"
-    ).arg(s.tintText));
+    QString valClass = QString("statVal-%1").arg(s.tintName);
+    StyleProps::set(valueLabel, valClass.toUtf8().constData());
     valueLabel->setWordWrap(false);
     v->addWidget(valueLabel);
 
-    // Label (small uppercase, colored)
+    // Label (small uppercase) — cssClass drives the color
     auto* lbl = new QLabel(TR(s.i18nKey), card);
-    lbl->setStyleSheet(QString(
-        "font: 800 8pt Manrope; letter-spacing: 1px; color: %1; opacity: 0.75; "
-        "background: transparent; max-height: 16px;"
-    ).arg(s.tintText));
+    QString labClass = QString("statLab-%1").arg(s.tintName);
+    StyleProps::set(lbl, labClass.toUtf8().constData());
     lbl->setWordWrap(true);
     v->addWidget(lbl);
 
@@ -180,7 +165,7 @@ QWidget* DashboardView::makeStatCard(int index, QLabel*& valueLabel) {
 }
 
 QWidget* DashboardView::makeChartCard(const QString& title, const QString& subtitle,
-                                       const QString& borderColor, QWidget* chart) {
+                                       const QString& tintName, QWidget* chart) {
     auto* card = new QFrame(this);
     card->setObjectName("card");
     card->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -189,20 +174,15 @@ QWidget* DashboardView::makeChartCard(const QString& title, const QString& subti
     v->setContentsMargins(16, 15, 16, 8);
     v->setSpacing(6);
 
-    // Title with colored left border
+    // Title with colored left border — via cssClass
     auto* titleLbl = new QLabel(title, card);
-    titleLbl->setStyleSheet(QString(
-        "font: 700 10pt Manrope; color: #12241b; background: transparent; "
-        "padding-left: 10px; border-left: 5px solid %1; max-height: 20px;"
-    ).arg(borderColor));
+    QString titleClass = QString("chartTitle-%1").arg(tintName);
+    StyleProps::set(titleLbl, titleClass.toUtf8().constData());
     v->addWidget(titleLbl);
 
     if (!subtitle.isEmpty()) {
         auto* subLbl = new QLabel(subtitle, card);
-        subLbl->setStyleSheet(QString(
-            "font: 600 8.5pt Manrope; color: #7e968a; background: transparent; "
-            "padding-left: 10px; max-height: 16px;"
-        ));
+        StyleProps::set(subLbl, "chartSub");
         v->addWidget(subLbl);
     }
 
@@ -211,7 +191,7 @@ QWidget* DashboardView::makeChartCard(const QString& title, const QString& subti
     return card;
 }
 
-// Quick action button — white card with solid colored icon square
+// Quick action button definitions
 struct QADef {
     const char* i18nKey;
     const char* iconPath;
@@ -241,20 +221,17 @@ static QPushButton* makeQuickAction(QWidget* parent, const QADef& qa) {
     h->setContentsMargins(12, 12, 12, 12);
     h->setSpacing(10);
 
-    // Solid colored icon square
     auto* iconLbl = makeSolidIcon(btn, qa.iconPath, qa.iconColor, 42);
     h->addWidget(iconLbl);
 
     auto* textCol = new QVBoxLayout();
     textCol->setSpacing(1);
     auto* titleLbl = new QLabel(TR(qa.i18nKey), btn);
-    titleLbl->setStyleSheet("font: 700 11px Manrope; color: #12241b; background: transparent; border: none;");
+    StyleProps::set(titleLbl, "qaTitle");
     titleLbl->setWordWrap(false);
-    titleLbl->setMaximumHeight(16);
     auto* subLbl = new QLabel(qa.subtitle, btn);
-    subLbl->setStyleSheet("font: 600 9px Manrope; color: #7e968a; background: transparent; border: none;");
+    StyleProps::set(subLbl, "qaSub");
     subLbl->setWordWrap(false);
-    subLbl->setMaximumHeight(14);
     textCol->addWidget(titleLbl);
     textCol->addWidget(subLbl);
     h->addLayout(textCol, 1);
@@ -273,7 +250,7 @@ void DashboardView::setupUi() {
     layout->setSpacing(16);
     layout->setContentsMargins(22, 20, 22, 26);
 
-    // 1. View header: greeting + subtitle (left), date chips + refresh (right)
+    // 1. View header
     auto* header = new QHBoxLayout();
     header->setSpacing(14);
     auto* titleCol = new QVBoxLayout();
@@ -287,15 +264,10 @@ void DashboardView::setupUi() {
     header->addLayout(titleCol);
     header->addStretch();
 
-    // Date chip
     auto* dateChip = new QLabel(QDateTime::currentDateTime().toString("dddd, dd MMMM yyyy"), content);
-    dateChip->setStyleSheet(
-        "font: 700 9pt Manrope; color: #33415c; "
-        "background: #e6ebf2; border: 1.5px solid #64748b; "
-        "border-radius: 7px; padding: 7px 12px;");
+    StyleProps::set(dateChip, "dateChip");
     header->addWidget(dateChip);
 
-    // Refresh button
     refreshBtn_ = new QPushButton(TR("action_refresh"), content);
     StyleProps::set(refreshBtn_, "chip");
     refreshBtn_->setCursor(Qt::PointingHandCursor);
@@ -305,7 +277,7 @@ void DashboardView::setupUi() {
     connect(refreshBtn_, &QPushButton::clicked, this, &DashboardView::refresh);
     layout->addLayout(header);
 
-    // 2. Quick action row: 5 equal-width buttons
+    // 2. Quick action row
     auto* qaLayout = new QHBoxLayout();
     qaLayout->setSpacing(12);
     QPushButton* qaBtns[5];
@@ -319,7 +291,7 @@ void DashboardView::setupUi() {
     qaDonation_ = qaBtns[3]; qaReport_ = qaBtns[4];
     layout->addLayout(qaLayout);
 
-    // 3. Stat grid: 10 cards in 5×2
+    // 3. Stat grid 5×2
     auto* statGrid = new QGridLayout();
     statGrid->setSpacing(12);
     statGrid->setContentsMargins(0, 0, 0, 0);
@@ -334,34 +306,31 @@ void DashboardView::setupUi() {
     lblBalance_ = statLabels[9];
     layout->addLayout(statGrid);
 
-    // 4. Chart grid: 4 cards in 2×2
+    // 4. Chart grid 2×2
     auto* chartGrid = new QGridLayout();
     chartGrid->setSpacing(12);
     chartGrid->setContentsMargins(0, 0, 0, 0);
 
     auto* cc = new QChart(); auto* cv1 = new QChartView(cc); cv1->setMinimumHeight(220); cv1->setRenderHint(QPainter::Antialiasing);
-    chartGrid->addWidget(makeChartCard(TR("dash_chart_collections"), "Subscription receipts · last 12 months", "#059669", cv1), 0, 0);
-
+    chartGrid->addWidget(makeChartCard(TR("dash_chart_collections"), "Subscription receipts · last 12 months", "em", cv1), 0, 0);
     auto* dc = new QChart(); auto* cv2 = new QChartView(dc); cv2->setMinimumHeight(220); cv2->setRenderHint(QPainter::Antialiasing);
-    chartGrid->addWidget(makeChartCard(TR("dash_chart_donations"), "All categories · last 12 months", "#d97706", cv2), 0, 1);
-
+    chartGrid->addWidget(makeChartCard(TR("dash_chart_donations"), "All categories · last 12 months", "gold", cv2), 0, 1);
     auto* ic = new QChart(); auto* cv3 = new QChartView(ic); cv3->setMinimumHeight(220); cv3->setRenderHint(QPainter::Antialiasing);
-    chartGrid->addWidget(makeChartCard(TR("dash_chart_income_expense"), "Financial year 2026-27 · to date", "#7c3aed", cv3), 1, 0);
-
+    chartGrid->addWidget(makeChartCard(TR("dash_chart_income_expense"), "Financial year 2026-27 · to date", "violet", cv3), 1, 0);
     auto* mc = new QChart(); auto* cv4 = new QChartView(mc); cv4->setMinimumHeight(220); cv4->setRenderHint(QPainter::Antialiasing);
-    chartGrid->addWidget(makeChartCard(TR("dash_chart_membership_growth"), "Total registered members", "#0284c7", cv4), 1, 1);
+    chartGrid->addWidget(makeChartCard(TR("dash_chart_membership_growth"), "Total registered members", "sky", cv4), 1, 1);
     layout->addLayout(chartGrid);
 
-    // 5. Recent activity table card
+    // 5. Recent activity table
     auto* rg = new QFrame(content);
     rg->setObjectName("card");
     auto* rl = new QVBoxLayout(rg);
     rl->setContentsMargins(16, 15, 16, 15);
     rl->setSpacing(6);
     auto* rTitle = new QLabel(TR("dash_recent_activity"), rg);
-    rTitle->setStyleSheet("font: 700 10pt Manrope; color: #12241b; background: transparent; padding-left: 10px; border-left: 5px solid #059669; max-height: 20px;");
+    StyleProps::set(rTitle, "chartTitle-em");
     auto* rSub = new QLabel(TR("dash_recent_activity_sub"), rg);
-    rSub->setStyleSheet("font: 600 8.5pt Manrope; color: #7e968a; background: transparent; padding-left: 10px; max-height: 16px;");
+    StyleProps::set(rSub, "chartSub");
     rl->addWidget(rTitle);
     rl->addWidget(rSub);
     recentTable_ = new QTableWidget(rg);
@@ -410,16 +379,12 @@ void DashboardView::loadCharts() {
 
     for (auto* cv : charts) {
         QChart* ch = cv->chart();
-        ch->setTheme(chartTheme);
-        ch->setBackgroundVisible(false);
-        ch->setMargins(QMargins(8, 8, 8, 8));
-        ch->setTitle("");
-        ch->legend()->hide();
+        ch->setTheme(chartTheme); ch->setBackgroundVisible(false);
+        ch->setMargins(QMargins(8,8,8,8)); ch->setTitle(""); ch->legend()->hide();
     }
 
-    // Chart 1: Collections (emerald line)
-    auto* cc = charts[0]->chart();
-    cc->removeAllSeries(); for (auto* a : cc->axes()) cc->removeAxis(a);
+    // Chart 1: Collections (emerald)
+    auto* cc = charts[0]->chart(); cc->removeAllSeries(); for (auto* a : cc->axes()) cc->removeAxis(a);
     auto* s1 = new QLineSeries(); s1->setColor(QColor("#059669")); s1->setPointsVisible(true);
     auto cd = svc.monthlyCollections(12); QStringList m1; double mx1 = 0; int i = 0;
     for (const auto& m : cd) { double a = m.toMap().value("amount").toDouble(); s1->append(i, a); m1 << m.toMap().value("month").toString(); if (a > mx1) mx1 = a; ++i; }
@@ -427,9 +392,8 @@ void DashboardView::loadCharts() {
     auto* ax1 = new QBarCategoryAxis(); ax1->append(m1); ax1->setGridLineVisible(false); cc->addAxis(ax1, Qt::AlignBottom); s1->attachAxis(ax1);
     auto* ay1 = new QValueAxis(); ay1->setRange(0, mx1 * 1.2 + 1); ay1->setLabelFormat("%.0f"); cc->addAxis(ay1, Qt::AlignLeft); s1->attachAxis(ay1);
 
-    // Chart 2: Donations (gold line)
-    auto* dc = charts[1]->chart();
-    dc->removeAllSeries(); for (auto* a : dc->axes()) dc->removeAxis(a);
+    // Chart 2: Donations (gold)
+    auto* dc = charts[1]->chart(); dc->removeAllSeries(); for (auto* a : dc->axes()) dc->removeAxis(a);
     auto* s2 = new QLineSeries(); s2->setColor(QColor("#d97706")); s2->setPointsVisible(true);
     auto dd = svc.donationsByCategory(QDate::currentDate().addMonths(-12).toString(Qt::ISODate), QDate::currentDate().toString(Qt::ISODate));
     QStringList m2; double mx2 = 0; int j = 0;
@@ -439,8 +403,7 @@ void DashboardView::loadCharts() {
     auto* ay2 = new QValueAxis(); ay2->setRange(0, mx2 * 1.2 + 1); ay2->setLabelFormat("%.0f"); dc->addAxis(ay2, Qt::AlignLeft); s2->attachAxis(ay2);
 
     // Chart 3: Income vs Expense (bar)
-    auto* ic = charts[2]->chart();
-    ic->removeAllSeries(); for (auto* a : ic->axes()) ic->removeAxis(a);
+    auto* ic = charts[2]->chart(); ic->removeAllSeries(); for (auto* a : ic->axes()) ic->removeAxis(a);
     auto ie = svc.incomeVsExpense(6);
     auto* is = new QBarSet(TR("acc_income")); is->setColor(QColor("#059669"));
     auto* es = new QBarSet(TR("acc_expense")); es->setColor(QColor("#e11d48"));
@@ -451,9 +414,8 @@ void DashboardView::loadCharts() {
     auto* ay3 = new QValueAxis(); ay3->setRange(0, mx3 * 1.2 + 1); ay3->setLabelFormat("%.0f"); ic->addAxis(ay3, Qt::AlignLeft); bs->attachAxis(ay3);
     ic->legend()->setVisible(true); ic->legend()->setAlignment(Qt::AlignBottom); ic->legend()->show();
 
-    // Chart 4: Membership growth (sky blue line)
-    auto* mc = charts[3]->chart();
-    mc->removeAllSeries(); for (auto* a : mc->axes()) mc->removeAxis(a);
+    // Chart 4: Membership growth (sky)
+    auto* mc = charts[3]->chart(); mc->removeAllSeries(); for (auto* a : mc->axes()) mc->removeAxis(a);
     auto* ms = new QLineSeries(); ms->setColor(QColor("#0284c7")); ms->setPointsVisible(true);
     auto mg = svc.membershipGrowth(12); QStringList m4; double mx4 = 0; int mi = 0;
     for (const auto& m : mg) { double t = m.toMap().value("total").toDouble(); ms->append(mi, t); m4 << m.toMap().value("month").toString(); if (t > mx4) mx4 = t; ++mi; }

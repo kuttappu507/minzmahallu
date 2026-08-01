@@ -17,6 +17,12 @@
         <file alias="AnekMalayalam-Medium.ttf">fonts/AnekMalayalam-Medium.ttf</file>
         <file alias="AnekMalayalam-SemiBold.ttf">fonts/AnekMalayalam-SemiBold.ttf</file>
         <file alias="AnekMalayalam-Bold.ttf">fonts/AnekMalayalam-Bold.ttf</file>
+        <file alias="Poppins-Regular.ttf">fonts/Poppins-Regular.ttf</file>
+        <file alias="Poppins-Medium.ttf">fonts/Poppins-Medium.ttf</file>
+        <file alias="Poppins-SemiBold.ttf">fonts/Poppins-SemiBold.ttf</file>
+        <file alias="Poppins-Bold.ttf">fonts/Poppins-Bold.ttf</file>
+        <file alias="Gayathri-Regular.ttf">fonts/Gayathri-Regular.ttf</file>
+        <file alias="Gayathri-Bold.ttf">fonts/Gayathri-Bold.ttf</file>
     </qresource>
     <qresource prefix="/icons">
         <file alias="dashboard.svg">icons/svg/dashboard.svg</file>
