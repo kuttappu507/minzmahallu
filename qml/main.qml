@@ -27,7 +27,7 @@ ApplicationWindow {
                 color: "#ffffff"; anchors.horizontalCenter: parent.horizontalCenter
             }
             Text {
-                text: "Loading…"
+                text: "Loading..."
                 font.family: "Poppins"; font.pixelSize: 12; color: "#d7f2e4"
                 anchors.horizontalCenter: parent.horizontalCenter
             }

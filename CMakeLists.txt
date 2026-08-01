@@ -65,16 +65,96 @@ if(WIN32)
     add_executable(${APP_NAME} WIN32
         ${MMS_SOURCES}
         ${MMS_HEADERS}
-        "${CMAKE_CURRENT_SOURCE_DIR}/resources/mms.qrc"
         ${APP_RC_FILE}
     )
 else()
     add_executable(${APP_NAME}
         ${MMS_SOURCES}
         ${MMS_HEADERS}
-        "${CMAKE_CURRENT_SOURCE_DIR}/resources/mms.qrc"
     )
 endif()
+
+# =============================================================================
+# Resources: icons, fonts, templates (via qt_add_resources, NOT manual .qrc)
+# =============================================================================
+qt_add_resources(${APP_NAME} "mms_resources"
+    PREFIX "/"
+    FILES
+        resources/icons/mms.svg
+        resources/icons/mms.png
+        resources/icons/mms_white.png
+        resources/icons/mms_icon.png
+        resources/icons/mms.ico
+)
+
+qt_add_resources(${APP_NAME} "fonts_resources"
+    PREFIX "/fonts"
+    FILES
+        resources/fonts/NotoSans-Regular.ttf
+        resources/fonts/NotoSans-Bold.ttf
+        resources/fonts/AnekMalayalam-Regular.ttf
+        resources/fonts/AnekMalayalam-Medium.ttf
+        resources/fonts/AnekMalayalam-SemiBold.ttf
+        resources/fonts/AnekMalayalam-Bold.ttf
+        resources/fonts/Poppins-Regular.ttf
+        resources/fonts/Poppins-Medium.ttf
+        resources/fonts/Poppins-SemiBold.ttf
+        resources/fonts/Poppins-Bold.ttf
+        resources/fonts/Gayathri-Regular.ttf
+        resources/fonts/Gayathri-Bold.ttf
+)
+
+qt_add_resources(${APP_NAME} "icons_resources"
+    PREFIX "/icons"
+    FILES
+        resources/icons/svg/dashboard.svg
+        resources/icons/svg/families.svg
+        resources/icons/svg/members.svg
+        resources/icons/svg/subscriptions.svg
+        resources/icons/svg/donations.svg
+        resources/icons/svg/accounting.svg
+        resources/icons/svg/marriage.svg
+        resources/icons/svg/death.svg
+        resources/icons/svg/welfare.svg
+        resources/icons/svg/certificates.svg
+        resources/icons/svg/reports.svg
+        resources/icons/svg/settings.svg
+        resources/icons/svg/users.svg
+        resources/icons/svg/audit.svg
+        resources/icons/svg/backup.svg
+        resources/icons/svg/search.svg
+        resources/icons/svg/bell.svg
+        resources/icons/svg/moon.svg
+        resources/icons/svg/sun.svg
+        resources/icons/svg/refresh.svg
+        resources/icons/svg/chevron-down.svg
+        resources/icons/svg/chevron-left.svg
+        resources/icons/svg/chevron-right.svg
+        resources/icons/svg/plus.svg
+        resources/icons/svg/edit.svg
+        resources/icons/svg/trash.svg
+        resources/icons/svg/print.svg
+        resources/icons/svg/download.svg
+        resources/icons/svg/archive.svg
+        resources/icons/svg/check.svg
+        resources/icons/svg/alert.svg
+        resources/icons/svg/dollar.svg
+        resources/icons/svg/trending-up.svg
+        resources/icons/svg/trending-down.svg
+        resources/icons/svg/menu.svg
+        resources/icons/svg/user.svg
+        resources/icons/svg/log-out.svg
+        resources/icons/svg/key.svg
+)
+
+qt_add_resources(${APP_NAME} "templates_resources"
+    PREFIX "/templates"
+    FILES
+        resources/templates/membership_cert.html
+        resources/templates/residence_cert.html
+        resources/templates/marriage_cert.html
+        resources/templates/death_cert.html
+)
 
 # =============================================================================
 # THE KEY FIX: Use qt_add_qml_module (Qt 6 proper way to register QML files)
