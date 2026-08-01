@@ -36,6 +36,10 @@ find_package(Qt6 6.5 REQUIRED COMPONENTS
     PrintSupport
     Svg
     Network
+    Quick
+    Qml
+    QuickControls2
+    QuickLayouts
 )
 
 if(Qt6_FOUND)
@@ -124,6 +128,10 @@ target_link_libraries(${APP_NAME} PRIVATE
     Qt6::PrintSupport
     Qt6::Svg
     Qt6::Network
+    Qt6::Quick
+    Qt6::Qml
+    Qt6::QuickControls2
+    Qt6::QuickLayouts
     OpenSSL::Crypto
     OpenSSL::SSL
     ZLIB::ZLIB
