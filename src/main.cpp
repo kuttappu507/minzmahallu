@@ -2,6 +2,8 @@
 #include <QQmlApplicationEngine>
 #include <QQuickStyle>
 #include <cstdio>
+#include <QFile>
+#include <QDir>
 #include <iostream>
 
 #ifdef Q_OS_WIN
