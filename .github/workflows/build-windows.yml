@@ -169,21 +169,26 @@ jobs:
           # Harvest files from dist directory
           & $heat dir dist -gg -sfrag -template:fragment -out Files.wxs -dr MMSINSTALLDIR -var var.SourceDir
           
-          # Write WiX main script using single-quoted here-string (no PS variable expansion)
+          # Write WiX main script — single-quoted here-string (no PS expansion)
           @'
           <?xml version="1.0" encoding="UTF-8"?>
           <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
             <Product Id="*" Name="Minz Mahallu Management" Language="1033" Version="1.0.0"
                      Manufacturer="Minz Mahallu" UpgradeCode="12345678-1234-1234-1234-123456789012">
-              <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
+              <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" Platform="x64" />
               <MajorUpgrade DowngradeErrorMessage="A newer version is already installed." />
               <Media Id="1" Cabinet="MMS.cab" EmbedCab="yes" />
               <Directory Id="TARGETDIR" Name="SourceDir">
-                <Directory Id="ProgramFilesFolder">
+                <Directory Id="ProgramFiles64Folder">
                   <Directory Id="MMSINSTALLDIR" Name="Minz Mahallu Management" />
                 </Directory>
                 <Directory Id="ProgramMenuFolder">
-                  <Directory Id="StartMenuDir" Name="Minz Mahallu Management" />
+                  <Directory Id="StartMenuDir" Name="Minz Mahallu Management">
+                    <Component Id="StartMenuDirComp" Guid="*" Win64="yes">
+                      <RemoveFolder Id="RemoveStartMenuDir" Directory="StartMenuDir" On="uninstall" />
+                      <RegistryValue Root="HKCU" Key="Software\MinzMahallu\MMS" Name="installed" Type="integer" Value="1" KeyPath="yes" />
+                    </Component>
+                  </Directory>
                 </Directory>
               </Directory>
               <DirectoryRef Id="MMSINSTALLDIR">
@@ -195,6 +200,7 @@ jobs:
               </DirectoryRef>
               <Feature Id="Complete" Title="MMS" Level="1">
                 <ComponentRef Id="MMS.exe" />
+                <ComponentRef Id="StartMenuDirComp" />
               </Feature>
             </Product>
           </Wix>
@@ -252,6 +258,7 @@ jobs:
         with:
           name: MMS-installer-msi
           path: ./artifacts
+        continue-on-error: true
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
@@ -259,6 +266,8 @@ jobs:
           files: |
             ./artifacts/MMS-portable-windows-x64.zip
             ./artifacts/MMS-Setup.msi
+        env:
+          GITHUB_TOKEN: \${{ secrets.GITHUB_TOKEN }}
           generate_release_notes: true
           draft: false
           prerelease: false
