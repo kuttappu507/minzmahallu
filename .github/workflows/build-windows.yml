@@ -136,7 +136,13 @@ jobs:
           if exist vc_redist.x64.exe (
             vc_redist.x64.exe /install /quiet /norestart 2>nul
           )
-          start "" MMS.exe
+          MMS.exe
+          if errorlevel 1 (
+            echo.
+            echo MMS.exe failed to start (exit code %errorlevel%)
+            echo Check that Qt6Quick.dll, Qt6Qml.dll are present
+            pause
+          )
           "@ | Out-File -FilePath dist-final\run_mms.bat -Encoding ASCII
           "portable" | Out-File -FilePath dist-final\mms.portable -Encoding ASCII
 

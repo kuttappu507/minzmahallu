@@ -72,10 +72,13 @@
     </qresource>
     <qresource prefix="/qml">
         <file alias="main.qml">../qml/main.qml</file>
-        <file alias="theme/Theme.qml">../qml/theme/Theme.qml</file>
         <file alias="components/SquircleButton.qml">../qml/components/SquircleButton.qml</file>
         <file alias="components/StatCard.qml">../qml/components/StatCard.qml</file>
         <file alias="components/Pill.qml">../qml/components/Pill.qml</file>
         <file alias="views/DashboardView.qml">../qml/views/DashboardView.qml</file>
+    </qresource>
+    <qresource prefix="/Theme">
+        <file alias="qmldir">../qml/theme/qmldir</file>
+        <file alias="Theme.qml">../qml/theme/Theme.qml</file>
     </qresource>
 </RCC>
