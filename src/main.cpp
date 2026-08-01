@@ -1,5 +1,5 @@
 /*
- * main.cpp — QML entry point with detailed error output
+ * main.cpp — QML embedded as string literal (no qrc dependency)
  */
 #include "core/Logger.h"
 #include "core/Config.h"
@@ -12,12 +12,12 @@
 #include <QApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
-#include <QQmlEngine>
 #include <QDir>
 #include <QFontDatabase>
 #include <QQuickStyle>
 #include <QStandardPaths>
-#include <QMessageBox>
+#include <QResource>
+#include <stdio.h>
 
 #ifdef Q_OS_WIN
 #  undef _WIN32_WINNT
@@ -29,21 +29,209 @@
 
 using namespace mms;
 
-// Simple inline QML — absolute minimum that should always work
-static const char* SIMPLE_QML =
-"import QtQuick\n"
-"import QtQuick.Controls\n"
-"ApplicationWindow {\n"
-"    visible: true; width: 800; height: 600\n"
-"    title: \"MMS\"\n"
-"    color: \"#e7f4ea\"\n"
-"    Text {\n"
-"        anchors.centerIn: parent\n"
-"        text: \"MMS is running\"\n"
-"        font.pixelSize: 24\n"
-"        color: \"#12241b\"\n"
-"    }\n"
-"}\n";
+// Main UI QML — embedded directly in the binary as a raw string literal
+// This eliminates ALL qrc/rcc dependency issues
+static const char* MAIN_QML = R"QML(
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+
+ApplicationWindow {
+    id: win
+    visible: true
+    width: 1366; height: 768
+    minimumWidth: 1200; minimumHeight: 700
+    color: "#e7f4ea"
+    title: "Minz Mahallu Management"
+
+    property bool sidebarCollapsed: false
+    property string currentUser: "Administrator"
+    property string currentRole: "Administrator"
+
+    // Splash
+    Rectangle {
+        id: splash
+        anchors.fill: parent; z: 100
+        color: "#065f46"; visible: true; opacity: 1
+        Column {
+            anchors.centerIn: parent; spacing: 20
+            Text {
+                text: "Minz Mahallu Management"
+                font.family: "Poppins"; font.pixelSize: 26; font.weight: Font.Bold
+                color: "#ffffff"; anchors.horizontalCenter: parent.horizontalCenter
+            }
+            Text {
+                text: "Loading..."
+                font.family: "Poppins"; font.pixelSize: 12; color: "#d7f2e4"
+                anchors.horizontalCenter: parent.horizontalCenter
+            }
+        }
+        Timer { interval: 2000; running: true; onTriggered: { splash.opacity = 0; fade.running = true } }
+        NumberAnimation { id: fade; target: splash; property: "opacity"; to: 0; duration: 500; onStopped: splash.visible = false }
+    }
+
+    RowLayout {
+        anchors.fill: parent; spacing: 0
+
+        // SIDEBAR
+        Rectangle {
+            id: sidebar
+            Layout.fillHeight: true
+            Layout.preferredWidth: sidebarCollapsed ? 80 : 260
+            Behavior on Layout.preferredWidth { NumberAnimation { duration: 280; easing.type: Easing.OutCubic } }
+            clip: true
+            gradient: Gradient {
+                orientation: Gradient.Vertical
+                GradientStop { position: 0.0; color: "#0a7f5d" }
+                GradientStop { position: 0.42; color: "#065f46" }
+                GradientStop { position: 1.0; color: "#044633" }
+            }
+
+            ColumnLayout {
+                anchors.fill: parent; spacing: 0
+
+                // Logo
+                Item {
+                    Layout.fillWidth: true; Layout.preferredHeight: 80
+                    Text {
+                        anchors.centerIn: parent
+                        text: "MMS"
+                        font.family: "Space Grotesk"; font.pixelSize: 24; font.weight: Font.Bold
+                        color: "#ffffff"
+                    }
+                }
+
+                // Nav
+                ListView {
+                    id: navList
+                    Layout.fillWidth: true; Layout.fillHeight: true
+                    clip: true; model: navModel; delegate: navDelegate
+                    ScrollBar.vertical: ScrollBar { policy: ScrollBar.AsNeeded }
+                }
+
+                // User card
+                Rectangle {
+                    Layout.fillWidth: true; Layout.preferredHeight: 70
+                    color: "transparent"
+                    Rectangle { anchors.top: parent.top; anchors.left: parent.left; anchors.right: parent.right; height: 1; color: "rgba(255,255,255,0.14)" }
+                    RowLayout {
+                        anchors.fill: parent; anchors.margins: 14; spacing: 10
+                        Rectangle {
+                            width: 36; height: 36; radius: 9
+                            color: "#f2c14e"; border.width: 2; border.color: "#b98317"
+                            Text { anchors.centerIn: parent; text: "A"; font.family: "Space Grotesk"; font.pixelSize: 13; font.weight: Font.Bold; color: "#4a3606" }
+                        }
+                        ColumnLayout {
+                            spacing: 1; visible: !sidebarCollapsed
+                            Text { text: currentUser; font.family: "Poppins"; font.pixelSize: 12; font.weight: Font.Bold; color: "#ffffff" }
+                            Text { text: currentRole; font.family: "Poppins"; font.pixelSize: 10; color: "#9fd8c3" }
+                        }
+                        Item { Layout.fillWidth: true }
+                    }
+                }
+            }
+
+            // Flap
+            Rectangle {
+                width: 26; height: 62; radius: 9
+                anchors.right: parent.right; anchors.rightMargin: -13
+                anchors.verticalCenter: parent.verticalCenter
+                color: flapMA.containsMouse ? "#0aa06f" : "#047857"
+                border.width: 1; border.color: "#0a7f5d"; z: 50
+                Text { anchors.centerIn: parent; text: sidebarCollapsed ? ">" : "<"; color: "#ffffff"; font.pixelSize: 14 }
+                MouseArea { id: flapMA; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: sidebarCollapsed = !sidebarCollapsed }
+            }
+        }
+
+        // MAIN COLUMN
+        ColumnLayout {
+            Layout.fillWidth: true; Layout.fillHeight: true; spacing: 0
+
+            // Top bar
+            Rectangle {
+                Layout.fillWidth: true; Layout.preferredHeight: 58
+                color: "#ffffff"
+                Rectangle { anchors.bottom: parent.bottom; anchors.left: parent.left; anchors.right: parent.right; height: 1.5; color: "#d2e5d8" }
+                RowLayout {
+                    anchors.fill: parent; anchors.leftMargin: 18; anchors.rightMargin: 18; spacing: 13
+                    Text { text: "Minz Mahallu /"; font.family: "Poppins"; font.pixelSize: 11; font.weight: Font.DemiBold; color: "#7e968a" }
+                    Text { text: navModel.get(navList.currentIndex) ? navModel.get(navList.currentIndex).title : ""; font.family: "Space Grotesk"; font.pixelSize: 15; font.weight: Font.Bold; color: "#12241b" }
+                    Item { Layout.fillWidth: true }
+                    Text { text: "v1.0.0"; font.family: "Poppins"; font.pixelSize: 11; color: "#7e968a" }
+                }
+            }
+
+            // Content
+            StackLayout {
+                id: contentStack
+                Layout.fillWidth: true; Layout.fillHeight: true
+                currentIndex: navList.currentIndex
+                Repeater {
+                    model: navModel
+                    delegate: Rectangle {
+                        color: "#e7f4ea"
+                        Text { anchors.centerIn: parent; text: model.title; font.pixelSize: 24; color: "#7e968a" }
+                    }
+                }
+            }
+
+            // Status bar
+            Rectangle {
+                Layout.fillWidth: true; Layout.preferredHeight: 28
+                color: "#f2faf4"
+                Rectangle { anchors.top: parent.top; anchors.left: parent.left; anchors.right: parent.right; height: 1.5; color: "#d2e5d8" }
+                Text { anchors.left: parent.left; anchors.leftMargin: 14; anchors.verticalCenter: parent.verticalCenter; text: "Ready"; font.family: "Poppins"; font.pixelSize: 11; color: "#4f6b5c" }
+            }
+        }
+    }
+
+    ListModel {
+        id: navModel
+        ListElement { title: "Dashboard" }
+        ListElement { title: "Families" }
+        ListElement { title: "Members" }
+        ListElement { title: "Subscriptions" }
+        ListElement { title: "Donations" }
+        ListElement { title: "Accounting" }
+        ListElement { title: "Marriage" }
+        ListElement { title: "Death" }
+        ListElement { title: "Welfare" }
+        ListElement { title: "Certificates" }
+        ListElement { title: "Tokens" }
+        ListElement { title: "Reports" }
+        ListElement { title: "Settings" }
+        ListElement { title: "Users" }
+        ListElement { title: "Audit Log" }
+        ListElement { title: "Backup" }
+    }
+
+    Component {
+        id: navDelegate
+        Rectangle {
+            width: navList.width; height: 44
+            anchors.margins: 2
+            radius: 9
+            color: navMA.containsMouse ? "rgba(255,255,255,0.09)" : (navList.currentIndex === index ? "rgba(255,255,255,0.14)" : "transparent")
+            Behavior on color { ColorAnimation { duration: 140 } }
+            Rectangle {
+                visible: navList.currentIndex === index
+                width: 4; height: 22; radius: 2; color: "#f2c14e"
+                anchors.left: parent.left; anchors.leftMargin: 0; anchors.verticalCenter: parent.verticalCenter
+            }
+            Text {
+                anchors.fill: parent; anchors.leftMargin: 24
+                verticalAlignment: Text.AlignVCenter
+                text: model.title
+                font.family: "Poppins"; font.pixelSize: 13; font.weight: Font.Bold
+                color: navList.currentIndex === index ? "#ffffff" : "#c4e7d7"
+                elide: Text.ElideRight
+                visible: !sidebarCollapsed
+            }
+            MouseArea { id: navMA; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: navList.currentIndex = index }
+        }
+    }
+}
+)QML";
 
 int main(int argc, char* argv[]) {
 #ifdef Q_OS_WIN
@@ -75,52 +263,38 @@ int main(int argc, char* argv[]) {
 
     Logger::info("=== MMS Starting ===");
 
-    // Create engine
     QQmlApplicationEngine engine;
 
-    // Capture QML warnings/errors
+    // Capture QML warnings
     QObject::connect(&engine, &QQmlApplicationEngine::warnings, &engine,
         [](const QList<QQmlError> &warnings) {
             for (const auto &w : warnings) {
-                QString msg = QString("QML WARNING: %1:%2:%3: %4")
-                    .arg(w.url().toString())
-                    .arg(w.line())
-                    .arg(w.column())
-                    .arg(w.description());
+                QString msg = QString("QML WARNING: %1:%2: %3")
+                    .arg(w.url().toString()).arg(w.line()).arg(w.description());
                 Logger::error(msg);
                 fprintf(stderr, "%s\n", msg.toUtf8().constData());
+                fflush(stderr);
             }
         });
 
-    engine.addImportPath("qrc:/");
     engine.rootContext()->setContextProperty("appVersion", APP_VERSION_STR);
 
-    // STEP 1: Try loading from qrc
-    Logger::info("Trying qrc:/qml/main.qml...");
-    engine.load(QUrl("qrc:/qml/main.qml"));
+    // Load QML directly from the embedded string — NO qrc dependency
+    printf("Loading embedded QML...\n");
+    fflush(stdout);
+    
+    engine.loadData(MAIN_QML, QUrl("qrc:/embedded_main.qml"));
 
     if (engine.rootObjects().isEmpty()) {
-        Logger::error("qrc:/qml/main.qml failed");
-
-        // STEP 2: Try simple inline QML (tests if QML engine works at all)
-        Logger::info("Trying simple inline QML...");
-        engine.loadData(SIMPLE_QML, QUrl("qrc:/simple.qml"));
-
-        if (engine.rootObjects().isEmpty()) {
-            Logger::error("Even simple QML failed — QML engine is broken");
-
-            // Last resort: show a message box
-            QMessageBox::critical(nullptr, "MMS Error",
-                "Failed to initialize QML engine.\n\n"
-                "This usually means Qt6Quick.dll or Qt6Qml.dll is missing or corrupted.\n"
-                "Please ensure all Qt DLLs are in the same folder as MMS.exe.");
-            return -1;
-        }
-
-        Logger::info("Simple QML loaded — main.qml has an error");
-    } else {
-        Logger::info("=== QML UI loaded successfully ===");
+        printf("ERROR: Embedded QML failed to load!\n");
+        fflush(stdout);
+        Logger::error("Embedded QML failed to load");
+        return -1;
     }
+
+    printf("QML loaded successfully!\n");
+    fflush(stdout);
+    Logger::info("=== QML UI loaded ===");
 
     return app.exec();
 }
