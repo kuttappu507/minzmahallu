@@ -1,8 +1,5 @@
 /*
- * main.cpp — QML-based entry point
- *
- * Backend (C++): Database, Services, Repositories stay as-is
- * Frontend (QML): main.qml drives the entire UI
+ * main.cpp — QML entry point with error handling
  */
 #include "core/Logger.h"
 #include "core/Config.h"
@@ -12,13 +9,14 @@
 #include "services/SettingsService.h"
 #include "services/AuthSession.h"
 
-#include <QApplication>
+#include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include <QDir>
 #include <QFontDatabase>
 #include <QQuickStyle>
 #include <QStandardPaths>
+#include <QQuickWindow>
 
 #ifdef Q_OS_WIN
 #  undef _WIN32_WINNT
@@ -30,20 +28,45 @@
 
 using namespace mms;
 
+// Fallback QML — shown if the main QML file fails to load
+static const char* FALLBACK_QML =
+R"QML(
+import QtQuick
+import QtQuick.Controls
+ApplicationWindow {
+    visible: true; width: 600; height: 400
+    title: "MMS — Error"
+    color: "#065f46"
+    Column {
+        anchors.centerIn: parent; spacing: 20
+        Text {
+            text: "Failed to load UI"
+            font.pixelSize: 24; font.bold: true; color: "#ffffff"
+            anchors.horizontalCenter: parent.horizontalCenter
+        }
+        Text {
+            text: "The QML file could not be loaded.\nCheck that Qt6Quick.dll and Qt6Qml.dll are present."
+            font.pixelSize: 14; color: "#c9ecd9"
+            anchors.horizontalCenter: parent.horizontalCenter
+            horizontalAlignment: Text.AlignHCenter
+        }
+    }
+}
+)QML";
+
 int main(int argc, char* argv[]) {
 #ifdef Q_OS_WIN
     SetProcessDPIAware();
 #endif
 
-    // High DPI
     qputenv("QT_ENABLE_HIGHDPI_SCALING", "1");
     qputenv("QT_AUTO_SCREEN_SCALE_FACTOR", "1");
 
-    QApplication app(argc, argv);
+    // Use QGuiApplication for pure QML (not QApplication which needs Widgets)
+    QGuiApplication app(argc, argv);
     app.setApplicationName("MMS");
     app.setOrganizationName("Mahallu Management System");
 
-    // Set QuickStyle to Basic (no system theme interference)
     QQuickStyle::setStyle("Basic");
 
     // Initialize fonts
@@ -62,46 +85,41 @@ int main(int argc, char* argv[]) {
     QString sqlDir = QFile::exists(exeDir + "/sql/schema.sql") ? exeDir + "/sql" : QString();
 
     if (!Database::instance().initialize(dbPath, sqlDir)) {
-        // Try relative path
         Database::instance().initialize("mms.db", "sql");
     }
 
-    // Initialize i18n
     I18N::instance().setLanguage("en");
 
-    // QML uses its own Theme.qml singleton — no QSS needed
-    // But we still load the saved theme for backend reference
-    QString savedTheme = Config::instance().theme();
-    if (savedTheme.isEmpty()) savedTheme = "light";
+    Logger::info("=== Minz Mahallu Management Starting (QML) ===");
 
-    Logger::info("=== Minz Mahallu Management Starting (QML mode) ===");
-
-    // Load QML
     QQmlApplicationEngine engine;
-
-    // Add import paths for QML modules
     engine.addImportPath("qrc:/");
-
-    // Expose backend to QML
     engine.rootContext()->setContextProperty("appVersion", APP_VERSION_STR);
 
+    // Try loading main QML from qrc
     engine.load(QUrl("qrc:/qml/main.qml"));
+
     if (engine.rootObjects().isEmpty()) {
-        // Try filesystem path as fallback
-        QString qmlPath = QCoreApplication::applicationDirPath() + "/qml/main.qml";
+        Logger::error("Failed to load qrc:/qml/main.qml — trying fallback");
+
+        // Try filesystem path
+        QString qmlPath = exeDir + "/qml/main.qml";
         if (QFile::exists(qmlPath)) {
             engine.load(QUrl::fromLocalFile(qmlPath));
         }
+
+        // If still empty, load fallback QML inline
+        if (engine.rootObjects().isEmpty()) {
+            Logger::error("All QML loading failed — showing error window");
+            engine.loadData(FALLBACK_QML, QUrl());
+        }
     }
+
     if (engine.rootObjects().isEmpty()) {
-        Logger::error("Failed to load QML main.qml");
+        Logger::error("Even fallback QML failed — aborting");
         return -1;
     }
 
-    Logger::info("=== QML UI loaded successfully ===");
-
-    int ret = app.exec();
-
-    Logger::info(QString("=== Minz Mahallu Management Exiting (code %1) ===").arg(ret));
-    return ret;
+    Logger::info("=== QML UI loaded ===");
+    return app.exec();
 }

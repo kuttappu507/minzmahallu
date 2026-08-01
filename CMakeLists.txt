@@ -30,7 +30,6 @@ endif()
 find_package(Qt6 6.5 REQUIRED COMPONENTS
     Core
     Gui
-    Widgets
     Sql
     Charts
     PrintSupport
@@ -133,7 +132,6 @@ target_include_directories(${APP_NAME} PRIVATE
 target_link_libraries(${APP_NAME} PRIVATE
     Qt6::Core
     Qt6::Gui
-    Qt6::Widgets
     Qt6::Sql
     Qt6::Charts
     Qt6::PrintSupport
