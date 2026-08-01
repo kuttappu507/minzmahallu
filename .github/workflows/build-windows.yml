@@ -39,7 +39,7 @@ jobs:
         with:
           version: ${{ env.QT_VERSION }}
           arch: 'win64_msvc2022_64'
-          modules: 'qtcharts'
+          modules: 'qtcharts qtquick3d qtquickcontrols2 qtdeclarative'
           tools: 'tools_opensslv3_x64'
           cache: true
 
