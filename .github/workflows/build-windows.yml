@@ -280,7 +280,7 @@ jobs:
             ./artifacts/MMS-portable-windows-x64.zip
             ./artifacts/MMS-Setup.msi
         env:
-          GITHUB_TOKEN: \${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           generate_release_notes: true
           draft: false
           prerelease: false
