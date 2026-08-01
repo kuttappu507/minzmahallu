@@ -96,6 +96,14 @@ jobs:
           New-Item -ItemType Directory -Force -Path dist\resources | Out-Null
           Copy-Item resources\* dist\resources\ -Recurse
 
+          # Copy QML files to filesystem (fallback if qrc loading fails)
+          New-Item -ItemType Directory -Force -Path dist\qml | Out-Null
+          Copy-Item qml\main.qml dist\qml\
+          New-Item -ItemType Directory -Force -Path dist\qml\components | Out-Null
+          Copy-Item qml\components\*.qml dist\qml\components\
+          New-Item -ItemType Directory -Force -Path dist\qml\views | Out-Null
+          Copy-Item qml\views\*.qml dist\qml\views\
+
       # ---- CODE SIGNING (self-signed) ----
       - name: Create self-signed certificate
         shell: pwsh
@@ -141,8 +149,13 @@ jobs:
           @"
           @echo off
           cd /d "%~dp0"
-          MMS.exe
-          if errorlevel 1 pause
+          echo Starting MMS...
+          MMS.exe 2>&1
+          if errorlevel 1 (
+            echo.
+            echo MMS.exe exited with error code %errorlevel%
+            pause
+          )
           "@ | Out-File -FilePath dist\run_mms.bat -Encoding ASCII
           
           Compress-Archive -Path dist\* -DestinationPath MMS-portable-windows-x64.zip -Force
