@@ -6,10 +6,6 @@
         <file>icons/mms_icon.png</file>
         <file>icons/mms.ico</file>
     </qresource>
-    <qresource prefix="/styles">
-        <file alias="light.qss">styles/light.qss</file>
-        <file alias="dark.qss">styles/dark.qss</file>
-    </qresource>
     <qresource prefix="/fonts">
         <file alias="NotoSans-Regular.ttf">fonts/NotoSans-Regular.ttf</file>
         <file alias="NotoSans-Bold.ttf">fonts/NotoSans-Bold.ttf</file>
@@ -69,12 +65,5 @@
         <file alias="residence_cert.html">templates/residence_cert.html</file>
         <file alias="marriage_cert.html">templates/marriage_cert.html</file>
         <file alias="death_cert.html">templates/death_cert.html</file>
-    </qresource>
-    <qresource prefix="/qml">
-        <file>qml/main.qml</file>
-        <file>qml/components/SquircleButton.qml</file>
-        <file>qml/components/StatCard.qml</file>
-        <file>qml/components/Pill.qml</file>
-        <file>qml/views/DashboardView.qml</file>
     </qresource>
 </RCC>

@@ -69,28 +69,11 @@ bool SettingsService::save(const MahalluSettings& s) {
 }
 
 void SettingsService::applyTheme(const QString& themeName) {
-    QString qss;
-    QString resPath = QString(":/styles/%1.qss").arg(themeName);
-    QFile resFile(resPath);
-    if (resFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        qss = QString::fromUtf8(resFile.readAll());
-        resFile.close();
-        Logger::info("Theme loaded from Qt resource: " + resPath);
-    }
-    if (qss.isEmpty()) {
-        QString exeDir = QCoreApplication::applicationDirPath();
-        QString fsPath = exeDir + "/resources/styles/" + themeName + ".qss";
-        QFile fsFile(fsPath);
-        if (fsFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-            qss = QString::fromUtf8(fsFile.readAll());
-            fsFile.close();
-            Logger::info("Theme loaded from filesystem: " + fsPath);
-        }
-    }
-    if (qss.isEmpty()) { Logger::error("Cannot load stylesheet: " + themeName); return; }
-    qApp->setStyleSheet(qss);
-    FontManager::instance().applyFont(I18N::instance().currentLanguage());
+    // QML uses its own theme system — no QSS needed
+    // Just store the theme preference for backend reference
     Config::instance().setTheme(themeName);
+    FontManager::instance().applyFont(I18N::instance().currentLanguage());
+    Logger::info("Theme set (QML mode): " + themeName);
 }
 
 QString SettingsService::currentTheme() const { return Config::instance().theme(); }

@@ -1,7 +1,7 @@
 #include "FontManager.h"
 #include "Logger.h"
 #include <QFontDatabase>
-#include <QApplication>
+// QApplication forward-declared in header
 #include <QFont>
 #include <QFile>
 
