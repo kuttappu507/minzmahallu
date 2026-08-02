@@ -88,7 +88,7 @@ qt_add_resources(${APP_NAME} "mms_resources"
 )
 
 qt_add_resources(${APP_NAME} "fonts_resources"
-    PREFIX "/fonts"
+    PREFIX "/"
     FILES
         resources/fonts/NotoSans-Regular.ttf
         resources/fonts/NotoSans-Bold.ttf
@@ -105,7 +105,7 @@ qt_add_resources(${APP_NAME} "fonts_resources"
 )
 
 qt_add_resources(${APP_NAME} "icons_resources"
-    PREFIX "/icons"
+    PREFIX "/"
     FILES
         resources/icons/svg/dashboard.svg
         resources/icons/svg/families.svg
@@ -148,7 +148,7 @@ qt_add_resources(${APP_NAME} "icons_resources"
 )
 
 qt_add_resources(${APP_NAME} "templates_resources"
-    PREFIX "/templates"
+    PREFIX "/"
     FILES
         resources/templates/membership_cert.html
         resources/templates/residence_cert.html
@@ -165,7 +165,7 @@ qt_add_resources(${APP_NAME} "templates_resources"
 # - main.cpp also has an embedded fallback QML string for emergency boot
 # =============================================================================
 qt_add_resources(${APP_NAME} "qml_resources"
-    PREFIX "/qml"
+    PREFIX "/"
     FILES
         qml/main.qml
         qml/views/DashboardView.qml
