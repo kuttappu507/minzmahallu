@@ -1,7 +1,6 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import "." as Theme
 
 // SubscriptionsView — receipt list, mark paid/overdue
 Item {

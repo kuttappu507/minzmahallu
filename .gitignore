@@ -42,3 +42,4 @@ Thumbs.db
 *.orig
 *~
 dist-win/
+build-linux/

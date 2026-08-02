@@ -1,7 +1,6 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import "." as Theme
 
 // CertificatesView — issued certificates (membership/residence/marriage/death)
 Item {

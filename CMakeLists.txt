@@ -158,8 +158,9 @@ qt_add_resources(${APP_NAME} "templates_resources"
 
 # =============================================================================
 # QML: Loaded from qrc:/qml/ resources + filesystem fallback
-# - qml/main.qml + Theme.qml (as local-imported QtObject, not singleton)
-# - 15 view files in qml/views/
+# - qml/main.qml + 15 view files in qml/views/
+# - Theme is exposed as a QML context property from C++ (src/core/Theme.h)
+#   NOT a QML singleton — more reliable inside qrc resources
 # - qt_add_qml_module is NOT used (qmlcachegen issues); plain qt_add_resources
 # - main.cpp also has an embedded fallback QML string for emergency boot
 # =============================================================================
@@ -167,7 +168,6 @@ qt_add_resources(${APP_NAME} "qml_resources"
     PREFIX "/qml"
     FILES
         qml/main.qml
-        qml/Theme.qml
         qml/views/DashboardView.qml
         qml/views/FamiliesView.qml
         qml/views/MembersView.qml

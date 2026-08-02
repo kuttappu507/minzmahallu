@@ -1,7 +1,6 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import "." as Theme
 
 // ============================================================================
 // FamiliesView — table with search, status filter, ward filter, add/edit/delete
@@ -41,6 +40,7 @@ Item {
                     anchors.fill: parent; anchors.margins: 8; spacing: 6
                     Text { text: "🔍"; font.pixelSize: 12; color: Theme.muted }
                     TextField {
+                        id: searchField
                         Layout.fillWidth: true
                         placeholderText: "Search by family #, house, phone..."
                         font.family: Theme.fontPrimary; font.pixelSize: 11

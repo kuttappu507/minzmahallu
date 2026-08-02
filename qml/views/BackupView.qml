@@ -1,7 +1,6 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import "." as Theme
 
 // BackupView — database backup/restore interface
 Item {

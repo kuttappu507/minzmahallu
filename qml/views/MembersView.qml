@@ -1,7 +1,6 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import "." as Theme
 
 // ============================================================================
 // MembersView — member directory with photo, search, family link, gender filter

@@ -1,7 +1,6 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import "." as Theme
 
 // SettingsView — mahallu profile, theme, language, backup config
 Item {

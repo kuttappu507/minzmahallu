@@ -1,7 +1,6 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import "." as Theme
 
 ApplicationWindow {
     id: win
@@ -15,6 +14,27 @@ ApplicationWindow {
     property string currentUser: "Administrator"
     property string currentRole: "Administrator"
     property int currentNavIndex: 0
+
+    // Map nav index → view QML file path (qrc:)
+    property var viewSources: [
+        "qrc:/qml/views/DashboardView.qml",
+        "qrc:/qml/views/FamiliesView.qml",
+        "qrc:/qml/views/MembersView.qml",
+        "qrc:/qml/views/SubscriptionsView.qml",
+        "qrc:/qml/views/DonationsView.qml",
+        "qrc:/qml/views/AccountingView.qml",
+        "qrc:/qml/views/MarriageView.qml",
+        "qrc:/qml/views/DeathView.qml",
+        "qrc:/qml/views/WelfareView.qml",
+        "qrc:/qml/views/CertificatesView.qml",
+        "qrc:/qml/views/TokensView.qml",
+        "qrc:/qml/views/ReportsView.qml",
+        "qrc:/qml/views/SettingsView.qml",
+        "qrc:/qml/views/UsersView.qml",
+        "qrc:/qml/views/AuditLogView.qml",
+        "qrc:/qml/views/BackupView.qml"
+    ]
+    property string currentViewSource: viewSources[currentNavIndex] || viewSources[0]
 
     // ===== Splash =====
     Rectangle {
@@ -159,43 +179,25 @@ ApplicationWindow {
                 }
             }
 
-            // Stack of views
-            StackLayout {
+            // Active view (single Loader that switches source on nav change)
+            Loader {
+                id: viewLoader
                 Layout.fillWidth: true; Layout.fillHeight: true
-                currentIndex: win.currentNavIndex
+                source: currentViewSource
+                onStatusChanged: {
+                    if (status === Loader.Error) {
+                        console.log("VIEW LOAD ERROR:", viewLoader.source)
+                    } else if (status === Loader.Ready) {
+                        console.log("VIEW LOADED:", viewLoader.source)
+                    }
+                }
+            }
 
-                // 0 - Dashboard
-                Loader { source: "qrc:/qml/views/DashboardView.qml" }
-                // 1 - Families
-                Loader { source: "qrc:/qml/views/FamiliesView.qml" }
-                // 2 - Members
-                Loader { source: "qrc:/qml/views/MembersView.qml" }
-                // 3 - Subscriptions
-                Loader { source: "qrc:/qml/views/SubscriptionsView.qml" }
-                // 4 - Donations
-                Loader { source: "qrc:/qml/views/DonationsView.qml" }
-                // 5 - Accounting
-                Loader { source: "qrc:/qml/views/AccountingView.qml" }
-                // 6 - Marriage
-                Loader { source: "qrc:/qml/views/MarriageView.qml" }
-                // 7 - Death
-                Loader { source: "qrc:/qml/views/DeathView.qml" }
-                // 8 - Welfare
-                Loader { source: "qrc:/qml/views/WelfareView.qml" }
-                // 9 - Certificates
-                Loader { source: "qrc:/qml/views/CertificatesView.qml" }
-                // 10 - Tokens
-                Loader { source: "qrc:/qml/views/TokensView.qml" }
-                // 11 - Reports
-                Loader { source: "qrc:/qml/views/ReportsView.qml" }
-                // 12 - Settings
-                Loader { source: "qrc:/qml/views/SettingsView.qml" }
-                // 13 - Users
-                Loader { source: "qrc:/qml/views/UsersView.qml" }
-                // 14 - Audit Log
-                Loader { source: "qrc:/qml/views/AuditLogView.qml" }
-                // 15 - Backup
-                Loader { source: "qrc:/qml/views/BackupView.qml" }
+            // Error fallback if Loader fails
+            Rectangle {
+                Layout.fillWidth: true; Layout.preferredHeight: 0
+                color: "#fddfe5"; visible: viewLoader.status === Loader.Error
+                Text { anchors.centerIn: parent; text: "Failed to load view"; color: "#95102e" }
             }
 
             // Status bar

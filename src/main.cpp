@@ -21,6 +21,7 @@
 #include "core/Database.h"
 #include "core/FontManager.h"
 #include "core/I18N.h"
+#include "core/Theme.h"
 #include "services/SettingsService.h"
 #include "services/AuthSession.h"
 
@@ -517,6 +518,12 @@ int main(int argc, char* argv[]) {
 
     logMsg("Step 7: Creating QML engine...");
     QQmlApplicationEngine engine;
+
+    // Register Theme as a context property — accessible in QML as `Theme.bg`, `Theme.tint("em")`, etc.
+    // This is more reliable than qmldir singletons or local dir imports inside qrc resources.
+    Theme* theme = new Theme(&engine);
+    engine.rootContext()->setContextProperty("Theme", theme);
+    logMsg("  Theme context property registered");
 
     QObject::connect(&engine, &QQmlApplicationEngine::warnings,
         &engine, [](const QList<QQmlError> &warnings) {

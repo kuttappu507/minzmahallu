@@ -1,7 +1,6 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import "." as Theme
 
 // TokensView — token events and assignments (Eid, Ramadan, etc.)
 Item {
