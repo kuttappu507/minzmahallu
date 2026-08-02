@@ -1,3 +1,7 @@
+# =============================================================================
+# Mahallu Management System (MMS) - CMake Build Configuration
+# Target: Qt 6.8+, C++20, Windows (MSVC / Visual Studio 2022)
+# =============================================================================
 cmake_minimum_required(VERSION 3.21)
 
 project(MMS
@@ -6,49 +10,63 @@ project(MMS
     LANGUAGES CXX
 )
 
+# -----------------------------------------------------------------------------
+# Global settings
+# -----------------------------------------------------------------------------
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+set(CMAKE_AUTOUIC ON)
 
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release CACHE STRING "Build type" FORCE)
 endif()
 
-# Qt 6 — Core, Gui, Widgets (for QPrinter), Qml, Quick, QuickControls2, Sql, Charts, PrintSupport, Svg, Network
+# -----------------------------------------------------------------------------
+# Find Qt 6
+# -----------------------------------------------------------------------------
 find_package(Qt6 6.5 REQUIRED COMPONENTS
-    Core Gui Widgets Qml Quick QuickControls2 QuickLayouts
-    Sql Charts PrintSupport Svg Network
+    Core
+    Gui
+    Widgets
+    Sql
+    Charts
+    PrintSupport
+    Svg
+    Network
 )
 
+if(Qt6_FOUND)
+    message(STATUS "Qt6 version: ${Qt6Core_VERSION}")
+endif()
+
+# Find OpenSSL for password hashing
 find_package(OpenSSL REQUIRED)
+message(STATUS "OpenSSL version: ${OPENSSL_VERSION}")
+
+# Find zlib for backup compression
 find_package(ZLIB REQUIRED)
 
+# -----------------------------------------------------------------------------
+# Application metadata
+# -----------------------------------------------------------------------------
 set(APP_NAME "MMS")
 set(APP_VERSION "1.0.0")
 set(APP_COMPANY "Mahallu Management System")
 
-# Backend C++ sources (core + repositories + services + main)
-file(GLOB MMS_CORE_SOURCES
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/core/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp"
+# -----------------------------------------------------------------------------
+# Sources
+# -----------------------------------------------------------------------------
+file(GLOB_RECURSE MMS_SOURCES
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp"
 )
-file(GLOB MMS_REPO_SOURCES
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/repositories/*.cpp"
-)
-file(GLOB MMS_SVC_SOURCES
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/services/*.cpp"
-)
-set(MMS_SOURCES ${MMS_CORE_SOURCES} ${MMS_REPO_SOURCES} ${MMS_SVC_SOURCES})
-
-file(GLOB MMS_HEADERS
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/core/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/models/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/repositories/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/services/*.h"
+file(GLOB_RECURSE MMS_HEADERS
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/*.h"
 )
 
-# Resource file (Windows icon)
+# Resource file (Windows only)
 set(APP_RC_FILE "")
 if(WIN32)
     set(APP_ICON "${CMAKE_CURRENT_SOURCE_DIR}/resources/icons/mms.ico")
@@ -60,156 +78,47 @@ if(WIN32)
     set(APP_RC_FILE "${CMAKE_CURRENT_BINARY_DIR}/mms.rc")
 endif()
 
-# Define the executable
+# -----------------------------------------------------------------------------
+# Define executable
+# On Windows use WIN32 (GUI subsystem); on other platforms use a normal exe.
+# -----------------------------------------------------------------------------
 if(WIN32)
     add_executable(${APP_NAME} WIN32
         ${MMS_SOURCES}
         ${MMS_HEADERS}
+        "${CMAKE_CURRENT_SOURCE_DIR}/resources/mms.qrc"
         ${APP_RC_FILE}
     )
 else()
     add_executable(${APP_NAME}
         ${MMS_SOURCES}
         ${MMS_HEADERS}
+        "${CMAKE_CURRENT_SOURCE_DIR}/resources/mms.qrc"
     )
 endif()
 
-# =============================================================================
-# Resources: icons, fonts, templates (via qt_add_resources, NOT manual .qrc)
-# =============================================================================
-qt_add_resources(${APP_NAME} "mms_resources"
-    PREFIX "/"
-    FILES
-        resources/icons/mms.svg
-        resources/icons/mms.png
-        resources/icons/mms_white.png
-        resources/icons/mms_icon.png
-        resources/icons/mms.ico
-)
-
-qt_add_resources(${APP_NAME} "fonts_resources"
-    PREFIX "/"
-    FILES
-        resources/fonts/NotoSans-Regular.ttf
-        resources/fonts/NotoSans-Bold.ttf
-        resources/fonts/AnekMalayalam-Regular.ttf
-        resources/fonts/AnekMalayalam-Medium.ttf
-        resources/fonts/AnekMalayalam-SemiBold.ttf
-        resources/fonts/AnekMalayalam-Bold.ttf
-        resources/fonts/Poppins-Regular.ttf
-        resources/fonts/Poppins-Medium.ttf
-        resources/fonts/Poppins-SemiBold.ttf
-        resources/fonts/Poppins-Bold.ttf
-        resources/fonts/Gayathri-Regular.ttf
-        resources/fonts/Gayathri-Bold.ttf
-)
-
-qt_add_resources(${APP_NAME} "icons_resources"
-    PREFIX "/"
-    FILES
-        resources/icons/svg/dashboard.svg
-        resources/icons/svg/families.svg
-        resources/icons/svg/members.svg
-        resources/icons/svg/subscriptions.svg
-        resources/icons/svg/donations.svg
-        resources/icons/svg/accounting.svg
-        resources/icons/svg/marriage.svg
-        resources/icons/svg/death.svg
-        resources/icons/svg/welfare.svg
-        resources/icons/svg/certificates.svg
-        resources/icons/svg/reports.svg
-        resources/icons/svg/settings.svg
-        resources/icons/svg/users.svg
-        resources/icons/svg/audit.svg
-        resources/icons/svg/backup.svg
-        resources/icons/svg/search.svg
-        resources/icons/svg/bell.svg
-        resources/icons/svg/moon.svg
-        resources/icons/svg/sun.svg
-        resources/icons/svg/refresh.svg
-        resources/icons/svg/chevron-down.svg
-        resources/icons/svg/chevron-left.svg
-        resources/icons/svg/chevron-right.svg
-        resources/icons/svg/plus.svg
-        resources/icons/svg/edit.svg
-        resources/icons/svg/trash.svg
-        resources/icons/svg/print.svg
-        resources/icons/svg/download.svg
-        resources/icons/svg/archive.svg
-        resources/icons/svg/check.svg
-        resources/icons/svg/alert.svg
-        resources/icons/svg/dollar.svg
-        resources/icons/svg/trending-up.svg
-        resources/icons/svg/trending-down.svg
-        resources/icons/svg/menu.svg
-        resources/icons/svg/user.svg
-        resources/icons/svg/log-out.svg
-        resources/icons/svg/key.svg
-)
-
-qt_add_resources(${APP_NAME} "templates_resources"
-    PREFIX "/"
-    FILES
-        resources/templates/membership_cert.html
-        resources/templates/residence_cert.html
-        resources/templates/marriage_cert.html
-        resources/templates/death_cert.html
-)
-
-# =============================================================================
-# QML: Loaded from qrc:/qml/ resources + filesystem fallback
-# - qml/main.qml + 15 view files in qml/views/
-# - Theme is exposed as a QML context property from C++ (src/core/Theme.h)
-#   NOT a QML singleton — more reliable inside qrc resources
-# - qt_add_qml_module is NOT used (qmlcachegen issues); plain qt_add_resources
-# - main.cpp also has an embedded fallback QML string for emergency boot
-# =============================================================================
-qt_add_resources(${APP_NAME} "qml_resources"
-    PREFIX "/"
-    FILES
-        qml/main.qml
-        qml/components/IconBtn.qml
-        qml/components/Dialog.qml
-        qml/components/FormField.qml
-        qml/dialogs/FamilyEditDialog.qml
-        qml/dialogs/MemberEditDialog.qml
-        qml/dialogs/DonationEditDialog.qml
-        qml/dialogs/ConfirmDialog.qml
-        qml/views/DashboardView.qml
-        qml/views/FamiliesView.qml
-        qml/views/MembersView.qml
-        qml/views/SubscriptionsView.qml
-        qml/views/DonationsView.qml
-        qml/views/AccountingView.qml
-        qml/views/MarriageView.qml
-        qml/views/DeathView.qml
-        qml/views/WelfareView.qml
-        qml/views/CertificatesView.qml
-        qml/views/TokensView.qml
-        qml/views/ReportsView.qml
-        qml/views/SettingsView.qml
-        qml/views/UsersView.qml
-        qml/views/AuditLogView.qml
-        qml/views/BackupView.qml
-)
-
+# -----------------------------------------------------------------------------
+# Include directories
+# -----------------------------------------------------------------------------
 target_include_directories(${APP_NAME} PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/src"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/core"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/models"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/repositories"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/services"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/viewmodels"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/views"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/utils"
     ${OPENSSL_INCLUDE_DIR}
 )
 
+# -----------------------------------------------------------------------------
+# Link libraries
+# -----------------------------------------------------------------------------
 target_link_libraries(${APP_NAME} PRIVATE
     Qt6::Core
     Qt6::Gui
     Qt6::Widgets
-    Qt6::Qml
-    Qt6::Quick
-    Qt6::QuickControls2
-    Qt6::QuickLayouts
     Qt6::Sql
     Qt6::Charts
     Qt6::PrintSupport
@@ -220,11 +129,20 @@ target_link_libraries(${APP_NAME} PRIVATE
     ZLIB::ZLIB
 )
 
+# -----------------------------------------------------------------------------
+# Compiler flags
+# -----------------------------------------------------------------------------
 if(MSVC)
     target_compile_options(${APP_NAME} PRIVATE
-        /W4 /permissive- /utf-8 /EHsc /Zc:__cplusplus
+        /W4
+        /permissive-
+        /utf-8
+        /EHsc
+        /Zc:__cplusplus
         $<$<CONFIG:Release>:/O2>
+        $<$<CONFIG:Debug>:/Zi /Od>
     )
+    # Windows subsystem for GUI app
     set_target_properties(${APP_NAME} PROPERTIES
         WIN32_EXECUTABLE TRUE
         LINK_FLAGS "/ENTRY:mainCRTStartup"
@@ -233,9 +151,13 @@ else()
     target_compile_options(${APP_NAME} PRIVATE
         -Wall -Wextra -Wpedantic
         $<$<CONFIG:Release>:-O2>
+        $<$<CONFIG:Debug>:-g -O0>
     )
 endif()
 
+# -----------------------------------------------------------------------------
+# Preprocessor defines
+# -----------------------------------------------------------------------------
 target_compile_definitions(${APP_NAME} PRIVATE
     APP_NAME_STR="${APP_NAME}"
     APP_VERSION_STR="${APP_VERSION}"
@@ -244,7 +166,9 @@ target_compile_definitions(${APP_NAME} PRIVATE
     QT_DISABLE_DEPRECATED_BEFORE=0x060000
 )
 
-# Copy SQL + templates to build dir
+# -----------------------------------------------------------------------------
+# Copy SQL files & assets to build dir
+# -----------------------------------------------------------------------------
 add_custom_command(TARGET ${APP_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
         "${CMAKE_CURRENT_SOURCE_DIR}/sql"
@@ -254,3 +178,72 @@ add_custom_command(TARGET ${APP_NAME} POST_BUILD
         "$<TARGET_FILE_DIR:${APP_NAME}>/templates"
     COMMENT "Copying SQL scripts and templates to build directory"
 )
+
+# -----------------------------------------------------------------------------
+# Install rules (portable layout)
+# -----------------------------------------------------------------------------
+install(TARGETS ${APP_NAME}
+    RUNTIME DESTINATION bin
+    BUNDLE  DESTINATION .
+)
+
+install(DIRECTORY sql/         DESTINATION sql)
+install(DIRECTORY resources/   DESTINATION resources)
+install(DIRECTORY docs/        DESTINATION docs)
+
+# =============================================================================
+# Tests (enabled via -DBUILD_TESTS=ON)
+# =============================================================================
+option(BUILD_TESTS "Build unit tests" OFF)
+
+if(BUILD_TESTS)
+    enable_testing()
+    find_package(Qt6 REQUIRED COMPONENTS Test)
+
+    # Test executable
+    add_executable(mms_tests
+        "${CMAKE_CURRENT_SOURCE_DIR}/tests/TestMain.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/tests/TestDatabase.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/tests/TestAuth.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/tests/TestFamily.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/tests/TestMember.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/tests/TestSubscription.cpp"
+    )
+    target_include_directories(mms_tests PRIVATE
+        "${CMAKE_CURRENT_SOURCE_DIR}/src"
+        ${OPENSSL_INCLUDE_DIR}
+    )
+    target_link_libraries(mms_tests PRIVATE
+        Qt6::Core
+        Qt6::Sql
+        Qt6::Test
+        OpenSSL::Crypto
+        ZLIB::ZLIB
+    )
+    target_compile_definitions(mms_tests PRIVATE TEST_DATA_DIR="${CMAKE_CURRENT_SOURCE_DIR}/tests/data")
+    add_test(NAME mms_tests COMMAND mms_tests)
+endif()
+
+# =============================================================================
+# CPack installer
+# =============================================================================
+set(CPACK_PACKAGE_NAME "Mahallu Management System")
+set(CPACK_PACKAGE_VENDOR "MMS Project")
+set(CPACK_PACKAGE_VERSION "${APP_VERSION}")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Mosque Community Administration System")
+set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
+set(CPACK_PACKAGE_INSTALL_DIRECTORY "MMS")
+
+if(WIN32)
+    set(CPACK_GENERATOR "NSIS;ZIP")
+    set(CPACK_NSIS_DISPLAY_NAME "Mahallu Management System")
+    set(CPACK_NSIS_INSTALL_ROOT "$LOCALAPPDATA")
+    set(CPACK_NSIS_CREATE_ICONS_EXTRA
+        "CreateShortCut '$SMPROGRAMS\\\\${CPACK_PACKAGE_NAME}\\\\MMS.lnk' '$INSTDIR\\\\bin\\\\MMS.exe'"
+    )
+    set(CPACK_NSIS_CREATE_UNINSTALLER "$INSTDIR\\\\Uninstall.exe")
+endif()
+
+include(CPack)
+
+# End of CMakeLists.txt

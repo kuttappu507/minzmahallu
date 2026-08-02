@@ -25,24 +25,17 @@ int FontManager::loadAll() {
     Logger::info("Loading bundled fonts...");
     struct FontDef { const char* resourcePath; const char* fallbackPath; };
     FontDef fonts[] = {
-        // English: Poppins (primary)
-        { ":/fonts/Poppins-Regular.ttf",   "" },
-        { ":/fonts/Poppins-Medium.ttf",    "" },
-        { ":/fonts/Poppins-SemiBold.ttf",  "" },
-        { ":/fonts/Poppins-Bold.ttf",      "" },
-        // Malayalam: Gayathri (primary)
-        { ":/fonts/Gayathri-Regular.ttf",  "" },
-        { ":/fonts/Gayathri-Bold.ttf",     "" },
-        // Fallbacks (kept for compatibility)
-        { ":/fonts/NotoSans-Regular.ttf",  "" },
-        { ":/fonts/NotoSans-Bold.ttf",     "" },
-        { ":/fonts/AnekMalayalam-Regular.ttf",  "" },
-        { ":/fonts/AnekMalayalam-Bold.ttf",     "" },
+        { ":/fonts/NotoSans-Regular.ttf", "/home/z/fonts/NotoSans-Regular.ttf" },
+        { ":/fonts/NotoSans-Bold.ttf", "/home/z/fonts/NotoSans-Bold.ttf" },
+        { ":/fonts/AnekMalayalam-Regular.ttf", "/home/z/fonts/anek/AnekMalayalam-Regular.ttf" },
+        { ":/fonts/AnekMalayalam-Medium.ttf", "/home/z/fonts/anek/AnekMalayalam-Medium.ttf" },
+        { ":/fonts/AnekMalayalam-SemiBold.ttf", "/home/z/fonts/anek/AnekMalayalam-SemiBold.ttf" },
+        { ":/fonts/AnekMalayalam-Bold.ttf", "/home/z/fonts/anek/AnekMalayalam-Bold.ttf" },
     };
     for (const auto& f : fonts) {
         bool ok = false;
         if (QFile::exists(f.resourcePath)) ok = loadFont(f.resourcePath);
-        if (!ok && f.fallbackPath[0] && QFile::exists(f.fallbackPath)) ok = loadFont(f.fallbackPath);
+        if (!ok && QFile::exists(f.fallbackPath)) ok = loadFont(f.fallbackPath);
         if (ok) ++loadedCount_;
     }
     Logger::info(QString("Total fonts loaded: %1").arg(loadedCount_));
@@ -50,8 +43,8 @@ int FontManager::loadAll() {
 }
 
 QString FontManager::fontFamilyForLanguage(const QString& langCode) const {
-    if (langCode == "ml") return "Gayathri";
-    return "Poppins";
+    if (langCode == "ml") return "Anek Malayalam";
+    return "Noto Sans";
 }
 
 void FontManager::applyFont(const QString& langCode) {
@@ -61,9 +54,9 @@ void FontManager::applyFont(const QString& langCode) {
     font.setHintingPreference(QFont::PreferFullHinting);
     QStringList fallbacks;
     if (langCode == "ml")
-        fallbacks << "Gayathri" << "Anek Malayalam" << "Poppins" << "Noto Sans" << "Segoe UI";
+        fallbacks << "Anek Malayalam" << "Noto Sans" << "Segoe UI" << "Arial";
     else
-        fallbacks << "Poppins" << "Noto Sans" << "Segoe UI" << "Arial";
+        fallbacks << "Noto Sans" << "Anek Malayalam" << "Segoe UI" << "Arial";
     font.setFamilies(fallbacks);
     qApp->setFont(font);
     Logger::info(QString("Applied font family: %1 (lang: %2)").arg(family).arg(langCode));

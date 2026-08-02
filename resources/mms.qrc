@@ -1,0 +1,67 @@
+<RCC>
+    <qresource prefix="/">
+        <file>icons/mms.svg</file>
+        <file>icons/mms.png</file>
+        <file>icons/mms_white.png</file>
+        <file>icons/mms_icon.png</file>
+        <file>icons/mms.ico</file>
+    </qresource>
+    <qresource prefix="/styles">
+        <file alias="light.qss">styles/light.qss</file>
+        <file alias="dark.qss">styles/dark.qss</file>
+    </qresource>
+    <qresource prefix="/fonts">
+        <file alias="NotoSans-Regular.ttf">fonts/NotoSans-Regular.ttf</file>
+        <file alias="NotoSans-Bold.ttf">fonts/NotoSans-Bold.ttf</file>
+        <file alias="AnekMalayalam-Regular.ttf">fonts/AnekMalayalam-Regular.ttf</file>
+        <file alias="AnekMalayalam-Medium.ttf">fonts/AnekMalayalam-Medium.ttf</file>
+        <file alias="AnekMalayalam-SemiBold.ttf">fonts/AnekMalayalam-SemiBold.ttf</file>
+        <file alias="AnekMalayalam-Bold.ttf">fonts/AnekMalayalam-Bold.ttf</file>
+    </qresource>
+    <qresource prefix="/icons">
+        <file alias="dashboard.svg">icons/svg/dashboard.svg</file>
+        <file alias="families.svg">icons/svg/families.svg</file>
+        <file alias="members.svg">icons/svg/members.svg</file>
+        <file alias="subscriptions.svg">icons/svg/subscriptions.svg</file>
+        <file alias="donations.svg">icons/svg/donations.svg</file>
+        <file alias="accounting.svg">icons/svg/accounting.svg</file>
+        <file alias="marriage.svg">icons/svg/marriage.svg</file>
+        <file alias="death.svg">icons/svg/death.svg</file>
+        <file alias="welfare.svg">icons/svg/welfare.svg</file>
+        <file alias="certificates.svg">icons/svg/certificates.svg</file>
+        <file alias="reports.svg">icons/svg/reports.svg</file>
+        <file alias="settings.svg">icons/svg/settings.svg</file>
+        <file alias="users.svg">icons/svg/users.svg</file>
+        <file alias="audit.svg">icons/svg/audit.svg</file>
+        <file alias="backup.svg">icons/svg/backup.svg</file>
+        <file alias="search.svg">icons/svg/search.svg</file>
+        <file alias="bell.svg">icons/svg/bell.svg</file>
+        <file alias="moon.svg">icons/svg/moon.svg</file>
+        <file alias="sun.svg">icons/svg/sun.svg</file>
+        <file alias="refresh.svg">icons/svg/refresh.svg</file>
+        <file alias="chevron-down.svg">icons/svg/chevron-down.svg</file>
+        <file alias="chevron-left.svg">icons/svg/chevron-left.svg</file>
+        <file alias="chevron-right.svg">icons/svg/chevron-right.svg</file>
+        <file alias="plus.svg">icons/svg/plus.svg</file>
+        <file alias="edit.svg">icons/svg/edit.svg</file>
+        <file alias="trash.svg">icons/svg/trash.svg</file>
+        <file alias="print.svg">icons/svg/print.svg</file>
+        <file alias="download.svg">icons/svg/download.svg</file>
+        <file alias="archive.svg">icons/svg/archive.svg</file>
+        <file alias="check.svg">icons/svg/check.svg</file>
+        <file alias="alert.svg">icons/svg/alert.svg</file>
+        <file alias="dollar.svg">icons/svg/dollar.svg</file>
+        <file alias="trending-up.svg">icons/svg/trending-up.svg</file>
+        <file alias="trending-down.svg">icons/svg/trending-down.svg</file>
+        <file alias="menu.svg">icons/svg/menu.svg</file>
+        <file alias="user.svg">icons/svg/user.svg</file>
+        <file alias="log-out.svg">icons/svg/log-out.svg</file>
+        <file alias="key.svg">icons/svg/key.svg</file>
+    </qresource>
+    <qresource prefix="/templates">
+        <file alias="membership_cert.html">templates/membership_cert.html</file>
+        <file alias="residence_cert.html">templates/residence_cert.html</file>
+        <file alias="marriage_cert.html">templates/marriage_cert.html</file>
+        <file alias="death_cert.html">templates/death_cert.html</file>
+    </qresource>
+</RCC>
