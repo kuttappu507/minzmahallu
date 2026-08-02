@@ -85,9 +85,11 @@ jobs:
           Copy-Item sql dist/ -Recurse
           mkdir dist/resources -Force
           Copy-Item resources/* dist/resources/ -Recurse
-          # Copy entire qml/ folder (main.qml + Theme.qml + qmldir + views/)
-          # This serves as filesystem fallback if qrc:/qml/ fails to load
-          Copy-Item qml dist/ -Recurse
+          # Copy our qml/ folder into dist/qml_app/ (NOT dist/qml/ which windeployqt already populated with Qt runtime)
+          # main.cpp's filesystem fallback looks at exeDir + "/qml/main.qml" first, but the qrc:/qml/ resources
+          # are bundled INSIDE the exe so this is purely a fallback for emergency use.
+          mkdir dist/qml_app -Force
+          Copy-Item qml/* dist/qml_app/ -Recurse
           @"
           @echo off
           cd /d "%~dp0"
