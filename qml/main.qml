@@ -15,32 +15,42 @@ ApplicationWindow {
     property string currentRole: "Administrator"
     property int currentNavIndex: 0
 
-    // Splash
+    // Splash — centered, not fullscreen
     Rectangle {
         id: splash
         anchors.fill: parent; z: 100
         color: "#065f46"; visible: true; opacity: 1
         Column {
-            anchors.centerIn: parent; spacing: 20
+            anchors.centerIn: parent; spacing: 16
             Text {
                 text: "Minz Mahallu Management"
                 font.family: "Poppins"; font.pixelSize: 26; font.weight: Font.Bold
                 color: "#ffffff"; anchors.horizontalCenter: parent.horizontalCenter
+                horizontalAlignment: Text.AlignHCenter
             }
             Text {
-                text: "Loading..."
-                font.family: "Poppins"; font.pixelSize: 12; color: "#d7f2e4"
+                text: "Mosque Community Administration"
+                font.family: "Poppins"; font.pixelSize: 13; color: "#c9ecd9"
                 anchors.horizontalCenter: parent.horizontalCenter
+                horizontalAlignment: Text.AlignHCenter
+            }
+            Rectangle {
+                width: 200; height: 6; radius: 3; color: "#04463a"
+                anchors.horizontalCenter: parent.horizontalCenter
+                Rectangle {
+                    width: parent.width * 0.7; height: parent.height; radius: 3; color: "#f2c14e"
+                    NumberAnimation on width { from: 0; to: 140; duration: 1800; running: true }
+                }
             }
         }
-        Timer { interval: 2000; running: true; onTriggered: { splash.opacity = 0; fade.running = true } }
+        Timer { interval: 2200; running: true; onTriggered: { splash.opacity = 0; fade.running = true } }
         NumberAnimation { id: fade; target: splash; property: "opacity"; to: 0; duration: 500; onStopped: splash.visible = false }
     }
 
     RowLayout {
         anchors.fill: parent; spacing: 0
 
-        // SIDEBAR
+        // ===== SIDEBAR =====
         Rectangle {
             id: sidebar
             Layout.fillHeight: true
@@ -57,18 +67,20 @@ ApplicationWindow {
             ColumnLayout {
                 anchors.fill: parent; spacing: 0
 
-                // Logo
+                // Logo area
                 Item {
-                    Layout.fillWidth: true; Layout.preferredHeight: 80
+                    Layout.fillWidth: true; Layout.preferredHeight: 76
                     Text {
                         anchors.centerIn: parent
                         text: "MMS"
-                        font.family: "Space Grotesk"; font.pixelSize: 24; font.weight: Font.Bold
+                        font.family: "Space Grotesk"; font.pixelSize: 22; font.weight: Font.Bold
                         color: "#ffffff"
+                        verticalAlignment: Text.AlignVCenter
+                        horizontalAlignment: Text.AlignHCenter
                     }
                 }
 
-                // Nav
+                // Nav list
                 ListView {
                     id: navList
                     Layout.fillWidth: true; Layout.fillHeight: true
@@ -80,6 +92,6 @@ ApplicationWindow {
 
                 // User card
                 Rectangle {
-                    Layout.fillWidth: true; Layout.preferredHeight: 70
+                    Layout.fillWidth: true; Layout.preferredHeight: 72
                     color: "transparent"
                     Rectangle { anchors.top: parent.top; anchors.left: parent.left; anchors.right: parent.right; height: 1; color: Qt.rgba(1,1,1,0.14
