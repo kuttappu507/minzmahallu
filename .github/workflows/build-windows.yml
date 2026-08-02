@@ -95,20 +95,20 @@ jobs:
           @echo off
           cd /d "%~dp0"
           echo Starting MMS...
+          echo.
           MMS.exe
-          if errorlevel 1 (
+          echo.
+          echo MMS.exe exited with code %errorlevel%
+          echo.
+          if exist mms_error.log (
+            echo === mms_error.log contents ===
+            type mms_error.log
             echo.
-            echo MMS.exe failed (exit code %errorlevel%).
-            echo Installing VC++ Redistributable...
-            if exist vc_redist.x64.exe (
-              vc_redist.x64.exe /install /quiet /norestart
-              echo Retrying...
-              start "" MMS.exe
-            ) else (
-              echo Please install Visual C++ Redistributable from Microsoft.
-              pause
-            )
+            echo === End of log ===
           )
+          echo.
+          echo Press any key to close...
+          pause >nul
           "@ | Out-File dist/run_mms.bat -Encoding ASCII
           Compress-Archive dist/* MMS-portable.zip
 
