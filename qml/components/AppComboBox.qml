@@ -4,26 +4,18 @@ import QtQuick.Effects
 import MMS.Theme 1.0
 
 // ============================================================================
-// AppComboBox — Styled dropdown for desktop
+// AppComboBox — Styled desktop dropdown
 //
 // Features:
-//   - Custom background with hover/focus states
-//   - Custom popup with styled items
-//   - Chevron-down SVG icon (tinted)
-//   - States: normal, hover, focused, disabled
-//
-// Usage:
-//   AppComboBox {
-//       label: "Status"
-//       model: ["Active", "Inactive", "Archived"]
-//       onActivated: console.log("Selected:", index)
-//   }
+//   - Single clean custom chevron-down indicator (no duplicate arrow)
+//   - Styled popup with hover/selected item states
+//   - States: normal, hover, focused, disabled, error
+//   - Optional label and helper text
 // ============================================================================
 
 FocusScope {
     id: root
 
-    // ===== Public API =====
     property string label: ""
     property var model: []
     property int currentIndex: 0
@@ -34,42 +26,44 @@ FocusScope {
     signal activated(int index)
 
     implicitHeight: column.implicitHeight
-    implicitWidth: 240
+    implicitWidth: 220
 
     Column {
         id: column
         anchors.fill: parent
         spacing: 4
 
-        // ===== Label =====
+        // Label
         Text {
             text: root.label
             font.family: Theme.fontFamily
             font.pixelSize: Theme.fontSizeSm
             font.weight: Theme.fontWeightMedium
-            color: root.error ? Theme.danger : Theme.textSecondary
+            color: root.error ? Theme.coral : Theme.textSecondary
             visible: root.label !== ""
         }
 
-        // ===== Combo button =====
+        // Combo
         ComboBox {
             id: combo
             width: parent.width
-            implicitHeight: Theme.controlHeightMd
+            implicitHeight: Theme.controlHeightLg
             model: root.model
             currentIndex: root.currentIndex
             font.family: Theme.fontFamily
             font.pixelSize: Theme.fontSizeMd
+            padding: 0
 
             onActivated: function(index) {
                 root.currentIndex = index
                 root.activated(index)
             }
 
-            // ===== Content (text + chevron) =====
+            // Content: text + single chevron
             contentItem: Row {
-                spacing: 6
-                leftPadding: 10
+                width: parent.width
+                height: parent.height
+                spacing: 0
 
                 Text {
                     text: combo.displayText
@@ -77,31 +71,46 @@ FocusScope {
                     font.pixelSize: Theme.fontSizeMd
                     color: combo.enabled ? Theme.textPrimary : Theme.textDisabled
                     anchors.verticalCenter: parent.verticalCenter
+                    leftPadding: 12
+                    rightPadding: 8
+                    elide: Text.ElideRight
+                    width: parent.width - 36
                 }
 
-                // Chevron-down icon
+                // Single clean chevron-down indicator
                 Item {
-                    width: 16; height: 16
-                    anchors.verticalCenter: parent.verticalCenter
+                    width: 36
+                    height: parent.height
 
-                    Image {
-                        id: chevronIcon
-                        source: "qrc:/icons/svg/chevron-down.svg"
-                        sourceSize: Qt.size(16, 16)
-                        anchors.fill: parent
-                        fillMode: Image.Pad
-                        visible: false
-                    }
-                    MultiEffect {
-                        anchors.fill: parent
-                        source: chevronIcon
-                        colorizationColor: combo.enabled ? Theme.textSecondary : Theme.textDisabled
-                        colorization: 1.0
+                    Item {
+                        width: 16; height: 16
+                        anchors.centerIn: parent
+
+                        Image {
+                            id: chevronIcon
+                            source: "qrc:/icons/svg/chevron-down.svg"
+                            sourceSize: Qt.size(16, 16)
+                            anchors.fill: parent
+                            fillMode: Image.Pad
+                            visible: false
+                        }
+                        MultiEffect {
+                            anchors.fill: parent
+                            source: chevronIcon
+                            colorizationColor: combo.enabled ?
+                                (combo.popup.visible ? Theme.primary : Theme.textSecondary) :
+                                Theme.textDisabled
+                            colorization: 1.0
+                            Behavior on colorizationColor { ColorAnimation { duration: Theme.animFast } }
+
+                            rotation: combo.popup.visible ? 180 : 0
+                            Behavior on rotation { NumberAnimation { duration: Theme.animNormal; easing.type: Theme.easingStandard } }
+                        }
                     }
                 }
             }
 
-            // ===== Background =====
+            // Background
             background: Rectangle {
                 radius: Theme.radiusMd
                 color: !combo.enabled ? Theme.surfaceSubtle :
@@ -110,9 +119,8 @@ FocusScope {
                        Theme.surface
                 border.width: 1
                 border.color: !combo.enabled ? Theme.border :
-                              root.error ? Theme.danger :
-                              combo.pressed || combo.popup.visible ? Theme.borderFocused :
-                              combo.activeFocus ? Theme.borderFocused :
+                              root.error ? Theme.coral :
+                              combo.popup.visible || combo.activeFocus ? Theme.borderFocused :
                               combo.hovered ? Theme.borderHover :
                               Theme.border
 
@@ -120,12 +128,12 @@ FocusScope {
                 Behavior on border.color { ColorAnimation { duration: Theme.animFast } }
             }
 
-            // ===== Popup =====
+            // Styled popup
             popup: Popup {
-                y: combo.height + 2
+                y: combo.height + 4
                 width: combo.width
-                implicitHeight: Math.min(contentItem.implicitHeight + 2, 280)
-                padding: 1
+                implicitHeight: Math.min(listView.contentHeight + 8, 280)
+                padding: 4
                 margins: 0
 
                 background: Rectangle {
@@ -133,6 +141,15 @@ FocusScope {
                     border.width: 1
                     border.color: Theme.border
                     radius: Theme.radiusMd
+
+                    // Subtle shadow
+                    layer.enabled: true
+                    layer.effect: MultiEffect {
+                        shadowEnabled: true
+                        shadowColor: Qt.rgba(0.15, 0.23, 0.42, Theme.shadowOpacityMedium)
+                        shadowBlur: 0.5
+                        shadowVerticalOffset: 4
+                    }
                 }
 
                 contentItem: ListView {
@@ -141,40 +158,76 @@ FocusScope {
                     implicitHeight: contentHeight
                     model: combo.popup.visible ? combo.delegateModel : null
                     currentIndex: combo.highlightedIndex
+                    spacing: 2
+
                     ScrollBar.vertical: ScrollBar {
                         policy: ScrollBar.AsNeeded
                         implicitWidth: 6
+                        contentItem: Rectangle {
+                            color: Theme.textTertiary
+                            radius: 3
+                            opacity: parent.hovered ? 0.8 : 0.4
+                            Behavior on opacity { NumberAnimation { duration: Theme.animFast } }
+                        }
                     }
                 }
             }
 
-            // ===== Delegate (each item in the dropdown) =====
+            // Item delegate
             delegate: ItemDelegate {
-                width: combo.width - 2
-                implicitHeight: 32
+                width: combo.width - 8
+                implicitHeight: 34
+                padding: 0
 
-                contentItem: Text {
-                    text: modelData
-                    font.family: Theme.fontFamily
-                    font.pixelSize: Theme.fontSizeMd
-                    color: highlighted ? Theme.primary : Theme.textPrimary
-                    verticalAlignment: Text.AlignVCenter
-                    leftPadding: 10
+                contentItem: Row {
+                    spacing: 8
+
+                    // Selected check indicator
+                    Item {
+                        width: 16; height: 16
+                        anchors.verticalCenter: parent.verticalCenter
+                        visible: index === combo.currentIndex
+
+                        Image {
+                            id: checkIcon
+                            source: "qrc:/icons/svg/check.svg"
+                            sourceSize: Qt.size(14, 14)
+                            anchors.fill: parent
+                            fillMode: Image.Pad
+                            visible: false
+                        }
+                        MultiEffect {
+                            anchors.fill: parent
+                            source: checkIcon
+                            colorizationColor: Theme.primary
+                            colorization: 1.0
+                        }
+                    }
+
+                    Text {
+                        text: modelData
+                        font.family: Theme.fontFamily
+                        font.pixelSize: Theme.fontSizeMd
+                        color: highlighted ? Theme.primary : Theme.textPrimary
+                        anchors.verticalCenter: parent.verticalCenter
+                        leftPadding: 8
+                    }
                 }
 
                 background: Rectangle {
                     color: highlighted ? Theme.primarySubtle : "transparent"
-                    radius: Theme.radiusXs
+                    radius: Theme.radiusSm
+                    Behavior on color { ColorAnimation { duration: Theme.animFast } }
                 }
             }
         }
 
-        // ===== Helper / Error text =====
+        // Helper text
         Text {
             text: root.helperText
             font.family: Theme.fontFamily
             font.pixelSize: Theme.fontSizeXs
-            color: root.error ? Theme.danger : Theme.textTertiary
+            color: root.error ? Theme.coral : Theme.textTertiary
             visible: root.helperText !== ""
         }
     }

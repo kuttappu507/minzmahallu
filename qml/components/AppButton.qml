@@ -4,59 +4,57 @@ import QtQuick.Effects
 import MMS.Theme 1.0
 
 // ============================================================================
-// AppButton — Polished desktop button with 4 variants
+// AppButton — Polished desktop button
 //
 // Variants:
-//   "primary"   — filled emerald, white text (main actions)
+//   "primary"   — filled emerald (main actions)
 //   "secondary" — white surface with border (default actions)
-//   "ghost"     — transparent, text only (subtle actions)
-//   "danger"    — filled red (destructive actions)
+//   "ghost"     — transparent (subtle actions)
+//   "danger"    — filled coral/red (destructive actions)
+//   "subtle"    — tinted background (tertiary actions)
 //
-// States: normal, hover, pressed, focused, disabled
-// All transitions use subtle color animations (100ms).
+// Height: 32-36px (desktop compact)
+// Animations: 100-150ms color transitions
 // ============================================================================
 
 Button {
     id: root
 
-    // ===== Public API =====
-    property string variant: "primary"     // primary | secondary | ghost | danger
-    property string iconSource: ""         // optional SVG path (qrc: or file:)
+    property string variant: "primary"
+    property string iconSource: ""
     property int iconSize: Theme.iconSizeSm
-    property bool showError: false         // red outline for validation errors
+    property bool showError: false
+    property color accentColor: Theme.primary  // for "subtle" variant
 
-    // ===== Sizing =====
-    implicitHeight: Theme.controlHeightMd
-    implicitWidth: Math.max(80, contentRow.implicitWidth + leftPadding + rightPadding)
-    leftPadding: iconSource !== "" ? 10 : 16
+    implicitHeight: Theme.controlHeightLg
+    implicitWidth: Math.max(72, contentRow.implicitWidth + leftPadding + rightPadding)
+    leftPadding: iconSource !== "" ? 12 : 16
     rightPadding: 16
     topPadding: 0
     bottomPadding: 0
+    hoverEnabled: true
 
-    // ===== Content (icon + text) =====
     contentItem: Row {
         id: contentRow
         spacing: 6
 
         Item {
-            id: iconContainer
             width: root.iconSource !== "" ? root.iconSize : 0
             height: root.iconSize
             anchors.verticalCenter: parent.verticalCenter
             visible: root.iconSource !== ""
 
             Image {
-                id: iconImage
+                id: btnIcon
                 source: root.iconSource
                 sourceSize: Qt.size(root.iconSize, root.iconSize)
                 anchors.fill: parent
                 fillMode: Image.Pad
                 visible: false
             }
-
             MultiEffect {
                 anchors.fill: parent
-                source: iconImage
+                source: btnIcon
                 colorizationColor: root.enabled ? _iconColor : Theme.textDisabled
                 colorization: 1.0
             }
@@ -73,8 +71,8 @@ Button {
         }
     }
 
-    // ===== Background =====
     background: Rectangle {
+        id: bg
         radius: Theme.radiusMd
         color: !root.enabled ? _disabledColor :
                root.pressed ? _pressedColor :
@@ -88,28 +86,41 @@ Button {
 
         Behavior on color { ColorAnimation { duration: Theme.animFast } }
         Behavior on border.color { ColorAnimation { duration: Theme.animFast } }
+
+        // Subtle elevation for primary/danger
+        layer.enabled: root.enabled && (root.variant === "primary" || root.variant === "danger") && !root.pressed
+        layer.effect: MultiEffect {
+            shadowEnabled: true
+            shadowColor: root.variant === "primary" ?
+                Qt.rgba(0.02, 0.59, 0.41, Theme.shadowOpacitySmall) :
+                Qt.rgba(0.96, 0.25, 0.37, Theme.shadowOpacitySmall)
+            shadowBlur: 0.4
+            shadowVerticalOffset: 2
+        }
     }
 
-    // ===== Focus ring =====
+    // Focus ring
     Rectangle {
         anchors.fill: parent
         anchors.margins: -2
-        radius: parent ? parent.radius + 2 : Theme.radiusMd + 2
+        radius: bg.radius + 2
         color: "transparent"
         border.width: 2
-        border.color: root.showError ? Qt.rgba(0.86, 0.15, 0.15, 0.35) :
-                                      Qt.rgba(0.02, 0.59, 0.41, 0.35)
+        border.color: root.showError ?
+            Qt.rgba(0.96, 0.25, 0.37, 0.4) :
+            Qt.rgba(0.02, 0.59, 0.41, 0.35)
         visible: root.activeFocus && root.enabled
         z: -1
     }
 
-    // ===== Color resolution by variant =====
+    // ===== Color resolution =====
     readonly property color _baseColor: {
         switch (variant) {
             case "primary":   return Theme.primary
             case "secondary": return Theme.surface
             case "ghost":     return "transparent"
-            case "danger":    return Theme.danger
+            case "danger":    return Theme.coral
+            case "subtle":    return Theme.primarySubtle
             default:          return Theme.primary
         }
     }
@@ -118,7 +129,8 @@ Button {
             case "primary":   return Theme.primaryHover
             case "secondary": return Theme.surfaceHover
             case "ghost":     return Theme.surfaceHover
-            case "danger":    return Theme.dangerHover
+            case "danger":    return Theme.coralHover
+            case "subtle":    return Theme.primarySubtleAlt
             default:          return Theme.primaryHover
         }
     }
@@ -127,7 +139,8 @@ Button {
             case "primary":   return Theme.primaryPressed
             case "secondary": return Theme.surfacePressed
             case "ghost":     return Theme.surfacePressed
-            case "danger":    return Theme.dangerPressed
+            case "danger":    return Theme.coralHover
+            case "subtle":    return Theme.primarySubtleAlt
             default:          return Theme.primaryPressed
         }
     }
@@ -136,7 +149,8 @@ Button {
             case "primary":   return Qt.rgba(0.02, 0.59, 0.41, 0.35)
             case "secondary": return Theme.surfaceSubtle
             case "ghost":     return "transparent"
-            case "danger":    return Qt.rgba(0.86, 0.15, 0.15, 0.35)
+            case "danger":    return Qt.rgba(0.96, 0.25, 0.37, 0.35)
+            case "subtle":    return Theme.surfaceSubtle
             default:          return Qt.rgba(0.02, 0.59, 0.41, 0.35)
         }
     }
@@ -146,6 +160,7 @@ Button {
             case "secondary": return Theme.textPrimary
             case "ghost":     return Theme.textSecondary
             case "danger":    return Theme.textOnPrimary
+            case "subtle":    return Theme.primary
             default:          return Theme.textOnPrimary
         }
     }
@@ -155,6 +170,7 @@ Button {
             case "secondary": return Theme.textSecondary
             case "ghost":     return Theme.textSecondary
             case "danger":    return Theme.textOnPrimary
+            case "subtle":    return Theme.primary
             default:          return Theme.textOnPrimary
         }
     }
