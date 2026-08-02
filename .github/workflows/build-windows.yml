@@ -82,6 +82,30 @@ jobs:
             }
           }
           
+          # ── Phase 2: QML smoke test executable ──────────────────────────
+          # Copy the QML smoke test exe into dist/ and run windeployqt with
+          # --qmldir so it deploys Qt Quick / QML runtime DLLs + QML plugins
+          # (QtQuick, QtQuick.Controls, QtQuick.Layouts, etc.) into dist/.
+          # Both exes share the same dist/ folder and its DLLs.
+          Copy-Item build/mms_qml_smoke.exe dist/
+          & "$env:RUNNER_WORKSPACE/Qt/$env:QT_VERSION/msvc2022_64/bin/windeployqt.exe" --release --no-translations --no-system-d3d-compiler --no-opengl-sw --qmldir "$PWD/qml" "dist/mms_qml_smoke.exe"
+          Write-Host "Deployed QML runtime for mms_qml_smoke.exe"
+
+          # run_smoke.bat — launcher for the QML smoke test
+          @"
+          @echo off
+          cd /d "%~dp0"
+          echo Starting MMS QML Smoke Test...
+          echo.
+          mms_qml_smoke.exe
+          echo.
+          echo mms_qml_smoke.exe exited with code %errorlevel%
+          echo.
+          echo Press any key to close...
+          pause >nul
+          "@ | Out-File dist/run_smoke.bat -Encoding ASCII
+          # ── End Phase 2 ─────────────────────────────────────────────────
+          
           Copy-Item sql dist/ -Recurse
           mkdir dist/resources -Force
           Copy-Item resources/* dist/resources/ -Recurse
