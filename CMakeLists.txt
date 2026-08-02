@@ -25,21 +25,43 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 
 # -----------------------------------------------------------------------------
-# Find Qt 6
+# Find Qt 6 — widgets components
+# Skipped entirely when MMS_QML_ONLY=ON (for QML-only dev builds)
 # -----------------------------------------------------------------------------
-find_package(Qt6 6.5 REQUIRED COMPONENTS
-    Core
-    Gui
-    Widgets
-    Sql
-    Charts
-    PrintSupport
-    Svg
-    Network
-)
+option(MMS_QML_ONLY "Build ONLY the QML smoke test (skip widgets MMS target)" OFF)
 
-if(Qt6_FOUND)
-    message(STATUS "Qt6 version: ${Qt6Core_VERSION}")
+set(MMS_WIDGETS_READY OFF)
+if(NOT MMS_QML_ONLY)
+    find_package(Qt6 6.5 COMPONENTS
+        Core
+        Gui
+        Widgets
+        Sql
+        Charts
+        PrintSupport
+        Svg
+        Network
+    )
+
+    if(Qt6_FOUND)
+        message(STATUS "Qt6 version: ${Qt6Core_VERSION}")
+    endif()
+
+    if(Qt6Core_FOUND AND Qt6Gui_FOUND AND Qt6Widgets_FOUND AND Qt6Sql_FOUND
+       AND Qt6Charts_FOUND AND Qt6PrintSupport_FOUND AND Qt6Svg_FOUND
+       AND Qt6Network_FOUND)
+        set(MMS_WIDGETS_READY ON)
+        message(STATUS "Widgets MMS target: all Qt6 modules found — will build")
+    else()
+        foreach(_mod Core Gui Widgets Sql Charts PrintSupport Svg Network)
+            if(NOT Qt6${_mod}_FOUND)
+                message(STATUS "  Qt6${_mod}: NOT FOUND")
+            endif()
+        endforeach()
+        message(STATUS "Widgets MMS target: skipping (some Qt6 modules absent)")
+    endif()
+else()
+    message(STATUS "MMS_QML_ONLY=ON — skipping widgets find_package entirely")
 endif()
 
 # Find OpenSSL for password hashing
@@ -79,9 +101,9 @@ if(WIN32)
 endif()
 
 # -----------------------------------------------------------------------------
-# Define executable
-# On Windows use WIN32 (GUI subsystem); on other platforms use a normal exe.
+# Define executable (guarded — only when all widgets deps are available)
 # -----------------------------------------------------------------------------
+if(MMS_WIDGETS_READY)
 if(WIN32)
     add_executable(${APP_NAME} WIN32
         ${MMS_SOURCES}
@@ -191,6 +213,8 @@ install(DIRECTORY sql/         DESTINATION sql)
 install(DIRECTORY resources/   DESTINATION resources)
 install(DIRECTORY docs/        DESTINATION docs)
 
+endif() # MMS_WIDGETS_READY
+
 # =============================================================================
 # Tests (enabled via -DBUILD_TESTS=ON)
 # =============================================================================
@@ -222,6 +246,49 @@ if(BUILD_TESTS)
     )
     target_compile_definitions(mms_tests PRIVATE TEST_DATA_DIR="${CMAKE_CURRENT_SOURCE_DIR}/tests/data")
     add_test(NAME mms_tests COMMAND mms_tests)
+endif()
+
+# =============================================================================
+# QML Smoke Test (Phase 2 — minimal Qt Quick verification)
+#
+# This is a SEPARATE executable that only verifies Qt Quick/QML loads.
+# It does NOT replace the widgets MMS application.
+# It does NOT link any backend code.
+# It does NOT affect the MMS (widgets) target in any way.
+#
+# The existing MMS widgets target above is UNCHANGED.
+# =============================================================================
+option(MMS_BUILD_QML_SMOKE "Build the Phase 2 QML smoke test executable" ON)
+
+if(MMS_BUILD_QML_SMOKE)
+    find_package(Qt6 6.5 COMPONENTS Qml Quick QuickControls2 QuickLayouts)
+
+    if(Qt6Qml_FOUND AND Qt6Quick_FOUND AND Qt6QuickControls2_FOUND AND Qt6QuickLayouts_FOUND)
+        message(STATUS "QML smoke test: Qt6 Qml/Quick/QuickControls2/QuickLayouts found — building mms_qml_smoke")
+
+        add_executable(mms_qml_smoke
+            "${CMAKE_CURRENT_SOURCE_DIR}/src/qml_smoke_main.cpp"
+            "${CMAKE_CURRENT_SOURCE_DIR}/qml_smoke.qrc"
+        )
+
+        target_link_libraries(mms_qml_smoke PRIVATE
+            Qt6::Core
+            Qt6::Gui
+            Qt6::Qml
+            Qt6::Quick
+            Qt6::QuickControls2
+            Qt6::QuickLayouts
+        )
+
+        if(WIN32)
+            set_target_properties(mms_qml_smoke PROPERTIES
+                WIN32_EXECUTABLE TRUE
+                LINK_FLAGS "/ENTRY:mainCRTStartup"
+            )
+        endif()
+    else()
+        message(STATUS "QML smoke test: Qt6 Qml/Quick modules not found — skipping mms_qml_smoke")
+    endif()
 endif()
 
 # =============================================================================
