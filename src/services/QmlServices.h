@@ -203,11 +203,11 @@ private:
     mms::DonationService* donationSvc_ = nullptr;
     mms::SubscriptionService* subscriptionSvc_ = nullptr;
     mms::AccountingService* accountingSvc_ = nullptr;
-    mms::AuthService* authSvc_ = nullptr;
-    mms::BackupService* backupSvc_ = nullptr;
+    mms::AuthService* authSvc_ = nullptr;          // QObject
+    mms::BackupService* backupSvc_ = nullptr;      // QObject
     mms::CertificateService* certSvc_ = nullptr;
     mms::DashboardService* dashSvc_ = nullptr;
     mms::ReportService* reportSvc_ = nullptr;
-    mms::SettingsService* settingsSvc_ = nullptr;
-    mms::TokenService* tokenSvc_ = nullptr;
+    mms::SettingsService* settingsSvc_ = nullptr;  // QObject
+    mms::TokenService* tokenSvc_ = nullptr;        // QObject
 };

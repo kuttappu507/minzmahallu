@@ -128,21 +128,30 @@ static Member mapToMember(const QVariantMap& d) {
 // Constructor / Destructor
 // ============================================================================
 QmlServices::QmlServices(QObject* parent) : QObject(parent) {
-    familySvc_ = new FamilyService(this);
-    memberSvc_ = new MemberService(this);
-    donationSvc_ = new DonationService(this);
-    subscriptionSvc_ = new SubscriptionService(this);
-    accountingSvc_ = new AccountingService(this);
+    familySvc_ = new FamilyService();
+    memberSvc_ = new MemberService();
+    donationSvc_ = new DonationService();
+    subscriptionSvc_ = new SubscriptionService();
+    accountingSvc_ = new AccountingService();
     authSvc_ = new AuthService(this);
     backupSvc_ = new BackupService(this);
-    certSvc_ = new CertificateService(this);
-    dashSvc_ = new DashboardService(this);
-    reportSvc_ = new ReportService(this);
+    certSvc_ = new CertificateService();
+    dashSvc_ = new DashboardService();
+    reportSvc_ = new ReportService();
     settingsSvc_ = new SettingsService(this);
     tokenSvc_ = new TokenService(this);
 }
 
-QmlServices::~QmlServices() {}
+QmlServices::~QmlServices() {
+    delete familySvc_;
+    delete memberSvc_;
+    delete donationSvc_;
+    delete subscriptionSvc_;
+    delete accountingSvc_;
+    delete certSvc_;
+    delete dashSvc_;
+    delete reportSvc_;
+}
 
 // ============================================================================
 // Auth
@@ -340,7 +349,7 @@ QVariantList QmlServices::searchSubscriptions(const QString& term, int page, int
                                                qint64 familyId, const QString& status) {
     QVariantList out;
     try {
-        auto subs = subscriptionSvc_->list(page, pageSize, familyId);
+        auto subs = subscriptionSvc_->list(page, pageSize, status, QString(), QString(), familyId);
         for (const auto& s : subs) {
             QVariantMap m;
             m["id"] = s.id;
@@ -427,7 +436,7 @@ QVariantList QmlServices::searchDonations(const QString& term, int page, int pag
                                            qint64 categoryId, const QString& dateFrom, const QString& dateTo) {
     QVariantList out;
     try {
-        auto dons = donationSvc_->list(page, pageSize, categoryId);
+        auto dons = donationSvc_->list(page, pageSize, dateFrom, dateTo, categoryId, term);
         for (const auto& d : dons) {
             QVariantMap m;
             m["id"] = d.id;
@@ -513,7 +522,7 @@ QVariantList QmlServices::searchTransactions(const QString& term, int page, int 
                                               qint64 accountId, const QString& dateFrom, const QString& dateTo) {
     QVariantList out;
     try {
-        auto txns = accountingSvc_->listTransactions(page, pageSize, accountId);
+        auto txns = accountingSvc_->listTransactions(page, pageSize, dateFrom, dateTo, QString(), accountId);
         for (const auto& t : txns) {
             QVariantMap m;
             m["id"] = t.id;
