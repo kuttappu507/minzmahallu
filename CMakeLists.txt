@@ -157,21 +157,13 @@ qt_add_resources(${APP_NAME} "templates_resources"
 )
 
 # =============================================================================
-# THE KEY FIX: Use qt_add_qml_module (Qt 6 proper way to register QML files)
-# This compiles QML files into the binary and registers them at the correct
-# qrc: path. No manual .qrc entries needed for QML.
+# QML: Embedded as raw string literal in main.cpp (no qt_add_qml_module)
+# The QML is loaded via engine.loadData() — no qrc/rcc/qmlcachegen needed.
+# qt_add_qml_module is NOT used because:
+# 1. qrc paths didn't work (rcc didn't embed files)
+# 2. qmlcachegen fails on certain QML syntax
+# 3. Raw string literal is 100% reliable — QML is in the .cpp file
 # =============================================================================
-qt_add_qml_module(${APP_NAME}
-    URI "qml"
-    VERSION 1.0
-    RESOURCE_PREFIX "/"
-    QML_FILES
-        "qml/main.qml"
-        "qml/components/SquircleButton.qml"
-        "qml/components/StatCard.qml"
-        "qml/components/Pill.qml"
-        "qml/views/DashboardView.qml"
-)
 
 target_include_directories(${APP_NAME} PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/src"
