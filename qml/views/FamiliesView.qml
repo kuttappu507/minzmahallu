@@ -1,19 +1,38 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import "../components"
+import "../dialogs"
 
 // ============================================================================
-// FamiliesView — table with search, status filter, ward filter, add/edit/delete
+// FamiliesView - functional family management with Add/Edit/Delete
 // ============================================================================
 Item {
     id: root
 
-    // ----- Top header + actions -----
+    property var services: typeof Services !== "undefined" ? Services : null
+
+    // Data model (populated from C++ backend)
+    ListModel { id: familyModel }
+
+    Component.onCompleted: refresh()
+
+    function refresh() {
+        familyModel.clear()
+        if (!services) return
+        var families = services.searchFamilies(searchField.text, 1, 50, statusFilter.currentText === "All" ? "" : statusFilter.currentText, wardFilter.currentText === "All Wards" ? "" : wardFilter.currentText)
+        for (var i = 0; i < families.length; i++) {
+            familyModel.append(families[i])
+        }
+        footerText.text = "Showing 1-" + familyModel.count + " of " + (services.totalFamilies()) + " families"
+    }
+
     ColumnLayout {
         anchors.fill: parent
         anchors.margins: 22
         spacing: 14
 
+        // Header
         RowLayout {
             Layout.fillWidth: true; spacing: 12
 
@@ -42,14 +61,16 @@ Item {
                     TextField {
                         id: searchField
                         Layout.fillWidth: true
-                        placeholderText: "Search by family #, house, phone..."
+                        placeholderText: "Search families..."
                         font.family: Theme.fontPrimary; font.pixelSize: 11
                         background: Item {}
                         color: Theme.text
-                        onTextEdited: familyModel.filter(text, statusFilter.currentText, wardFilter.currentText)
+                        onTextEdited: refreshTimer.restart()
                     }
                 }
             }
+
+            Timer { id: refreshTimer; interval: 300; onTriggered: refresh() }
 
             // Status filter
             ComboBox {
@@ -57,7 +78,7 @@ Item {
                 implicitHeight: 34; Layout.preferredWidth: 110
                 model: ["All", "Active", "Inactive", "Archived"]
                 font.family: Theme.fontPrimary; font.pixelSize: 11
-                onCurrentIndexChanged: familyModel.filter(searchField.text, currentText, wardFilter.currentText)
+                onCurrentIndexChanged: refresh()
             }
 
             // Ward filter
@@ -66,24 +87,19 @@ Item {
                 implicitHeight: 34; Layout.preferredWidth: 120
                 model: ["All Wards", "Ward 1", "Ward 2", "Ward 3", "Ward 4"]
                 font.family: Theme.fontPrimary; font.pixelSize: 11
-                onCurrentIndexChanged: familyModel.filter(searchField.text, statusFilter.currentText, currentText)
+                onCurrentIndexChanged: refresh()
             }
 
-            // Add button
-            Rectangle {
-                radius: 8; color: Theme.sidebar; border.width: 0
-                implicitHeight: 34; Layout.preferredWidth: 110
-                Text {
-                    anchors.centerIn: parent
-                    text: "+ Add Family"
-                    font.family: Theme.fontPrimary; font.pixelSize: 11; font.weight: Font.Bold
-                    color: "#ffffff"
-                }
-                MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor }
+            // Add button (functional!)
+            IconBtn {
+                icon: "plus"
+                label: "Add Family"
+                primary: true
+                onClicked: openAddDialog()
             }
         }
 
-        // ----- Table -----
+        // Table
         Rectangle {
             Layout.fillWidth: true; Layout.fillHeight: true
             radius: 10; color: Theme.panel; border.width: 1.5; border.color: Theme.border
@@ -91,10 +107,9 @@ Item {
             ColumnLayout {
                 anchors.fill: parent; spacing: 0
 
-                // Header row
+                // Header
                 Rectangle {
-                    Layout.fillWidth: true; Layout.preferredHeight: 38
-                    color: Theme.panelMuted
+                    Layout.fillWidth: true; Layout.preferredHeight: 38; color: Theme.panelMuted
                     Rectangle { anchors.bottom: parent.bottom; anchors.left: parent.left; anchors.right: parent.right; height: 1; color: Theme.border }
                     RowLayout {
                         anchors.fill: parent; anchors.leftMargin: 14; anchors.rightMargin: 14; spacing: 0
@@ -104,7 +119,20 @@ Item {
                         Text { text: "PHONE"; Layout.preferredWidth: 130; font.family: Theme.fontPrimary; font.pixelSize: 9; font.weight: Font.Black; color: Theme.muted }
                         Text { text: "MEMBERS"; Layout.preferredWidth: 70; font.family: Theme.fontPrimary; font.pixelSize: 9; font.weight: Font.Black; color: Theme.muted; horizontalAlignment: Text.AlignHCenter }
                         Text { text: "STATUS"; Layout.preferredWidth: 110; font.family: Theme.fontPrimary; font.pixelSize: 9; font.weight: Font.Black; color: Theme.muted; horizontalAlignment: Text.AlignHCenter }
-                        Text { text: "ACTIONS"; Layout.preferredWidth: 100; font.family: Theme.fontPrimary; font.pixelSize: 9; font.weight: Font.Black; color: Theme.muted; horizontalAlignment: Text.AlignHCenter }
+                        Text { text: "ACTIONS"; Layout.preferredWidth: 120; font.family: Theme.fontPrimary; font.pixelSize: 9; font.weight: Font.Black; color: Theme.muted; horizontalAlignment: Text.AlignHCenter }
+                    }
+                }
+
+                // Empty state
+                Rectangle {
+                    Layout.fillWidth: true; Layout.fillHeight: true
+                    color: Theme.panel
+                    visible: familyModel.count === 0
+                    ColumnLayout {
+                        anchors.centerIn: parent; spacing: 8
+                        Text { text: "🏠"; font.pixelSize: 36; Layout.alignment: Qt.AlignHCenter }
+                        Text { text: "No families found"; font.family: Theme.fontDisplay; font.pixelSize: 14; font.weight: Font.Bold; color: Theme.text; Layout.alignment: Qt.AlignHCenter }
+                        Text { text: "Click 'Add Family' to create your first family record"; font.family: Theme.fontPrimary; font.pixelSize: 11; color: Theme.muted; Layout.alignment: Qt.AlignHCenter }
                     }
                 }
 
@@ -114,10 +142,13 @@ Item {
                     Layout.fillWidth: true; Layout.fillHeight: true
                     clip: true; spacing: 0
                     model: familyModel
+                    visible: familyModel.count > 0
                     delegate: Rectangle {
                         width: table.width; height: 44
-                        color: index % 2 === 0 ? Theme.panel : Theme.panelMuted
+                        color: rowMA.containsMouse ? Theme.panelMuted : (index % 2 === 0 ? Theme.panel : Theme.panelMuted)
+                        Behavior on color { ColorAnimation { duration: 80 } }
                         Rectangle { anchors.bottom: parent.bottom; anchors.left: parent.left; anchors.right: parent.right; height: 1; color: Theme.border; opacity: 0.4 }
+
                         RowLayout {
                             anchors.fill: parent; anchors.leftMargin: 14; anchors.rightMargin: 14; spacing: 0
                             Text { text: model.familyNumber; Layout.preferredWidth: 110; font.family: Theme.fontPrimary; font.pixelSize: 11; font.weight: Font.Bold; color: Theme.text }
@@ -137,23 +168,18 @@ Item {
                                     anchors.centerIn: parent
                                     width: 78; height: 22; radius: 11
                                     color: parent.p.sb; border.width: 1.2; border.color: parent.p.sc
-                                    Text {
-                                        anchors.centerIn: parent
-                                        text: parent.parent.p.label
-                                        font.family: Theme.fontPrimary; font.pixelSize: 9; font.weight: Font.Bold
-                                        color: parent.parent.p.st
-                                    }
+                                    Text { anchors.centerIn: parent; text: parent.parent.p.label; font.family: Theme.fontPrimary; font.pixelSize: 9; font.weight: Font.Bold; color: parent.parent.p.st }
                                 }
                             }
-                            // Actions
+                            // Actions (functional!)
                             RowLayout {
-                                Layout.preferredWidth: 100; spacing: 4
-                                Rectangle { width: 26; height: 26; radius: 6; color: Theme.tints.bl.sb; border.width: 1; border.color: Theme.tints.bl.sc; Text { anchors.centerIn: parent; text: "✎"; font.pixelSize: 11; color: Theme.tints.bl.st } }
-                                Rectangle { width: 26; height: 26; radius: 6; color: Theme.tints.sl.sb; border.width: 1; border.color: Theme.tints.sl.sc; Text { anchors.centerIn: parent; text: "↗"; font.pixelSize: 11; color: Theme.tints.sl.st } }
-                                Rectangle { width: 26; height: 26; radius: 6; color: Theme.tints.rd.sb; border.width: 1; border.color: Theme.tints.rd.sc; Text { anchors.centerIn: parent; text: "✕"; font.pixelSize: 11; color: Theme.tints.rd.st } }
+                                Layout.preferredWidth: 120; spacing: 4
+                                IconBtn { icon: "edit"; compact: true; onClicked: openEditDialog(model.id) }
+                                IconBtn { icon: "trash"; compact: true; bgColor: Theme.tints.rd.sb; bgColorHover: Theme.tints.rd.sc; onClicked: openDeleteDialog(model.id, model.houseName) }
                             }
                         }
-                        MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor }
+
+                        MouseArea { id: rowMA; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor }
                     }
                 }
             }
@@ -163,35 +189,32 @@ Item {
         RowLayout {
             Layout.fillWidth: true; spacing: 8
             Text {
-                text: "Showing 1–248 of 248 families"
+                id: footerText
+                text: "Loading..."
                 font.family: Theme.fontPrimary; font.pixelSize: 10; color: Theme.muted
             }
             Item { Layout.fillWidth: true }
-            Rectangle { width: 26; height: 26; radius: 6; color: Theme.panel; border.width: 1; border.color: Theme.border; Text { anchors.centerIn: parent; text: "‹"; font.pixelSize: 14; color: Theme.muted } }
-            Text { text: "1"; font.family: Theme.fontPrimary; font.pixelSize: 11; font.weight: Font.Bold; color: Theme.text }
-            Rectangle { width: 26; height: 26; radius: 6; color: Theme.panel; border.width: 1; border.color: Theme.border; Text { anchors.centerIn: parent; text: "›"; font.pixelSize: 14; color: Theme.muted } }
+            IconBtn { icon: "refresh"; compact: true; onClicked: refresh() }
         }
     }
 
-    // Inline list model (placeholder; will be replaced with C++ backend when wired)
-    ListModel {
-        id: familyModel
+    // ===== Dialogs =====
+    function openAddDialog() {
+        var dlg = Qt.createQmlObject('import QtQuick\nimport QtQuick.Controls\nimport "../dialogs"\nFamilyEditDialog { services: root.services; onSaved: function(id) { root.refresh() } }', root, "FamilyAddDialog")
+        dlg.show()
+    }
 
-        function filter(term, status, ward) {
-            // Placeholder — just keeps current rows
-        }
+    function openEditDialog(id) {
+        var dlg = Qt.createQmlObject('import QtQuick\nimport QtQuick.Controls\nimport "../dialogs"\nFamilyEditDialog { familyId: ' + id + '; services: root.services; onSaved: function(id) { root.refresh() } }', root, "FamilyEditDialog")
+        dlg.show()
+    }
 
-        ListElement { familyNumber: "KH-F-0001"; houseName: "Manzil Manzoor"; headName: "Manzoor PP"; ward: "Ward 1"; phone: "9847123456"; memberCount: 5; status: "Active" }
-        ListElement { familyNumber: "KH-F-0002"; houseName: "Puthanpurayil"; headName: "Rahim PT"; ward: "Ward 1"; phone: "9847234567"; memberCount: 4; status: "Active" }
-        ListElement { familyNumber: "KH-F-0003"; houseName: "Kizhakkepuram"; headName: "Sulaiman K"; ward: "Ward 2"; phone: "9847345678"; memberCount: 6; status: "Active" }
-        ListElement { familyNumber: "KH-F-0004"; houseName: "Vadakke Veettil"; headName: "Hameed V"; ward: "Ward 2"; phone: "9847456789"; memberCount: 3; status: "Active" }
-        ListElement { familyNumber: "KH-F-0005"; houseName: "Thekkepuram"; headName: "Yusuf T"; ward: "Ward 3"; phone: "9847567890"; memberCount: 7; status: "Active" }
-        ListElement { familyNumber: "KH-F-0006"; houseName: "Purayil House"; headName: "Jameel P"; ward: "Ward 3"; phone: "9847678901"; memberCount: 4; status: "Active" }
-        ListElement { familyNumber: "KH-F-0007"; houseName: "Madappattu"; headName: "Ansar M"; ward: "Ward 4"; phone: "9847789012"; memberCount: 5; status: "Inactive" }
-        ListElement { familyNumber: "KH-F-0008"; houseName: "Kunnumpuram"; headName: "Nisar K"; ward: "Ward 4"; phone: "9847890123"; memberCount: 3; status: "Active" }
-        ListElement { familyNumber: "KH-F-0009"; houseName: "Puthanveettil"; headName: "Sajna P"; ward: "Ward 1"; phone: "9847901234"; memberCount: 4; status: "Active" }
-        ListElement { familyNumber: "KH-F-0010"; houseName: "Chalil House"; headName: "Hamsa C"; ward: "Ward 2"; phone: "9847012345"; memberCount: 6; status: "Archived" }
-        ListElement { familyNumber: "KH-F-0011"; houseName: "Puzhaypuram"; headName: "Rasheed P"; ward: "Ward 1"; phone: "9847123457"; memberCount: 5; status: "Active" }
-        ListElement { familyNumber: "KH-F-0012"; houseName: "Velichappuram"; headName: "Suhara V"; ward: "Ward 2"; phone: "9847234568"; memberCount: 4; status: "Active" }
+    function openDeleteDialog(id, name) {
+        var dlg = Qt.createQmlObject('import QtQuick\nimport QtQuick.Controls\nimport "../dialogs"\nConfirmDialog { message: "Delete family?"; warningText: "Family \\"' + name + '\\" will be permanently deleted. This action cannot be undone."; acceptLabel: "Yes, Delete" }', root, "ConfirmDelete")
+        dlg.accepted.connect(function() {
+            root.services.deleteFamily(id)
+            root.refresh()
+        })
+        dlg.show()
     }
 }

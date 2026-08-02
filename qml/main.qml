@@ -217,49 +217,58 @@ ApplicationWindow {
 
     ListModel {
         id: navModel
-        ListElement { title: "Dashboard" }
-        ListElement { title: "Families" }
-        ListElement { title: "Members" }
-        ListElement { title: "Subscriptions" }
-        ListElement { title: "Donations" }
-        ListElement { title: "Accounting" }
-        ListElement { title: "Marriage" }
-        ListElement { title: "Death" }
-        ListElement { title: "Welfare" }
-        ListElement { title: "Certificates" }
-        ListElement { title: "Tokens" }
-        ListElement { title: "Reports" }
-        ListElement { title: "Settings" }
-        ListElement { title: "Users" }
-        ListElement { title: "Audit Log" }
-        ListElement { title: "Backup" }
+        ListElement { title: "Dashboard";     icon: "dashboard" }
+        ListElement { title: "Families";      icon: "families" }
+        ListElement { title: "Members";       icon: "members" }
+        ListElement { title: "Subscriptions"; icon: "subscriptions" }
+        ListElement { title: "Donations";     icon: "donations" }
+        ListElement { title: "Accounting";    icon: "accounting" }
+        ListElement { title: "Marriage";      icon: "marriage" }
+        ListElement { title: "Death";         icon: "death" }
+        ListElement { title: "Welfare";       icon: "welfare" }
+        ListElement { title: "Certificates";  icon: "certificates" }
+        ListElement { title: "Tokens";        icon: "token" }
+        ListElement { title: "Reports";       icon: "reports" }
+        ListElement { title: "Settings";      icon: "settings" }
+        ListElement { title: "Users";         icon: "users" }
+        ListElement { title: "Audit Log";     icon: "audit" }
+        ListElement { title: "Backup";        icon: "backup" }
     }
 
     Component {
         id: navDelegate
         Rectangle {
             width: navList.width; height: 46
-            color: ListView.isCurrentItem ? Qt.rgba(255,255,255,0.10) : (mouseArea.containsMouse ? Qt.rgba(255,255,255,0.05) : "transparent")
-            Behavior on color { ColorAnimation { duration: 120 } }
+            color: ListView.isCurrentItem ? Qt.rgba(255,255,255,0.12) : (mouseArea.containsMouse ? Qt.rgba(255,255,255,0.06) : "transparent")
+            Behavior on color { ColorAnimation { duration: 150 } }
+
+            // Left accent bar
             Rectangle {
                 anchors.left: parent.left; anchors.top: parent.top; anchors.bottom: parent.bottom
                 width: 4; color: Theme.accent; visible: ListView.isCurrentItem
+                Behavior on width { NumberAnimation { duration: 150 } }
             }
+
             RowLayout {
-                anchors.fill: parent; anchors.leftMargin: 22; anchors.rightMargin: 14; spacing: 12
-                Text {
-                    text: model.title.charAt(0)
-                    font.family: Theme.fontDisplay; font.pixelSize: 12; font.weight: Font.Bold
-                    color: ListView.isCurrentItem ? Theme.accent : Qt.rgba(255,255,255,0.55)
-                    verticalAlignment: Text.AlignVCenter; horizontalAlignment: Text.AlignHCenter
+                anchors.fill: parent; anchors.leftMargin: 18; anchors.rightMargin: 14; spacing: 12
+
+                // SVG icon
+                Image {
+                    source: "qrc:/resources/icons/svg/" + model.icon + ".svg"
+                    sourceSize.width: 18; sourceSize.height: 18
+                    Layout.alignment: Qt.AlignVCenter
+                    visible: model.icon !== ""
+                    // For SVG with currentColor, we can't tint via Image. Rely on icon color as-is.
                 }
+
                 Text {
                     visible: !sidebarCollapsed
                     text: model.title
                     font.family: Theme.fontPrimary; font.pixelSize: 13
                     font.weight: ListView.isCurrentItem ? Font.Bold : Font.Medium
-                    color: ListView.isCurrentItem ? "#ffffff" : Qt.rgba(255,255,255,0.82)
+                    color: ListView.isCurrentItem ? "#ffffff" : (mouseArea.containsMouse ? "#ffffff" : Qt.rgba(255,255,255,0.78))
                     verticalAlignment: Text.AlignVCenter
+                    Behavior on color { ColorAnimation { duration: 120 } }
                 }
                 Item { Layout.fillWidth: true }
             }

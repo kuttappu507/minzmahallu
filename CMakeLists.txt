@@ -168,6 +168,13 @@ qt_add_resources(${APP_NAME} "qml_resources"
     PREFIX "/"
     FILES
         qml/main.qml
+        qml/components/IconBtn.qml
+        qml/components/Dialog.qml
+        qml/components/FormField.qml
+        qml/dialogs/FamilyEditDialog.qml
+        qml/dialogs/MemberEditDialog.qml
+        qml/dialogs/DonationEditDialog.qml
+        qml/dialogs/ConfirmDialog.qml
         qml/views/DashboardView.qml
         qml/views/FamiliesView.qml
         qml/views/MembersView.qml

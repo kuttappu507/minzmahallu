@@ -25,6 +25,7 @@
 #include "core/Theme.h"
 #include "services/SettingsService.h"
 #include "services/AuthSession.h"
+#include "services/QmlServices.h"
 
 using namespace mms;
 
@@ -525,6 +526,12 @@ int main(int argc, char* argv[]) {
     Theme* theme = new Theme(&engine);
     engine.rootContext()->setContextProperty("Theme", theme);
     logMsg("  Theme context property registered");
+
+    // Register QmlServices as a context property — exposes all C++ services to QML
+    // Usage in QML: Services.searchFamilies(...), Services.createFamily({...}), etc.
+    QmlServices* services = new QmlServices(&engine);
+    engine.rootContext()->setContextProperty("Services", services);
+    logMsg("  QmlServices context property registered");
 
     QObject::connect(&engine, &QQmlApplicationEngine::warnings,
         &engine, [](const QList<QQmlError> &warnings) {

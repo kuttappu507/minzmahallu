@@ -43,3 +43,4 @@ Thumbs.db
 *~
 dist-win/
 build-linux/
+build-verify/

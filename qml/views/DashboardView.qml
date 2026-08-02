@@ -1,10 +1,17 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import "../components"
 
+// ============================================================================
+// DashboardView - live data from Services + functional quick actions
+// ============================================================================
 ScrollView {
     id: dashboard
     clip: true
+
+    property var services: typeof Services !== "undefined" ? Services : null
+    property var stats: services ? services.dashboardStats : ({})
 
     ColumnLayout {
         width: dashboard.width
@@ -20,7 +27,7 @@ ScrollView {
             ColumnLayout {
                 spacing: 3
                 Text {
-                    text: "Assalamu Alaikum, " + "Administrator"
+                    text: "Assalamu Alaikum, " + (services ? services.currentUserName : "Administrator")
                     font.family: Theme.fontDisplay; font.pixelSize: 21; font.weight: Font.Bold
                     color: Theme.text
                 }
@@ -32,7 +39,6 @@ ScrollView {
             }
             Item { Layout.fillWidth: true }
 
-            // Date chip
             Rectangle {
                 radius: 7; color: Theme.tints.sl.sb
                 border.width: 1.5; border.color: Theme.tints.sl.sc
@@ -46,7 +52,7 @@ ScrollView {
             }
         }
 
-        // 10 stat cards in 2 rows x 5 cols
+        // Stat cards (live data)
         GridLayout {
             Layout.fillWidth: true
             Layout.leftMargin: 22; Layout.rightMargin: 22
@@ -55,40 +61,52 @@ ScrollView {
 
             Repeater {
                 model: ListModel {
-                    ListElement { label: "FAMILIES"; value: "248"; delta: "+6 this month"; up: 1; tint: "em"; icon: "F" }
-                    ListElement { label: "MEMBERS"; value: "1,142"; delta: "+18 this month"; up: 1; tint: "cy"; icon: "M" }
-                    ListElement { label: "ACTIVE"; value: "986"; delta: "86.3% active"; up: 1; tint: "bl"; icon: "A" }
-                    ListElement { label: "COLLECTION"; value: "Rs.48,200"; delta: "+9.1% vs June"; up: 1; tint: "am"; icon: "₹" }
-                    ListElement { label: "DUES"; value: "Rs.36,400"; delta: "7 families overdue"; up: 0; tint: "rd"; icon: "!" }
-                    ListElement { label: "DONATIONS"; value: "Rs.92,750"; delta: "+12.4% vs June"; up: 1; tint: "pk"; icon: "D" }
-                    ListElement { label: "WELFARE"; value: "Rs.1,45,000"; delta: "14 beneficiaries"; up: 1; tint: "vi"; icon: "W" }
-                    ListElement { label: "MARRIAGES"; value: "17"; delta: "2 this quarter"; up: 1; tint: "or"; icon: "♥" }
-                    ListElement { label: "DEATHS"; value: "9"; delta: "1 this month"; up: 0; tint: "sl"; icon: "✿" }
-                    ListElement { label: "BALANCE"; value: "Rs.4,56,320"; delta: "across all funds"; up: 1; tint: "ib"; icon: "₹" }
+                    ListElement { label: "FAMILIES";    valueExpr: "stats.totalFamilies || 0";     delta: "Total registered";   up: 1; tint: "em"; icon: "F" }
+                    ListElement { label: "MEMBERS";     valueExpr: "stats.totalMembers || 0";      delta: "Active community";   up: 1; tint: "cy"; icon: "M" }
+                    ListElement { label: "ACTIVE";      valueExpr: "stats.activeMembers || 0";     delta: "Active members";     up: 1; tint: "bl"; icon: "A" }
+                    ListElement { label: "COLLECTION";  valueExpr: "'Rs.' + (stats.monthlyCollection || 0).toLocaleString()"; delta: "This month"; up: 1; tint: "am"; icon: "₹" }
+                    ListElement { label: "DUES";        valueExpr: "'Rs.' + (stats.pendingDues || 0).toLocaleString()";       delta: "Pending dues"; up: 0; tint: "rd"; icon: "!" }
+                    ListElement { label: "DONATIONS";   valueExpr: "'Rs.' + (stats.monthlyDonations || 0).toLocaleString()";  delta: "This month"; up: 1; tint: "pk"; icon: "D" }
+                    ListElement { label: "WELFARE";     valueExpr: "stats.welfareBeneficiaries || 0"; delta: "Beneficiaries"; up: 1; tint: "vi"; icon: "W" }
+                    ListElement { label: "MARRIAGES";   valueExpr: "stats.marriagesThisYear || 0";  delta: "This year";          up: 1; tint: "or"; icon: "♥" }
+                    ListElement { label: "DEATHS";      valueExpr: "stats.deathsThisYear || 0";     delta: "This year";          up: 0; tint: "sl"; icon: "✿" }
+                    ListElement { label: "BALANCE";     valueExpr: "'Rs.' + (stats.balanceThisMonth || 0).toLocaleString()";  delta: "This month"; up: 1; tint: "ib"; icon: "₹" }
                 }
                 delegate: statCard
             }
         }
 
-        // Quick actions row
+        // Quick actions row (functional — switch to the relevant view)
         RowLayout {
             Layout.fillWidth: true
             Layout.leftMargin: 22; Layout.rightMargin: 22
             spacing: 10
 
             Repeater {
-                model: ["+ Add Family", "+ Add Member", "+ Receive Donation", "+ New Token", "+ Issue Certificate"]
+                model: ListModel {
+                    ListElement { label: "+ Add Family";      navIndex: 1 }
+                    ListElement { label: "+ Add Member";      navIndex: 2 }
+                    ListElement { label: "+ Receive Donation"; navIndex: 4 }
+                    ListElement { label: "+ New Token";       navIndex: 10 }
+                    ListElement { label: "+ Issue Certificate"; navIndex: 9 }
+                }
                 delegate: Rectangle {
-                    radius: 8; color: Theme.panel; border.width: 1.5; border.color: Theme.border
+                    property bool isHover: qaMA.containsMouse
+                    radius: 8; color: isHover ? Theme.panelMuted : Theme.panel
+                    border.width: 1.5; border.color: isHover ? Theme.sidebar : Theme.border
                     implicitHeight: 36
                     Layout.preferredWidth: 160
+                    Behavior on color { ColorAnimation { duration: 120 } }
+                    Behavior on border.color { ColorAnimation { duration: 120 } }
+                    scale: isHover ? 1.04 : 1.0
+                    Behavior on scale { NumberAnimation { duration: 100 } }
                     Text {
                         anchors.centerIn: parent; anchors.margins: 12
-                        text: modelData
+                        text: model.label
                         font.family: Theme.fontPrimary; font.pixelSize: 11; font.weight: Font.Bold
-                        color: Theme.text
+                        color: isHover ? Theme.sidebar : Theme.text
                     }
-                    MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor }
+                    MouseArea { id: qaMA; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: { navList.currentIndex = model.navIndex; win.currentNavIndex = model.navIndex } }
                 }
             }
             Item { Layout.fillWidth: true }
@@ -122,7 +140,6 @@ ScrollView {
                             font.family: Theme.fontPrimary; font.pixelSize: 10
                             color: Theme.muted
                         }
-                        // Placeholder bar chart
                         Item { Layout.fillWidth: true; Layout.fillHeight: true }
                         RowLayout {
                             Layout.fillWidth: true; spacing: 6
@@ -167,16 +184,11 @@ ScrollView {
                     font.family: Theme.fontPrimary; font.pixelSize: 11
                     color: Theme.muted
                 }
-
                 ListView {
                     Layout.fillWidth: true; Layout.fillHeight: true
                     clip: true; spacing: 4
                     model: ListModel {
-                        ListElement { who: "Administrator"; what: "Added new family: KH-F-0249 (Manzil Manzoor)"; when: "2 min ago"; tint: "em" }
-                        ListElement { who: "Treasurer"; what: "Recorded donation: Rs.5,000 (Sponsorship) from Rahim PT"; when: "17 min ago"; tint: "pk" }
-                        ListElement { who: "Administrator"; what: "Issued marriage certificate: M-2026-017"; when: "1 hour ago"; tint: "or" }
-                        ListElement { who: "Secretary"; what: "Marked subscription overdue: 7 families"; when: "2 hours ago"; tint: "rd" }
-                        ListElement { who: "Administrator"; what: "Created token event: Eid Milad 2026"; when: "Yesterday"; tint: "vi" }
+                        ListElement { who: "Administrator"; what: "Welcome to Minz Mahallu Management System"; when: "Just now"; tint: "em" }
                     }
                     delegate: RowLayout {
                         width: ListView.view.width; height: 38; spacing: 10
@@ -211,18 +223,20 @@ ScrollView {
         }
     }
 
-    // Stat card component
+    // Stat card component with hover effect
     Component {
         id: statCard
         Rectangle {
             property var t: Theme.tint(model.tint)
+            property bool isHover: scMA.containsMouse
             Layout.fillWidth: true
             Layout.preferredHeight: 130
             radius: 10
             color: t.sb
             border.width: 1.5; border.color: t.sc
+            scale: isHover ? 1.03 : 1.0
+            Behavior on scale { NumberAnimation { duration: 150 } }
 
-            // Decorative circle (bottom-right, semi-transparent)
             Rectangle {
                 width: 56; height: 56; radius: 28
                 anchors.right: parent.right; anchors.bottom: parent.bottom
@@ -232,7 +246,6 @@ ScrollView {
 
             ColumnLayout {
                 anchors.fill: parent; anchors.margins: 14; spacing: 6
-                // Top row: icon + delta
                 RowLayout {
                     Layout.fillWidth: true; spacing: 8
                     Rectangle {
@@ -251,14 +264,14 @@ ScrollView {
                         implicitHeight: 22
                         Text {
                             anchors.centerIn: parent; anchors.margins: 8
-                            text: (model.up ? "▲ " : "▼ ") + model.delta
+                            text: (model.up ? "▲ " : "■ ") + model.delta
                             font.family: Theme.fontPrimary; font.pixelSize: 9; font.weight: Font.Black
                             color: t.st
                         }
                     }
                 }
                 Text {
-                    text: model.value
+                    text: evalExpr(model.valueExpr)
                     font.family: Theme.fontDisplay; font.pixelSize: 24; font.weight: Font.Bold
                     color: t.st
                     Layout.fillWidth: true; elide: Text.ElideRight
@@ -270,6 +283,14 @@ ScrollView {
                     Layout.fillWidth: true; elide: Text.ElideRight
                 }
             }
+
+            MouseArea { id: scMA; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor }
         }
+    }
+
+    // Helper to evaluate a stat value expression against the current stats
+    function evalExpr(expr) {
+        try { return Function("stats", "return " + expr)(stats); }
+        catch (e) { return "—"; }
     }
 }
