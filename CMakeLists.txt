@@ -86,6 +86,7 @@ file(GLOB_RECURSE MMS_SOURCES
 )
 # Exclude the QML smoke test launcher — it's a separate executable
 list(FILTER MMS_SOURCES EXCLUDE REGEX "qml_smoke_main\.cpp$")
+list(FILTER MMS_SOURCES EXCLUDE REGEX "design_preview_main\.cpp$")
 file(GLOB_RECURSE MMS_HEADERS
     "${CMAKE_CURRENT_SOURCE_DIR}/src/*.h"
 )
