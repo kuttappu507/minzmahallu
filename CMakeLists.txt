@@ -294,6 +294,47 @@ if(MMS_BUILD_QML_SMOKE)
 endif()
 
 # =============================================================================
+# Design Preview (Phase 3 — visual design system evaluation)
+#
+# Separate executable that loads DesignPreview.qml showing all design system
+# components (Theme, AppButton, IconButton, AppTextField, AppComboBox).
+# No backend integration — purely visual.
+# Does NOT affect the MMS widgets application.
+# =============================================================================
+option(MMS_BUILD_DESIGN_PREVIEW "Build the Phase 3 design preview executable" ON)
+
+if(MMS_BUILD_DESIGN_PREVIEW)
+    find_package(Qt6 6.5 COMPONENTS Qml Quick QuickControls2 QuickLayouts)
+
+    if(Qt6Qml_FOUND AND Qt6Quick_FOUND AND Qt6QuickControls2_FOUND AND Qt6QuickLayouts_FOUND)
+        message(STATUS "Design preview: Qt6 Qml/Quick found — building mms_design_preview")
+
+        add_executable(mms_design_preview
+            "${CMAKE_CURRENT_SOURCE_DIR}/src/design_preview_main.cpp"
+            "${CMAKE_CURRENT_SOURCE_DIR}/design_preview.qrc"
+        )
+
+        target_link_libraries(mms_design_preview PRIVATE
+            Qt6::Core
+            Qt6::Gui
+            Qt6::Qml
+            Qt6::Quick
+            Qt6::QuickControls2
+            Qt6::QuickLayouts
+        )
+
+        if(WIN32)
+            set_target_properties(mms_design_preview PROPERTIES
+                WIN32_EXECUTABLE TRUE
+                LINK_FLAGS "/ENTRY:mainCRTStartup"
+            )
+        endif()
+    else()
+        message(STATUS "Design preview: Qt6 Qml/Quick modules not found — skipping mms_design_preview")
+    endif()
+endif()
+
+# =============================================================================
 # CPack installer
 # =============================================================================
 set(CPACK_PACKAGE_NAME "Mahallu Management System")

@@ -106,6 +106,29 @@ jobs:
           "@ | Out-File dist/run_smoke.bat -Encoding ASCII
           # ── End Phase 2 ─────────────────────────────────────────────────
           
+          # ── Phase 3: Design Preview executable ──────────────────────────
+          # Copy the design preview exe and run windeployqt with --qmldir
+          # so it deploys any additional QML dependencies (e.g. QtQuick.Effects
+          # for MultiEffect icon tinting).
+          Copy-Item build/mms_design_preview.exe dist/
+          & "$env:RUNNER_WORKSPACE/Qt/$env:QT_VERSION/msvc2022_64/bin/windeployqt.exe" --release --no-translations --no-system-d3d-compiler --no-opengl-sw --qmldir "$PWD/qml" "dist/mms_design_preview.exe"
+          Write-Host "Deployed QML runtime for mms_design_preview.exe"
+
+          # run_design_preview.bat — launcher for the design preview
+          @"
+          @echo off
+          cd /d "%~dp0"
+          echo Starting MMS Design Preview...
+          echo.
+          mms_design_preview.exe
+          echo.
+          echo mms_design_preview.exe exited with code %errorlevel%
+          echo.
+          echo Press any key to close...
+          pause >nul
+          "@ | Out-File dist/run_design_preview.bat -Encoding ASCII
+          # ── End Phase 3 ─────────────────────────────────────────────────
+          
           Copy-Item sql dist/ -Recurse
           mkdir dist/resources -Force
           Copy-Item resources/* dist/resources/ -Recurse

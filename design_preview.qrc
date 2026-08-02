@@ -1,0 +1,28 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource prefix="/">
+    <!-- QML design system -->
+    <file alias="qml/theme/Theme.qml">qml/theme/Theme.qml</file>
+    <file alias="qml/components/AppButton.qml">qml/components/AppButton.qml</file>
+    <file alias="qml/components/IconButton.qml">qml/components/IconButton.qml</file>
+    <file alias="qml/components/AppTextField.qml">qml/components/AppTextField.qml</file>
+    <file alias="qml/components/AppComboBox.qml">qml/components/AppComboBox.qml</file>
+    <file alias="qml/design/DesignPreview.qml">qml/design/DesignPreview.qml</file>
+    <!-- Fonts -->
+    <file alias="fonts/Poppins-Regular.ttf">resources/fonts/Poppins-Regular.ttf</file>
+    <file alias="fonts/Poppins-Medium.ttf">resources/fonts/Poppins-Medium.ttf</file>
+    <file alias="fonts/Poppins-SemiBold.ttf">resources/fonts/Poppins-SemiBold.ttf</file>
+    <file alias="fonts/Poppins-Bold.ttf">resources/fonts/Poppins-Bold.ttf</file>
+    <!-- SVG icons used in the preview -->
+    <file alias="icons/svg/plus.svg">resources/icons/svg/plus.svg</file>
+    <file alias="icons/svg/edit.svg">resources/icons/svg/edit.svg</file>
+    <file alias="icons/svg/trash.svg">resources/icons/svg/trash.svg</file>
+    <file alias="icons/svg/search.svg">resources/icons/svg/search.svg</file>
+    <file alias="icons/svg/check.svg">resources/icons/svg/check.svg</file>
+    <file alias="icons/svg/settings.svg">resources/icons/svg/settings.svg</file>
+    <file alias="icons/svg/download.svg">resources/icons/svg/download.svg</file>
+    <file alias="icons/svg/refresh.svg">resources/icons/svg/refresh.svg</file>
+    <file alias="icons/svg/print.svg">resources/icons/svg/print.svg</file>
+    <file alias="icons/svg/chevron-down.svg">resources/icons/svg/chevron-down.svg</file>
+    <file alias="icons/svg/families.svg">resources/icons/svg/families.svg</file>
+</qresource>
+</RCC>
