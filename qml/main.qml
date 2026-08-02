@@ -79,7 +79,7 @@ ApplicationWindow {
                 Rectangle {
                     Layout.fillWidth: true; Layout.preferredHeight: 70
                     color: "transparent"
-                    Rectangle { anchors.top: parent.top; anchors.left: parent.left; anchors.right: parent.right; height: 1; color: "rgba(255,255,255,0.14)" }
+                    Rectangle { anchors.top: parent.top; anchors.left: parent.left; anchors.right: parent.right; height: 1; color: Qt.rgba(1,1,1,0.14) }
                     RowLayout {
                         anchors.fill: parent; anchors.margins: 14; spacing: 10
                         Rectangle {
@@ -177,7 +177,7 @@ ApplicationWindow {
             width: navList.width; height: 44
             anchors.margins: 2
             radius: 9
-            color: navMA.containsMouse ? "rgba(255,255,255,0.09)" : (navList.currentIndex === index ? "rgba(255,255,255,0.14)" : "transparent")
+            color: navMA.containsMouse ? Qt.rgba(1,1,1,0.09) : (navList.currentIndex === index ? Qt.rgba(1,1,1,0.14) : "transparent")
             Behavior on color { ColorAnimation { duration: 140 } }
             Rectangle {
                 visible: navList.currentIndex === index
