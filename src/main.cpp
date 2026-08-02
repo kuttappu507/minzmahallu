@@ -4,6 +4,7 @@
 #include <QFile>
 #include <QDir>
 #include <QDateTime>
+#include <QStandardPaths>
 #include <cstdio>
 #include <iostream>
 #include <fstream>
@@ -14,6 +15,17 @@
 #include <windows.h>
 #endif
 
+// Backend includes
+#include "core/Logger.h"
+#include "core/Config.h"
+#include "core/Database.h"
+#include "core/FontManager.h"
+#include "core/I18N.h"
+#include "services/SettingsService.h"
+#include "services/AuthSession.h"
+
+using namespace mms;
+
 static std::ofstream g_logFile;
 
 void logMsg(const QString& msg) {
@@ -21,7 +33,6 @@ void logMsg(const QString& msg) {
     QString line = QString("[%1] %2").arg(ts, msg);
     if (g_logFile.is_open()) { g_logFile << line.toStdString() << std::endl; g_logFile.flush(); }
     std::cout << line.toStdString() << std::endl; fflush(stdout);
-    fprintf(stderr, "%s\n", line.toUtf8().constData()); fflush(stderr);
 }
 
 void crashHandler(int sig) {
@@ -30,7 +41,7 @@ void crashHandler(int sig) {
     exit(1);
 }
 
-// Full main.qml embedded as raw string — NO qrc dependency
+// Full main.qml embedded as raw string
 static const char* MAIN_QML = R"QML(
 import QtQuick
 import QtQuick.Controls
@@ -47,6 +58,7 @@ ApplicationWindow {
     property bool sidebarCollapsed: false
     property string currentUser: "Administrator"
     property string currentRole: "Administrator"
+    property int currentNavIndex: 0
 
     // Splash
     Rectangle {
@@ -57,7 +69,7 @@ ApplicationWindow {
             anchors.centerIn: parent; spacing: 20
             Text {
                 text: "Minz Mahallu Management"
-                font.family: "Space Grotesk"; font.pixelSize: 26; font.weight: Font.Bold
+                font.family: "Poppins"; font.pixelSize: 26; font.weight: Font.Bold
                 color: "#ffffff"; anchors.horizontalCenter: parent.horizontalCenter
             }
             Text {
@@ -106,6 +118,8 @@ ApplicationWindow {
                     id: navList
                     Layout.fillWidth: true; Layout.fillHeight: true
                     clip: true; model: navModel; delegate: navDelegate
+                    currentIndex: win.currentNavIndex
+                    onCurrentIndexChanged: win.currentNavIndex = currentIndex
                     ScrollBar.vertical: ScrollBar { policy: ScrollBar.AsNeeded }
                 }
 
@@ -123,8 +137,8 @@ ApplicationWindow {
                         }
                         ColumnLayout {
                             spacing: 1; visible: !sidebarCollapsed
-                            Text { text: currentUser; font.family: "Poppins"; font.pixelSize: 12; font.weight: Font.Bold; color: "#ffffff" }
-                            Text { text: currentRole; font.family: "Poppins"; font.pixelSize: 10; color: "#9fd8c3" }
+                            Text { text: win.currentUser; font.family: "Poppins"; font.pixelSize: 12; font.weight: Font.Bold; color: "#ffffff" }
+                            Text { text: win.currentRole; font.family: "Poppins"; font.pixelSize: 10; color: "#9fd8c3" }
                         }
                         Item { Layout.fillWidth: true }
                     }
@@ -155,22 +169,121 @@ ApplicationWindow {
                 RowLayout {
                     anchors.fill: parent; anchors.leftMargin: 18; anchors.rightMargin: 18; spacing: 13
                     Text { text: "Minz Mahallu /"; font.family: "Poppins"; font.pixelSize: 11; font.weight: Font.DemiBold; color: "#7e968a" }
-                    Text { text: navModel.get(navList.currentIndex) ? navModel.get(navList.currentIndex).title : ""; font.family: "Space Grotesk"; font.pixelSize: 15; font.weight: Font.Bold; color: "#12241b" }
+                    Text {
+                        text: navModel.get(win.currentNavIndex) ? navModel.get(win.currentNavIndex).title : ""
+                        font.family: "Space Grotesk"; font.pixelSize: 15; font.weight: Font.Bold; color: "#12241b"
+                    }
                     Item { Layout.fillWidth: true }
                     Text { text: "v1.0.0"; font.family: "Poppins"; font.pixelSize: 11; color: "#7e968a" }
                 }
             }
 
-            // Content
+            // Content area
             StackLayout {
                 id: contentStack
                 Layout.fillWidth: true; Layout.fillHeight: true
-                currentIndex: navList.currentIndex
+                currentIndex: win.currentNavIndex
+
+                // Dashboard
+                ScrollView {
+                    clip: true
+                    ColumnLayout {
+                        width: contentStack.width; spacing: 16
+                        Layout.leftMargin: 22; Layout.rightMargin: 22; Layout.topMargin: 20
+
+                        // Header
+                        RowLayout {
+                            Layout.fillWidth: true; spacing: 14
+                            ColumnLayout {
+                                spacing: 3
+                                Text { text: "Assalamu Alaikum, " + win.currentUser; font.family: "Space Grotesk"; font.pixelSize: 21; font.weight: Font.Bold; color: "#12241b" }
+                                Text { text: "Here's what's happening in your mahallu today."; font.family: "Poppins"; font.pixelSize: 12; color: "#4f6b5c" }
+                            }
+                            Item { Layout.fillWidth: true }
+                            Rectangle {
+                                radius: 7; color: "#e6ebf2"; border.width: 1.5; border.color: "#64748b"
+                                implicitHeight: 32; Layout.rightMargin: 8
+                                Text { anchors.centerIn: parent; anchors.margins: 12; text: Qt.formatDate(new Date(), "dddd, dd MMMM yyyy"); font.family: "Poppins"; font.pixelSize: 11; font.weight: Font.Bold; color: "#33415c" }
+                            }
+                        }
+
+                        // Stat cards grid 5x2
+                        GridLayout {
+                            Layout.fillWidth: true; columns: 5; columnSpacing: 12; rowSpacing: 12
+                            Repeater {
+                                model: ListModel {
+                                    ListElement { label: "FAMILIES"; value: "248"; delta: "+6 this month"; up: 1; bg: "#d3f5e6"; border_c: "#059669"; text_c: "#04543c" }
+                                    ListElement { label: "MEMBERS"; value: "1142"; delta: "+18 this month"; up: 1; bg: "#c8f6f1"; border_c: "#0d9488"; text_c: "#0f5e54" }
+                                    ListElement { label: "ACTIVE"; value: "986"; delta: "86.3% active"; up: 1; bg: "#d7edfb"; border_c: "#0284c7"; text_c: "#0a5480" }
+                                    ListElement { label: "COLLECTION"; value: "Rs.48,200"; delta: "+9.1% vs June"; up: 1; bg: "#fcebc8"; border_c: "#d97706"; text_c: "#7c4403" }
+                                    ListElement { label: "DUES"; value: "Rs.36,400"; delta: "7 families overdue"; up: 0; bg: "#fddfe5"; border_c: "#e11d48"; text_c: "#95102e" }
+                                    ListElement { label: "DONATIONS"; value: "Rs.92,750"; delta: "+12.4% vs June"; up: 1; bg: "#fadfeb"; border_c: "#db2777"; text_c: "#93184f" }
+                                    ListElement { label: "WELFARE"; value: "Rs.1,45,000"; delta: "14 beneficiaries"; up: 1; bg: "#e7defc"; border_c: "#7c3aed"; text_c: "#5423b7" }
+                                    ListElement { label: "MARRIAGES"; value: "17"; delta: "2 this quarter"; up: 1; bg: "#ffe4cf"; border_c: "#ea580c"; text_c: "#8f3708" }
+                                    ListElement { label: "DEATHS"; value: "9"; delta: "1 this month"; up: 0; bg: "#e6ebf2"; border_c: "#64748b"; text_c: "#33415c" }
+                                    ListElement { label: "BALANCE"; value: "Rs.4,56,320"; delta: "across all funds"; up: 1; bg: "#dbe7fd"; border_c: "#2563eb"; text_c: "#1e3fae" }
+                                }
+                                delegate: Rectangle {
+                                    Layout.fillWidth: true; radius: 10
+                                    color: model.bg; border.width: 1.5; border.color: model.border_c
+                                    implicitHeight: 120
+                                    ColumnLayout {
+                                        anchors.fill: parent; anchors.margins: 14; spacing: 6
+                                        RowLayout {
+                                            Layout.fillWidth: true; spacing: 8
+                                            Rectangle { width: 37; height: 37; radius: 9; color: model.border_c }
+                                            Item { Layout.fillWidth: true }
+                                            Rectangle {
+                                                radius: 99; color: "#ffffff"; border.width: 1.5; border.color: model.border_c
+                                                implicitHeight: 22
+                                                Text { anchors.centerIn: parent; anchors.margins: 8; text: (model.up ? "^ " : "v ") + model.delta; font.family: "Poppins"; font.pixelSize: 9; font.weight: Font.Black; color: model.text_c }
+                                            }
+                                        }
+                                        Text { text: model.value; font.family: "Space Grotesk"; font.pixelSize: 24; font.weight: Font.Bold; color: model.text_c; Layout.fillWidth: true; elide: Text.ElideRight }
+                                        Text { text: model.label; font.family: "Poppins"; font.pixelSize: 10; font.weight: Font.Black; color: model.text_c; opacity: 0.75 }
+                                    }
+                                }
+                            }
+                        }
+
+                        // Chart placeholders 2x2
+                        GridLayout {
+                            Layout.fillWidth: true; columns: 2; columnSpacing: 12; rowSpacing: 12
+                            Repeater {
+                                model: ["Collections", "Donations", "Income vs Expense", "Membership Growth"]
+                                delegate: Rectangle {
+                                    Layout.fillWidth: true; Layout.minimumHeight: 220
+                                    radius: 10; color: "#ffffff"; border.width: 1.5; border.color: "#d2e5d8"
+                                    ColumnLayout {
+                                        anchors.fill: parent; anchors.margins: 16; spacing: 6
+                                        Text { text: modelData; font.family: "Poppins"; font.pixelSize: 14; font.weight: Font.Bold; color: "#12241b" }
+                                        Item { Layout.fillWidth: true; Layout.fillHeight: true }
+                                    }
+                                }
+                            }
+                        }
+
+                        // Recent activity
+                        Rectangle {
+                            Layout.fillWidth: true; Layout.bottomMargin: 26
+                            radius: 10; color: "#ffffff"; border.width: 1.5; border.color: "#d2e5d8"
+                            implicitHeight: 280
+                            ColumnLayout {
+                                anchors.fill: parent; anchors.margins: 16; spacing: 6
+                                Text { text: "Recent Activity"; font.family: "Poppins"; font.pixelSize: 14; font.weight: Font.Bold; color: "#12241b" }
+                                Text { text: "Latest user actions across all modules"; font.family: "Poppins"; font.pixelSize: 11; color: "#7e968a" }
+                                Item { Layout.fillHeight: true }
+                            }
+                        }
+                    }
+                }
+
+                // Placeholder views for all other pages
                 Repeater {
-                    model: navModel
+                    model: 15
                     delegate: Rectangle {
                         color: "#e7f4ea"
-                        Text { anchors.centerIn: parent; text: model.title; font.pixelSize: 24; color: "#7e968a" }
+                        Text { anchors.centerIn: parent; text: navModel.get(index + 1) ? navModel.get(index + 1).title : ""; font.pixelSize: 24; color: "#7e968a" }
                     }
                 }
             }
@@ -208,15 +321,13 @@ ApplicationWindow {
     Component {
         id: navDelegate
         Rectangle {
-            width: navList.width; height: 44
-            anchors.margins: 2
-            radius: 9
+            width: navList.width; height: 44; radius: 9
             color: navMA.containsMouse ? Qt.rgba(1,1,1,0.09) : (navList.currentIndex === index ? Qt.rgba(1,1,1,0.14) : "transparent")
             Behavior on color { ColorAnimation { duration: 140 } }
             Rectangle {
                 visible: navList.currentIndex === index
                 width: 4; height: 22; radius: 2; color: "#f2c14e"
-                anchors.left: parent.left; anchors.leftMargin: 0; anchors.verticalCenter: parent.verticalCenter
+                anchors.left: parent.left; anchors.verticalCenter: parent.verticalCenter
             }
             Text {
                 anchors.fill: parent; anchors.leftMargin: 24
@@ -224,8 +335,7 @@ ApplicationWindow {
                 text: model.title
                 font.family: "Poppins"; font.pixelSize: 13; font.weight: Font.Bold
                 color: navList.currentIndex === index ? "#ffffff" : "#c4e7d7"
-                elide: Text.ElideRight
-                visible: !sidebarCollapsed
+                elide: Text.ElideRight; visible: !sidebarCollapsed
             }
             MouseArea { id: navMA; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: navList.currentIndex = index }
         }
@@ -249,19 +359,41 @@ int main(int argc, char* argv[]) {
     logMsg("Step 1: Creating QApplication...");
     QApplication app(argc, argv);
     app.setApplicationName("MMS");
+    app.setOrganizationName("Mahallu Management System");
 
-    // NOW we can get exeDir (after QApplication exists)
     QString exeDir = QCoreApplication::applicationDirPath();
-    
-    // Open log file
     g_logFile.open((exeDir + "/mms_error.log").toStdString(), std::ios::out | std::ios::trunc);
     logMsg(QString("Exe dir: %1").arg(exeDir));
-    logMsg(QString("Log file: %1/mms_error.log").arg(exeDir));
 
-    logMsg("Step 2: Setting QuickStyle...");
+    // Backend init — each step wrapped with error handling
+    logMsg("Step 2: Loading fonts...");
+    try { FontManager::instance().loadAll(); FontManager::instance().applyFont("en"); logMsg("  Fonts OK"); }
+    catch (...) { logMsg("  Fonts FAILED (non-fatal)"); }
+
+    logMsg("Step 3: Loading config...");
+    try { Config::instance().initialize(); logMsg("  Config OK"); }
+    catch (...) { logMsg("  Config FAILED (non-fatal)"); }
+
+    logMsg("Step 4: Initializing database...");
+    try {
+        QString dbPath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+        QDir().mkpath(dbPath);
+        dbPath = QDir(dbPath).filePath("mms.db");
+        QString sqlDir = QFile::exists(exeDir + "/sql/schema.sql") ? exeDir + "/sql" : QString();
+        if (!Database::instance().initialize(dbPath, sqlDir)) {
+            Database::instance().initialize("mms.db", "sql");
+        }
+        logMsg("  Database OK");
+    } catch (...) { logMsg("  Database FAILED (non-fatal)"); }
+
+    logMsg("Step 5: Setting up i18n...");
+    try { I18N::instance().setLanguage("en"); logMsg("  I18N OK"); }
+    catch (...) { logMsg("  I18N FAILED (non-fatal)"); }
+
+    logMsg("Step 6: Setting QuickStyle...");
     QQuickStyle::setStyle("Basic");
 
-    logMsg("Step 3: Creating QML engine...");
+    logMsg("Step 7: Creating QML engine...");
     QQmlApplicationEngine engine;
 
     QObject::connect(&engine, &QQmlApplicationEngine::warnings,
@@ -270,20 +402,14 @@ int main(int argc, char* argv[]) {
                 logMsg(QString("QML WARNING: %1:%2: %3").arg(w.url().toString()).arg(w.line()).arg(w.description()));
         });
 
-    logMsg("Step 4: Loading embedded QML (raw string)...");
+    logMsg("Step 8: Loading embedded QML...");
     engine.loadData(MAIN_QML, QUrl("qrc:/embedded_main.qml"));
 
     if (engine.rootObjects().isEmpty()) {
-        logMsg("FAILED: embedded QML did not load!");
-        // Try filesystem fallback
+        logMsg("FAILED: QML did not load!");
         QString fsPath = exeDir + "/qml/main.qml";
         logMsg(QString("Trying filesystem: %1").arg(fsPath));
-        if (QFile::exists(fsPath)) {
-            logMsg("File exists! Loading from disk...");
-            engine.load(QUrl::fromLocalFile(fsPath));
-        } else {
-            logMsg("File does NOT exist on disk!");
-        }
+        if (QFile::exists(fsPath)) { engine.load(QUrl::fromLocalFile(fsPath)); }
     }
 
     if (engine.rootObjects().isEmpty()) {
