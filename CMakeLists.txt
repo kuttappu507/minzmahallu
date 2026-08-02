@@ -157,13 +157,34 @@ qt_add_resources(${APP_NAME} "templates_resources"
 )
 
 # =============================================================================
-# QML: Embedded as raw string literal in main.cpp (no qt_add_qml_module)
-# The QML is loaded via engine.loadData() — no qrc/rcc/qmlcachegen needed.
-# qt_add_qml_module is NOT used because:
-# 1. qrc paths didn't work (rcc didn't embed files)
-# 2. qmlcachegen fails on certain QML syntax
-# 3. Raw string literal is 100% reliable — QML is in the .cpp file
+# QML: Loaded from qrc:/qml/ resources + filesystem fallback
+# - qml/main.qml + Theme.qml (as local-imported QtObject, not singleton)
+# - 15 view files in qml/views/
+# - qt_add_qml_module is NOT used (qmlcachegen issues); plain qt_add_resources
+# - main.cpp also has an embedded fallback QML string for emergency boot
 # =============================================================================
+qt_add_resources(${APP_NAME} "qml_resources"
+    PREFIX "/qml"
+    FILES
+        qml/main.qml
+        qml/Theme.qml
+        qml/views/DashboardView.qml
+        qml/views/FamiliesView.qml
+        qml/views/MembersView.qml
+        qml/views/SubscriptionsView.qml
+        qml/views/DonationsView.qml
+        qml/views/AccountingView.qml
+        qml/views/MarriageView.qml
+        qml/views/DeathView.qml
+        qml/views/WelfareView.qml
+        qml/views/CertificatesView.qml
+        qml/views/TokensView.qml
+        qml/views/ReportsView.qml
+        qml/views/SettingsView.qml
+        qml/views/UsersView.qml
+        qml/views/AuditLogView.qml
+        qml/views/BackupView.qml
+)
 
 target_include_directories(${APP_NAME} PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/src"

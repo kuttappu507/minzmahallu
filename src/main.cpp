@@ -524,14 +524,24 @@ int main(int argc, char* argv[]) {
                 logMsg(QString("QML WARNING: %1:%2: %3").arg(w.url().toString()).arg(w.line()).arg(w.description()));
         });
 
-    logMsg("Step 8: Loading embedded QML...");
-    engine.loadData(MAIN_QML, QUrl("qrc:/embedded_main.qml"));
+    // Step 8: Load QML — try qrc resource first, then filesystem, then embedded fallback
+    // The qrc:/qml/main.qml + qmldir + Theme.qml + 15 view files are bundled via qt_add_resources
+    logMsg("Step 8a: Loading QML from qrc:/qml/main.qml...");
+    engine.load(QUrl("qrc:/qml/main.qml"));
 
     if (engine.rootObjects().isEmpty()) {
-        logMsg("FAILED: QML did not load!");
+        logMsg("  qrc load failed — trying filesystem...");
         QString fsPath = exeDir + "/qml/main.qml";
-        logMsg(QString("Trying filesystem: %1").arg(fsPath));
-        if (QFile::exists(fsPath)) { engine.load(QUrl::fromLocalFile(fsPath)); }
+        logMsg(QString("  Trying: %1").arg(fsPath));
+        if (QFile::exists(fsPath)) {
+            engine.addImportPath(exeDir + "/qml");
+            engine.load(QUrl::fromLocalFile(fsPath));
+        }
+    }
+
+    if (engine.rootObjects().isEmpty()) {
+        logMsg("  filesystem failed — falling back to embedded QML...");
+        engine.loadData(MAIN_QML, QUrl("qrc:/embedded_main.qml"));
     }
 
     if (engine.rootObjects().isEmpty()) {

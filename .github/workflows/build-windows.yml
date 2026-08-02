@@ -85,12 +85,9 @@ jobs:
           Copy-Item sql dist/ -Recurse
           mkdir dist/resources -Force
           Copy-Item resources/* dist/resources/ -Recurse
-          mkdir dist/qml -Force
-          Copy-Item qml/main.qml dist/qml/
-          mkdir dist/qml/components -Force
-          Copy-Item qml/components/*.qml dist/qml/components/
-          mkdir dist/qml/views -Force
-          Copy-Item qml/views/*.qml dist/qml/views/
+          # Copy entire qml/ folder (main.qml + Theme.qml + qmldir + views/)
+          # This serves as filesystem fallback if qrc:/qml/ fails to load
+          Copy-Item qml dist/ -Recurse
           @"
           @echo off
           cd /d "%~dp0"
