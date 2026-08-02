@@ -138,7 +138,7 @@ QmlServices::QmlServices(QObject* parent) : QObject(parent) {
     certSvc_ = new CertificateService();
     dashSvc_ = new DashboardService();
     reportSvc_ = new ReportService();
-    settingsSvc_ = new SettingsService(this);
+    // SettingsService is a singleton — use instance()
     tokenSvc_ = new TokenService(this);
 }
 
@@ -967,7 +967,7 @@ bool QmlServices::exportReport(const QString& reportName, const QString& format,
 QVariantMap QmlServices::getSettings() {
     QVariantMap m;
     try {
-        auto s = settingsSvc_->load();
+        auto s = SettingsService::instance().load();
         m["mahalluName"] = s.mahalluName;
         m["address"] = s.address;
         m["phone"] = s.phone;
@@ -998,5 +998,5 @@ bool QmlServices::saveSettings(const QVariantMap& data) {
     s.autoBackup = data.value("autoBackup", true).toBool();
     s.backupIntervalHours = data.value("backupIntervalHours", 6).toInt();
     s.receiptPrefix = data.value("receiptPrefix").toString();
-    return settingsSvc_->save(s);
+    return SettingsService::instance().save(s);
 }

@@ -208,6 +208,6 @@ private:
     mms::CertificateService* certSvc_ = nullptr;
     mms::DashboardService* dashSvc_ = nullptr;
     mms::ReportService* reportSvc_ = nullptr;
-    mms::SettingsService* settingsSvc_ = nullptr;  // QObject
     mms::TokenService* tokenSvc_ = nullptr;        // QObject
+    // SettingsService is a singleton — access via SettingsService::instance()
 };
