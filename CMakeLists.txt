@@ -84,6 +84,8 @@ set(APP_COMPANY "Mahallu Management System")
 file(GLOB_RECURSE MMS_SOURCES
     "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp"
 )
+# Exclude the QML smoke test launcher — it's a separate executable
+list(FILTER MMS_SOURCES EXCLUDE REGEX "qml_smoke_main\.cpp$")
 file(GLOB_RECURSE MMS_HEADERS
     "${CMAKE_CURRENT_SOURCE_DIR}/src/*.h"
 )
