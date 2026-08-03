@@ -7,23 +7,11 @@ import MMS.Theme 1.0
 // ============================================================================
 // KpiCard — Attractive KPI card with tinted accent, icon, trend
 //
-// Each card has:
-//   - Soft tinted accent background (top-left corner glow)
-//   - Tinted icon container with SVG icon
-//   - Large display number
-//   - Small label
-//   - Trend indicator (up/down with percentage)
-//   - Hover interaction (subtle lift)
-//
-// Usage:
-//   KpiCard {
-//       label: "Total Families"
-//       value: "512"
-//       trend: "+12 this month"
-//       trendUp: true
-//       accentName: "emerald"
-//       iconName: "families"
-//   }
+// Layout: Rectangle root → Column (anchors.fill)
+//   - Row (icon + spacer + trend badge)
+//   - Text (value)
+//   - Text (label)
+//   - Text (subtitle)
 // ============================================================================
 
 Rectangle {
@@ -33,7 +21,7 @@ Rectangle {
     property string value: ""
     property string trend: ""
     property bool trendUp: true
-    property string accentName: "emerald"   // emerald|blue|orange|violet|cyan|coral
+    property string accentName: "emerald"
     property string iconName: ""
     property string subtitle: ""
 
@@ -44,19 +32,20 @@ Rectangle {
     border.width: 1
     border.color: Theme.border
 
-    // Subtle accent tint in top-right corner
+    readonly property var accent: Theme.accent(accentName)
+
+    // Accent tint in top-right corner
     Rectangle {
         anchors.right: parent.right
         anchors.top: parent.top
         width: 120
         height: 120
         radius: parent.radius
-        color: accent.main
+        color: root.accent.main
         opacity: 0.06
-        visible: true
     }
 
-    // Subtle shadow on hover
+    // Hover shadow
     layer.enabled: hoverMA.containsMouse
     layer.effect: MultiEffect {
         shadowEnabled: true
@@ -66,8 +55,6 @@ Rectangle {
     }
 
     Behavior on color { ColorAnimation { duration: Theme.animFast } }
-
-    readonly property var accent: Theme.accent(accentName)
 
     MouseArea {
         id: hoverMA
@@ -81,10 +68,10 @@ Rectangle {
         anchors.margins: 16
         spacing: 8
 
-        // Top row: icon container + trend badge
-        RowLayout {
-            spacing: 0
+        // Top row: icon + trend badge
+        Row {
             width: parent.width
+            spacing: 0
 
             // Tinted icon container
             Rectangle {
@@ -94,8 +81,8 @@ Rectangle {
                 border.color: root.accent.subtleAlt
 
                 Item {
-                    anchors.centerIn: parent
                     width: Theme.iconSizeLg; height: Theme.iconSizeLg
+                    anchors.centerIn: parent
 
                     Image {
                         id: kpiIcon
@@ -114,26 +101,31 @@ Rectangle {
                 }
             }
 
-            Item { width: 16; height: 1 }
+            // Spacer — pushes trend badge to the right
+            Item {
+                width: parent.width - 40 - trendBadge.width
+                height: 40
+            }
 
             // Trend badge
             Rectangle {
+                id: trendBadge
                 visible: root.trend !== ""
-                width: trendRow.implicitWidth + 12
                 height: 22
+                width: trendRow.implicitWidth + 12
                 radius: 11
                 color: root.trendUp ? Theme.successSubtle : Theme.coralSubtle
-                anchors.verticalCenter: parent.verticalCenter
                 border.width: 0
+                y: (40 - height) / 2
 
-                RowLayout {
+                Row {
                     id: trendRow
                     anchors.centerIn: parent
                     spacing: 2
 
                     Item {
                         width: 12; height: 12
-                        anchors.verticalCenter: parent.verticalCenter
+                        y: (parent.height - height) / 2
 
                         Image {
                             id: trendIcon
@@ -157,7 +149,7 @@ Rectangle {
                         font.pixelSize: Theme.fontSizeXs
                         font.weight: Theme.fontWeightSemiBold
                         color: root.trendUp ? Theme.success : Theme.coral
-                        anchors.verticalCenter: parent.verticalCenter
+                        y: (parent.height - height) / 2
                     }
                 }
             }
@@ -181,7 +173,7 @@ Rectangle {
             color: Theme.textSecondary
         }
 
-        // Subtitle (optional)
+        // Subtitle
         Text {
             text: root.subtitle
             font.family: Theme.fontFamily

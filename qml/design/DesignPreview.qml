@@ -5,20 +5,22 @@ import QtQuick.Effects
 import MMS.Theme 1.0
 import "../components"
 
-
-
 // ============================================================================
 // DesignPreview — Phase 3.1 — Realistic Minz Mahallu Dashboard
 //
-// This is a VISUAL PROTOTYPE only. No backend connection.
-// Shows what the real application should look like:
-//   - Navy sidebar with navigation
-//   - Topbar with greeting, search, notifications, user
-//   - 4 colorful KPI cards
-//   - Recent activities + upcoming events
-//   - Families data table with status badges + row actions
-//   - Component state examples
-//   - Modal dialog + notification popover
+// LAYOUT STRUCTURE (deterministic, no anchor/layout conflicts):
+//
+// ApplicationWindow
+// └─ RowLayout (fills parent)
+//    ├─ DashboardSidebar (fixed width, fills height)
+//    └─ ColumnLayout (fills remaining width)
+//       ├─ TopBar (fixed height)
+//       └─ ScrollView (fills remaining)
+//          └─ Column (content)
+//
+// RULE: Items inside RowLayout/ColumnLayout use Layout.* properties.
+//       Items inside Row/Column use anchors or explicit x/y.
+//       NEVER mix anchors with Layout.* on the same item.
 // ============================================================================
 
 ApplicationWindow {
@@ -31,56 +33,65 @@ ApplicationWindow {
     title: "Minz Mahallu — Design Preview"
     color: Theme.canvas
 
-    // ===== State =====
     property bool showNotifications: false
     property bool showFamilyDialog: false
 
-    // ===== Main layout: sidebar + content =====
+    // ===== ROOT: RowLayout (sidebar + content) =====
     RowLayout {
         anchors.fill: parent
         spacing: 0
 
-        // Sidebar
+        // ===== Sidebar =====
         DashboardSidebar {
             id: sidebar
-            height: parent.height
+            Layout.fillHeight: true
+            Layout.fillWidth: false
+            implicitWidth: Theme.sidebarWidth
             onNavigated: function(index) {
-                // Visual only — no actual navigation
+                // Visual only
             }
         }
 
-        // Content area
-        Column {
-            width: parent.width - sidebar.width
-            height: parent.height
+        // ===== Main content area =====
+        ColumnLayout {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
             spacing: 0
 
             // ===== Topbar =====
             Rectangle {
-                width: parent.width
-                height: 64
+                id: topbar
+                Layout.fillWidth: true
+                Layout.preferredHeight: 64
+                Layout.fillHeight: false
                 color: Theme.surface
 
                 Rectangle {
                     anchors.bottom: parent.bottom
-                    width: parent.width
+                    anchors.left: parent.left
+                    anchors.right: parent.right
                     height: 1
                     color: Theme.borderSubtle
                 }
 
-                RowLayout {
+                // Topbar content — uses Row (NOT RowLayout) with anchors
+                Item {
                     anchors.fill: parent
-                    spacing: 16
+                    anchors.leftMargin: 24
+                    anchors.rightMargin: 20
 
+                    // Greeting (left)
                     Column {
-                        spacing: 0
+                        id: greetingCol
+                        anchors.left: parent.left
                         anchors.verticalCenter: parent.verticalCenter
+                        spacing: 0
 
                         Text {
                             text: "Dashboard"
                             font.family: Theme.fontFamily
                             font.pixelSize: Theme.fontSizeXl
-                            font.weight: Font.SemiBold
+                            font.weight: Font.DemiBold
                             color: Theme.textPrimary
                         }
                         Text {
@@ -91,24 +102,34 @@ ApplicationWindow {
                         }
                     }
 
-                    Item { Layout.fillWidth: true; height: 1 }
-
-                    // Search field
-                    AppTextField {
-                        variant: "search"
-                        placeholderText: "Search families, members..."
-                        width: 280
+                    // User avatar (right)
+                    Rectangle {
+                        id: avatar
+                        anchors.right: parent.right
                         anchors.verticalCenter: parent.verticalCenter
+                        width: 38; height: 38; radius: 19
+                        color: Theme.primary
+
+                        Text {
+                            anchors.centerIn: parent
+                            text: "A"
+                            font.family: Theme.fontFamilyDisplay
+                            font.pixelSize: 14
+                            font.weight: Font.Bold
+                            color: Theme.textOnPrimary
+                        }
                     }
 
-                    // Notification bell
+                    // Notification bell (left of avatar)
                     Rectangle {
+                        id: bellBtn
+                        anchors.right: avatar.left
+                        anchors.rightMargin: 8
+                        anchors.verticalCenter: parent.verticalCenter
                         width: 38; height: 38; radius: Theme.radiusMd
                         color: bellMA.containsMouse ? Theme.surfaceHover : "transparent"
-                        anchors.verticalCenter: parent.verticalCenter
                         Behavior on color { ColorAnimation { duration: Theme.animFast } }
 
-                        // Notification dot
                         Rectangle {
                             anchors.top: parent.top
                             anchors.right: parent.right
@@ -150,43 +171,41 @@ ApplicationWindow {
                         }
                     }
 
-                    // User avatar
-                    Rectangle {
-                        width: 38; height: 38; radius: 19
-                        color: Theme.primary
+                    // Search field (left of bell)
+                    AppTextField {
+                        id: searchField
+                        anchors.right: bellBtn.left
+                        anchors.rightMargin: 12
                         anchors.verticalCenter: parent.verticalCenter
-
-                        Text {
-                            anchors.centerIn: parent
-                            text: "A"
-                            font.family: Theme.fontFamilyDisplay
-                            font.pixelSize: 14
-                            font.weight: Font.Bold
-                            color: Theme.textOnPrimary
-                        }
+                        variant: "search"
+                        placeholderText: "Search families, members..."
+                        width: 280
                     }
                 }
             }
 
             // ===== Scrollable content =====
             ScrollView {
-                width: parent.width
-                height: parent.height - 64
+                Layout.fillWidth: true
+                Layout.fillHeight: true
                 clip: true
                 ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
 
                 Column {
+                    id: contentCol
                     width: window.width - sidebar.width
                     spacing: 24
                     topPadding: 24
                     bottomPadding: 32
+                    leftPadding: 24
+                    rightPadding: 24
 
                     // ═══════════════════════════════════════
                     // KPI CARDS ROW
                     // ═══════════════════════════════════════
-                    RowLayout {
-                        spacing: 16
+                    Row {
                         width: parent.width - 48
+                        spacing: 16
 
                         KpiCard {
                             label: "Total Families"
@@ -233,9 +252,9 @@ ApplicationWindow {
                     // ═══════════════════════════════════════
                     // ACTIVITY + EVENTS ROW
                     // ═══════════════════════════════════════
-                    RowLayout {
-                        spacing: 16
+                    Row {
                         width: parent.width - 48
+                        spacing: 16
 
                         // Recent Activities
                         Rectangle {
@@ -251,12 +270,11 @@ ApplicationWindow {
                                 anchors.margins: 20
                                 spacing: 0
 
-                                // Header
                                 Text {
                                     text: "Recent Activities"
                                     font.family: Theme.fontFamily
                                     font.pixelSize: Theme.fontSizeLg
-                                    font.weight: Font.SemiBold
+                                    font.weight: Font.DemiBold
                                     color: Theme.textPrimary
                                 }
                                 Text {
@@ -268,7 +286,6 @@ ApplicationWindow {
                                     bottomPadding: 16
                                 }
 
-                                // Activity items
                                 ListView {
                                     width: parent.width
                                     height: parent.height - 60
@@ -281,11 +298,10 @@ ApplicationWindow {
                                         ListElement { title: "Certificate Generated"; subtitle: "Nikah Certificate #NK/2025/043"; time: "2 days ago"; icon: "certificates"; accent: "cyan" }
                                     }
 
-                                    delegate: RowLayout {
+                                    delegate: Row {
                                         width: ListView.view.width
                                         spacing: 12
 
-                                        // Colorful icon container
                                         Rectangle {
                                             width: 36; height: 36; radius: Theme.radiusMd
                                             color: Theme.accent(model.accent).subtle
@@ -314,8 +330,8 @@ ApplicationWindow {
                                         }
 
                                         Column {
-                                            spacing: 1
                                             width: parent.width - 36 - 12
+                                            spacing: 1
 
                                             Text {
                                                 text: model.title
@@ -361,7 +377,7 @@ ApplicationWindow {
                                     text: "Upcoming Events"
                                     font.family: Theme.fontFamily
                                     font.pixelSize: Theme.fontSizeLg
-                                    font.weight: Font.SemiBold
+                                    font.weight: Font.DemiBold
                                     color: Theme.textPrimary
                                 }
                                 Text {
@@ -384,11 +400,10 @@ ApplicationWindow {
                                         ListElement { day: "07"; month: "JUN"; title: "Quran Study Circle"; time: "6:30 PM"; accent: "violet" }
                                     }
 
-                                    delegate: RowLayout {
+                                    delegate: Row {
                                         width: ListView.view.width
                                         spacing: 12
 
-                                        // Date block
                                         Rectangle {
                                             width: 48; height: 48; radius: Theme.radiusMd
                                             color: Theme.accent(model.accent).subtle
@@ -405,7 +420,7 @@ ApplicationWindow {
                                                     font.pixelSize: 16
                                                     font.weight: Font.Bold
                                                     color: Theme.accent(model.accent).main
-                                                    anchors.horizontalCenter: parent.horizontalCenter
+                                                    horizontalAlignment: Text.AlignHCenter
                                                 }
                                                 Text {
                                                     text: model.month
@@ -413,14 +428,15 @@ ApplicationWindow {
                                                     font.pixelSize: 9
                                                     font.weight: Font.Bold
                                                     color: Theme.accent(model.accent).main
-                                                    anchors.horizontalCenter: parent.horizontalCenter
+                                                    horizontalAlignment: Text.AlignHCenter
                                                 }
                                             }
                                         }
 
                                         Column {
+                                            width: parent.width - 48 - 12
                                             spacing: 1
-                                            anchors.verticalCenter: parent.verticalCenter
+                                            y: (48 - height) / 2
 
                                             Text {
                                                 text: model.title
@@ -455,7 +471,6 @@ ApplicationWindow {
 
                         Column {
                             anchors.fill: parent
-                            anchors.margins: 0
                             spacing: 0
 
                             // Table header
@@ -466,24 +481,29 @@ ApplicationWindow {
 
                                 Rectangle {
                                     anchors.bottom: parent.bottom
-                                    width: parent.width
+                                    anchors.left: parent.left
+                                    anchors.right: parent.right
                                     height: 1
                                     color: Theme.borderSubtle
                                 }
 
-                                RowLayout {
+                                // Header content — anchors only
+                                Item {
                                     anchors.fill: parent
-                                    spacing: 12
+                                    anchors.leftMargin: 20
+                                    anchors.rightMargin: 20
 
                                     Column {
-                                        spacing: 0
+                                        id: tableTitleCol
+                                        anchors.left: parent.left
                                         anchors.verticalCenter: parent.verticalCenter
+                                        spacing: 0
 
                                         Text {
                                             text: "Families"
                                             font.family: Theme.fontFamily
                                             font.pixelSize: Theme.fontSizeLg
-                                            font.weight: Font.SemiBold
+                                            font.weight: Font.DemiBold
                                             color: Theme.textPrimary
                                         }
                                         Text {
@@ -494,27 +514,33 @@ ApplicationWindow {
                                         }
                                     }
 
-                                    Item { Layout.fillWidth: true; height: 1 }
-
-                                    AppTextField {
-                                        variant: "search"
-                                        placeholderText: "Search..."
-                                        width: 220
-                                        anchors.verticalCenter: parent.verticalCenter
-                                    }
-
-                                    AppComboBox {
-                                        model: ["All Wards", "Ward 1", "Ward 2", "Ward 3"]
-                                        width: 140
-                                        anchors.verticalCenter: parent.verticalCenter
-                                    }
-
                                     AppButton {
+                                        id: addFamilyBtn
+                                        anchors.right: parent.right
+                                        anchors.verticalCenter: parent.verticalCenter
                                         text: "Add Family"
                                         variant: "primary"
                                         iconSource: "qrc:/icons/svg/plus.svg"
-                                        anchors.verticalCenter: parent.verticalCenter
                                         onClicked: showFamilyDialog = true
+                                    }
+
+                                    AppComboBox {
+                                        id: wardFilter
+                                        anchors.right: addFamilyBtn.left
+                                        anchors.rightMargin: 8
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        model: ["All Wards", "Ward 1", "Ward 2", "Ward 3"]
+                                        width: 140
+                                    }
+
+                                    AppTextField {
+                                        id: tableSearch
+                                        anchors.right: wardFilter.left
+                                        anchors.rightMargin: 8
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        variant: "search"
+                                        placeholderText: "Search..."
+                                        width: 200
                                     }
                                 }
                             }
@@ -525,19 +551,21 @@ ApplicationWindow {
                                 height: 40
                                 color: Theme.surfaceSubtle
 
-                                RowLayout {
-                                    anchors.fill: parent
+                                // Header row — uses Row with fixed widths, no anchors
+                                Row {
+                                    x: 20
+                                    width: parent.width - 40
                                     spacing: 0
 
-                                    Text { text: "FAMILY ID"; width: 90; font.family: Theme.fontFamily; font.pixelSize: 11; font.weight: Font.Bold; color: Theme.textTertiary; anchors.verticalCenter: parent.verticalCenter }
-                                    Text { text: "HOUSE NAME"; width: 160; font.family: Theme.fontFamily; font.pixelSize: 11; font.weight: Font.Bold; color: Theme.textTertiary; anchors.verticalCenter: parent.verticalCenter }
-                                    Text { text: "HEAD OF FAMILY"; width: 150; font.family: Theme.fontFamily; font.pixelSize: 11; font.weight: Font.Bold; color: Theme.textTertiary; anchors.verticalCenter: parent.verticalCenter }
-                                    Text { text: "WARD"; width: 80; font.family: Theme.fontFamily; font.pixelSize: 11; font.weight: Font.Bold; color: Theme.textTertiary; anchors.verticalCenter: parent.verticalCenter }
-                                    Text { text: "MEMBERS"; width: 70; font.family: Theme.fontFamily; font.pixelSize: 11; font.weight: Font.Bold; color: Theme.textTertiary; anchors.verticalCenter: parent.verticalCenter; horizontalAlignment: Text.AlignHCenter }
-                                    Text { text: "PHONE"; width: 120; font.family: Theme.fontFamily; font.pixelSize: 11; font.weight: Font.Bold; color: Theme.textTertiary; anchors.verticalCenter: parent.verticalCenter }
-                                    Text { text: "STATUS"; width: 100; font.family: Theme.fontFamily; font.pixelSize: 11; font.weight: Font.Bold; color: Theme.textTertiary; anchors.verticalCenter: parent.verticalCenter }
-                                    Item { Layout.fillWidth: true; height: 1 }
-                                    Text { text: "ACTIONS"; width: 80; font.family: Theme.fontFamily; font.pixelSize: 11; font.weight: Font.Bold; color: Theme.textTertiary; anchors.verticalCenter: parent.verticalCenter; horizontalAlignment: Text.AlignHCenter }
+                                    Text { text: "FAMILY ID"; width: 90; height: 40; verticalAlignment: Text.AlignVCenter; font.family: Theme.fontFamily; font.pixelSize: 11; font.weight: Font.Bold; color: Theme.textTertiary }
+                                    Text { text: "HOUSE NAME"; width: 160; height: 40; verticalAlignment: Text.AlignVCenter; font.family: Theme.fontFamily; font.pixelSize: 11; font.weight: Font.Bold; color: Theme.textTertiary }
+                                    Text { text: "HEAD OF FAMILY"; width: 150; height: 40; verticalAlignment: Text.AlignVCenter; font.family: Theme.fontFamily; font.pixelSize: 11; font.weight: Font.Bold; color: Theme.textTertiary }
+                                    Text { text: "WARD"; width: 80; height: 40; verticalAlignment: Text.AlignVCenter; font.family: Theme.fontFamily; font.pixelSize: 11; font.weight: Font.Bold; color: Theme.textTertiary }
+                                    Text { text: "MEMBERS"; width: 70; height: 40; verticalAlignment: Text.AlignVCenter; horizontalAlignment: Text.AlignHCenter; font.family: Theme.fontFamily; font.pixelSize: 11; font.weight: Font.Bold; color: Theme.textTertiary }
+                                    Text { text: "PHONE"; width: 120; height: 40; verticalAlignment: Text.AlignVCenter; font.family: Theme.fontFamily; font.pixelSize: 11; font.weight: Font.Bold; color: Theme.textTertiary }
+                                    Text { text: "STATUS"; width: 100; height: 40; verticalAlignment: Text.AlignVCenter; font.family: Theme.fontFamily; font.pixelSize: 11; font.weight: Font.Bold; color: Theme.textTertiary }
+                                    Item { width: parent.width - 90 - 160 - 150 - 80 - 70 - 120 - 100 - 80; height: 40 }
+                                    Text { text: "ACTIONS"; width: 80; height: 40; verticalAlignment: Text.AlignVCenter; horizontalAlignment: Text.AlignHCenter; font.family: Theme.fontFamily; font.pixelSize: 11; font.weight: Font.Bold; color: Theme.textTertiary }
                                 }
                             }
 
@@ -566,30 +594,56 @@ ApplicationWindow {
 
                                     Rectangle {
                                         anchors.bottom: parent.bottom
-                                        width: parent.width
+                                        anchors.left: parent.left
+                                        anchors.right: parent.right
                                         height: 1
                                         color: Theme.borderSubtle
                                     }
 
-                                    RowLayout {
-                                        anchors.fill: parent
+                                    Row {
+                                        x: 20
+                                        width: parent.width - 40
                                         spacing: 0
 
-                                        Text { text: model.famId; width: 90; font.family: Theme.fontFamily; font.pixelSize: 12; font.weight: Font.Medium; color: Theme.textPrimary; anchors.verticalCenter: parent.verticalCenter }
-                                        Text { text: model.house; width: 160; font.family: Theme.fontFamily; font.pixelSize: 12; color: Theme.textPrimary; anchors.verticalCenter: parent.verticalCenter; elide: Text.ElideRight }
-                                        Text { text: model.head; width: 150; font.family: Theme.fontFamily; font.pixelSize: 12; color: Theme.textSecondary; anchors.verticalCenter: parent.verticalCenter; elide: Text.ElideRight }
-                                        Text { text: model.ward; width: 80; font.family: Theme.fontFamily; font.pixelSize: 12; color: Theme.textSecondary; anchors.verticalCenter: parent.verticalCenter }
-                                        Text { text: model.members; width: 70; font.family: Theme.fontFamily; font.pixelSize: 12; color: Theme.textPrimary; anchors.verticalCenter: parent.verticalCenter; horizontalAlignment: Text.AlignHCenter }
-                                        Text { text: model.phone; width: 120; font.family: Theme.fontFamily; font.pixelSize: 12; color: Theme.textSecondary; anchors.verticalCenter: parent.verticalCenter }
-                                        StatusBadge { text: model.status.charAt(0).toUpperCase() + model.status.slice(1); variant: model.status; anchors.verticalCenter: parent.verticalCenter; width: 100 }
-                                        Item { Layout.fillWidth: true; height: 1 }
-                                        RowLayout {
-                                            width: 80
-                                            spacing: 4
-                                            anchors.verticalCenter: parent.verticalCenter
+                                        Text { text: model.famId; width: 90; height: 44; verticalAlignment: Text.AlignVCenter; font.family: Theme.fontFamily; font.pixelSize: 12; font.weight: Font.Medium; color: Theme.textPrimary }
+                                        Text { text: model.house; width: 160; height: 44; verticalAlignment: Text.AlignVCenter; font.family: Theme.fontFamily; font.pixelSize: 12; color: Theme.textPrimary; elide: Text.ElideRight }
+                                        Text { text: model.head; width: 150; height: 44; verticalAlignment: Text.AlignVCenter; font.family: Theme.fontFamily; font.pixelSize: 12; color: Theme.textSecondary; elide: Text.ElideRight }
+                                        Text { text: model.ward; width: 80; height: 44; verticalAlignment: Text.AlignVCenter; font.family: Theme.fontFamily; font.pixelSize: 12; color: Theme.textSecondary }
+                                        Text { text: model.members; width: 70; height: 44; verticalAlignment: Text.AlignVCenter; horizontalAlignment: Text.AlignHCenter; font.family: Theme.fontFamily; font.pixelSize: 12; color: Theme.textPrimary }
+                                        Text { text: model.phone; width: 120; height: 44; verticalAlignment: Text.AlignVCenter; font.family: Theme.fontFamily; font.pixelSize: 12; color: Theme.textSecondary }
 
-                                            IconButton { iconName: "edit"; compact: true; iconSize: 15; tooltipText: "Edit" }
-                                            IconButton { iconName: "trash"; compact: true; iconSize: 15; variant: "danger"; tooltipText: "Delete" }
+                                        Item {
+                                            width: 100; height: 44
+                                            StatusBadge {
+                                                x: 0
+                                                y: (44 - height) / 2
+                                                text: model.status.charAt(0).toUpperCase() + model.status.slice(1)
+                                                variant: model.status
+                                            }
+                                        }
+
+                                        Item { width: parent.width - 90 - 160 - 150 - 80 - 70 - 120 - 100 - 80; height: 44 }
+
+                                        Row {
+                                            width: 80; height: 44
+                                            spacing: 4
+                                            x: 0
+
+                                            IconButton {
+                                                y: (44 - height) / 2
+                                                iconName: "edit"
+                                                compact: true
+                                                iconSize: 15
+                                                tooltipText: "Edit"
+                                            }
+                                            IconButton {
+                                                y: (44 - height) / 2
+                                                iconName: "trash"
+                                                compact: true
+                                                iconSize: 15
+                                                variant: "danger"
+                                                tooltipText: "Delete"
+                                            }
                                         }
                                     }
 
@@ -610,32 +664,39 @@ ApplicationWindow {
 
                                 Rectangle {
                                     anchors.top: parent.top
-                                    width: parent.width
+                                    anchors.left: parent.left
+                                    anchors.right: parent.right
                                     height: 1
                                     color: Theme.borderSubtle
                                 }
 
-                                RowLayout {
+                                Item {
                                     anchors.fill: parent
-                                    spacing: 8
+                                    anchors.leftMargin: 20
+                                    anchors.rightMargin: 20
 
                                     Text {
+                                        anchors.left: parent.left
+                                        anchors.verticalCenter: parent.verticalCenter
                                         text: "Showing 1-7 of 512 families"
                                         font.family: Theme.fontFamily
                                         font.pixelSize: 12
                                         color: Theme.textSecondary
-                                        anchors.verticalCenter: parent.verticalCenter
                                     }
 
-                                    Item { Layout.fillWidth: true; height: 1 }
+                                    Row {
+                                        anchors.right: parent.right
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        spacing: 8
 
-                                    IconButton { iconName: "chevron-left"; compact: true; tooltipText: "Previous" }
-                                    Text { text: "1"; font.family: Theme.fontFamily; font.pixelSize: 12; font.weight: Font.Bold; color: Theme.primary; anchors.verticalCenter: parent.verticalCenter; width: 24; horizontalAlignment: Text.AlignHCenter }
-                                    Text { text: "2"; font.family: Theme.fontFamily; font.pixelSize: 12; color: Theme.textSecondary; anchors.verticalCenter: parent.verticalCenter; width: 24; horizontalAlignment: Text.AlignHCenter }
-                                    Text { text: "3"; font.family: Theme.fontFamily; font.pixelSize: 12; color: Theme.textSecondary; anchors.verticalCenter: parent.verticalCenter; width: 24; horizontalAlignment: Text.AlignHCenter }
-                                    Text { text: "…"; font.family: Theme.fontFamily; font.pixelSize: 12; color: Theme.textSecondary; anchors.verticalCenter: parent.verticalCenter; width: 24; horizontalAlignment: Text.AlignHCenter }
-                                    Text { text: "73"; font.family: Theme.fontFamily; font.pixelSize: 12; color: Theme.textSecondary; anchors.verticalCenter: parent.verticalCenter; width: 24; horizontalAlignment: Text.AlignHCenter }
-                                    IconButton { iconName: "chevron-right"; compact: true; tooltipText: "Next" }
+                                        IconButton { iconName: "chevron-left"; compact: true; tooltipText: "Previous" }
+                                        Text { text: "1"; height: 24; verticalAlignment: Text.AlignVCenter; horizontalAlignment: Text.AlignHCenter; width: 24; font.family: Theme.fontFamily; font.pixelSize: 12; font.weight: Font.Bold; color: Theme.primary }
+                                        Text { text: "2"; height: 24; verticalAlignment: Text.AlignVCenter; horizontalAlignment: Text.AlignHCenter; width: 24; font.family: Theme.fontFamily; font.pixelSize: 12; color: Theme.textSecondary }
+                                        Text { text: "3"; height: 24; verticalAlignment: Text.AlignVCenter; horizontalAlignment: Text.AlignHCenter; width: 24; font.family: Theme.fontFamily; font.pixelSize: 12; color: Theme.textSecondary }
+                                        Text { text: "…"; height: 24; verticalAlignment: Text.AlignVCenter; horizontalAlignment: Text.AlignHCenter; width: 24; font.family: Theme.fontFamily; font.pixelSize: 12; color: Theme.textSecondary }
+                                        Text { text: "73"; height: 24; verticalAlignment: Text.AlignVCenter; horizontalAlignment: Text.AlignHCenter; width: 24; font.family: Theme.fontFamily; font.pixelSize: 12; color: Theme.textSecondary }
+                                        IconButton { iconName: "chevron-right"; compact: true; tooltipText: "Next" }
+                                    }
                                 }
                             }
                         }
@@ -661,16 +722,16 @@ ApplicationWindow {
                                 text: "Component States"
                                 font.family: Theme.fontFamily
                                 font.pixelSize: Theme.fontSizeLg
-                                font.weight: Font.SemiBold
+                                font.weight: Font.DemiBold
                                 color: Theme.textPrimary
                             }
 
                             // Buttons
-                            RowLayout {
+                            Row {
                                 spacing: 16
                                 width: parent.width
 
-                                Text { text: "Buttons"; width: 100; font.family: Theme.fontFamily; font.pixelSize: 12; color: Theme.textTertiary; anchors.verticalCenter: parent.verticalCenter }
+                                Text { text: "Buttons"; width: 100; height: 36; verticalAlignment: Text.AlignVCenter; font.family: Theme.fontFamily; font.pixelSize: 12; color: Theme.textTertiary }
                                 AppButton { text: "Primary"; variant: "primary" }
                                 AppButton { text: "Secondary"; variant: "secondary" }
                                 AppButton { text: "Ghost"; variant: "ghost" }
@@ -679,22 +740,22 @@ ApplicationWindow {
                             }
 
                             // Text fields
-                            RowLayout {
+                            Row {
                                 spacing: 16
                                 width: parent.width
 
-                                Text { text: "Fields"; width: 100; font.family: Theme.fontFamily; font.pixelSize: 12; color: Theme.textTertiary; anchors.verticalCenter: parent.verticalCenter }
+                                Text { text: "Fields"; width: 100; height: 60; verticalAlignment: Text.AlignVCenter; font.family: Theme.fontFamily; font.pixelSize: 12; color: Theme.textTertiary }
                                 AppTextField { label: "Normal"; placeholderText: "Type..."; width: 180 }
                                 AppTextField { label: "With Icon"; placeholderText: "Phone"; leadingIcon: "user"; width: 180 }
                                 AppTextField { label: "Error"; placeholderText: "123"; text: "123"; error: true; errorText: "Invalid"; width: 180 }
                             }
 
                             // Status badges
-                            RowLayout {
+                            Row {
                                 spacing: 16
                                 width: parent.width
 
-                                Text { text: "Badges"; width: 100; font.family: Theme.fontFamily; font.pixelSize: 12; color: Theme.textTertiary; anchors.verticalCenter: parent.verticalCenter }
+                                Text { text: "Badges"; width: 100; height: 24; verticalAlignment: Text.AlignVCenter; font.family: Theme.fontFamily; font.pixelSize: 12; color: Theme.textTertiary }
                                 StatusBadge { text: "Active"; variant: "active" }
                                 StatusBadge { text: "Pending"; variant: "pending" }
                                 StatusBadge { text: "Overdue"; variant: "overdue" }
@@ -704,11 +765,11 @@ ApplicationWindow {
                             }
 
                             // Icon buttons
-                            RowLayout {
+                            Row {
                                 spacing: 16
                                 width: parent.width
 
-                                Text { text: "Icons"; width: 100; font.family: Theme.fontFamily; font.pixelSize: 12; color: Theme.textTertiary; anchors.verticalCenter: parent.verticalCenter }
+                                Text { text: "Icons"; width: 100; height: 36; verticalAlignment: Text.AlignVCenter; font.family: Theme.fontFamily; font.pixelSize: 12; color: Theme.textTertiary }
                                 IconButton { iconName: "edit"; compact: true; tooltipText: "Edit" }
                                 IconButton { iconName: "trash"; compact: true; variant: "danger"; tooltipText: "Delete" }
                                 IconButton { iconName: "check"; compact: true; variant: "primary"; tooltipText: "Approve" }
@@ -727,19 +788,16 @@ ApplicationWindow {
     Rectangle {
         id: notifPopover
         visible: showNotifications
-        anchors.top: parent.top
-        anchors.right: parent.right
-        anchors.topMargin: 64
-        anchors.rightMargin: 20
+        x: window.width - width - 20
+        y: 64
+        z: 100
         width: 360
         height: 400
         radius: Theme.radiusLg
         color: Theme.surface
         border.width: 1
         border.color: Theme.border
-        z: 100
 
-        // Subtle shadow
         layer.enabled: true
         layer.effect: MultiEffect {
             shadowEnabled: true
@@ -750,10 +808,8 @@ ApplicationWindow {
 
         Column {
             anchors.fill: parent
-            anchors.margins: 0
             spacing: 0
 
-            // Header
             Rectangle {
                 width: parent.width
                 height: 52
@@ -761,30 +817,34 @@ ApplicationWindow {
 
                 Rectangle {
                     anchors.bottom: parent.bottom
-                    width: parent.width
+                    anchors.left: parent.left
+                    anchors.right: parent.right
                     height: 1
                     color: Theme.borderSubtle
                 }
 
-                RowLayout {
+                Item {
                     anchors.fill: parent
-                    spacing: 8
+                    anchors.leftMargin: 16
+                    anchors.rightMargin: 16
 
                     Text {
+                        anchors.left: parent.left
+                        anchors.verticalCenter: parent.verticalCenter
                         text: "Notifications"
                         font.family: Theme.fontFamily
                         font.pixelSize: Theme.fontSizeMd
-                        font.weight: Font.SemiBold
+                        font.weight: Font.DemiBold
                         color: Theme.textPrimary
-                        anchors.verticalCenter: parent.verticalCenter
                     }
-                    Item { Layout.fillWidth: true; height: 1 }
+
                     Text {
+                        anchors.right: parent.right
+                        anchors.verticalCenter: parent.verticalCenter
                         text: "Mark all read"
                         font.family: Theme.fontFamily
                         font.pixelSize: Theme.fontSizeSm
                         color: Theme.primary
-                        anchors.verticalCenter: parent.verticalCenter
 
                         MouseArea {
                             anchors.fill: parent
@@ -795,7 +855,6 @@ ApplicationWindow {
                 }
             }
 
-            // Notification items
             ListView {
                 width: parent.width
                 height: parent.height - 52 - 48
@@ -818,15 +877,17 @@ ApplicationWindow {
                         Behavior on color { ColorAnimation { duration: Theme.animFast } }
                     }
 
-                    contentItem: RowLayout {
+                    contentItem: Row {
                         spacing: 12
+                        leftPadding: 16
+                        rightPadding: 16
 
                         Rectangle {
                             width: 32; height: 32; radius: Theme.radiusSm
                             color: Theme.accent(model.accent).subtle
                             border.width: 1
                             border.color: Theme.accent(model.accent).subtleAlt
-                            anchors.verticalCenter: parent.verticalCenter
+                            y: (64 - 32) / 2
 
                             Item {
                                 width: 14; height: 14
@@ -850,9 +911,9 @@ ApplicationWindow {
                         }
 
                         Column {
+                            width: parent.width - 32 - 12 - 32 - 16 - 16
+                            y: (64 - height) / 2
                             spacing: 1
-                            anchors.verticalCenter: parent.verticalCenter
-                            width: parent.width - 32 - 12 - 32
 
                             Text {
                                 text: model.title
@@ -876,13 +937,12 @@ ApplicationWindow {
                             font.family: Theme.fontFamily
                             font.pixelSize: 10
                             color: Theme.textTertiary
-                            anchors.verticalCenter: parent.verticalCenter
+                            y: (64 - height) / 2
                         }
                     }
                 }
             }
 
-            // Footer
             Rectangle {
                 width: parent.width
                 height: 48
@@ -890,7 +950,8 @@ ApplicationWindow {
 
                 Rectangle {
                     anchors.top: parent.top
-                    width: parent.width
+                    anchors.left: parent.left
+                    anchors.right: parent.right
                     height: 1
                     color: Theme.borderSubtle
                 }
@@ -911,13 +972,6 @@ ApplicationWindow {
                 }
             }
         }
-
-        // Close on outside click
-        MouseArea {
-            anchors.fill: parent
-            acceptedButtons: Qt.NoButton
-            propagateComposedEvents: true
-        }
     }
 
     // Click outside to close popover
@@ -934,12 +988,8 @@ ApplicationWindow {
         id: familyDlg
         visible: showFamilyDialog
         title: "Add Family"
-        onVisibleChanged: {
-            if (visible) {
-                familyDlg.x = (window.width - familyDlg.width) / 2
-                familyDlg.y = (window.height - familyDlg.height) / 2
-            }
-        }
+        x: (window.width - width) / 2
+        y: (window.height - height) / 2
         onAccepted: showFamilyDialog = false
         onRejected: showFamilyDialog = false
     }

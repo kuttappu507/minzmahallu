@@ -7,13 +7,11 @@ import MMS.Theme 1.0
 // ============================================================================
 // DashboardSidebar — Deep navy sidebar with navigation
 //
-// Features:
-//   - Deep navy background (#0f172a)
-//   - Application logo + name at top
-//   - Nav items with SVG icons
-//   - Hover: subtle lighter navy background
-//   - Active: emerald left indicator + white text
-//   - User profile area at bottom
+// Layout: Rectangle root → Column (fills parent)
+//   - Logo header (fixed height)
+//   - Section label (fixed height)
+//   - Nav ListView (fills remaining)
+//   - User profile card (fixed height)
 // ============================================================================
 
 Rectangle {
@@ -22,11 +20,15 @@ Rectangle {
     property int currentIndex: 0
     signal navigated(int index)
 
-    width: Theme.sidebarWidth
+    // ===== Sizing — controlled by parent RowLayout =====
+    implicitWidth: Theme.sidebarWidth
+    Layout.fillHeight: true
+    Layout.fillWidth: false
+
     color: Theme.sidebarBg
     border.width: 0
 
-    // Subtle right edge to separate from content
+    // Right edge separator
     Rectangle {
         anchors.right: parent.right
         anchors.top: parent.top
@@ -44,15 +46,13 @@ Rectangle {
             width: parent.width
             height: 64
 
-            RowLayout {
+            Row {
                 anchors.centerIn: parent
                 spacing: 10
 
-                // Logo icon container
                 Rectangle {
                     width: 32; height: 32; radius: Theme.radiusMd
                     color: Theme.primary
-                    anchors.verticalCenter: parent.verticalCenter
 
                     Text {
                         anchors.centerIn: parent
@@ -66,7 +66,6 @@ Rectangle {
 
                 Column {
                     spacing: 0
-                    anchors.verticalCenter: parent.verticalCenter
 
                     Text {
                         text: "Minz Mahallu"
@@ -86,22 +85,27 @@ Rectangle {
         }
 
         // ===== Nav section label =====
-        Text {
-            text: "MENU"
-            font.family: Theme.fontFamily
-            font.pixelSize: 10
-            font.weight: Font.Bold
-            color: Theme.sidebarTextMuted
-            leftPadding: 20
-            topPadding: 12
-            bottomPadding: 8
+        Item {
+            width: parent.width
+            height: 36
+
+            Text {
+                text: "MENU"
+                font.family: Theme.fontFamily
+                font.pixelSize: 10
+                font.weight: Font.Bold
+                color: Theme.sidebarTextMuted
+                anchors.left: parent.left
+                anchors.leftMargin: 20
+                anchors.verticalCenter: parent.verticalCenter
+            }
         }
 
         // ===== Nav items =====
         ListView {
             id: navList
             width: parent.width
-            height: parent.height - 64 - 40 - 80   // logo + section label + user card
+            height: parent.height - 64 - 36 - 76   // logo + label + user card
             clip: true
             spacing: 2
             currentIndex: sidebar.currentIndex
@@ -122,7 +126,6 @@ Rectangle {
                 height: 38
                 x: 8
                 padding: 0
-                leftPadding: 12
 
                 background: Rectangle {
                     radius: Theme.radiusMd
@@ -130,7 +133,6 @@ Rectangle {
                            (hovered ? Theme.sidebarHover : "transparent")
                     Behavior on color { ColorAnimation { duration: Theme.animFast } }
 
-                    // Emerald active indicator (left bar)
                     Rectangle {
                         anchors.left: parent.left
                         anchors.verticalCenter: parent.verticalCenter
@@ -141,12 +143,14 @@ Rectangle {
                     }
                 }
 
-                contentItem: RowLayout {
+                contentItem: Row {
                     spacing: 10
+                    leftPadding: 12
 
                     Item {
-                        width: Theme.iconSizeMd; height: Theme.iconSizeMd
-                        anchors.verticalCenter: parent.verticalCenter
+                        width: Theme.iconSizeMd
+                        height: Theme.iconSizeMd
+                        y: (parent.height - height) / 2
 
                         Image {
                             id: navIcon
@@ -161,7 +165,7 @@ Rectangle {
                             source: navIcon
                             colorizationColor: ListView.isCurrentItem ?
                                 Theme.sidebarTextActive :
-                                (parent.parent.hovered ? Theme.sidebarTextActive : Theme.sidebarText)
+                                (hovered ? Theme.sidebarTextActive : Theme.sidebarText)
                             colorization: 1.0
                             Behavior on colorizationColor { ColorAnimation { duration: Theme.animFast } }
                         }
@@ -174,8 +178,8 @@ Rectangle {
                         font.weight: ListView.isCurrentItem ? Font.Medium : Font.Normal
                         color: ListView.isCurrentItem ?
                             Theme.sidebarTextActive :
-                            (parent.parent.hovered ? Theme.sidebarTextActive : Theme.sidebarText)
-                        anchors.verticalCenter: parent.verticalCenter
+                            (hovered ? Theme.sidebarTextActive : Theme.sidebarText)
+                        y: (parent.height - height) / 2
                         Behavior on color { ColorAnimation { duration: Theme.animFast } }
                     }
                 }
@@ -188,81 +192,72 @@ Rectangle {
         }
 
         // ===== User profile card =====
-        Rectangle {
-            width: parent.width - 16
-            height: 64
-            x: 8
-            radius: Theme.radiusMd
-            color: "transparent"
-            border.width: 1
-            border.color: Theme.sidebarBorder
+        Item {
+            width: parent.width
+            height: 76
 
             Rectangle {
                 anchors.fill: parent
-                radius: parent.radius
+                anchors.margins: 8
+                radius: Theme.radiusMd
                 color: Theme.sidebarHover
                 opacity: 0.5
-            }
+                border.width: 1
+                border.color: Theme.sidebarBorder
 
-            RowLayout {
-                anchors.centerIn: parent
-                spacing: 10
+                Row {
+                    anchors.centerIn: parent
+                    spacing: 10
 
-                // Avatar
-                Rectangle {
-                    width: 32; height: 32; radius: 16
-                    color: Theme.primary
-                    anchors.verticalCenter: parent.verticalCenter
+                    Rectangle {
+                        width: 32; height: 32; radius: 16
+                        color: Theme.primary
 
-                    Text {
-                        anchors.centerIn: parent
-                        text: "A"
-                        font.family: Theme.fontFamilyDisplay
-                        font.pixelSize: 13
-                        font.weight: Font.Bold
-                        color: Theme.textOnPrimary
+                        Text {
+                            anchors.centerIn: parent
+                            text: "A"
+                            font.family: Theme.fontFamilyDisplay
+                            font.pixelSize: 13
+                            font.weight: Font.Bold
+                            color: Theme.textOnPrimary
+                        }
                     }
-                }
 
-                Column {
-                    spacing: 0
-                    anchors.verticalCenter: parent.verticalCenter
+                    Column {
+                        spacing: 0
 
-                    Text {
-                        text: "Admin User"
-                        font.family: Theme.fontFamily
-                        font.pixelSize: 12
-                        font.weight: Font.Medium
-                        color: Theme.sidebarTextActive
+                        Text {
+                            text: "Admin User"
+                            font.family: Theme.fontFamily
+                            font.pixelSize: 12
+                            font.weight: Font.Medium
+                            color: Theme.sidebarTextActive
+                        }
+                        Text {
+                            text: "Administrator"
+                            font.family: Theme.fontFamily
+                            font.pixelSize: 10
+                            color: Theme.sidebarTextMuted
+                        }
                     }
-                    Text {
-                        text: "Administrator"
-                        font.family: Theme.fontFamily
-                        font.pixelSize: 10
-                        color: Theme.sidebarTextMuted
-                    }
-                }
 
-                Item { width: 1; height: 1 }
+                    Item {
+                        width: 18; height: 18
 
-                // Logout icon
-                Item {
-                    width: 18; height: 18
-                    anchors.verticalCenter: parent.verticalCenter
-
-                    Image {
-                        id: logoutIcon
-                        source: "qrc:/icons/svg/log-out.svg"
-                        sourceSize: Qt.size(16, 16)
-                        anchors.fill: parent
-                        fillMode: Image.Pad
-                        visible: false
-                    }
-                    MultiEffect {
-                        anchors.fill: parent
-                        source: logoutIcon
-                        colorizationColor: Theme.sidebarTextMuted
-                        colorization: 1.0
+                        Image {
+                            id: logoutIcon
+                            source: "qrc:/icons/svg/log-out.svg"
+                            sourceSize: Qt.size(16, 16)
+                            anchors.fill: parent
+                            fillMode: Image.Pad
+                            visible: false
+                        }
+                        MultiEffect {
+                            anchors.fill: parent
+                            source: logoutIcon
+                            colorizationColor: Theme.sidebarTextMuted
+                            colorization: 1.0
+                        }
                     }
                 }
             }

@@ -1,6 +1,5 @@
 import QtQuick
 import QtQuick.Controls
-import QtQuick.Layouts
 import QtQuick.Effects
 import MMS.Theme 1.0
 import "../components"
@@ -8,12 +7,11 @@ import "../components"
 // ============================================================================
 // FamilyEditDialog — Polished modal dialog
 //
-// Features:
-//   - Modal overlay (dimmed background)
-//   - Header with title + close button
-//   - Form with grouped fields
-//   - Footer with Cancel + Save actions
-//   - Subtle shadow/elevation
+// Layout: ApplicationWindow → Rectangle (fills parent)
+//   → Column (fills parent)
+//     → Header (Item with anchors)
+//     → ScrollView (fills remaining)
+//     → Footer (Item with anchors)
 // ============================================================================
 
 ApplicationWindow {
@@ -42,11 +40,9 @@ ApplicationWindow {
     // Dialog surface
     Rectangle {
         anchors.fill: parent
-        anchors.margins: 0
         color: Theme.surface
         radius: Theme.radiusXl
 
-        // Subtle shadow
         layer.enabled: true
         layer.effect: MultiEffect {
             shadowEnabled: true
@@ -60,67 +56,53 @@ ApplicationWindow {
             spacing: 0
 
             // ===== Header =====
-            Rectangle {
+            Item {
                 width: parent.width
                 height: 56
-                color: Theme.surface
-                radius: Theme.radiusXl
 
                 Rectangle {
                     anchors.bottom: parent.bottom
-                    width: parent.width
+                    anchors.left: parent.left
+                    anchors.right: parent.right
                     height: 1
                     color: Theme.borderSubtle
                 }
 
-                RowLayout {
-                    anchors.fill: parent
-                    spacing: 0
+                Text {
+                    anchors.left: parent.left
+                    anchors.leftMargin: 20
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: dialog.title
+                    font.family: Theme.fontFamily
+                    font.pixelSize: Theme.fontSizeLg
+                    font.weight: Font.DemiBold
+                    color: Theme.textPrimary
+                }
+
+                Rectangle {
+                    anchors.right: parent.right
+                    anchors.rightMargin: 12
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 28; height: 28; radius: Theme.radiusSm
+                    color: closeMA.containsMouse ? Theme.surfaceHover : "transparent"
+                    Behavior on color { ColorAnimation { duration: Theme.animFast } }
 
                     Text {
-                        text: dialog.title
-                        font.family: Theme.fontFamily
-                        font.pixelSize: Theme.fontSizeLg
-                        font.weight: Font.SemiBold
-                        color: Theme.textPrimary
-                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.centerIn: parent
+                        text: "×"
+                        font.pixelSize: 18
+                        font.weight: Font.Bold
+                        color: closeMA.containsMouse ? Theme.textPrimary : Theme.textSecondary
                     }
 
-                    Item { Layout.fillWidth: true; height: 1 }
-
-                    IconButton {
-                        iconName: "log-out"
-                        compact: true
-                        iconSize: 18
-                        anchors.verticalCenter: parent.verticalCenter
-                        tooltipText: "Close"
-                        // Using a close icon — actually use "x" approach with a simple Rectangle
-                    }
-
-                    // Close button (custom — using × character in a hoverable rectangle)
-                    Rectangle {
-                        width: 28; height: 28; radius: Theme.radiusSm
-                        color: closeMA.containsMouse ? Theme.surfaceHover : "transparent"
-                        anchors.verticalCenter: parent.verticalCenter
-                        Behavior on color { ColorAnimation { duration: Theme.animFast } }
-
-                        Text {
-                            anchors.centerIn: parent
-                            text: "×"
-                            font.pixelSize: 18
-                            font.weight: Font.Bold
-                            color: closeMA.containsMouse ? Theme.textPrimary : Theme.textSecondary
-                        }
-
-                        MouseArea {
-                            id: closeMA
-                            anchors.fill: parent
-                            hoverEnabled: true
-                            cursorShape: Qt.PointingHandCursor
-                            onClicked: {
-                                dialog.rejected()
-                                dialog.visible = false
-                            }
+                    MouseArea {
+                        id: closeMA
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: {
+                            dialog.rejected()
+                            dialog.visible = false
                         }
                     }
                 }
@@ -129,7 +111,7 @@ ApplicationWindow {
             // ===== Form body =====
             ScrollView {
                 width: parent.width
-                height: parent.height - 56 - 72   // header + footer
+                height: parent.height - 56 - 72
                 clip: true
                 ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
 
@@ -153,7 +135,7 @@ ApplicationWindow {
                         width: parent.width
                     }
 
-                    RowLayout {
+                    Row {
                         spacing: 12
                         width: parent.width
 
@@ -207,7 +189,7 @@ ApplicationWindow {
                         }
                     }
 
-                    RowLayout {
+                    Row {
                         spacing: 12
                         width: parent.width
 
@@ -227,28 +209,32 @@ ApplicationWindow {
             }
 
             // ===== Footer =====
-            Rectangle {
+            Item {
                 width: parent.width
                 height: 72
-                color: Theme.surfaceSubtle
+
+                Rectangle {
+                    anchors.fill: parent
+                    color: Theme.surfaceSubtle
+                }
 
                 Rectangle {
                     anchors.top: parent.top
-                    width: parent.width
+                    anchors.left: parent.left
+                    anchors.right: parent.right
                     height: 1
                     color: Theme.borderSubtle
                 }
 
-                RowLayout {
-                    anchors.fill: parent
+                Row {
+                    anchors.right: parent.right
+                    anchors.rightMargin: 20
+                    anchors.verticalCenter: parent.verticalCenter
                     spacing: 10
-
-                    Item { Layout.fillWidth: true; height: 1 }
 
                     AppButton {
                         text: "Cancel"
                         variant: "secondary"
-                        anchors.verticalCenter: parent.verticalCenter
                         onClicked: {
                             dialog.rejected()
                             dialog.visible = false
@@ -259,7 +245,6 @@ ApplicationWindow {
                         text: "Add Family"
                         variant: "primary"
                         iconSource: "qrc:/icons/svg/plus.svg"
-                        anchors.verticalCenter: parent.verticalCenter
                         onClicked: {
                             dialog.accepted()
                             dialog.visible = false
