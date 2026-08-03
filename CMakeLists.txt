@@ -87,6 +87,7 @@ file(GLOB_RECURSE MMS_SOURCES
 # Exclude the QML smoke test launcher — it's a separate executable
 list(FILTER MMS_SOURCES EXCLUDE REGEX "qml_smoke_main\.cpp$")
 list(FILTER MMS_SOURCES EXCLUDE REGEX "design_preview_main\.cpp$")
+list(FILTER MMS_SOURCES EXCLUDE REGEX "dashboard_v2_main\.cpp$")
 file(GLOB_RECURSE MMS_HEADERS
     "${CMAKE_CURRENT_SOURCE_DIR}/src/*.h"
 )
@@ -332,6 +333,46 @@ if(MMS_BUILD_DESIGN_PREVIEW)
         endif()
     else()
         message(STATUS "Design preview: Qt6 Qml/Quick modules not found — skipping mms_design_preview")
+    endif()
+endif()
+
+# =============================================================================
+# DashboardV2 Preview (Phase 3.3 — production dashboard screen evaluation)
+#
+# Separate executable that opens directly to DashboardV2.qml.
+# Only the sidebar + topbar + KPI grid + activities + events.
+# No backend, no other screens, no component showcase.
+# =============================================================================
+option(MMS_BUILD_DASHBOARD_V2 "Build the DashboardV2 preview executable" ON)
+
+if(MMS_BUILD_DASHBOARD_V2)
+    find_package(Qt6 6.5 COMPONENTS Qml Quick QuickControls2 QuickLayouts)
+
+    if(Qt6Qml_FOUND AND Qt6Quick_FOUND AND Qt6QuickControls2_FOUND AND Qt6QuickLayouts_FOUND)
+        message(STATUS "DashboardV2: Qt6 Qml/Quick found — building mms_dashboard_v2")
+
+        add_executable(mms_dashboard_v2
+            "${CMAKE_CURRENT_SOURCE_DIR}/src/dashboard_v2_main.cpp"
+            "${CMAKE_CURRENT_SOURCE_DIR}/dashboard_v2.qrc"
+        )
+
+        target_link_libraries(mms_dashboard_v2 PRIVATE
+            Qt6::Core
+            Qt6::Gui
+            Qt6::Qml
+            Qt6::Quick
+            Qt6::QuickControls2
+            Qt6::QuickLayouts
+        )
+
+        if(WIN32)
+            set_target_properties(mms_dashboard_v2 PROPERTIES
+                WIN32_EXECUTABLE TRUE
+                LINK_FLAGS "/ENTRY:mainCRTStartup"
+            )
+        endif()
+    else()
+        message(STATUS "DashboardV2: Qt6 Qml/Quick modules not found — skipping mms_dashboard_v2")
     endif()
 endif()
 
