@@ -1,17 +1,17 @@
 import QtQuick
 import QtQuick.Controls
+import QtQuick.Layouts
 import QtQuick.Effects
 import MMS.Theme 1.0
 import "../components"
 
 // ============================================================================
-// FamilyEditDialog — Polished modal dialog
+// FamilyEditDialog — Polished modal dialog (Phase 3.2 fixed layout)
 //
-// Layout: ApplicationWindow → Rectangle (fills parent)
-//   → Column (fills parent)
-//     → Header (Item with anchors)
-//     → ScrollView (fills remaining)
-//     → Footer (Item with anchors)
+// Layout: ApplicationWindow → Rectangle → ColumnLayout
+//   ├─ Header (Item, fixed height)
+//   ├─ Form body (ScrollView → ColumnLayout)
+//   └─ Footer (Item, fixed height)
 // ============================================================================
 
 ApplicationWindow {
@@ -27,9 +27,9 @@ ApplicationWindow {
     signal rejected()
 
     width: 520
-    height: 580
+    height: 560
     minimumWidth: 520
-    minimumHeight: 580
+    minimumHeight: 560
 
     // Dimmed overlay
     Rectangle {
@@ -51,14 +51,15 @@ ApplicationWindow {
             shadowVerticalOffset: 8
         }
 
-        Column {
+        ColumnLayout {
             anchors.fill: parent
             spacing: 0
 
             // ===== Header =====
-            Item {
-                width: parent.width
-                height: 56
+            Rectangle {
+                Layout.fillWidth: true
+                Layout.preferredHeight: 56
+                color: "transparent"
 
                 Rectangle {
                     anchors.bottom: parent.bottom
@@ -68,41 +69,45 @@ ApplicationWindow {
                     color: Theme.borderSubtle
                 }
 
-                Text {
-                    anchors.left: parent.left
+                Item {
+                    anchors.fill: parent
                     anchors.leftMargin: 20
-                    anchors.verticalCenter: parent.verticalCenter
-                    text: dialog.title
-                    font.family: Theme.fontFamily
-                    font.pixelSize: Theme.fontSizeLg
-                    font.weight: Font.DemiBold
-                    color: Theme.textPrimary
-                }
-
-                Rectangle {
-                    anchors.right: parent.right
                     anchors.rightMargin: 12
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 28; height: 28; radius: Theme.radiusSm
-                    color: closeMA.containsMouse ? Theme.surfaceHover : "transparent"
-                    Behavior on color { ColorAnimation { duration: Theme.animFast } }
 
                     Text {
-                        anchors.centerIn: parent
-                        text: "×"
-                        font.pixelSize: 18
-                        font.weight: Font.Bold
-                        color: closeMA.containsMouse ? Theme.textPrimary : Theme.textSecondary
+                        anchors.left: parent.left
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: dialog.title
+                        font.family: Theme.fontFamily
+                        font.pixelSize: Theme.fontSizeLg
+                        font.weight: Font.DemiBold
+                        color: Theme.textPrimary
                     }
 
-                    MouseArea {
-                        id: closeMA
-                        anchors.fill: parent
-                        hoverEnabled: true
-                        cursorShape: Qt.PointingHandCursor
-                        onClicked: {
-                            dialog.rejected()
-                            dialog.visible = false
+                    Rectangle {
+                        anchors.right: parent.right
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 28; height: 28; radius: Theme.radiusSm
+                        color: closeMA.containsMouse ? Theme.surfaceHover : "transparent"
+                        Behavior on color { ColorAnimation { duration: Theme.animFast } }
+
+                        Text {
+                            anchors.centerIn: parent
+                            text: "×"
+                            font.pixelSize: 18
+                            font.weight: Font.Bold
+                            color: closeMA.containsMouse ? Theme.textPrimary : Theme.textSecondary
+                        }
+
+                        MouseArea {
+                            id: closeMA
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: {
+                                dialog.rejected()
+                                dialog.visible = false
+                            }
                         }
                     }
                 }
@@ -110,52 +115,55 @@ ApplicationWindow {
 
             // ===== Form body =====
             ScrollView {
-                width: parent.width
-                height: parent.height - 56 - 72
+                Layout.fillWidth: true
+                Layout.fillHeight: true
                 clip: true
                 ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
 
-                Column {
+                ColumnLayout {
                     width: parent.width - 40
                     x: 20
-                    spacing: 14
-                    topPadding: 20
+                    spacing: 16
 
+                    // House Name (full width)
                     AppTextField {
+                        Layout.fillWidth: true
                         label: "House Name"
                         placeholderText: "e.g. Manzil Manzoor"
                         required: true
-                        width: parent.width
                     }
 
+                    // Head of Family (full width)
                     AppTextField {
+                        Layout.fillWidth: true
                         label: "Head of Family"
                         placeholderText: "e.g. Manzoor PP"
                         leadingIcon: "user"
-                        width: parent.width
                     }
 
-                    Row {
+                    // Ward + Phone (side by side)
+                    RowLayout {
+                        Layout.fillWidth: true
                         spacing: 12
-                        width: parent.width
 
                         AppComboBox {
+                            Layout.fillWidth: true
                             label: "Ward"
                             model: ["Ward 1", "Ward 2", "Ward 3", "Ward 4"]
-                            width: (parent.width - 12) / 2
                         }
 
                         AppTextField {
+                            Layout.fillWidth: true
                             label: "Phone"
                             placeholderText: "9847123456"
                             leadingIcon: "user"
-                            width: (parent.width - 12) / 2
                         }
                     }
 
-                    Column {
+                    // Address (multiline)
+                    ColumnLayout {
+                        Layout.fillWidth: true
                         spacing: 4
-                        width: parent.width
 
                         Text {
                             text: "ADDRESS"
@@ -166,8 +174,8 @@ ApplicationWindow {
                         }
 
                         TextArea {
-                            width: parent.width
-                            implicitHeight: 72
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: 72
                             font.family: Theme.fontFamily
                             font.pixelSize: Theme.fontSizeMd
                             color: Theme.textPrimary
@@ -189,34 +197,35 @@ ApplicationWindow {
                         }
                     }
 
-                    Row {
+                    // Pincode (half width)
+                    RowLayout {
+                        Layout.fillWidth: true
                         spacing: 12
-                        width: parent.width
 
                         AppTextField {
-                            label: "Area"
-                            placeholderText: "e.g. Kondotty"
-                            width: (parent.width - 12) / 2
-                        }
-
-                        AppTextField {
+                            Layout.fillWidth: true
                             label: "Pincode"
                             placeholderText: "673601"
-                            width: (parent.width - 12) / 2
                         }
+
+                        Item {
+                            Layout.fillWidth: true
+                        }
+                    }
+
+                    // Bottom padding
+                    Item {
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 8
                     }
                 }
             }
 
             // ===== Footer =====
-            Item {
-                width: parent.width
-                height: 72
-
-                Rectangle {
-                    anchors.fill: parent
-                    color: Theme.surfaceSubtle
-                }
+            Rectangle {
+                Layout.fillWidth: true
+                Layout.preferredHeight: 64
+                color: Theme.surfaceSubtle
 
                 Rectangle {
                     anchors.top: parent.top
@@ -226,28 +235,32 @@ ApplicationWindow {
                     color: Theme.borderSubtle
                 }
 
-                Row {
-                    anchors.right: parent.right
+                Item {
+                    anchors.fill: parent
                     anchors.rightMargin: 20
-                    anchors.verticalCenter: parent.verticalCenter
-                    spacing: 10
 
-                    AppButton {
-                        text: "Cancel"
-                        variant: "secondary"
-                        onClicked: {
-                            dialog.rejected()
-                            dialog.visible = false
+                    Row {
+                        anchors.right: parent.right
+                        anchors.verticalCenter: parent.verticalCenter
+                        spacing: 10
+
+                        AppButton {
+                            text: "Cancel"
+                            variant: "secondary"
+                            onClicked: {
+                                dialog.rejected()
+                                dialog.visible = false
+                            }
                         }
-                    }
 
-                    AppButton {
-                        text: "Add Family"
-                        variant: "primary"
-                        iconSource: "qrc:/icons/svg/plus.svg"
-                        onClicked: {
-                            dialog.accepted()
-                            dialog.visible = false
+                        AppButton {
+                            text: "Add Family"
+                            variant: "primary"
+                            iconSource: "qrc:/icons/svg/plus.svg"
+                            onClicked: {
+                                dialog.accepted()
+                                dialog.visible = false
+                            }
                         }
                     }
                 }

@@ -5,13 +5,12 @@ import QtQuick.Effects
 import MMS.Theme 1.0
 
 // ============================================================================
-// DashboardSidebar — Deep navy sidebar with navigation
+// DashboardSidebar — Deep navy sidebar (Phase 3.2 polished)
 //
-// Layout: Rectangle root → Column (fills parent)
-//   - Logo header (fixed height)
-//   - Section label (fixed height)
-//   - Nav ListView (fills remaining)
-//   - User profile card (fixed height)
+// Fixes:
+// - Icon contrast: muted light/slate normal, white hover, emerald-white selected
+// - Selected state: emerald-tinted navy bg + emerald left indicator + white text
+// - Profile area: clearer contrast on name/role/logout
 // ============================================================================
 
 Rectangle {
@@ -20,7 +19,6 @@ Rectangle {
     property int currentIndex: 0
     signal navigated(int index)
 
-    // ===== Sizing — controlled by parent RowLayout =====
     implicitWidth: Theme.sidebarWidth
     Layout.fillHeight: true
     Layout.fillWidth: false
@@ -78,7 +76,7 @@ Rectangle {
                         text: "Management System"
                         font.family: Theme.fontFamily
                         font.pixelSize: 10
-                        color: Theme.sidebarTextMuted
+                        color: "#94a3b8"
                     }
                 }
             }
@@ -94,7 +92,7 @@ Rectangle {
                 font.family: Theme.fontFamily
                 font.pixelSize: 10
                 font.weight: Font.Bold
-                color: Theme.sidebarTextMuted
+                color: "#64748b"
                 anchors.left: parent.left
                 anchors.leftMargin: 20
                 anchors.verticalCenter: parent.verticalCenter
@@ -105,7 +103,7 @@ Rectangle {
         ListView {
             id: navList
             width: parent.width
-            height: parent.height - 64 - 36 - 76   // logo + label + user card
+            height: parent.height - 64 - 36 - 80
             clip: true
             spacing: 2
             currentIndex: sidebar.currentIndex
@@ -123,20 +121,24 @@ Rectangle {
 
             delegate: ItemDelegate {
                 width: navList.width - 16
-                height: 38
+                height: 40
                 x: 8
                 padding: 0
 
                 background: Rectangle {
                     radius: Theme.radiusMd
-                    color: ListView.isCurrentItem ? Theme.sidebarActive :
+                    // Selected: emerald-tinted navy (slightly lighter than sidebar bg)
+                    // Hover: lighter navy
+                    // Normal: transparent
+                    color: ListView.isCurrentItem ? "#1a3a2e" :
                            (hovered ? Theme.sidebarHover : "transparent")
                     Behavior on color { ColorAnimation { duration: Theme.animFast } }
 
+                    // Emerald left indicator (selected only)
                     Rectangle {
                         anchors.left: parent.left
                         anchors.verticalCenter: parent.verticalCenter
-                        width: 3; height: 20
+                        width: 3; height: 22
                         radius: 2
                         color: Theme.primary
                         visible: ListView.isCurrentItem
@@ -145,8 +147,9 @@ Rectangle {
 
                 contentItem: Row {
                     spacing: 10
-                    leftPadding: 12
+                    leftPadding: 14
 
+                    // Icon
                     Item {
                         width: Theme.iconSizeMd
                         height: Theme.iconSizeMd
@@ -163,22 +166,25 @@ Rectangle {
                         MultiEffect {
                             anchors.fill: parent
                             source: navIcon
+                            // Selected: white, Hover: white, Normal: muted light slate
                             colorizationColor: ListView.isCurrentItem ?
-                                Theme.sidebarTextActive :
-                                (hovered ? Theme.sidebarTextActive : Theme.sidebarText)
+                                "#ffffff" :
+                                (hovered ? "#ffffff" : "#94a3b8")
                             colorization: 1.0
                             Behavior on colorizationColor { ColorAnimation { duration: Theme.animFast } }
                         }
                     }
 
+                    // Label
                     Text {
                         text: model.label
                         font.family: Theme.fontFamily
                         font.pixelSize: Theme.fontSizeMd
                         font.weight: ListView.isCurrentItem ? Font.Medium : Font.Normal
+                        // Selected: white, Hover: white, Normal: muted light slate
                         color: ListView.isCurrentItem ?
-                            Theme.sidebarTextActive :
-                            (hovered ? Theme.sidebarTextActive : Theme.sidebarText)
+                            "#ffffff" :
+                            (hovered ? "#ffffff" : "#94a3b8")
                         y: (parent.height - height) / 2
                         Behavior on color { ColorAnimation { duration: Theme.animFast } }
                     }
@@ -194,55 +200,57 @@ Rectangle {
         // ===== User profile card =====
         Item {
             width: parent.width
-            height: 76
+            height: 80
 
             Rectangle {
                 anchors.fill: parent
                 anchors.margins: 8
                 radius: Theme.radiusMd
-                color: Theme.sidebarHover
-                opacity: 0.5
+                color: "#1e293b"
                 border.width: 1
-                border.color: Theme.sidebarBorder
+                border.color: "#334155"
 
                 Row {
                     anchors.centerIn: parent
                     spacing: 10
 
+                    // Avatar
                     Rectangle {
-                        width: 32; height: 32; radius: 16
+                        width: 34; height: 34; radius: 17
                         color: Theme.primary
 
                         Text {
                             anchors.centerIn: parent
                             text: "A"
                             font.family: Theme.fontFamilyDisplay
-                            font.pixelSize: 13
+                            font.pixelSize: 14
                             font.weight: Font.Bold
                             color: Theme.textOnPrimary
                         }
                     }
 
                     Column {
-                        spacing: 0
+                        spacing: 1
 
                         Text {
                             text: "Admin User"
                             font.family: Theme.fontFamily
                             font.pixelSize: 12
                             font.weight: Font.Medium
-                            color: Theme.sidebarTextActive
+                            color: "#e2e8f0"
                         }
                         Text {
                             text: "Administrator"
                             font.family: Theme.fontFamily
                             font.pixelSize: 10
-                            color: Theme.sidebarTextMuted
+                            color: "#94a3b8"
                         }
                     }
 
+                    // Logout icon
                     Item {
                         width: 18; height: 18
+                        y: (34 - 18) / 2
 
                         Image {
                             id: logoutIcon
@@ -255,8 +263,14 @@ Rectangle {
                         MultiEffect {
                             anchors.fill: parent
                             source: logoutIcon
-                            colorizationColor: Theme.sidebarTextMuted
+                            colorizationColor: "#94a3b8"
                             colorization: 1.0
+                        }
+
+                        MouseArea {
+                            anchors.fill: parent
+                            cursorShape: Qt.PointingHandCursor
+                            hoverEnabled: true
                         }
                     }
                 }

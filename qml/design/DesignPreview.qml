@@ -259,7 +259,7 @@ ApplicationWindow {
                         // Recent Activities
                         Rectangle {
                             width: (parent.width - 16) * 0.6
-                            height: 320
+                            height: 340
                             radius: Theme.radiusLg
                             color: Theme.surface
                             border.width: 1
@@ -283,14 +283,15 @@ ApplicationWindow {
                                     font.pixelSize: Theme.fontSizeSm
                                     color: Theme.textSecondary
                                     topPadding: 2
-                                    bottomPadding: 16
+                                    bottomPadding: 12
                                 }
 
                                 ListView {
                                     width: parent.width
-                                    height: parent.height - 60
+                                    height: parent.height - 56
                                     clip: true
-                                    spacing: 12
+                                    spacing: 14
+                                    topMargin: 4
                                     model: ListModel {
                                         ListElement { title: "New Nikah Registered"; subtitle: "Faisal P. & Amina K."; time: "2 hours ago"; icon: "marriage"; accent: "orange" }
                                         ListElement { title: "New Member Added"; subtitle: "Rashid K."; time: "5 hours ago"; icon: "members"; accent: "blue" }
@@ -362,7 +363,7 @@ ApplicationWindow {
                         // Upcoming Events
                         Rectangle {
                             width: (parent.width - 16) * 0.4
-                            height: 320
+                            height: 340
                             radius: Theme.radiusLg
                             color: Theme.surface
                             border.width: 1
@@ -391,7 +392,7 @@ ApplicationWindow {
 
                                 ListView {
                                     width: parent.width
-                                    height: parent.height - 60
+                                    height: parent.height - 56
                                     clip: true
                                     spacing: 12
                                     model: ListModel {

@@ -5,13 +5,14 @@ import QtQuick.Effects
 import MMS.Theme 1.0
 
 // ============================================================================
-// KpiCard — Attractive KPI card with tinted accent, icon, trend
+// KpiCard — Attractive KPI card (Phase 3.2 fixed clipping)
 //
-// Layout: Rectangle root → Column (anchors.fill)
-//   - Row (icon + spacer + trend badge)
-//   - Text (value)
-//   - Text (label)
-//   - Text (subtitle)
+// Increased height to 148px so all content fits at Windows scaling.
+// Layout: Rectangle → Column (anchors.fill, margins: 16)
+//   ├─ Row (icon + spacer + trend badge) — height: 40
+//   ├─ Text (value) — fontSize3xl
+//   ├─ Text (label) — fontSizeSm
+//   └─ Text (subtitle) — fontSizeXs
 // ============================================================================
 
 Rectangle {
@@ -25,7 +26,7 @@ Rectangle {
     property string iconName: ""
     property string subtitle: ""
 
-    implicitHeight: 130
+    implicitHeight: 148
     implicitWidth: 240
     radius: Theme.radiusLg
     color: Theme.surface
@@ -64,17 +65,21 @@ Rectangle {
     }
 
     Column {
+        id: cardContent
         anchors.fill: parent
         anchors.margins: 16
-        spacing: 8
+        spacing: 6
 
         // Top row: icon + trend badge
-        Row {
+        Item {
             width: parent.width
-            spacing: 0
+            height: 40
 
-            // Tinted icon container
+            // Tinted icon container (left)
             Rectangle {
+                id: iconContainer
+                x: 0
+                y: 0
                 width: 40; height: 40; radius: Theme.radiusMd
                 color: root.accent.subtle
                 border.width: 1
@@ -101,22 +106,17 @@ Rectangle {
                 }
             }
 
-            // Spacer — pushes trend badge to the right
-            Item {
-                width: parent.width - 40 - trendBadge.width
-                height: 40
-            }
-
-            // Trend badge
+            // Trend badge (right)
             Rectangle {
                 id: trendBadge
                 visible: root.trend !== ""
+                x: parent.width - width
+                y: (40 - height) / 2
                 height: 22
                 width: trendRow.implicitWidth + 12
                 radius: 11
                 color: root.trendUp ? Theme.successSubtle : Theme.coralSubtle
                 border.width: 0
-                y: (40 - height) / 2
 
                 Row {
                     id: trendRow
@@ -147,7 +147,7 @@ Rectangle {
                         text: root.trend
                         font.family: Theme.fontFamily
                         font.pixelSize: Theme.fontSizeXs
-                        font.weight: Theme.fontWeightSemiBold
+                        font.weight: Font.DemiBold
                         color: root.trendUp ? Theme.success : Theme.coral
                         y: (parent.height - height) / 2
                     }
@@ -160,8 +160,10 @@ Rectangle {
             text: root.value
             font.family: Theme.fontFamilyDisplay
             font.pixelSize: Theme.fontSize3xl
-            font.weight: Theme.fontWeightBold
+            font.weight: Font.Bold
             color: Theme.textPrimary
+            width: parent.width
+            elide: Text.ElideRight
         }
 
         // Label
@@ -169,8 +171,10 @@ Rectangle {
             text: root.label
             font.family: Theme.fontFamily
             font.pixelSize: Theme.fontSizeSm
-            font.weight: Theme.fontWeightMedium
+            font.weight: Font.Medium
             color: Theme.textSecondary
+            width: parent.width
+            elide: Text.ElideRight
         }
 
         // Subtitle
@@ -180,6 +184,8 @@ Rectangle {
             font.pixelSize: Theme.fontSizeXs
             color: Theme.textTertiary
             visible: root.subtitle !== ""
+            width: parent.width
+            elide: Text.ElideRight
         }
     }
 }
