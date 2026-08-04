@@ -5,6 +5,7 @@
     <!-- Components -->
     <file alias="qml/components/AppTextField.qml">qml/components/AppTextField.qml</file>
     <file alias="qml/components/KpiCardV2.qml">qml/components/KpiCardV2.qml</file>
+    <file alias="qml/components/DashboardPanel.qml">qml/components/DashboardPanel.qml</file>
     <!-- Design -->
     <file alias="qml/design/DashboardV2.qml">qml/design/DashboardV2.qml</file>
     <file alias="qml/design/DashboardSidebarV2.qml">qml/design/DashboardSidebarV2.qml</file>

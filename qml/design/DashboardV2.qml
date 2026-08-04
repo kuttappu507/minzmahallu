@@ -36,6 +36,7 @@ ApplicationWindow {
 
     // ===== ROOT: RowLayout =====
     RowLayout {
+        objectName: "rootRowLayout"
         anchors.fill: parent
         spacing: 0
 
@@ -49,6 +50,7 @@ ApplicationWindow {
 
         // ===== Main content area =====
         ColumnLayout {
+            objectName: "mainColumnLayout"
             Layout.fillWidth: true
             Layout.fillHeight: true
             spacing: 0
@@ -176,12 +178,14 @@ ApplicationWindow {
 
             // ===== Scrollable dashboard content =====
             ScrollView {
+                objectName: "scrollView"
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 clip: true
                 ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
 
                 ColumnLayout {
+                    objectName: "contentColumnLayout"
                     width: parent.width - 48
                     x: 24
                     spacing: 20
@@ -215,12 +219,14 @@ ApplicationWindow {
                     // KPI GRID (responsive)
                     // ═══════════════════════════════════════
                     GridLayout {
+                        objectName: "kpiGridLayout"
                         Layout.fillWidth: true
                         columns: window.width > 1200 ? 4 : (window.width > 800 ? 2 : 1)
                         columnSpacing: 16
                         rowSpacing: 16
 
                         KpiCardV2 {
+                            objectName: "kpiCard"
                             Layout.fillWidth: true
                             label: "Total Families"
                             value: "512"
@@ -231,6 +237,7 @@ ApplicationWindow {
                             iconName: "families"
                         }
                         KpiCardV2 {
+                            objectName: "kpiCard"
                             Layout.fillWidth: true
                             label: "Total Members"
                             value: "2,345"
@@ -241,6 +248,7 @@ ApplicationWindow {
                             iconName: "members"
                         }
                         KpiCardV2 {
+                            objectName: "kpiCard"
                             Layout.fillWidth: true
                             label: "Nikahs This Year"
                             value: "48"
@@ -251,6 +259,7 @@ ApplicationWindow {
                             iconName: "marriage"
                         }
                         KpiCardV2 {
+                            objectName: "kpiCard"
                             Layout.fillWidth: true
                             label: "Collections (Month)"
                             value: "₹48,750"
@@ -265,205 +274,154 @@ ApplicationWindow {
                     // ═══════════════════════════════════════
                     // ACTIVITIES + EVENTS ROW
                     // ═══════════════════════════════════════
+                    // NO Layout.fillHeight on this RowLayout.
+                    // Its height = max(activitiesPanel.implicitHeight, eventsPanel.implicitHeight)
+                    // which is driven by content.
                     RowLayout {
+        objectName: "rootRowLayout"
                         Layout.fillWidth: true
                         spacing: 16
 
-                        // Recent Activities (content-driven height)
-                        Rectangle {
+                        // Recent Activities — natural content height via DashboardPanel
+                        DashboardPanel {
                             Layout.fillWidth: true
-                            Layout.fillHeight: true
                             Layout.preferredWidth: 1
-                            radius: Theme.radiusLg
-                            color: Theme.surface
-                            border.width: 1
-                            border.color: Theme.border
+                            panelName: "activitiesPanel"
+                            title: "Recent Activities"
+                            subtitle: "Latest updates across the mahallu"
 
-                            ColumnLayout {
-                                anchors.fill: parent
-                                anchors.margins: 16
-                                spacing: 0
-
-                                // Section header
-                                Text {
-                                    text: "Recent Activities"
-                                    font.family: Theme.fontFamily
-                                    font.pixelSize: 15
-                                    font.weight: Font.DemiBold
-                                    color: Theme.textPrimary
-                                }
-                                Text {
-                                    text: "Latest updates across the mahallu"
-                                    font.family: Theme.fontFamily
-                                    font.pixelSize: 12
-                                    color: Theme.textSecondary
-                                    topPadding: 2
-                                    bottomPadding: 12
+                            // Activity rows via Column + Repeater (NOT ListView)
+                            // Column correctly calculates implicitHeight from children
+                            Repeater {
+                                model: ListModel {
+                                    ListElement { title: "New Nikah Registered"; subtitle: "Faisal P. & Amina K."; time: "2h ago"; icon: "marriage"; accent: "orange" }
+                                    ListElement { title: "New Member Added"; subtitle: "Rashid K."; time: "5h ago"; icon: "members"; accent: "blue" }
+                                    ListElement { title: "Collection Received"; subtitle: "₹2,500 from Ibrahim K."; time: "1d ago"; icon: "donations"; accent: "violet" }
+                                    ListElement { title: "Certificate Generated"; subtitle: "Nikah Cert #NK/2025/043"; time: "2d ago"; icon: "certificates"; accent: "cyan" }
                                 }
 
-                                // Activity list (content-driven)
-                                ListView {
+                                delegate: Row {
                                     Layout.fillWidth: true
-                                    Layout.fillHeight: true
-                                    clip: true
                                     spacing: 10
-                                    model: ListModel {
-                                        ListElement { title: "New Nikah Registered"; subtitle: "Faisal P. & Amina K."; time: "2h ago"; icon: "marriage"; accent: "orange" }
-                                        ListElement { title: "New Member Added"; subtitle: "Rashid K."; time: "5h ago"; icon: "members"; accent: "blue" }
-                                        ListElement { title: "Collection Received"; subtitle: "₹2,500 from Ibrahim K."; time: "1d ago"; icon: "donations"; accent: "violet" }
-                                        ListElement { title: "Certificate Generated"; subtitle: "Nikah Cert #NK/2025/043"; time: "2d ago"; icon: "certificates"; accent: "cyan" }
-                                    }
 
-                                    delegate: Row {
-                                        width: ListView.view.width
-                                        spacing: 10
+                                    // Compact tinted icon
+                                    Rectangle {
+                                        width: 28; height: 28; radius: Theme.radiusSm
+                                        color: Theme.accent(model.accent).subtle
+                                        y: (parent.height - 28) / 2
 
-                                        // Compact tinted icon
-                                        Rectangle {
-                                            width: 28; height: 28; radius: Theme.radiusSm
-                                            color: Theme.accent(model.accent).subtle
-                                            y: (parent.height - 28) / 2
+                                        Item {
+                                            width: 14; height: 14
+                                            anchors.centerIn: parent
 
-                                            Item {
-                                                width: 14; height: 14
-                                                anchors.centerIn: parent
-
-                                                Image {
-                                                    id: actIcon
-                                                    source: "qrc:/icons/svg/" + model.icon + ".svg"
-                                                    sourceSize: Qt.size(14, 14)
-                                                    anchors.fill: parent
-                                                    fillMode: Image.Pad
-                                                    visible: false
-                                                }
-                                                MultiEffect {
-                                                    anchors.fill: parent
-                                                    source: actIcon
-                                                    colorizationColor: Theme.accent(model.accent).main
-                                                    colorization: 1.0
-                                                }
+                                            Image {
+                                                id: actIcon
+                                                source: "qrc:/icons/svg/" + model.icon + ".svg"
+                                                sourceSize: Qt.size(14, 14)
+                                                anchors.fill: parent
+                                                fillMode: Image.Pad
+                                                visible: false
+                                            }
+                                            MultiEffect {
+                                                anchors.fill: parent
+                                                source: actIcon
+                                                colorizationColor: Theme.accent(model.accent).main
+                                                colorization: 1.0
                                             }
                                         }
+                                    }
 
-                                        // Content
-                                        Column {
-                                            width: parent.width - 28 - 10
-                                            y: (parent.height - height) / 2
-                                            spacing: 1
+                                    // Content
+                                    Column {
+                                        width: parent.width - 28 - 10
+                                        y: (parent.height - height) / 2
+                                        spacing: 1
 
-                                            Text {
-                                                text: model.title
-                                                font.family: Theme.fontFamily
-                                                font.pixelSize: 13
-                                                font.weight: Font.Medium
-                                                color: Theme.textPrimary
-                                            }
-                                            Text {
-                                                text: model.subtitle + " · " + model.time
-                                                font.family: Theme.fontFamily
-                                                font.pixelSize: 11
-                                                color: Theme.textTertiary
-                                            }
+                                        Text {
+                                            text: model.title
+                                            font.family: Theme.fontFamily
+                                            font.pixelSize: 13
+                                            font.weight: Font.Medium
+                                            color: Theme.textPrimary
+                                        }
+                                        Text {
+                                            text: model.subtitle + " · " + model.time
+                                            font.family: Theme.fontFamily
+                                            font.pixelSize: 11
+                                            color: Theme.textTertiary
                                         }
                                     }
                                 }
                             }
                         }
 
-                        // Upcoming Events (content-driven height)
-                        Rectangle {
+                        // Upcoming Events — natural content height via DashboardPanel
+                        DashboardPanel {
                             Layout.fillWidth: true
-                            Layout.fillHeight: true
                             Layout.preferredWidth: 1
-                            radius: Theme.radiusLg
-                            color: Theme.surface
-                            border.width: 1
-                            border.color: Theme.border
+                            panelName: "eventsPanel"
+                            title: "Upcoming Events"
+                            subtitle: "Next 2 weeks"
 
-                            ColumnLayout {
-                                anchors.fill: parent
-                                anchors.margins: 16
-                                spacing: 0
-
-                                // Section header
-                                Text {
-                                    text: "Upcoming Events"
-                                    font.family: Theme.fontFamily
-                                    font.pixelSize: 15
-                                    font.weight: Font.DemiBold
-                                    color: Theme.textPrimary
-                                }
-                                Text {
-                                    text: "Next 2 weeks"
-                                    font.family: Theme.fontFamily
-                                    font.pixelSize: 12
-                                    color: Theme.textSecondary
-                                    topPadding: 2
-                                    bottomPadding: 12
+                            // Event rows via Column + Repeater (NOT ListView)
+                            Repeater {
+                                model: ListModel {
+                                    ListElement { day: "24"; month: "MAY"; title: "Jumma Khutbah"; time: "12:30 PM"; accent: "emerald" }
+                                    ListElement { day: "30"; month: "MAY"; title: "Mahallu Meeting"; time: "7:00 PM"; accent: "blue" }
+                                    ListElement { day: "07"; month: "JUN"; title: "Quran Study Circle"; time: "6:30 PM"; accent: "violet" }
                                 }
 
-                                // Events list (content-driven)
-                                ListView {
+                                delegate: Row {
                                     Layout.fillWidth: true
-                                    Layout.fillHeight: true
-                                    clip: true
                                     spacing: 10
-                                    model: ListModel {
-                                        ListElement { day: "24"; month: "MAY"; title: "Jumma Khutbah"; time: "12:30 PM"; accent: "emerald" }
-                                        ListElement { day: "30"; month: "MAY"; title: "Mahallu Meeting"; time: "7:00 PM"; accent: "blue" }
-                                        ListElement { day: "07"; month: "JUN"; title: "Quran Study Circle"; time: "6:30 PM"; accent: "violet" }
-                                    }
 
-                                    delegate: Row {
-                                        width: ListView.view.width
-                                        spacing: 10
+                                    // Compact date block
+                                    Rectangle {
+                                        width: 40; height: 40; radius: Theme.radiusSm
+                                        color: Theme.accent(model.accent).subtle
+                                        y: (parent.height - 40) / 2
 
-                                        // Compact date block
-                                        Rectangle {
-                                            width: 40; height: 40; radius: Theme.radiusSm
-                                            color: Theme.accent(model.accent).subtle
-                                            y: (parent.height - 40) / 2
+                                        Column {
+                                            anchors.centerIn: parent
+                                            spacing: 0
 
-                                            Column {
-                                                anchors.centerIn: parent
-                                                spacing: 0
-
-                                                Text {
-                                                    text: model.day
-                                                    font.family: Theme.fontFamilyDisplay
-                                                    font.pixelSize: 14
-                                                    font.weight: Font.Bold
-                                                    color: Theme.accent(model.accent).main
-                                                    horizontalAlignment: Text.AlignHCenter
-                                                }
-                                                Text {
-                                                    text: model.month
-                                                    font.family: Theme.fontFamily
-                                                    font.pixelSize: 8
-                                                    font.weight: Font.Bold
-                                                    color: Theme.accent(model.accent).main
-                                                    horizontalAlignment: Text.AlignHCenter
-                                                }
+                                            Text {
+                                                text: model.day
+                                                font.family: Theme.fontFamilyDisplay
+                                                font.pixelSize: 14
+                                                font.weight: Font.Bold
+                                                color: Theme.accent(model.accent).main
+                                                horizontalAlignment: Text.AlignHCenter
+                                            }
+                                            Text {
+                                                text: model.month
+                                                font.family: Theme.fontFamily
+                                                font.pixelSize: 8
+                                                font.weight: Font.Bold
+                                                color: Theme.accent(model.accent).main
+                                                horizontalAlignment: Text.AlignHCenter
                                             }
                                         }
+                                    }
 
-                                        // Content
-                                        Column {
-                                            width: parent.width - 40 - 10
+                                    // Content
+                                    Column {
+                                        width: parent.width - 40 - 10
+                                        y: (parent.height - height) / 2
+                                        spacing: 1
 
-                                            Text {
-                                                text: model.title
-                                                font.family: Theme.fontFamily
-                                                font.pixelSize: 13
-                                                font.weight: Font.Medium
-                                                color: Theme.textPrimary
-                                            }
-                                            Text {
-                                                text: model.time
-                                                font.family: Theme.fontFamily
-                                                font.pixelSize: 11
-                                                color: Theme.textTertiary
-                                            }
+                                        Text {
+                                            text: model.title
+                                            font.family: Theme.fontFamily
+                                            font.pixelSize: 13
+                                            font.weight: Font.Medium
+                                            color: Theme.textPrimary
+                                        }
+                                        Text {
+                                            text: model.time
+                                            font.family: Theme.fontFamily
+                                            font.pixelSize: 11
+                                            color: Theme.textTertiary
                                         }
                                     }
                                 }
@@ -477,4 +435,5 @@ ApplicationWindow {
             }
         }
     }
+
 }

@@ -17,13 +17,11 @@ int main(int argc, char* argv[]) {
 
     QQuickStyle::setStyle("Basic");
 
-    // Load fonts
     QFontDatabase::addApplicationFont(":/fonts/Poppins-Regular.ttf");
     QFontDatabase::addApplicationFont(":/fonts/Poppins-Medium.ttf");
     QFontDatabase::addApplicationFont(":/fonts/Poppins-SemiBold.ttf");
     QFontDatabase::addApplicationFont(":/fonts/Poppins-Bold.ttf");
 
-    // Register Theme singleton
     qmlRegisterSingletonType(
         QUrl("qrc:/qml/theme/Theme.qml"),
         "MMS.Theme", 1, 0, "Theme"
