@@ -160,10 +160,9 @@ ApplicationWindow {
                         x: 10
 
                         Rectangle {
+                            id: navRect
                             anchors.fill: parent
-                            radius: 9  // CSS: border-radius:9px
-                            // CSS: .nav-it.on { background:rgba(255,255,255,.14); }
-                            // CSS: .nav-it:hover { background:rgba(255,255,255,.09); }
+                            radius: 9
                             color: model.active ? Qt.rgba(255/255,255/255,255/255,0.14) :
                                    (navMA.containsMouse ? Qt.rgba(255/255,255/255,255/255,0.09) : "transparent")
                             Behavior on color { ColorAnimation { duration: 140 } }
@@ -224,6 +223,8 @@ ApplicationWindow {
                             anchors.fill: parent
                             hoverEnabled: true
                             cursorShape: Qt.PointingHandCursor
+                            onPressed: navRect.color = model.active ? Qt.rgba(255/255,255/255,255/255,0.22) : Qt.rgba(255/255,255/255,255/255,0.14)
+                            onReleased: navRect.color = model.active ? Qt.rgba(255/255,255/255,255/255,0.14) : (containsMouse ? Qt.rgba(255/255,255/255,255/255,0.09) : "transparent")
                         }
                     }
                 }
@@ -244,9 +245,26 @@ ApplicationWindow {
                         color: Qt.rgba(255/255,255/255,255/255,0.14)
                     }
 
+                    // Profile hover background (outside Row to avoid anchor conflict)
+                    Rectangle {
+                        x: 10; y: 9
+                        width: profileRow.width + 8
+                        height: profileRow.height + 8
+                        radius: 9
+                        color: Qt.rgba(255/255,255/255,255/255, profileHover.containsMouse ? 0.06 : 0)
+                        Behavior on color { ColorAnimation { duration: 120 } }
+                        z: -1
+                    }
+
+                    HoverHandler {
+                        id: profileHover
+                        cursorShape: Qt.PointingHandCursor
+                    }
+
                     Row {
-                        x: 14; y: 13  // CSS: padding:13px 14px
-                        spacing: 10   // CSS: gap:10px
+                        id: profileRow
+                        x: 14; y: 13
+                        spacing: 10
 
                         // Avatar — gold
                         Rectangle {
@@ -341,12 +359,30 @@ ApplicationWindow {
 
                     // CSS: .qwrap { background:var(--panel2)=#f2faf4; border:1.5px solid var(--border)=#d2e5d8; border-radius:9px; height:38px; width:250px; padding:0 10px; }
                     Rectangle {
+                        id: searchBox
                         anchors.right: parent.right
                         anchors.verticalCenter: parent.verticalCenter
                         width: 250; height: 38; radius: 9
                         color: "#f2faf4"
                         border.width: 1
-                        border.color: "#d2e5d8"
+                        border.color: searchInput.activeFocus ? "#059669" : (searchHover.containsMouse ? "#b2cfbd" : "#d2e5d8")
+                        Behavior on border.color { ColorAnimation { duration: 120 } }
+
+                        // Subtle focus glow
+                        Rectangle {
+                            anchors.fill: parent
+                            anchors.margins: -2
+                            radius: parent.radius + 2
+                            color: "transparent"
+                            border.width: 2
+                            border.color: Qt.rgba(5/255,150/255,105/255,0.12)
+                            visible: searchInput.activeFocus
+                        }
+
+                        HoverHandler {
+                            id: searchHover
+                            cursorShape: Qt.IBeamCursor
+                        }
 
                         Row {
                             anchors.fill: parent
@@ -354,17 +390,28 @@ ApplicationWindow {
                             spacing: 8
 
                             Text {
-                                text: "🔍"
+                                text: "\u{1F50D}"
                                 font.pixelSize: 14
-                                color: "#7e968a"
+                                color: searchInput.activeFocus ? "#059669" : "#7e968a"
                                 y: (parent.height - height) / 2
+                                Behavior on color { ColorAnimation { duration: 120 } }
                             }
-                            Text {
-                                text: "Search records..."
+                            TextField {
+                                id: searchInput
+                                width: parent.width - 22
+                                height: parent.height
+                                placeholderText: "Search records..."
+                                placeholderTextColor: "#7e968a"
                                 font.family: "Poppins"
                                 font.pixelSize: 13
-                                color: "#7e968a"
-                                y: (parent.height - height) / 2
+                                color: "#12241b"
+                                background: Item {}
+                                verticalAlignment: Text.AlignVCenter
+                                cursorDelegate: Rectangle {
+                                    visible: searchInput.activeFocus
+                                    color: "#059669"
+                                    width: 1
+                                }
                             }
                         }
                     }
@@ -443,12 +490,16 @@ ApplicationWindow {
                             }
 
                             delegate: Rectangle {
+                                id: qaCard
                                 Layout.fillWidth: true
-                                implicitHeight: qaContent.implicitHeight + 24  // 12+12 padding
+                                implicitHeight: qaContent.implicitHeight + 24
                                 radius: 10
                                 color: "#ffffff"
                                 border.width: 1
-                                border.color: "#d2e5d8"
+                                border.color: qaMA.containsMouse ? model.sc : "#d2e5d8"
+                                y: qaMA.containsMouse ? -2 : 0
+                                Behavior on border.color { ColorAnimation { duration: 140 } }
+                                Behavior on y { NumberAnimation { duration: 140; easing.type: Easing.OutCubic } }
 
                                 Row {
                                     id: qaContent
@@ -503,6 +554,7 @@ ApplicationWindow {
                                 }
 
                                 MouseArea {
+                                    id: qaMA
                                     anchors.fill: parent
                                     hoverEnabled: true
                                     cursorShape: Qt.PointingHandCursor
@@ -543,12 +595,20 @@ ApplicationWindow {
                             }
 
                             delegate: Rectangle {
+                                id: statCard
                                 Layout.fillWidth: true
-                                implicitHeight: statContent.implicitHeight + 25  // 13+12 padding
+                                implicitHeight: statContent.implicitHeight + 25
                                 radius: 10
                                 color: model.sb
                                 border.width: 1
                                 border.color: model.sc
+                                y: statHover.containsMouse ? -2 : 0
+                                Behavior on y { NumberAnimation { duration: 150; easing.type: Easing.OutCubic } }
+
+                                HoverHandler {
+                                    id: statHover
+                                    cursorShape: Qt.ArrowCursor  // KPI cards are informational, not clickable
+                                }
 
                                 // CSS: .stat::after — decorative circle
                                 Rectangle {
@@ -665,12 +725,21 @@ ApplicationWindow {
                             }
 
                             delegate: Rectangle {
+                                id: evCard
                                 Layout.fillWidth: true
-                                implicitHeight: evContent.implicitHeight + 28  // 14+14 padding
+                                implicitHeight: evContent.implicitHeight + 28
                                 radius: 10
                                 color: "#ffffff"
                                 border.width: 1
-                                border.color: "#d2e5d8"
+                                border.color: evHover.containsMouse ? "#059669" : "#d2e5d8"
+                                y: evHover.containsMouse ? -2 : 0
+                                Behavior on border.color { ColorAnimation { duration: 150 } }
+                                Behavior on y { NumberAnimation { duration: 150; easing.type: Easing.OutCubic } }
+
+                                HoverHandler {
+                                    id: evHover
+                                    cursorShape: Qt.PointingHandCursor
+                                }
 
                                 Row {
                                     id: evContent
