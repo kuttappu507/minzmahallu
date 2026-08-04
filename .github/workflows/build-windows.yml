@@ -148,6 +148,26 @@ jobs:
           "@ | Out-File dist/run_dashboard_v2.bat -Encoding ASCII
           # ── End Phase 3.3 ───────────────────────────────────────────────
           
+
+          # ── Phase 3.4: DashboardV3 executable ───────────────────────────
+          Copy-Item build/mms_dashboard_v3.exe dist/
+          & "$env:RUNNER_WORKSPACE/Qt/$env:QT_VERSION/msvc2022_64/bin/windeployqt.exe" --release --no-translations --no-system-d3d-compiler --no-opengl-sw --qmldir "$PWD/qml" "dist/mms_dashboard_v3.exe"
+          Write-Host "Deployed QML runtime for mms_dashboard_v3.exe"
+
+          @"
+          @echo off
+          cd /d "%~dp0"
+          echo Starting MMS DashboardV3...
+          echo.
+          mms_dashboard_v3.exe
+          echo.
+          echo mms_dashboard_v3.exe exited with code %errorlevel%
+          echo.
+          echo Press any key to close...
+          pause >nul
+          "@ | Out-File dist/run_dashboard_v3.bat -Encoding ASCII
+          # ── End Phase 3.4 ───────────────────────────────────────────────
+          
           Copy-Item sql dist/ -Recurse
           mkdir dist/resources -Force
           Copy-Item resources/* dist/resources/ -Recurse

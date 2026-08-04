@@ -1,0 +1,33 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource prefix="/">
+    <file alias="qml/theme/Theme.qml">qml/theme/Theme.qml</file>
+    <file alias="qml/design/DashboardV3.qml">qml/design/DashboardV3.qml</file>
+    <file alias="fonts/Poppins-Regular.ttf">resources/fonts/Poppins-Regular.ttf</file>
+    <file alias="fonts/Poppins-Medium.ttf">resources/fonts/Poppins-Medium.ttf</file>
+    <file alias="fonts/Poppins-SemiBold.ttf">resources/fonts/Poppins-SemiBold.ttf</file>
+    <file alias="fonts/Poppins-Bold.ttf">resources/fonts/Poppins-Bold.ttf</file>
+    <file alias="icons/svg/dashboard.svg">resources/icons/svg/dashboard.svg</file>
+    <file alias="icons/svg/families.svg">resources/icons/svg/families.svg</file>
+    <file alias="icons/svg/members.svg">resources/icons/svg/members.svg</file>
+    <file alias="icons/svg/marriage.svg">resources/icons/svg/marriage.svg</file>
+    <file alias="icons/svg/donations.svg">resources/icons/svg/donations.svg</file>
+    <file alias="icons/svg/token.svg">resources/icons/svg/token.svg</file>
+    <file alias="icons/svg/certificates.svg">resources/icons/svg/certificates.svg</file>
+    <file alias="icons/svg/reports.svg">resources/icons/svg/reports.svg</file>
+    <file alias="icons/svg/settings.svg">resources/icons/svg/settings.svg</file>
+    <file alias="icons/svg/subscriptions.svg">resources/icons/svg/subscriptions.svg</file>
+    <file alias="icons/svg/accounting.svg">resources/icons/svg/accounting.svg</file>
+    <file alias="icons/svg/death.svg">resources/icons/svg/death.svg</file>
+    <file alias="icons/svg/welfare.svg">resources/icons/svg/welfare.svg</file>
+    <file alias="icons/svg/audit.svg">resources/icons/svg/audit.svg</file>
+    <file alias="icons/svg/backup.svg">resources/icons/svg/backup.svg</file>
+    <file alias="icons/svg/users.svg">resources/icons/svg/users.svg</file>
+    <file alias="icons/svg/user.svg">resources/icons/svg/user.svg</file>
+    <file alias="icons/svg/plus.svg">resources/icons/svg/plus.svg</file>
+    <file alias="icons/svg/dollar.svg">resources/icons/svg/dollar.svg</file>
+    <file alias="icons/svg/alert.svg">resources/icons/svg/alert.svg</file>
+    <file alias="icons/svg/search.svg">resources/icons/svg/search.svg</file>
+    <file alias="icons/svg/log-out.svg">resources/icons/svg/log-out.svg</file>
+    <file alias="icons/svg/bell.svg">resources/icons/svg/bell.svg</file>
+</qresource>
+</RCC>

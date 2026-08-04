@@ -88,6 +88,7 @@ file(GLOB_RECURSE MMS_SOURCES
 list(FILTER MMS_SOURCES EXCLUDE REGEX "qml_smoke_main\.cpp$")
 list(FILTER MMS_SOURCES EXCLUDE REGEX "design_preview_main\.cpp$")
 list(FILTER MMS_SOURCES EXCLUDE REGEX "dashboard_v2_main\.cpp$")
+list(FILTER MMS_SOURCES EXCLUDE REGEX "dashboard_v3_main\.cpp$")
 file(GLOB_RECURSE MMS_HEADERS
     "${CMAKE_CURRENT_SOURCE_DIR}/src/*.h"
 )
@@ -373,6 +374,38 @@ if(MMS_BUILD_DASHBOARD_V2)
         endif()
     else()
         message(STATUS "DashboardV2: Qt6 Qml/Quick modules not found — skipping mms_dashboard_v2")
+    endif()
+endif()
+
+
+# =============================================================================
+# DashboardV3 Preview (faithful HTML→QML visual port)
+# =============================================================================
+option(MMS_BUILD_DASHBOARD_V3 "Build the DashboardV3 preview executable" ON)
+
+if(MMS_BUILD_DASHBOARD_V3)
+    find_package(Qt6 6.5 COMPONENTS Qml Quick QuickControls2 QuickLayouts)
+
+    if(Qt6Qml_FOUND AND Qt6Quick_FOUND AND Qt6QuickControls2_FOUND AND Qt6QuickLayouts_FOUND)
+        message(STATUS "DashboardV3: building mms_dashboard_v3")
+
+        add_executable(mms_dashboard_v3
+            "${CMAKE_CURRENT_SOURCE_DIR}/src/dashboard_v3_main.cpp"
+            "${CMAKE_CURRENT_SOURCE_DIR}/dashboard_v3.qrc"
+        )
+
+        target_link_libraries(mms_dashboard_v3 PRIVATE
+            Qt6::Core Qt6::Gui Qt6::Qml Qt6::Quick Qt6::QuickControls2 Qt6::QuickLayouts
+        )
+
+        if(WIN32)
+            set_target_properties(mms_dashboard_v3 PROPERTIES
+                WIN32_EXECUTABLE TRUE
+                LINK_FLAGS "/ENTRY:mainCRTStartup"
+            )
+        endif()
+    else()
+        message(STATUS "DashboardV3: Qt6 Qml/Quick modules not found - skipping")
     endif()
 endif()
 
