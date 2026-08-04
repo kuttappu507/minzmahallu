@@ -374,13 +374,19 @@ ApplicationWindow {
             // ===== SCROLLABLE CONTENT =====
             // CSS: .view { padding:18px; }
             ScrollView {
+                id: scrollView
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 clip: true
                 ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
 
                 ColumnLayout {
-                    width: parent.width
+                    id: contentCol
+                    // CRITICAL: bind to scrollView.width, NOT parent.width
+                    // parent is the ScrollView's internal Flickable (contentItem)
+                    // whose width creates a circular dependency with contentWidth.
+                    // scrollView.width is the actual viewport width.
+                    width: scrollView.width
                     spacing: 16  // CSS: margin-bottom:16px on each section
                     x: 0
 
@@ -419,6 +425,7 @@ ApplicationWindow {
                     // CSS: .qa b { font:700 12.5px Manrope; color:var(--text)=#12241b; }
                     // CSS: .qa small { font:600 10.5px Manrope; color:var(--faint)=#7e968a; }
                     GridLayout {
+                        id: qaGrid
                         Layout.fillWidth: true
                         Layout.leftMargin: 18
                         Layout.rightMargin: 18
@@ -513,6 +520,7 @@ ApplicationWindow {
                     // CSS: .stat .val { font:700 24px/1 "Space Grotesk"; color:var(--st); }
                     // CSS: .stat .slab { font:800 10px Manrope; letter-spacing:.09em; text-transform:uppercase; color:var(--st); opacity:.75; margin-top:6px; }
                     GridLayout {
+                        id: statGrid
                         Layout.fillWidth: true
                         Layout.leftMargin: 18
                         Layout.rightMargin: 18
@@ -725,4 +733,6 @@ ApplicationWindow {
             }
         }
     }
+
+
 }
