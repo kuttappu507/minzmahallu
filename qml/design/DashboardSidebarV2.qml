@@ -21,11 +21,17 @@ Rectangle {
     property int currentIndex: 0
     signal navigated(int index)
 
-    implicitWidth: 230
+    implicitWidth: 260
     Layout.fillHeight: true
     Layout.fillWidth: false
 
-    color: Theme.sidebarBg
+    // Green gradient sidebar (matches HTML: linear-gradient(180deg, #0a7f5d 0%, #065f46 42%, #044633 100%))
+    gradient: Gradient {
+        orientation: Gradient.Vertical
+        GradientStop { position: 0.0; color: Theme.sidebarTop }
+        GradientStop { position: 0.42; color: Theme.sidebarMid }
+        GradientStop { position: 1.0; color: Theme.sidebarBot }
+    }
 
     // Right edge separator
     Rectangle {
@@ -33,7 +39,7 @@ Rectangle {
         anchors.top: parent.top
         anchors.bottom: parent.bottom
         width: 1
-        color: "#1e293b"
+        color: Qt.rgba(255,255,255,0.14)
     }
 
     Column {
@@ -51,7 +57,9 @@ Rectangle {
 
                 Rectangle {
                     width: 28; height: 28; radius: Theme.radiusSm
-                    color: Theme.primary
+                    color: "#f2c14e"   // Gold logo bg
+                    border.width: 2
+                    border.color: "#b98317"
 
                     Text {
                         anchors.centerIn: parent
@@ -77,7 +85,7 @@ Rectangle {
                         text: "Management System"
                         font.family: Theme.fontFamily
                         font.pixelSize: 9
-                        color: "#64748b"
+                        color: "#a5dcc6"
                     }
                 }
             }
@@ -89,7 +97,7 @@ Rectangle {
             font.family: Theme.fontFamily
             font.pixelSize: 9
             font.weight: Font.Bold
-            color: "#475569"
+            color: Qt.rgba(214,240,228,0.42)
             leftPadding: 20
             topPadding: 8
             bottomPadding: 6
@@ -125,8 +133,8 @@ Rectangle {
                 background: Rectangle {
                     radius: Theme.radiusSm
                     // Selected: emerald-tinted navy
-                    color: ListView.isCurrentItem ? "#134e3a" :
-                           (hovered ? "#1e293b" : "transparent")
+                    color: ListView.isCurrentItem ? Qt.rgba(255,255,255,0.14) :
+                           (hovered ? Qt.rgba(255,255,255,0.09) : "transparent")
                     Behavior on color { ColorAnimation { duration: Theme.animFast } }
 
                     // Emerald left indicator
@@ -135,7 +143,7 @@ Rectangle {
                         anchors.verticalCenter: parent.verticalCenter
                         width: 3; height: 20
                         radius: 2
-                        color: Theme.primary
+                        color: "#f2c14e"   // Gold indicator (matches HTML)
                         visible: ListView.isCurrentItem
                     }
                 }
@@ -177,7 +185,7 @@ Rectangle {
                         font.weight: ListView.isCurrentItem ? Font.Medium : Font.Normal
                         color: ListView.isCurrentItem ?
                             "#ffffff" :
-                            (hovered ? "#ffffff" : "#94a3b8")
+                            (hovered ? "#ffffff" : "#c4e7d7")
                         y: (36 - height) / 2
                         Behavior on color { ColorAnimation { duration: Theme.animFast } }
                     }
@@ -199,9 +207,8 @@ Rectangle {
                 anchors.fill: parent
                 anchors.margins: 8
                 radius: Theme.radiusSm
-                color: "#1e293b"
-                border.width: 1
-                border.color: "#334155"
+                color: "transparent"
+                border.width: 0
 
                 Row {
                     anchors.centerIn: parent
@@ -209,7 +216,9 @@ Rectangle {
 
                     Rectangle {
                         width: 30; height: 30; radius: 15
-                        color: Theme.primary
+                        color: "#f2c14e"   // Gold avatar (matches HTML)
+                        border.width: 2
+                        border.color: "#b98317"
 
                         Text {
                             anchors.centerIn: parent
@@ -217,7 +226,7 @@ Rectangle {
                             font.family: Theme.fontFamilyDisplay
                             font.pixelSize: 12
                             font.weight: Font.Bold
-                            color: Theme.textOnPrimary
+                            color: "#4a3606"   // Brown text on gold (matches HTML)
                         }
                     }
 
@@ -229,13 +238,13 @@ Rectangle {
                             font.family: Theme.fontFamily
                             font.pixelSize: 11
                             font.weight: Font.Medium
-                            color: "#e2e8f0"
+                            color: "#ffffff"
                         }
                         Text {
                             text: "Administrator"
                             font.family: Theme.fontFamily
                             font.pixelSize: 9
-                            color: "#94a3b8"
+                            color: "#9fd8c3"
                         }
                     }
 
@@ -254,7 +263,7 @@ Rectangle {
                         MultiEffect {
                             anchors.fill: parent
                             source: logoutIcon
-                            colorizationColor: "#94a3b8"
+                            colorizationColor: "#bfe6d6"
                             colorization: 1.0
                         }
                     }

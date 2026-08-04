@@ -29,5 +29,7 @@
     <file alias="icons/svg/log-out.svg">resources/icons/svg/log-out.svg</file>
     <file alias="icons/svg/trending-up.svg">resources/icons/svg/trending-up.svg</file>
     <file alias="icons/svg/trending-down.svg">resources/icons/svg/trending-down.svg</file>
+    <file alias="icons/svg/user.svg">resources/icons/svg/user.svg</file>
+    <file alias="icons/svg/alert.svg">resources/icons/svg/alert.svg</file>
 </qresource>
 </RCC>

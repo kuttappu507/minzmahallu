@@ -32,10 +32,10 @@ Rectangle {
 
     implicitWidth: 220
     implicitHeight: content.implicitHeight + 32   // 16px top + 16px bottom padding
-    radius: Theme.radiusLg
-    color: Theme.surface
+    radius: 10
+    color: root.accent.subtle
     border.width: 1
-    border.color: Theme.border
+    border.color: root.accent.main
 
     readonly property var accent: Theme.accent(accentName)
 
@@ -99,11 +99,11 @@ Rectangle {
                 id: iconContainer
                 x: 0
                 y: 0
-                width: 32; height: 32; radius: Theme.radiusSm
-                color: root.accent.subtle
+                width: 37; height: 37; radius: 9
+                color: root.accent.main
 
                 Item {
-                    width: Theme.iconSizeSm; height: Theme.iconSizeSm
+                    width: 18; height: 18
                     anchors.centerIn: parent
 
                     Image {
@@ -117,7 +117,7 @@ Rectangle {
                     MultiEffect {
                         anchors.fill: parent
                         source: kpiIcon
-                        colorizationColor: root.accent.main
+                        colorizationColor: "#ffffff"
                         colorization: 1.0
                     }
                 }
@@ -131,7 +131,7 @@ Rectangle {
                 height: 22
                 width: trendRow.implicitWidth + 14
                 radius: 11
-                color: root.trendUp ? Theme.successSubtle : Theme.coralSubtle
+                color: Theme.surface
 
                 Row {
                     id: trendRow
@@ -153,7 +153,7 @@ Rectangle {
                         MultiEffect {
                             anchors.fill: parent
                             source: trendIcon
-                            colorizationColor: root.trendUp ? Theme.success : Theme.coral
+                            colorizationColor: root.accent.main
                             colorization: 1.0
                         }
                     }
@@ -163,7 +163,7 @@ Rectangle {
                         font.family: Theme.fontFamily
                         font.pixelSize: Theme.fontSizeXs
                         font.weight: Font.DemiBold
-                        color: root.trendUp ? Theme.success : Theme.coral
+                        color: root.accent.deep
                         y: (parent.height - height) / 2
                     }
                 }
@@ -174,9 +174,9 @@ Rectangle {
         Text {
             text: root.value
             font.family: Theme.fontFamilyDisplay
-            font.pixelSize: 28
+            font.pixelSize: 24
             font.weight: Font.Bold
-            color: Theme.textPrimary
+            color: root.accent.deep
             width: parent.width
             elide: Text.ElideRight
         }
@@ -185,9 +185,10 @@ Rectangle {
         Text {
             text: root.label
             font.family: Theme.fontFamily
-            font.pixelSize: Theme.fontSizeSm
-            font.weight: Font.Medium
-            color: Theme.textSecondary
+            font.pixelSize: 10
+            font.weight: Font.Black
+            color: root.accent.deep
+            opacity: 0.75
             width: parent.width
             elide: Text.ElideRight
         }

@@ -21,27 +21,31 @@ import QtQuick
 // ============================================================================
 
 QtObject {
-    // ===== CANVAS =====
-    readonly property color canvas:          "#eef1f6"   // app background (cool blue-gray)
-    readonly property color canvasAlt:       "#e6eaf1"   // slightly darker for contrast
+    // ===== CANVAS (matches HTML --bg) =====
+    readonly property color canvas:          "#e7f4ea"   // light green-tinted background
+    readonly property color canvasAlt:       "#eef8f1"   // slightly lighter
 
-    // ===== SURFACES =====
-    readonly property color surface:         "#ffffff"   // cards, panels
-    readonly property color surfaceHover:    "#f5f7fa"   // hover background
-    readonly property color surfacePressed:  "#eceff3"   // pressed background
-    readonly property color surfaceSubtle:   "#f8fafc"   // table alt rows, subtle panels
-    readonly property color surfaceRaised:   "#ffffff"   // elevated cards (with shadow)
+    // ===== SURFACES (matches HTML --panel, --panel2) =====
+    readonly property color surface:         "#ffffff"   // cards, panels (--panel)
+    readonly property color surfaceHover:    "#f2faf4"   // hover background (--panel2)
+    readonly property color surfacePressed:  "#eef8f1"   // pressed background (--header)
+    readonly property color surfaceSubtle:   "#f2faf4"   // table alt rows (--panel2)
+    readonly property color surfaceRaised:   "#ffffff"   // elevated cards
 
-    // ===== NAVY SIDEBAR =====
-    readonly property color sidebarBg:       "#0f172a"   // deep navy
-    readonly property color sidebarBgAlt:    "#1e293b"   // slightly lighter navy for sections
-    readonly property color sidebarHover:    "#1e293b"   // nav item hover
-    readonly property color sidebarActive:   "#1e293b"   // nav item active background
-    readonly property color sidebarBorder:   "#1e293b"   // subtle border on navy
-    readonly property color sidebarText:     "#cbd5e1"   // primary nav text
+    // ===== GREEN SIDEBAR (matches HTML gradient) =====
+    readonly property color sidebarTop:      "#0a7f5d"   // gradient stop 0%
+    readonly property color sidebarMid:      "#065f46"   // gradient stop 42%
+    readonly property color sidebarBot:      "#044633"   // gradient stop 100%
+    readonly property color sidebarHover:    "#ffffff14" // rgba(255,255,255,0.09)
+    readonly property color sidebarActive:   "#ffffff24" // rgba(255,255,255,0.14)
+    readonly property color sidebarBorder:   "#ffffff24" // rgba(255,255,255,0.14)
+    readonly property color sidebarText:     "#c4e7d7"   // nav text color
     readonly property color sidebarTextActive: "#ffffff" // active nav text
-    readonly property color sidebarTextMuted: "#64748b"  // section labels, metadata
+    readonly property color sidebarTextMuted: "#d6f0e46c" // section labels rgba(214,240,228,0.42)
     readonly property color sidebarLogo:     "#ffffff"   // logo text
+    readonly property color sidebarSubTitle: "#a5dcc6"   // logo subtitle
+    // Keep sidebarBg as a fallback (gradient applied in QML)
+    readonly property color sidebarBg:       "#065f46"   // fallback solid color
 
     // ===== BRAND — Emerald =====
     readonly property color primary:         "#059669"
@@ -93,24 +97,24 @@ QtObject {
     readonly property color infoSubtle:      "#f0f9ff"
 
     // ===== TEXT =====
-    readonly property color textPrimary:     "#0f172a"   // headings, body
-    readonly property color textSecondary:   "#475569"   // labels, secondary
-    readonly property color textTertiary:    "#94a3b8"   // hints, placeholders
-    readonly property color textDisabled:    "#cbd5e1"   // disabled controls
+    readonly property color textPrimary:     "#12241b"   // HTML --text
+    readonly property color textSecondary:   "#4f6b5c"   // HTML --muted
+    readonly property color textTertiary:    "#7e968a"   // HTML --faint
+    readonly property color textDisabled:    "#b2cfbd"   // HTML --border2
     readonly property color textOnPrimary:   "#ffffff"
     readonly property color textOnDark:      "#ffffff"
     readonly property color textInverse:     "#ffffff"
 
     // ===== BORDERS =====
-    readonly property color border:          "#e2e8f0"   // default border
-    readonly property color borderHover:     "#cbd5e1"   // hover border
+    readonly property color border:          "#d2e5d8"   // HTML --border
+    readonly property color borderHover:     "#b2cfbd"   // HTML --border2
     readonly property color borderFocused:   "#059669"   // focused input
-    readonly property color borderSubtle:    "#f1f5f9"   // very subtle dividers
+    readonly property color borderSubtle:    "#d2e5d8"   // HTML --border (same as border)
 
     // ===== TYPOGRAPHY =====
     // Use "Segoe UI" on Windows (falls back to system sans on Linux)
     // Poppins kept for branding/display only
-    readonly property string fontFamily:     "Segoe UI"
+    readonly property string fontFamily:     "Poppins"   // HTML uses Manrope (closest available)
     readonly property string fontFamilyDisplay: "Poppins"  // for logo, big numbers
     readonly property string fontFamilyMono:  "Cascadia Code"
 
@@ -151,7 +155,7 @@ QtObject {
     readonly property int controlHeightSm:  28
     readonly property int controlHeightMd:  32
     readonly property int controlHeightLg:  36
-    readonly property int sidebarWidth:     248
+    readonly property int sidebarWidth:     260   // HTML sidebar width
 
     // ===== ICON SIZES =====
     readonly property int iconSizeXs:   12
@@ -178,12 +182,13 @@ QtObject {
     // Returns an accent object {main, hover, subtle, subtleAlt} by name
     function accent(name) {
         var accents = {
-            "emerald": { main: primary, hover: primaryHover, subtle: primarySubtle, subtleAlt: primarySubtleAlt },
-            "blue":    { main: blue,    hover: blueHover,    subtle: blueSubtle,    subtleAlt: blueSubtleAlt },
-            "orange":  { main: orange,  hover: orangeHover,  subtle: orangeSubtle,  subtleAlt: orangeSubtleAlt },
-            "violet":  { main: violet,  hover: violetHover,  subtle: violetSubtle,  subtleAlt: violetSubtleAlt },
-            "cyan":    { main: cyan,    hover: cyanHover,    subtle: cyanSubtle,    subtleAlt: cyanSubtleAlt },
-            "coral":   { main: coral,   hover: coralHover,   subtle: coralSubtle,   subtleAlt: coralSubtleAlt }
+            "emerald": { main: primary, hover: primaryHover, subtle: primarySubtle, subtleAlt: primarySubtleAlt, deep: "#04543c" },
+            "blue":    { main: blue,    hover: blueHover,    subtle: blueSubtle,    subtleAlt: blueSubtleAlt, deep: "#1e3fae" },
+            "orange":  { main: orange,  hover: orangeHover,  subtle: orangeSubtle,  subtleAlt: orangeSubtleAlt, deep: "#8f3708" },
+            "violet":  { main: violet,  hover: violetHover,  subtle: violetSubtle,  subtleAlt: violetSubtleAlt, deep: "#5423b7" },
+            "cyan":    { main: cyan,    hover: cyanHover,    subtle: cyanSubtle,    subtleAlt: cyanSubtleAlt, deep: "#0f5e54" },
+            "coral":   { main: coral,   hover: coralHover,   subtle: coralSubtle,   subtleAlt: coralSubtleAlt, deep: "#95102e" },
+        "gold":    { main: "#d97706", hover: "#b45309", subtle: "#fcebc8", subtleAlt: "#fde68a", deep: "#7c4403" }
         }
         return accents[name] || accents.emerald
     }

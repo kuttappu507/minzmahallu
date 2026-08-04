@@ -58,7 +58,7 @@ ApplicationWindow {
             // ===== TopBar =====
             Rectangle {
                 Layout.fillWidth: true
-                Layout.preferredHeight: 56
+                Layout.preferredHeight: 58
                 Layout.fillHeight: false
                 color: Theme.surface
 
@@ -82,17 +82,18 @@ ApplicationWindow {
                         spacing: 0
 
                         Text {
-                            text: "Dashboard"
+                            text: "MINZ MAHALLU /"
                             font.family: Theme.fontFamily
-                            font.pixelSize: 18
-                            font.weight: Font.DemiBold
-                            color: Theme.textPrimary
+                            font.pixelSize: 11
+                            font.weight: Font.Bold
+                            color: Theme.textTertiary
                         }
                         Text {
-                            text: "Good evening, Admin"
-                            font.family: Theme.fontFamily
-                            font.pixelSize: 12
-                            color: Theme.textSecondary
+                            text: "Dashboard"
+                            font.family: Theme.fontFamilyDisplay
+                            font.pixelSize: 15
+                            font.weight: Font.Bold
+                            color: Theme.textPrimary
                         }
                     }
 
@@ -201,14 +202,14 @@ ApplicationWindow {
                         spacing: 2
 
                         Text {
-                            text: "Overview"
-                            font.family: Theme.fontFamily
+                            text: "Good evening, Abdul Kareem"
+                            font.family: Theme.fontFamilyDisplay
                             font.pixelSize: 22
                             font.weight: Font.Bold
                             color: Theme.textPrimary
                         }
                         Text {
-                            text: "Mahallu statistics and recent activities"
+                            text: "Here is what is happening in your mahallu today."
                             font.family: Theme.fontFamily
                             font.pixelSize: 13
                             color: Theme.textSecondary
@@ -221,42 +222,42 @@ ApplicationWindow {
                     GridLayout {
                         objectName: "kpiGridLayout"
                         Layout.fillWidth: true
-                        columns: window.width > 1200 ? 4 : (window.width > 800 ? 2 : 1)
+                        columns: window.width > 1360 ? 5 : (window.width > 900 ? 3 : (window.width > 600 ? 2 : 1))
                         columnSpacing: 16
                         rowSpacing: 16
 
                         KpiCardV2 {
                             objectName: "kpiCard"
                             Layout.fillWidth: true
-                            label: "Total Families"
-                            value: "512"
-                            trend: "+12"
+                            label: "FAMILIES"
+                            value: "248"
+                            trend: "+6 this month"
                             trendUp: true
-                            subtitle: "this month"
+                            subtitle: "registered"
                             accentName: "emerald"
                             iconName: "families"
                         }
                         KpiCardV2 {
                             objectName: "kpiCard"
                             Layout.fillWidth: true
-                            label: "Total Members"
-                            value: "2,345"
-                            trend: "+28"
+                            label: "MEMBERS"
+                            value: "1,142"
+                            trend: "+18 this month"
                             trendUp: true
-                            subtitle: "this month"
-                            accentName: "blue"
+                            subtitle: "registered"
+                            accentName: "cyan"
                             iconName: "members"
                         }
                         KpiCardV2 {
                             objectName: "kpiCard"
                             Layout.fillWidth: true
-                            label: "Nikahs This Year"
-                            value: "48"
-                            trend: "+8"
+                            label: "ACTIVE"
+                            value: "986"
+                            trend: "86.3% active"
                             trendUp: true
-                            subtitle: "this month"
-                            accentName: "orange"
-                            iconName: "marriage"
+                            subtitle: "members"
+                            accentName: "blue"
+                            iconName: "user"
                         }
                         KpiCardV2 {
                             objectName: "kpiCard"
