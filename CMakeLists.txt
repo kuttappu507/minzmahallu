@@ -454,6 +454,14 @@ if(MMS_BUILD_APP)
             OpenSSL::Crypto OpenSSL::SSL ZLIB::ZLIB
         )
 
+        target_compile_definitions(mms_app PRIVATE
+            APP_NAME_STR="${APP_NAME}"
+            APP_VERSION_STR="${APP_VERSION}"
+            APP_COMPANY_STR="${APP_COMPANY}"
+            QT_DEPRECATED_WARNINGS
+            QT_DISABLE_DEPRECATED_BEFORE=0x060000
+        )
+
         if(WIN32)
             set_target_properties(mms_app PROPERTIES
                 WIN32_EXECUTABLE TRUE
