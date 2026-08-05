@@ -35,6 +35,10 @@ ApplicationWindow {
     title: "Minz Mahallu — DashboardV3"
     color: "#e7f4ea"  // HTML --bg
 
+    // Available content width (window - sidebar)
+    readonly property int contentWidth: width - 260
+    readonly property int responsiveColumns: Math.max(1, Math.min(5, Math.floor((contentWidth - 36 + 12) / (190 + 12))))
+
     RowLayout {
         anchors.fill: parent
         spacing: 0
@@ -201,7 +205,7 @@ ApplicationWindow {
                                     source: navIcon
                                     // CSS: .nav-it .ic { color:#c4e7d7; } .nav-it.on .ic { color:#ffd76a; }
                                     colorizationColor: model.active ? "#ffffff" :
-                                                       (navMA.containsMouse ? "#ffffff" : "#a7d7c5")
+                                                       (navMA.containsMouse ? "#e7fff5" : "#a7d7c5")
                                     colorization: 1.0
                                 }
                             }
@@ -211,7 +215,7 @@ ApplicationWindow {
                                 text: model.label
                                 font.family: "Poppins"
                                 font.pixelSize: 13
-                                font.weight: Font.Bold
+                                font.weight: model.active ? Font.DemiBold : Font.Medium
                                 color: model.active ? "#ffffff" :
                                        (navMA.containsMouse ? "#ffffff" : "#c4e7d7")
                                 y: (44 - height) / 2
@@ -290,14 +294,14 @@ ApplicationWindow {
                                 text: "Abdul Kareem"
                                 font.family: "Poppins"
                                 font.pixelSize: 13
-                                font.weight: Font.Bold
+                                font.weight: Font.DemiBold
                                 color: "#ffffff"
                             }
                             Text {
                                 text: "Administrator"
                                 font.family: "Poppins"
                                 font.pixelSize: 11
-                                font.weight: Font.DemiBold
+                                font.weight: Font.Normal
                                 color: "#9fd8c3"
                             }
                         }
@@ -351,7 +355,7 @@ ApplicationWindow {
                             text: "Dashboard"
                             font.family: "Poppins"
                             font.pixelSize: 16
-                            font.weight: Font.Bold
+                            font.weight: Font.DemiBold
                             color: "#12241b"
                             y: (parent.height - height) / 2
                         }
@@ -362,7 +366,7 @@ ApplicationWindow {
                         id: searchBox
                         anchors.right: parent.right
                         anchors.verticalCenter: parent.verticalCenter
-                        width: 250; height: 38; radius: 9
+                        width: window.contentWidth > 800 ? 250 : (window.contentWidth > 500 ? 180 : 120); height: 38; radius: 9
                         color: "#f2faf4"
                         border.width: 1
                         border.color: searchInput.activeFocus ? "#059669" : (searchHover.containsMouse ? "#b2cfbd" : "#d2e5d8")
@@ -453,7 +457,7 @@ ApplicationWindow {
                             text: "Good evening, Abdul Kareem"
                             font.family: "Poppins"
                             font.pixelSize: 21
-                            font.weight: Font.Bold
+                            font.weight: Font.DemiBold
                             color: "#12241b"
                         }
                         Text {
@@ -476,7 +480,7 @@ ApplicationWindow {
                         Layout.fillWidth: true
                         Layout.leftMargin: 18
                         Layout.rightMargin: 18
-                        columns: 5
+                        columns: window.responsiveColumns
                         columnSpacing: 12
                         rowSpacing: 12
 
@@ -492,6 +496,7 @@ ApplicationWindow {
                             delegate: Rectangle {
                                 id: qaCard
                                 Layout.fillWidth: true
+                                Layout.minimumWidth: 180
                                 implicitHeight: qaContent.implicitHeight + 24
                                 radius: 10
                                 color: "#ffffff"
@@ -519,7 +524,7 @@ ApplicationWindow {
                                     Rectangle {
                                         width: 42; height: 42; radius: 9
                                         color: model.sc
-                                        scale: qaMA.containsMouse ? 1.04 : 1.0
+                                        scale: qaMA.containsMouse ? 1.02 : 1.0
                                         Behavior on scale { NumberAnimation { duration: 160; easing.type: Easing.OutCubic } }
 
                                         Item {
@@ -551,15 +556,21 @@ ApplicationWindow {
                                             text: model.label
                                             font.family: "Poppins"
                                             font.pixelSize: 13
-                                            font.weight: Font.Bold
+                                            font.weight: Font.DemiBold
                                             color: "#12241b"
+                                            elide: Text.ElideRight
+                                            maximumLineCount: 1
+                                            width: qaCard.width - 42 - 12 - 28
                                         }
                                         Text {
                                             text: model.sub
                                             font.family: "Poppins"
                                             font.pixelSize: 11
-                                            font.weight: Font.DemiBold
+                                            font.weight: Font.Normal
                                             color: "#7e968a"
+                                            elide: Text.ElideRight
+                                            maximumLineCount: 1
+                                            width: qaCard.width - 42 - 12 - 28
                                         }
                                     }
                                 }
@@ -587,7 +598,7 @@ ApplicationWindow {
                         Layout.fillWidth: true
                         Layout.leftMargin: 18
                         Layout.rightMargin: 18
-                        columns: 5
+                        columns: window.responsiveColumns
                         columnSpacing: 12
                         rowSpacing: 12
 
@@ -608,13 +619,14 @@ ApplicationWindow {
                             delegate: Rectangle {
                                 id: statCard
                                 Layout.fillWidth: true
+                                Layout.minimumWidth: 180
                                 implicitHeight: statContent.implicitHeight + 25
                                 radius: 10
                                 color: model.sb
                                 border.width: 1
                                 border.color: statHover.containsMouse ? model.sc : Qt.lighter(model.sc, 1.15)
                                 clip: true  // CRITICAL: clips decorative circle to rounded corners
-                                y: statHover.containsMouse ? -3 : 0
+                                y: statHover.hovered ? -2 : 0
                                 Behavior on y { NumberAnimation { duration: 180; easing.type: Easing.OutCubic } }
                                 Behavior on border.color { ColorAnimation { duration: 180 } }
 
@@ -632,19 +644,20 @@ ApplicationWindow {
                                     shadowVerticalOffset: 5
                                 }
 
-                                // CSS: .stat::after — decorative circle (INSIDE card, clipped)
+                                // Decorative circle — center OUTSIDE card bottom-right
+                                // Only ~35-45% visible normally, grows ~10% on hover
                                 Rectangle {
                                     id: decorCircle
                                     anchors.right: parent.right
                                     anchors.bottom: parent.bottom
-                                    anchors.rightMargin: -10
-                                    anchors.bottomMargin: -10
-                                    width: statHover.containsMouse ? 70 : 56
+                                    anchors.rightMargin: -22
+                                    anchors.bottomMargin: -22
+                                    width: statHover.hovered ? 62 : 56
                                     height: width
                                     radius: width / 2
                                     color: model.sc
                                     opacity: 0.14
-                                    Behavior on width { NumberAnimation { duration: 180; easing.type: Easing.OutCubic } }
+                                    Behavior on width { NumberAnimation { duration: 160; easing.type: Easing.OutCubic } }
                                 }
 
                                 Column {
@@ -662,7 +675,7 @@ ApplicationWindow {
                                         Rectangle {
                                             width: 37; height: 37; radius: 9
                                             color: model.sc
-                                            scale: statHover.containsMouse ? 1.05 : 1.0
+                                            scale: statHover.hovered ? 1.02 : 1.0
                                             Behavior on scale { NumberAnimation { duration: 180; easing.type: Easing.OutCubic } }
 
                                             Item {
@@ -703,7 +716,7 @@ ApplicationWindow {
                                                 text: model.delta
                                                 font.family: "Poppins"
                                                 font.pixelSize: 10
-                                                font.weight: Font.Black
+                                                font.weight: Font.Medium
                                                 color: model.st
                                             }
                                         }
@@ -716,7 +729,10 @@ ApplicationWindow {
                                         font.pixelSize: 24
                                         font.weight: Font.Bold
                                         color: model.st
-                                        topPadding: 9  // CSS: margin-bottom:9px on .srow
+                                        topPadding: 9
+                                        elide: Text.ElideRight
+                                        maximumLineCount: 1
+                                        width: parent.width  // CSS: margin-bottom:9px on .srow
                                     }
 
                                     // CSS: .stat .slab { font:800 10px Manrope; letter-spacing:.09em; text-transform:uppercase; color:var(--st); opacity:.75; margin-top:6px; }
@@ -724,10 +740,13 @@ ApplicationWindow {
                                         text: model.label
                                         font.family: "Poppins"
                                         font.pixelSize: 10
-                                        font.weight: Font.Black
+                                        font.weight: Font.Medium
                                         color: model.st
                                         opacity: 0.75
                                         topPadding: 6
+                                        elide: Text.ElideRight
+                                        maximumLineCount: 1
+                                        width: parent.width
                                     }
                                 }
                             }
@@ -808,15 +827,19 @@ ApplicationWindow {
                                             text: model.title
                                             font.family: "Poppins"
                                             font.pixelSize: 14
-                                            font.weight: Font.Bold
+                                            font.weight: Font.DemiBold
                                             color: "#12241b"
+                                            elide: Text.ElideRight
+                                            width: evCard.width - 42 - 13 - 32
                                         }
                                         Text {
                                             text: model.sub
                                             font.family: "Poppins"
                                             font.pixelSize: 12
-                                            font.weight: Font.DemiBold
+                                            font.weight: Font.Normal
                                             color: "#4f6b5c"
+                                            elide: Text.ElideRight
+                                            width: evCard.width - 42 - 13 - 32
                                         }
                                     }
                                 }
