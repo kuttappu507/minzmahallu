@@ -23,6 +23,16 @@ ApplicationWindow {
     minimumWidth: 400
     minimumHeight: 200
 
+    onVisibleChanged: {
+        if (visible) {
+            var parentWin = dialog.transientParent
+            if (parentWin) {
+                dialog.x = parentWin.x + (parentWin.width - dialog.width) / 2
+                dialog.y = parentWin.y + (parentWin.height - dialog.height) / 2
+            }
+        }
+    }
+
     Rectangle {
         anchors.fill: parent
         color: Qt.rgba(0.02, 0.05, 0.15, 0.4)

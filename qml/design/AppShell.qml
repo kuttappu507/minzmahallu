@@ -140,8 +140,25 @@ ApplicationWindow {
                         Behavior on border.color { ColorAnimation { duration: 120 } }
                         Rectangle { anchors.fill: parent; anchors.margins: -2; radius: parent.radius + 2; color: "transparent"; border.width: 2; border.color: Qt.rgba(5/255,150/255,105/255,0.12); visible: searchInput.activeFocus }
                         HoverHandler { id: searchHover; cursorShape: Qt.IBeamCursor }
-                        Text { text: "\\u{1F50D}"; font.pixelSize: 14; color: searchInput.activeFocus ? "#059669" : "#7e968a"; anchors.left: parent.left; anchors.leftMargin: 10; anchors.verticalCenter: parent.verticalCenter; Behavior on color { ColorAnimation { duration: 120 } } }
-                        TextField { id: searchInput; anchors.left: parent.left; anchors.leftMargin: 32; anchors.right: parent.right; anchors.rightMargin: 10; anchors.verticalCenter: parent.verticalCenter; placeholderText: "Search records..."; placeholderTextColor: "#7e968a"; font.family: "Poppins"; font.pixelSize: 13; color: "#12241b"; background: Item {} verticalAlignment: Text.AlignVCenter; cursorDelegate: Rectangle { visible: searchInput.activeFocus; color: "#059669"; width: 1 } }
+                        Item {
+                            width: 16; height: 16
+                            anchors.left: parent.left; anchors.leftMargin: 10
+                            anchors.verticalCenter: parent.verticalCenter
+                            Image { id: shellSearchIcon; source: "qrc:/icons/svg/search.svg"; sourceSize: Qt.size(16, 16); anchors.fill: parent; fillMode: Image.Pad; visible: false }
+                            MultiEffect { anchors.fill: parent; source: shellSearchIcon; colorizationColor: searchInput.activeFocus ? "#059669" : "#7e968a"; colorization: 1.0; Behavior on colorizationColor { ColorAnimation { duration: 120 } } }
+                        }
+                        TextField {
+                            id: searchInput
+                            anchors.left: parent.left; anchors.leftMargin: 32
+                            anchors.right: parent.right; anchors.rightMargin: 10
+                            anchors.verticalCenter: parent.verticalCenter
+                            placeholderText: "Search records..."
+                            placeholderTextColor: "#7e968a"
+                            font.family: "Poppins"; font.pixelSize: 13; color: "#12241b"
+                            background: Item {}
+                            verticalAlignment: Text.AlignVCenter
+                            cursorDelegate: Rectangle { visible: searchInput.activeFocus; color: "#059669"; width: 1 }
+                        }
                     }
                 }
             }

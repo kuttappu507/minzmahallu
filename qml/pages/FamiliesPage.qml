@@ -93,11 +93,11 @@ Item {
                 border.color: searchField.activeFocus ? "#059669" : (searchHover.containsMouse ? "#b2cfbd" : "#d2e5d8")
                 Behavior on border.color { ColorAnimation { duration: 120 } }
                 HoverHandler { id: searchHover; cursorShape: Qt.IBeamCursor }
-                Text {
-                    text: "\\u{1F50D}"; font.pixelSize: 14
-                    color: searchField.activeFocus ? "#059669" : "#7e968a"
+                Item {
+                    width: 16; height: 16
                     anchors.left: parent.left; anchors.leftMargin: 10; anchors.verticalCenter: parent.verticalCenter
-                    Behavior on color { ColorAnimation { duration: 120 } }
+                    Image { id: famSearchIcon; source: "qrc:/icons/svg/search.svg"; sourceSize: Qt.size(16, 16); anchors.fill: parent; fillMode: Image.Pad; visible: false }
+                    MultiEffect { anchors.fill: parent; source: famSearchIcon; colorizationColor: searchField.activeFocus ? "#059669" : "#7e968a"; colorization: 1.0; Behavior on colorizationColor { ColorAnimation { duration: 120 } } }
                 }
                 TextField {
                     id: searchField
@@ -209,7 +209,7 @@ Item {
                     visible: familyModel.count === 0
                     Column {
                         anchors.centerIn: parent; spacing: 8
-                        Text { text: "\\u{1F3E8}"; font.pixelSize: 36; anchors.horizontalCenter: parent.horizontalCenter }
+                        Text { text: "\🏨"; font.pixelSize: 36; anchors.horizontalCenter: parent.horizontalCenter }
                         Text { text: "No families found"; font.family: "Poppins"; font.pixelSize: 14; font.weight: Font.DemiBold; color: "#12241b"; anchors.horizontalCenter: parent.horizontalCenter }
                         Text { text: "Click 'Add Family' to create your first family record"; font.family: "Poppins"; font.pixelSize: 11; font.weight: Font.Normal; color: "#7e968a"; anchors.horizontalCenter: parent.horizontalCenter }
                     }

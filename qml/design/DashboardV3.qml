@@ -390,7 +390,7 @@ ApplicationWindow {
 
                         // Search icon — vertically centered
                         Text {
-                            text: "\u{1F50D}"
+                            text: ""
                             font.pixelSize: 14
                             color: searchInput.activeFocus ? "#059669" : "#7e968a"
                             anchors.left: parent.left

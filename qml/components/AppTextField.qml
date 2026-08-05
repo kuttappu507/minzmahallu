@@ -64,15 +64,26 @@ FocusScope {
             }
 
             // Optional leading icon
-            Text {
-                text: root.iconName !== "" ? "\\u{1F50D}" : ""
-                font.pixelSize: 14
-                color: input.activeFocus ? "#059669" : "#7e968a"
+            Item {
+                width: 16; height: 16
                 anchors.left: parent.left
                 anchors.leftMargin: 10
                 anchors.verticalCenter: parent.verticalCenter
                 visible: root.iconName !== ""
-                Behavior on color { ColorAnimation { duration: 120 } }
+                Image {
+                    source: root.iconName !== "" ? "qrc:/icons/svg/" + root.iconName + ".svg" : ""
+                    sourceSize: Qt.size(16, 16)
+                    anchors.fill: parent
+                    fillMode: Image.Pad
+                    visible: false
+                }
+                MultiEffect {
+                    anchors.fill: parent
+                    source: parent.children[0]
+                    colorizationColor: input.activeFocus ? "#059669" : "#7e968a"
+                    colorization: 1.0
+                    Behavior on colorizationColor { ColorAnimation { duration: 120 } }
+                }
             }
 
             TextField {

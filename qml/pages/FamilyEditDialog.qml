@@ -55,6 +55,12 @@ ApplicationWindow {
             _altPhone = ""; _status = "Active"; _notes = ""
             titleText.text = "Add Family"
         }
+        // Center over the parent window
+        var parentWin = dialog.transientParent
+        if (parentWin) {
+            dialog.x = parentWin.x + (parentWin.width - dialog.width) / 2
+            dialog.y = parentWin.y + (parentWin.height - dialog.height) / 2
+        }
         visible = true
     }
 
@@ -85,7 +91,7 @@ ApplicationWindow {
                     width: 28; height: 28; radius: 6
                     color: closeMA.containsMouse ? "#f2faf4" : "transparent"
                     Behavior on color { ColorAnimation { duration: 120 } }
-                    Text { anchors.centerIn: parent; text: "\\u{00D7}"; font.pixelSize: 18; font.weight: Font.Bold; color: closeMA.containsMouse ? "#12241b" : "#7e968a" }
+                    Text { anchors.centerIn: parent; text: "\×"; font.pixelSize: 18; font.weight: Font.Bold; color: closeMA.containsMouse ? "#12241b" : "#7e968a" }
                     MouseArea { id: closeMA; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: dialog.visible = false }
                 }
             }
