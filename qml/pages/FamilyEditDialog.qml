@@ -15,7 +15,7 @@ ApplicationWindow {
     modality: Qt.ApplicationModal
     color: "transparent"
 
-    property qint64 familyId: 0
+    property int familyId: 0
     property bool readOnly: false
     signal saved()
 

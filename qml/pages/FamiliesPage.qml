@@ -40,7 +40,7 @@ Item {
                 page.refresh()
             }
         }
-        property qint64 _familyId: 0
+        property int _familyId: 0
     }
 
     Component.onCompleted: refresh()
