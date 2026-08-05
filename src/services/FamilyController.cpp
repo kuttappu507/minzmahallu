@@ -5,7 +5,9 @@
  * logging, or SQL — all of that stays in FamilyService/FamilyRepository.
  */
 #include "FamilyController.h"
+#include "MemberService.h"
 #include "../models/Family.h"
+#include "../models/Member.h"
 #include "../core/Database.h"
 #include <QRegularExpression>
 #include <QSqlError>

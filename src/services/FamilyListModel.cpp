@@ -4,6 +4,7 @@
 #include "FamilyListModel.h"
 #include "FamilyController.h"
 #include "../models/Family.h"
+#include <algorithm>
 
 FamilyListModel::FamilyListModel(QObject* parent)
     : QAbstractListModel(parent)
