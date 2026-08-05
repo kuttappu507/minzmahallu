@@ -91,8 +91,8 @@ list(FILTER MMS_SOURCES EXCLUDE REGEX "dashboard_v2_main\.cpp$")
 list(FILTER MMS_SOURCES EXCLUDE REGEX "dashboard_v3_main\.cpp$")
 list(FILTER MMS_SOURCES EXCLUDE REGEX "app_main\.cpp$")
 list(FILTER MMS_SOURCES EXCLUDE REGEX "QmlServices\.cpp$")
-list(FILTER MMS_SOURCES EXCLUDE REGEX "src/views/")
-list(FILTER MMS_SOURCES EXCLUDE REGEX "src/main\\.cpp$")
+list(FILTER MMS_SOURCES EXCLUDE REGEX "dashboard_v2_main\.cpp$")
+list(FILTER MMS_SOURCES EXCLUDE REGEX "dashboard_v3_main\.cpp$")
 file(GLOB_RECURSE MMS_HEADERS
     "${CMAKE_CURRENT_SOURCE_DIR}/src/*.h"
 )
