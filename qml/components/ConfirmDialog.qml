@@ -18,10 +18,10 @@ ApplicationWindow {
     signal accepted()
     signal rejected()
 
-    width: 440
-    height: 240
-    minimumWidth: 440
-    minimumHeight: 240
+    width: 400
+    height: 200
+    minimumWidth: 400
+    minimumHeight: 200
 
     onVisibleChanged: {
         if (visible) {
@@ -33,18 +33,10 @@ ApplicationWindow {
         }
     }
 
-    // Dark overlay (scrim) — fills entire transparent window.
+    // White card fills the window. radius:12 + clip:true gives clean rounded
+    // corners. No dark scrim — modality (Qt.ApplicationModal) handles blocking.
     Rectangle {
         anchors.fill: parent
-        color: Qt.rgba(0.02, 0.05, 0.15, 0.4)
-    }
-
-    // White card — centered, smaller than window so overlay shows around it
-    // and through the rounded corners. clip:true keeps the card's children
-    // (text, buttons) inside the rounded rectangle.
-    Rectangle {
-        anchors.centerIn: parent
-        width: 400; height: 200
         color: "#ffffff"
         radius: 12
         clip: true

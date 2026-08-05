@@ -19,9 +19,10 @@ ApplicationWindow {
     property bool readOnly: false
     signal saved()
 
-    // Window is larger than the card to leave room for the dark overlay (scrim)
-    // around the card edges and at the rounded corners.
-    width: 560; height: 640; minimumWidth: 560; minimumHeight: 640
+    // Window IS the card (no separate overlay). Frameless + transparent
+    // window with the white card filling it and radius:12 gives clean rounded
+    // corners. No dark scrim — modality (Qt.ApplicationModal) handles blocking.
+    width: 520; height: 580; minimumWidth: 520; minimumHeight: 580
 
     // Form data
     property string _familyNumber: ""
@@ -66,19 +67,11 @@ ApplicationWindow {
         visible = true
     }
 
-    // Dark overlay (scrim) — fills entire transparent window.
-    // Visible around the card edges and through the card's rounded corners.
+    // White card fills the entire window. radius:12 + clip:true gives clean
+    // rounded corners (the 12px corners are transparent, showing the parent
+    // window behind — standard frameless rounded dialog look).
     Rectangle {
         anchors.fill: parent
-        color: Qt.rgba(0.02, 0.05, 0.15, 0.4)
-    }
-
-    // White card — centered in the window, smaller than the window so the
-    // overlay shows around it. clip:true keeps header/footer inside the
-    // rounded corners (without it their square corners poke out).
-    Rectangle {
-        anchors.centerIn: parent
-        width: 520; height: 580
         color: "#ffffff"
         radius: 12
         clip: true
@@ -117,16 +110,16 @@ ApplicationWindow {
                     width: parent.width - 40; x: 20; spacing: 14
 
                     AppTextField { Layout.fillWidth: true; label: "Family Number"; placeholderText: "Auto-generated"; text: dialog._familyNumber; readOnly: true }
-                    AppTextField { Layout.fillWidth: true; label: "House Name"; placeholderText: "e.g. Manzil Manzoor"; text: dialog._houseName; readOnly: dialog.readOnly }
-                    AppTextField { Layout.fillWidth: true; label: "House Number"; placeholderText: "e.g. 14A"; text: dialog._houseNumber; readOnly: dialog.readOnly }
+                    AppTextField { Layout.fillWidth: true; label: "House Name"; placeholderText: "e.g. Manzil Manzoor"; text: dialog._houseName; readOnly: dialog.readOnly; onTextChanged: dialog._houseName = text }
+                    AppTextField { Layout.fillWidth: true; label: "House Number"; placeholderText: "e.g. 14A"; text: dialog._houseNumber; readOnly: dialog.readOnly; onTextChanged: dialog._houseNumber = text }
 
                     RowLayout {
                         Layout.fillWidth: true; spacing: 12
                         AppComboBox { Layout.fillWidth: true; label: "Ward"; model: ["Ward 1", "Ward 2", "Ward 3", "Ward 4"]; currentIndex: Math.max(0, ["Ward 1", "Ward 2", "Ward 3", "Ward 4"].indexOf(dialog._ward)); onActivated: function(index) { dialog._ward = model[index] } }
-                        AppTextField { Layout.fillWidth: true; label: "Phone"; placeholderText: "9847123456"; text: dialog._phone; readOnly: dialog.readOnly }
+                        AppTextField { Layout.fillWidth: true; label: "Phone"; placeholderText: "9847123456"; text: dialog._phone; readOnly: dialog.readOnly; onTextChanged: dialog._phone = text }
                     }
 
-                    AppTextField { Layout.fillWidth: true; label: "Area"; placeholderText: "e.g. Kondotty"; text: dialog._area; readOnly: dialog.readOnly }
+                    AppTextField { Layout.fillWidth: true; label: "Area"; placeholderText: "e.g. Kondotty"; text: dialog._area; readOnly: dialog.readOnly; onTextChanged: dialog._area = text }
 
                     // Address (multiline)
                     ColumnLayout { Layout.fillWidth: true; spacing: 4
@@ -145,7 +138,7 @@ ApplicationWindow {
 
                     RowLayout {
                         Layout.fillWidth: true; spacing: 12
-                        AppTextField { Layout.fillWidth: true; label: "Pincode"; placeholderText: "673601"; text: dialog._pincode; readOnly: dialog.readOnly }
+                        AppTextField { Layout.fillWidth: true; label: "Pincode"; placeholderText: "673601"; text: dialog._pincode; readOnly: dialog.readOnly; onTextChanged: dialog._pincode = text }
                         AppComboBox { Layout.fillWidth: true; label: "Status"; model: ["Active", "Inactive", "Archived"]; currentIndex: Math.max(0, ["Active", "Inactive", "Archived"].indexOf(dialog._status)); onActivated: function(index) { dialog._status = model[index] } }
                     }
 

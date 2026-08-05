@@ -61,16 +61,18 @@ FocusScope {
                     font.family: "Poppins"
                     font.pixelSize: 13
                     color: combo.enabled ? "#12241b" : "#b2cfbd"
-                    x: 10
-                    y: (parent.height - height) / 2
+                    anchors.left: parent.left
+                    anchors.leftMargin: 10
+                    anchors.verticalCenter: parent.verticalCenter
                     width: parent.width - 36
                     elide: Text.ElideRight
                 }
 
                 Item {
                     width: 16; height: 16
-                    x: parent.width - 26
-                    y: (parent.height - 16) / 2
+                    anchors.right: parent.right
+                    anchors.rightMargin: 10
+                    anchors.verticalCenter: parent.verticalCenter
 
                     Image {
                         id: chevron
@@ -133,8 +135,9 @@ FocusScope {
                     font.family: "Poppins"
                     font.pixelSize: 13
                     color: highlighted ? "#059669" : "#12241b"
-                    x: 8
-                    y: (parent.height - height) / 2
+                    anchors.left: parent.left
+                    anchors.leftMargin: 8
+                    anchors.verticalCenter: parent.verticalCenter
                 }
 
                 background: Rectangle {

@@ -18,14 +18,15 @@ ApplicationWindow {
 
     // Responsive column count for dashboard grids.
     // Bound to contentWidth (window width minus 260px sidebar).
-    // DashboardPage.qml references window.responsiveColumns — this MUST be defined
-    // or GridLayout.columns falls back to 1 (everything stacks in a single column).
+    // 5 cards × 180px min + 4 × 12px gap + 36px margins = 984px needed for 5 cols.
+    // At default 1600px window → contentWidth 1340 → 5 columns.
+    // At 1920px full screen → contentWidth 1660 → 5 columns.
     readonly property int responsiveColumns: {
         var cw = contentWidth
-        if (cw >= 1500) return 5
-        if (cw >= 1200) return 4
-        if (cw >= 900)  return 3
-        if (cw >= 600)  return 2
+        if (cw >= 1000) return 5
+        if (cw >= 800)  return 4
+        if (cw >= 600)  return 3
+        if (cw >= 400)  return 2
         return 1
     }
 

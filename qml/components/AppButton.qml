@@ -20,40 +20,44 @@ Button {
     padding: 0
     hoverEnabled: true
 
-    contentItem: Row {
-        id: contentRow
-        spacing: 6
+    // contentItem fills the entire button (padding:0). We use an Item wrapper
+    // with the Row anchored to centerIn so icon+text are centered BOTH
+    // horizontally and vertically. A bare Row would left-align its children.
+    contentItem: Item {
+        Row {
+            id: contentRow
+            anchors.centerIn: parent
+            spacing: 6
 
-        Item {
-            width: root.iconName !== "" ? root.iconSize : 0
-            height: root.iconSize
-            y: (parent.height - height) / 2
-            visible: root.iconName !== ""
+            Item {
+                width: root.iconName !== "" ? root.iconSize : 0
+                height: root.iconSize
+                visible: root.iconName !== ""
 
-            Image {
-                id: btnIcon
-                source: root.iconName !== "" ? "qrc:/icons/svg/" + root.iconName + ".svg" : ""
-                sourceSize: Qt.size(root.iconSize, root.iconSize)
-                anchors.fill: parent
-                fillMode: Image.Pad
-                visible: false
+                Image {
+                    id: btnIcon
+                    source: root.iconName !== "" ? "qrc:/icons/svg/" + root.iconName + ".svg" : ""
+                    sourceSize: Qt.size(root.iconSize, root.iconSize)
+                    anchors.fill: parent
+                    fillMode: Image.Pad
+                    visible: false
+                }
+                MultiEffect {
+                    anchors.fill: parent
+                    source: btnIcon
+                    colorizationColor: root.enabled ? _iconColor : "#b2cfbd"
+                    colorization: 1.0
+                }
             }
-            MultiEffect {
-                anchors.fill: parent
-                source: btnIcon
-                colorizationColor: root.enabled ? _iconColor : "#b2cfbd"
-                colorization: 1.0
-            }
-        }
 
-        Text {
-            text: root.text
-            font.family: "Poppins"
-            font.pixelSize: 13
-            font.weight: Font.DemiBold
-            color: root.enabled ? _textColor : "#b2cfbd"
-            y: (parent.height - height) / 2
-            visible: root.text !== ""
+            Text {
+                text: root.text
+                font.family: "Poppins"
+                font.pixelSize: 13
+                font.weight: Font.DemiBold
+                color: root.enabled ? _textColor : "#b2cfbd"
+                visible: root.text !== ""
+            }
         }
     }
 
