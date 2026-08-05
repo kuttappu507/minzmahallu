@@ -11,6 +11,8 @@
 #include <QFile>
 #include <cstdio>
 #include <csignal>
+#include <fstream>
+#include <QDateTime>
 
 #ifdef Q_OS_WIN
 #include <windows.h>
@@ -39,8 +41,6 @@ void crashHandler(int sig) {
     exit(1);
 }
 
-#include <QDateTime>
-#include <fstream>
 
 int main(int argc, char* argv[]) {
     std::signal(SIGSEGV, crashHandler);
