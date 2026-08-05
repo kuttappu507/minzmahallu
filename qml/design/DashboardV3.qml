@@ -388,34 +388,35 @@ ApplicationWindow {
                             cursorShape: Qt.IBeamCursor
                         }
 
-                        Row {
-                            anchors.fill: parent
-                            anchors.margins: 10
-                            spacing: 8
-
-                            Text {
-                                text: "\u{1F50D}"
-                                font.pixelSize: 14
-                                color: searchInput.activeFocus ? "#059669" : "#7e968a"
-                                y: (parent.height - height) / 2
-                                Behavior on color { ColorAnimation { duration: 120 } }
-                            }
-                            TextField {
-                                id: searchInput
-                                width: parent.width - 22
-                                height: parent.height
-                                placeholderText: "Search records..."
-                                placeholderTextColor: "#7e968a"
-                                font.family: "Poppins"
-                                font.pixelSize: 13
-                                color: "#12241b"
-                                background: Item {}
-                                verticalAlignment: Text.AlignVCenter
-                                cursorDelegate: Rectangle {
-                                    visible: searchInput.activeFocus
-                                    color: "#059669"
-                                    width: 1
-                                }
+                        // Search icon — vertically centered
+                        Text {
+                            text: "\u{1F50D}"
+                            font.pixelSize: 14
+                            color: searchInput.activeFocus ? "#059669" : "#7e968a"
+                            anchors.left: parent.left
+                            anchors.leftMargin: 10
+                            anchors.verticalCenter: parent.verticalCenter
+                            Behavior on color { ColorAnimation { duration: 120 } }
+                        }
+                        // Text input — vertically centered, fills remaining width
+                        TextField {
+                            id: searchInput
+                            anchors.left: parent.left
+                            anchors.leftMargin: 32
+                            anchors.right: parent.right
+                            anchors.rightMargin: 10
+                            anchors.verticalCenter: parent.verticalCenter
+                            placeholderText: "Search records..."
+                            placeholderTextColor: "#7e968a"
+                            font.family: "Poppins"
+                            font.pixelSize: 13
+                            color: "#12241b"
+                            background: Item {}
+                            verticalAlignment: Text.AlignVCenter
+                            cursorDelegate: Rectangle {
+                                visible: searchInput.activeFocus
+                                color: "#059669"
+                                width: 1
                             }
                         }
                     }
