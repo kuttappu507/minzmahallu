@@ -208,8 +208,17 @@ Item {
                     Layout.fillWidth: true; Layout.fillHeight: true
                     visible: familyModel.count === 0
                     Column {
-                        anchors.centerIn: parent; spacing: 8
-                        Text { text: "\🏨"; font.pixelSize: 36; anchors.horizontalCenter: parent.horizontalCenter }
+                        anchors.centerIn: parent; spacing: 12
+                        // Icon circle (replaces emoji that didn't render)
+                        Rectangle {
+                            width: 56; height: 56; radius: 28; color: "#f2faf4"; border.width: 1; border.color: "#d2e5d8"
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            Item {
+                                width: 28; height: 28; anchors.centerIn: parent
+                                Image { id: emptyIcon; source: "qrc:/icons/svg/families.svg"; sourceSize: Qt.size(28, 28); anchors.fill: parent; fillMode: Image.Pad; visible: false }
+                                MultiEffect { anchors.fill: parent; source: emptyIcon; colorizationColor: "#b2cfbd"; colorization: 1.0 }
+                            }
+                        }
                         Text { text: "No families found"; font.family: "Poppins"; font.pixelSize: 14; font.weight: Font.DemiBold; color: "#12241b"; anchors.horizontalCenter: parent.horizontalCenter }
                         Text { text: "Click 'Add Family' to create your first family record"; font.family: "Poppins"; font.pixelSize: 11; font.weight: Font.Normal; color: "#7e968a"; anchors.horizontalCenter: parent.horizontalCenter }
                     }

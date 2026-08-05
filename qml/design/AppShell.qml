@@ -16,6 +16,19 @@ ApplicationWindow {
     property int currentNavIndex: 0
     readonly property int contentWidth: width - 260
 
+    // Responsive column count for dashboard grids.
+    // Bound to contentWidth (window width minus 260px sidebar).
+    // DashboardPage.qml references window.responsiveColumns — this MUST be defined
+    // or GridLayout.columns falls back to 1 (everything stacks in a single column).
+    readonly property int responsiveColumns: {
+        var cw = contentWidth
+        if (cw >= 1500) return 5
+        if (cw >= 1200) return 4
+        if (cw >= 900)  return 3
+        if (cw >= 600)  return 2
+        return 1
+    }
+
     RowLayout {
         anchors.fill: parent
         spacing: 0

@@ -19,7 +19,9 @@ ApplicationWindow {
     property bool readOnly: false
     signal saved()
 
-    width: 520; height: 580; minimumWidth: 520; minimumHeight: 580
+    // Window is larger than the card to leave room for the dark overlay (scrim)
+    // around the card edges and at the rounded corners.
+    width: 560; height: 640; minimumWidth: 560; minimumHeight: 640
 
     // Form data
     property string _familyNumber: ""
@@ -64,12 +66,22 @@ ApplicationWindow {
         visible = true
     }
 
+    // Dark overlay (scrim) — fills entire transparent window.
+    // Visible around the card edges and through the card's rounded corners.
     Rectangle {
-        anchors.fill: parent; color: Qt.rgba(0.02, 0.05, 0.15, 0.4)
+        anchors.fill: parent
+        color: Qt.rgba(0.02, 0.05, 0.15, 0.4)
     }
 
+    // White card — centered in the window, smaller than the window so the
+    // overlay shows around it. clip:true keeps header/footer inside the
+    // rounded corners (without it their square corners poke out).
     Rectangle {
-        anchors.fill: parent; color: "#ffffff"; radius: 12
+        anchors.centerIn: parent
+        width: 520; height: 580
+        color: "#ffffff"
+        radius: 12
+        clip: true
 
         ColumnLayout {
             anchors.fill: parent; spacing: 0
@@ -91,7 +103,7 @@ ApplicationWindow {
                     width: 28; height: 28; radius: 6
                     color: closeMA.containsMouse ? "#f2faf4" : "transparent"
                     Behavior on color { ColorAnimation { duration: 120 } }
-                    Text { anchors.centerIn: parent; text: "\×"; font.pixelSize: 18; font.weight: Font.Bold; color: closeMA.containsMouse ? "#12241b" : "#7e968a" }
+                    Text { anchors.centerIn: parent; text: "\u00D7"; font.pixelSize: 18; font.weight: Font.Bold; color: closeMA.containsMouse ? "#12241b" : "#7e968a" }
                     MouseArea { id: closeMA; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: dialog.visible = false }
                 }
             }
