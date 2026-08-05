@@ -91,6 +91,8 @@ list(FILTER MMS_SOURCES EXCLUDE REGEX "dashboard_v2_main\.cpp$")
 list(FILTER MMS_SOURCES EXCLUDE REGEX "dashboard_v3_main\.cpp$")
 list(FILTER MMS_SOURCES EXCLUDE REGEX "app_main\.cpp$")
 list(FILTER MMS_SOURCES EXCLUDE REGEX "QmlServices\.cpp$")
+list(FILTER MMS_SOURCES EXCLUDE REGEX "src/views/")
+list(FILTER MMS_SOURCES EXCLUDE REGEX "src/main\\.cpp$")
 file(GLOB_RECURSE MMS_HEADERS
     "${CMAKE_CURRENT_SOURCE_DIR}/src/*.h"
 )
@@ -423,8 +425,12 @@ if(MMS_BUILD_APP)
     if(Qt6Qml_FOUND AND Qt6Quick_FOUND AND Qt6QuickControls2_FOUND AND Qt6QuickLayouts_FOUND)
         message(STATUS "MMS App: building mms_app")
 
-        # Include QmlServices.cpp in the app sources
-        set(APP_SOURCES ${MMS_SOURCES} "${CMAKE_CURRENT_SOURCE_DIR}/src/services/QmlServices.cpp")
+        # App sources: only backend (core + models + repositories + services)
+        # Exclude old widgets views and old main.cpp
+        file(GLOB APP_CORE_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/core/*.cpp")
+        file(GLOB APP_REPO_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/repositories/*.cpp")
+        file(GLOB APP_SVC_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/services/*.cpp")
+        set(APP_SOURCES ${APP_CORE_SOURCES} ${APP_REPO_SOURCES} ${APP_SVC_SOURCES})
 
         add_executable(mms_app
             ${APP_SOURCES}
