@@ -1,5 +1,17 @@
 /*
- * app_main.cpp — Main MMS application launcher
+ * app_main.cpp — Main MMS application launcher (QML)
+ *
+ * Initializes:
+ *   1. QGuiApplication + QQuickStyle
+ *   2. Fonts (from qrc)
+ *   3. Theme singleton
+ *   4. Config (paths)
+ *   5. Database (schema + seed + migrations) — CRITICAL: if this fails,
+ *      we still launch but expose databaseReady=false to QML so the UI
+ *      can show an error screen instead of silently failing every query.
+ *   6. I18N + Settings
+ *   7. FamilyController + FamilyListModel (registered as context properties)
+ *   8. QML engine + load AppShell.qml
  */
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
@@ -25,6 +37,8 @@
 #include "core/I18N.h"
 #include "services/SettingsService.h"
 #include "services/QmlServices.h"
+#include "services/FamilyController.h"
+#include "services/FamilyListModel.h"
 
 static std::ofstream g_logFile;
 
@@ -72,7 +86,6 @@ int main(int argc, char* argv[]) {
     QFontDatabase::addApplicationFont(":/fonts/Poppins-Medium.ttf");
     QFontDatabase::addApplicationFont(":/fonts/Poppins-SemiBold.ttf");
     QFontDatabase::addApplicationFont(":/fonts/Poppins-Bold.ttf");
-    // Also load fonts from mms.qrc (NotoSans, AnekMalayalam)
     QFontDatabase::addApplicationFont(":/fonts/NotoSans-Regular.ttf");
     QFontDatabase::addApplicationFont(":/fonts/NotoSans-Bold.ttf");
     logMsg("  Fonts OK");
@@ -87,21 +100,36 @@ int main(int argc, char* argv[]) {
     try { mms::Config::instance().initialize("MinzMahallu"); logMsg("  Config OK"); }
     catch (...) { logMsg("  Config FAILED (non-fatal)"); }
 
-    // Initialize Database
+    // Initialize Database — CRITICAL
+    // If this fails, the app still launches but FamilyController.databaseReady
+    // will be false, and every service call will fail with a visible error.
     logMsg("Step 5: Initializing Database...");
+    bool dbOk = false;
     try {
         QString dbPath = mms::Config::instance().databasePath();
-        QString sqlDir = exeDir + "/sql";
+        QString sqlDir = mms::Config::instance().sqlDir();
         logMsg(QString("  dbPath: %1").arg(dbPath));
         logMsg(QString("  sqlDir: %1").arg(sqlDir));
         logMsg(QString("  sql/schema.sql exists: %1").arg(QFile::exists(sqlDir + "/schema.sql") ? "YES" : "NO"));
-        
-        if (!mms::Database::instance().initialize(dbPath, sqlDir)) {
-            logMsg("  Database init failed, trying alternate...");
-            mms::Database::instance().initialize("mms.db", "sql");
+
+        dbOk = mms::Database::instance().initialize(dbPath, sqlDir);
+        if (!dbOk) {
+            logMsg(QString("  Database init FAILED: %1").arg(mms::Database::instance().lastErrorText()));
+            // Try fallback — exeDir/sql
+            sqlDir = exeDir + "/sql";
+            logMsg(QString("  Trying fallback sqlDir: %1").arg(sqlDir));
+            dbOk = mms::Database::instance().initialize(dbPath, sqlDir);
         }
-        logMsg("  Database OK");
-    } catch (...) { logMsg("  Database FAILED (non-fatal)"); }
+        if (dbOk) {
+            logMsg("  Database OK");
+        } else {
+            logMsg("  Database FAILED — app will launch but all operations will fail");
+        }
+    } catch (const std::exception& e) {
+        logMsg(QString("  Database EXCEPTION: %1").arg(e.what()));
+    } catch (...) {
+        logMsg("  Database UNKNOWN EXCEPTION");
+    }
 
     // Skip FontManager — fonts already loaded above via QFontDatabase
     logMsg("Step 6: FontManager (skipped — fonts loaded in Step 2)");
@@ -116,14 +144,25 @@ int main(int argc, char* argv[]) {
     try { mms::SettingsService::instance().load(); logMsg("  Settings OK"); }
     catch (...) { logMsg("  Settings FAILED (non-fatal)"); }
 
-    // Create QmlServices
-    logMsg("Step 9: Creating QmlServices...");
-    QmlServices* services = new QmlServices(&app);
-    logMsg("  QmlServices OK");
+    // Create FamilyController + FamilyListModel
+    logMsg("Step 9: Creating FamilyController + FamilyListModel...");
+    FamilyController* familyController = new FamilyController(&app);
+    FamilyListModel* familyModel = new FamilyListModel(&app);
+    familyModel->setController(familyController);  // auto-refresh on CRUD
+    logMsg("  Controllers OK");
 
     // Create QML engine
     logMsg("Step 10: Creating QML engine...");
     QQmlApplicationEngine engine;
+    engine.rootContext()->setContextProperty("FamilyController", familyController);
+    engine.rootContext()->setContextProperty("familyController", familyController);
+    engine.rootContext()->setContextProperty("FamilyModel", familyModel);
+    engine.rootContext()->setContextProperty("familyModel", familyModel);
+
+    // Keep legacy QmlServices for backward compat during migration (other
+    // modules may still reference "Services"). Can be removed once all
+    // modules have their own controllers.
+    QmlServices* services = new QmlServices(&app);
     engine.rootContext()->setContextProperty("Services", services);
     logMsg("  Engine OK");
 

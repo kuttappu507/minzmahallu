@@ -9,14 +9,15 @@ VALUES (1, 'admin', 'System Administrator',
 
 INSERT OR IGNORE INTO settings (id, mahallu_name, theme, language, currency_symbol) VALUES (1, 'Minz Mahallu', 'light', 'en', 'â¹');
 
-INSERT OR IGNORE INTO subscription_plans (id, name, default_amount, period_months, description) VALUES
-(1,'Monthly',100,1,'Monthly'),
-(2,'Quarterly',300,3,'Quarterly'),
-(3,'Annual',1200,12,'Annual');
+-- schema.sql already inserts default subscription plans via INSERT OR IGNORE.
+-- The old seed used a non-existent 'period_months' column which aborted seed.sql.
+-- Add an extra 'Special' plan not in the schema defaults:
+INSERT OR IGNORE INTO subscription_plans (name, frequency, default_amount, description) VALUES
+('Special Subscription','OneTime',0,'Special one-time contribution');
 
-INSERT OR IGNORE INTO ledger_accounts (id, name, type, balance) VALUES
-(1,'General Fund','Asset',0),(2,'Donation Fund','Income',0),(3,'Building Fund','Income',0),
-(4,'Education Fund','Income',0),(5,'Expense Account','Expense',0),(6,'Salary Account','Expense',0);
+-- schema.sql already inserts default ledger accounts via INSERT OR IGNORE.
+-- The old seed used a non-existent 'balance' column which aborted seed.sql.
+-- (No extra seed accounts needed — the schema defaults are sufficient.)
 
 INSERT OR IGNORE INTO donation_categories (id, name, description, is_active) VALUES
 (1,'General Donation','General',1),(2,'Masjid Donation','Mosque',1),(3,'Building Fund','Construction',1),
@@ -152,12 +153,14 @@ INSERT OR IGNORE INTO deaths (death_number, deceased_name, father_name, family_i
 ('DTH-002','Khadeeja','Moosa',2,'Female','2026-04-17','2026-04-17','Old Age','Aluva Kabarsthan',68),
 ('DTH-003','Moosa','Ali',9,'Male','2026-03-03','2026-03-03','Cancer','Kakkanad Kabarsthan',65);
 
+-- Welfare categories must match the CHECK constraint in schema.sql:
+-- ('Medical Aid','Education Aid','Marriage Assistance','Financial Assistance')
 INSERT OR IGNORE INTO welfare_requests (request_number, applicant_name, family_id, category, amount_requested, reason, status) VALUES
-('WEL-001','Kareem',14,'Medical',25000,'Heart surgery','Approved'),
-('WEL-002','Jaleel',9,'Housing',50000,'House repair','Disbursed'),
-('WEL-003','Fouziya',9,'Education',15000,'Children education','Pending'),
-('WEL-004','Nizar',13,'Medical',10000,'Treatment','Approved'),
-('WEL-005','Kareem',14,'General',5000,'Daily needs','Rejected');
+('WEL-001','Kareem',14,'Medical Aid',25000,'Heart surgery','Approved'),
+('WEL-002','Jaleel',9,'Financial Assistance',50000,'House repair','Disbursed'),
+('WEL-003','Fouziya',9,'Education Aid',15000,'Children education','Pending'),
+('WEL-004','Nizar',13,'Medical Aid',10000,'Treatment','Approved'),
+('WEL-005','Kareem',14,'Financial Assistance',5000,'Daily needs','Rejected');
 
 INSERT OR IGNORE INTO audit_log (created_at, username, action, module, description) VALUES
 (datetime('2026-07-15 10:00:00'),'admin','LOGIN','auth','User logged in'),

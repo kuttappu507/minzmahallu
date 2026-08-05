@@ -5,62 +5,80 @@ import QtQuick.Effects
 import "../components"
 
 // ============================================================================
-// FamiliesPage — Family management screen
-// Reuses DashboardV3 design language: colors, spacing, typography, borders
+// FamiliesPage — Family management screen (PRODUCTION)
 //
-// Features: search, ward/status filters, data table, pagination,
-// Add/Edit/Delete via dialog, View detail.
+// Uses FamilyListModel (QAbstractListModel) as the ListView model.
+// Uses FamilyController for create/update/delete operations.
+// The model auto-refreshes when the controller emits created/updated/deleted.
+//
+// NO manual clear/append. NO QML-side SQL. All persistence via C++ backend.
 // ============================================================================
 
 Item {
     id: page
 
-    property int currentPage: 1
-    property int pageSize: 25
-    property int totalRecords: 0
-    property int totalPages: Math.max(1, Math.ceil(totalRecords / pageSize))
-    property string searchTerm: ""
-    property string statusFilter: ""
-    property string wardFilter: ""
-
-    ListModel { id: familyModel }
+    // familyModel and familyController are context properties registered
+    // in app_main.cpp. They are available as "familyModel" and "familyController".
 
     FamilyEditDialog {
         id: editDialog
-        onSaved: page.refresh()
+        onSaved: familyModel.refresh()
     }
 
     ConfirmDialog {
         id: deleteDialog
         message: "Delete Family?"
         warningText: "This family record will be permanently deleted."
+        property int _familyId: 0
         onAccepted: {
-            if (deleteDialog._familyId > 0) {
-                Services.deleteFamily(deleteDialog._familyId)
-                page.refresh()
+            if (_familyId > 0) {
+                var result = familyController.remove(_familyId)
+                if (!result.success) {
+                    toast.show(result.error || "Delete failed", "#e11d48")
+                } else {
+                    toast.show("Family deleted", "#059669")
+                }
             }
         }
-        property int _familyId: 0
     }
 
-    Component.onCompleted: refresh()
+    // Toast notification
+    Rectangle {
+        id: toast
+        property bool visible_: false
+        property string message: ""
+        property color bgColor: "#059669"
+        anchors.top: parent.top; anchors.horizontalCenter: parent.horizontalCenter
+        anchors.topMargin: visible_ ? 18 : -60
+        width: toastText.implicitWidth + 40; height: 40; radius: 9
+        color: bgColor; z: 1000
+        Behavior on anchors.topMargin { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
 
-    function refresh() {
-        familyModel.clear()
-        if (typeof Services === "undefined") return
-        var families = Services.searchFamilies(searchTerm, currentPage, pageSize, statusFilter, wardFilter)
-        for (var i = 0; i < families.length; i++) {
-            familyModel.append(families[i])
+        Text {
+            id: toastText
+            anchors.centerIn: parent
+            text: toast.message
+            font.family: "Poppins"; font.pixelSize: 13; font.weight: Font.DemiBold; color: "#ffffff"
         }
-        totalRecords = Services.totalFamilies
+
+        Timer { id: toastTimer; interval: 3000; onTriggered: toast.visible_ = false }
+
+        function show(msg, color) {
+            message = msg
+            bgColor = color || "#059669"
+            visible_ = true
+            toastTimer.restart()
+        }
     }
+
+    Component.onCompleted: familyModel.refresh()
 
     ColumnLayout {
         anchors.fill: parent
         anchors.margins: 18
         spacing: 16
 
-        // Page header
+        // ===== Page header =====
         Row {
             Layout.fillWidth: true
             spacing: 14
@@ -83,10 +101,11 @@ Item {
             }
         }
 
-        // Toolbar
+        // ===== Toolbar =====
         Row {
             Layout.fillWidth: true; spacing: 10
 
+            // Search field
             Rectangle {
                 width: 260; height: 38; radius: 9
                 color: "#f2faf4"; border.width: 1
@@ -108,33 +127,49 @@ Item {
                     placeholderTextColor: "#7e968a"
                     font.family: "Poppins"; font.pixelSize: 13; color: "#12241b"
                     background: Item {} verticalAlignment: Text.AlignVCenter
-                    onTextEdited: { page.searchTerm = text; page.currentPage = 1; searchTimer.restart() }
+                    onTextEdited: { familyModel.searchTerm = text }
                 }
-                Timer { id: searchTimer; interval: 300; onTriggered: page.refresh() }
+                Timer {
+                    interval: 300; running: searchField.text !== familyModel.searchTerm
+                    onTriggered: familyModel.searchTerm = searchField.text
+                }
             }
 
+            // Status filter
             AppComboBox {
                 model: ["All Status", "Active", "Inactive", "Archived"]
                 implicitHeight: 38
-                onActivated: function(index) { page.statusFilter = index === 0 ? "" : model[index]; page.currentPage = 1; page.refresh() }
+                onActivated: function(index) {
+                    familyModel.statusFilter = index === 0 ? "" : model[index]
+                }
             }
 
+            // Ward filter — populated from backend
             AppComboBox {
                 id: wardCombo
-                model: ["All Wards"].concat(typeof Services !== "undefined" ? Services.wards : [])
                 implicitHeight: 38
-                onActivated: function(index) { page.wardFilter = index === 0 ? "" : model[index]; page.currentPage = 1; page.refresh() }
+                model: {
+                    var w = ["All Wards"]
+                    if (typeof familyController !== "undefined") {
+                        var wards = familyController.wards()
+                        for (var i = 0; i < wards.length; i++) w.push(wards[i])
+                    }
+                    return w
+                }
+                onActivated: function(index) {
+                    familyModel.wardFilter = index === 0 ? "" : model[index]
+                }
             }
 
             Item { width: 1; height: 1; Layout.fillWidth: true }
             Text {
-                text: "Showing " + familyModel.count + " of " + totalRecords + " families"
+                text: "Showing " + familyModel.rowCount + " of " + familyModel.totalCount + " families"
                 font.family: "Poppins"; font.pixelSize: 11; font.weight: Font.Normal; color: "#7e968a"
                 y: (38 - height) / 2
             }
         }
 
-        // Data table
+        // ===== Data table =====
         Rectangle {
             Layout.fillWidth: true; Layout.fillHeight: true
             radius: 10; color: "#ffffff"; border.width: 1; border.color: "#d2e5d8"
@@ -160,11 +195,12 @@ Item {
                     }
                 }
 
-                // Rows
+                // Rows — using FamilyListModel (QAbstractListModel)
                 ListView {
                     id: table
                     Layout.fillWidth: true; Layout.fillHeight: true
-                    clip: true; spacing: 0; model: familyModel
+                    clip: true; spacing: 0
+                    model: familyModel
 
                     delegate: Rectangle {
                         width: table.width; height: 44
@@ -174,8 +210,8 @@ Item {
                             x: 16; width: parent.width - 32; spacing: 0
                             Text { text: model.familyNumber; width: 110; height: 44; verticalAlignment: Text.AlignVCenter; font.family: "Poppins"; font.pixelSize: 12; font.weight: Font.DemiBold; color: "#12241b"; elide: Text.ElideRight }
                             Text { text: model.houseName; width: 160; height: 44; verticalAlignment: Text.AlignVCenter; font.family: "Poppins"; font.pixelSize: 12; font.weight: Font.Normal; color: "#12241b"; elide: Text.ElideRight }
-                            Text { text: model.headName; width: 140; height: 44; verticalAlignment: Text.AlignVCenter; font.family: "Poppins"; font.pixelSize: 12; font.weight: Font.Normal; color: "#4f6b5c"; elide: Text.ElideRight }
-                            Text { text: model.ward; width: 80; height: 44; verticalAlignment: Text.AlignVCenter; font.family: "Poppins"; font.pixelSize: 12; font.weight: Font.Normal; color: "#4f6b5c" }
+                            Text { text: model.headName || "—"; width: 140; height: 44; verticalAlignment: Text.AlignVCenter; font.family: "Poppins"; font.pixelSize: 12; font.weight: Font.Normal; color: "#4f6b5c"; elide: Text.ElideRight }
+                            Text { text: model.ward || "—"; width: 80; height: 44; verticalAlignment: Text.AlignVCenter; font.family: "Poppins"; font.pixelSize: 12; font.weight: Font.Normal; color: "#4f6b5c" }
                             Text { text: model.memberCount; width: 70; height: 44; verticalAlignment: Text.AlignVCenter; horizontalAlignment: Text.AlignHCenter; font.family: "Poppins"; font.pixelSize: 12; font.weight: Font.DemiBold; color: "#12241b" }
                             Text { text: model.phone; width: 120; height: 44; verticalAlignment: Text.AlignVCenter; font.family: "Poppins"; font.pixelSize: 12; font.weight: Font.Normal; color: "#4f6b5c" }
                             Item { width: 100; height: 44; StatusBadge { y: (44 - height) / 2; text: model.status; variant: model.status.toLowerCase() } }
@@ -206,10 +242,9 @@ Item {
                 // Empty state
                 Item {
                     Layout.fillWidth: true; Layout.fillHeight: true
-                    visible: familyModel.count === 0
+                    visible: familyModel.rowCount === 0
                     Column {
                         anchors.centerIn: parent; spacing: 12
-                        // Icon circle (replaces emoji that didn't render)
                         Rectangle {
                             width: 56; height: 56; radius: 28; color: "#f2faf4"; border.width: 1; border.color: "#d2e5d8"
                             anchors.horizontalCenter: parent.horizontalCenter
@@ -230,15 +265,15 @@ Item {
                     Rectangle { anchors.top: parent.top; anchors.left: parent.left; anchors.right: parent.right; height: 1; color: "#d2e5d8" }
                     Row {
                         anchors.fill: parent; anchors.leftMargin: 16; anchors.rightMargin: 16; spacing: 8
-                        Text { text: "Page " + currentPage + " of " + totalPages; font.family: "Poppins"; font.pixelSize: 11; font.weight: Font.Normal; color: "#7e968a"; y: (44 - height) / 2 }
+                        Text { text: "Page " + familyModel.currentPage + " of " + familyModel.totalPages; font.family: "Poppins"; font.pixelSize: 11; font.weight: Font.Normal; color: "#7e968a"; y: (44 - height) / 2 }
                         Item { width: 1; height: 1; Layout.fillWidth: true }
-                        Rectangle { width: 28; height: 28; radius: 6; color: prevMA.containsMouse ? "#f2faf4" : "transparent"; border.width: 1; border.color: "#d2e5d8"; y: (44 - 28) / 2; opacity: currentPage > 1 ? 1 : 0.4
+                        Rectangle { width: 28; height: 28; radius: 6; color: prevMA.containsMouse ? "#f2faf4" : "transparent"; border.width: 1; border.color: "#d2e5d8"; y: (44 - 28) / 2; opacity: familyModel.currentPage > 1 ? 1 : 0.4
                             Item { width: 14; height: 14; anchors.centerIn: parent; Image { source: "qrc:/icons/svg/chevron-left.svg"; sourceSize: Qt.size(14, 14); anchors.fill: parent; fillMode: Image.Pad; visible: false; MultiEffect { anchors.fill: parent; source: parent; colorizationColor: "#4f6b5c"; colorization: 1.0 } } }
-                            MouseArea { id: prevMA; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: if (currentPage > 1) { currentPage--; refresh() } }
+                            MouseArea { id: prevMA; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: if (familyModel.currentPage > 1) familyModel.currentPage = familyModel.currentPage - 1 }
                         }
-                        Rectangle { width: 28; height: 28; radius: 6; color: nextMA.containsMouse ? "#f2faf4" : "transparent"; border.width: 1; border.color: "#d2e5d8"; y: (44 - 28) / 2; opacity: currentPage < totalPages ? 1 : 0.4
+                        Rectangle { width: 28; height: 28; radius: 6; color: nextMA.containsMouse ? "#f2faf4" : "transparent"; border.width: 1; border.color: "#d2e5d8"; y: (44 - 28) / 2; opacity: familyModel.currentPage < familyModel.totalPages ? 1 : 0.4
                             Item { width: 14; height: 14; anchors.centerIn: parent; Image { source: "qrc:/icons/svg/chevron-right.svg"; sourceSize: Qt.size(14, 14); anchors.fill: parent; fillMode: Image.Pad; visible: false; MultiEffect { anchors.fill: parent; source: parent; colorizationColor: "#4f6b5c"; colorization: 1.0 } } }
-                            MouseArea { id: nextMA; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: if (currentPage < totalPages) { currentPage++; refresh() } }
+                            MouseArea { id: nextMA; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: if (familyModel.currentPage < familyModel.totalPages) familyModel.currentPage = familyModel.currentPage + 1 }
                         }
                     }
                 }
