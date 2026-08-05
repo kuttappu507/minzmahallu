@@ -426,8 +426,9 @@ if(MMS_BUILD_APP)
     if(Qt6Qml_FOUND AND Qt6Quick_FOUND AND Qt6QuickControls2_FOUND AND Qt6QuickLayouts_FOUND)
         message(STATUS "MMS App: building mms_app")
 
-        # App sources: use ALL backend sources (same as MMS but with app_main.cpp instead of main.cpp)
+        # App sources: use ALL backend sources except old main.cpp (we use app_main.cpp instead)
         set(APP_SOURCES ${MMS_SOURCES})
+        list(FILTER APP_SOURCES EXCLUDE REGEX "src/main\\.cpp$")
 
         add_executable(mms_app
             ${APP_SOURCES}
