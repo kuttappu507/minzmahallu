@@ -443,13 +443,14 @@ if(MMS_BUILD_APP)
         )
 
         target_include_directories(mms_app PRIVATE
-            "${CMAKE_CURRENT_SOURCE_DIR}/src"
             "${CMAKE_CURRENT_SOURCE_DIR}/src/core"
             "${CMAKE_CURRENT_SOURCE_DIR}/src/models"
             "${CMAKE_CURRENT_SOURCE_DIR}/src/repositories"
             "${CMAKE_CURRENT_SOURCE_DIR}/src/services"
             ${OPENSSL_INCLUDE_DIR}
         )
+        # NOTE: src/ and src/views/ are intentionally NOT in the include path
+        # to prevent AUTOMOC from processing old widgets headers.
 
         target_link_libraries(mms_app PRIVATE
             Qt6::Core Qt6::Gui Qt6::Widgets Qt6::Qml Qt6::Quick Qt6::QuickControls2
