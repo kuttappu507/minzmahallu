@@ -103,10 +103,8 @@ int main(int argc, char* argv[]) {
         logMsg("  Database OK");
     } catch (...) { logMsg("  Database FAILED (non-fatal)"); }
 
-    // Load fonts via FontManager
-    logMsg("Step 6: FontManager...");
-    try { mms::FontManager::instance().loadAll(); mms::FontManager::instance().applyFont("en"); logMsg("  FontManager OK"); }
-    catch (...) { logMsg("  FontManager FAILED (non-fatal)"); }
+    // Skip FontManager — fonts already loaded above via QFontDatabase
+    logMsg("Step 6: FontManager (skipped — fonts loaded in Step 2)");
 
     // I18N
     logMsg("Step 7: I18N...");
