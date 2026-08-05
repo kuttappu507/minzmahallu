@@ -89,6 +89,8 @@ list(FILTER MMS_SOURCES EXCLUDE REGEX "qml_smoke_main\.cpp$")
 list(FILTER MMS_SOURCES EXCLUDE REGEX "design_preview_main\.cpp$")
 list(FILTER MMS_SOURCES EXCLUDE REGEX "dashboard_v2_main\.cpp$")
 list(FILTER MMS_SOURCES EXCLUDE REGEX "dashboard_v3_main\.cpp$")
+list(FILTER MMS_SOURCES EXCLUDE REGEX "app_main\.cpp$")
+list(FILTER MMS_SOURCES EXCLUDE REGEX "QmlServices\.cpp$")
 file(GLOB_RECURSE MMS_HEADERS
     "${CMAKE_CURRENT_SOURCE_DIR}/src/*.h"
 )
@@ -406,6 +408,56 @@ if(MMS_BUILD_DASHBOARD_V3)
         endif()
     else()
         message(STATUS "DashboardV3: Qt6 Qml/Quick modules not found - skipping")
+    endif()
+endif()
+
+
+# =============================================================================
+# MMS App (full QML application with backend)
+# =============================================================================
+option(MMS_BUILD_APP "Build the full MMS QML application" ON)
+
+if(MMS_BUILD_APP)
+    find_package(Qt6 6.5 COMPONENTS Qml Quick QuickControls2 QuickLayouts)
+
+    if(Qt6Qml_FOUND AND Qt6Quick_FOUND AND Qt6QuickControls2_FOUND AND Qt6QuickLayouts_FOUND)
+        message(STATUS "MMS App: building mms_app")
+
+        # Include QmlServices.cpp in the app sources
+        set(APP_SOURCES ${MMS_SOURCES} "${CMAKE_CURRENT_SOURCE_DIR}/src/services/QmlServices.cpp")
+
+        add_executable(mms_app
+            ${APP_SOURCES}
+            ${MMS_HEADERS}
+            "${CMAKE_CURRENT_SOURCE_DIR}/src/app_main.cpp"
+            "${CMAKE_CURRENT_SOURCE_DIR}/resources/mms.qrc"
+            "${CMAKE_CURRENT_SOURCE_DIR}/app.qrc"
+            ${APP_RC_FILE}
+        )
+
+        target_include_directories(mms_app PRIVATE
+            "${CMAKE_CURRENT_SOURCE_DIR}/src"
+            "${CMAKE_CURRENT_SOURCE_DIR}/src/core"
+            "${CMAKE_CURRENT_SOURCE_DIR}/src/models"
+            "${CMAKE_CURRENT_SOURCE_DIR}/src/repositories"
+            "${CMAKE_CURRENT_SOURCE_DIR}/src/services"
+            ${OPENSSL_INCLUDE_DIR}
+        )
+
+        target_link_libraries(mms_app PRIVATE
+            Qt6::Core Qt6::Gui Qt6::Widgets Qt6::Qml Qt6::Quick Qt6::QuickControls2
+            Qt6::QuickLayouts Qt6::Sql Qt6::Charts Qt6::PrintSupport Qt6::Svg Qt6::Network
+            OpenSSL::Crypto OpenSSL::SSL ZLIB::ZLIB
+        )
+
+        if(WIN32)
+            set_target_properties(mms_app PROPERTIES
+                WIN32_EXECUTABLE TRUE
+                LINK_FLAGS "/ENTRY:mainCRTStartup"
+            )
+        endif()
+    else()
+        message(STATUS "MMS App: Qt6 modules not found - skipping")
     endif()
 endif()
 

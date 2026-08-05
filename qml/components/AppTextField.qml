@@ -1,23 +1,10 @@
 import QtQuick
 import QtQuick.Controls
-import QtQuick.Effects
-import MMS.Theme 1.0
 
 // ============================================================================
-// AppTextField — Polished desktop input
-//
-// Features:
-//   - Optional label above
-//   - Optional leading icon
-//   - Helper/error text below
-//   - States: normal, hover, focused, error, disabled
-//   - Search variant (with search icon + clear button)
-//
-// Usage:
-//   AppTextField { label: "House Name"; placeholderText: "Enter..." }
-//   AppTextField { variant: "search"; placeholderText: "Search..." }
-//   AppTextField { leadingIcon: "user"; label: "Phone" }
-//   AppTextField { error: true; errorText: "Invalid number" }
+// AppTextField — Reusable input matching DashboardV3 design
+// CSS: .qwrap { background:#f2faf4; border:1px solid #d2e5d8; border-radius:9px; height:38px; }
+// Focus: border #059669 + subtle green glow
 // ============================================================================
 
 FocusScope {
@@ -25,187 +12,107 @@ FocusScope {
 
     property string label: ""
     property string placeholderText: ""
-    property string helperText: ""
+    property string iconName: ""
+    property bool showError: false
     property string errorText: ""
-    property bool required: false
-    property bool error: false
-    property string variant: "default"    // default | search
-    property string leadingIcon: ""       // SVG icon name
-    property bool showClearButton: false
 
     property alias text: input.text
     property alias echoMode: input.echoMode
     property alias readOnly: input.readOnly
     property alias validator: input.validator
-    property alias maximumLength: input.maximumLength
 
     signal editingFinished()
-    signal textEdited(string newText)
 
-    implicitHeight: column.implicitHeight
-    implicitWidth: variant === "search" ? 280 : 240
-
-    property bool hovered: false
+    implicitHeight: label !== "" ? labelItem.implicitHeight + 4 + 38 : 38
+    implicitWidth: 240
 
     Column {
-        id: column
         anchors.fill: parent
         spacing: 4
 
-        // Label
-        Row {
-            spacing: 2
-            visible: root.label !== "" && root.variant !== "search"
-            height: visible ? label.implicitHeight : 0
-
-            Text {
-                id: label
-                text: root.label
-                font.family: Theme.fontFamily
-                font.pixelSize: Theme.fontSizeSm
-                font.weight: Theme.fontWeightMedium
-                color: root.error ? Theme.coral : Theme.textSecondary
-            }
-            Text {
-                text: "*"
-                font.family: Theme.fontFamily
-                font.pixelSize: Theme.fontSizeSm
-                font.weight: Theme.fontWeightBold
-                color: Theme.coral
-                visible: root.required
-            }
+        Text {
+            id: labelItem
+            text: root.label
+            font.family: "Poppins"
+            font.pixelSize: 11
+            font.weight: Font.Medium
+            color: root.showError ? "#e11d48" : "#7e968a"
+            visible: root.label !== ""
+            height: root.label !== "" ? implicitHeight : 0
         }
 
-        // Input container
         Rectangle {
-            id: inputContainer
             width: parent.width
-            height: Theme.controlHeightLg
-            radius: Theme.radiusMd
-            color: !root.enabled ? Theme.surfaceSubtle : Theme.surface
+            height: 38
+            radius: 9
+            color: "#f2faf4"
             border.width: 1
-            border.color: !root.enabled ? Theme.border :
-                          root.error ? Theme.coral :
-                          input.activeFocus ? Theme.borderFocused :
-                          root.hovered ? Theme.borderHover :
-                          Theme.border
+            border.color: root.showError ? "#e11d48" :
+                          input.activeFocus ? "#059669" :
+                          (hoverMA.containsMouse ? "#b2cfbd" : "#d2e5d8")
+            Behavior on border.color { ColorAnimation { duration: 120 } }
 
-            Behavior on border.color { ColorAnimation { duration: Theme.animFast } }
-            Behavior on color { ColorAnimation { duration: Theme.animFast } }
-
-            // Focus glow (subtle)
+            // Focus glow
             Rectangle {
                 anchors.fill: parent
-                anchors.margins: -1
-                radius: parent.radius
+                anchors.margins: -2
+                radius: parent.radius + 2
                 color: "transparent"
-                border.width: input.activeFocus && !root.error ? 3 : 0
-                border.color: Qt.rgba(0.02, 0.59, 0.41, 0.12)
-                visible: border.width > 0
-                z: -1
+                border.width: 2
+                border.color: Qt.rgba(5/255, 150/255, 105/255, 0.12)
+                visible: input.activeFocus && !root.showError
             }
 
-            Row {
+            // Optional leading icon
+            Text {
+                text: root.iconName !== "" ? "\\u{1F50D}" : ""
+                font.pixelSize: 14
+                color: input.activeFocus ? "#059669" : "#7e968a"
+                anchors.left: parent.left
+                anchors.leftMargin: 10
+                anchors.verticalCenter: parent.verticalCenter
+                visible: root.iconName !== ""
+                Behavior on color { ColorAnimation { duration: 120 } }
+            }
+
+            TextField {
+                id: input
+                anchors.left: parent.left
+                anchors.leftMargin: root.iconName !== "" ? 32 : 10
+                anchors.right: parent.right
+                anchors.rightMargin: 10
+                anchors.verticalCenter: parent.verticalCenter
+                placeholderText: root.placeholderText
+                placeholderTextColor: "#7e968a"
+                font.family: "Poppins"
+                font.pixelSize: 13
+                color: "#12241b"
+                background: Item {}
+                verticalAlignment: Text.AlignVCenter
+                cursorDelegate: Rectangle {
+                    visible: input.activeFocus
+                    color: "#059669"
+                    width: 1
+                }
+                onEditingFinished: root.editingFinished()
+            }
+
+            MouseArea {
+                id: hoverMA
                 anchors.fill: parent
-                spacing: 0
-
-                // Leading icon
-                Item {
-                    width: root.leadingIcon !== "" || root.variant === "search" ? 36 : 0
-                    height: parent.height
-                    visible: root.leadingIcon !== "" || root.variant === "search"
-
-                    Item {
-                        width: Theme.iconSizeMd
-                        height: Theme.iconSizeMd
-                        anchors.centerIn: parent
-
-                        Image {
-                            id: leadingImg
-                            source: root.variant === "search" ? "qrc:/icons/svg/search.svg" : (root.leadingIcon !== "" ? "qrc:/icons/svg/" + root.leadingIcon + ".svg" : "")
-                            sourceSize: Qt.size(Theme.iconSizeMd, Theme.iconSizeMd)
-                            anchors.fill: parent
-                            fillMode: Image.Pad
-                            visible: false
-                        }
-                        MultiEffect {
-                            anchors.fill: parent
-                            source: leadingImg
-                            colorizationColor: input.activeFocus ?
-                                Theme.primary : Theme.textTertiary
-                            colorization: 1.0
-                            Behavior on colorizationColor { ColorAnimation { duration: Theme.animFast } }
-                        }
-                    }
-                }
-
-                // Text field
-                TextField {
-                    id: input
-                    width: parent.width - leadingIconSlot.width - clearBtnSlot.width
-                    height: parent.height
-                    font.family: Theme.fontFamily
-                    font.pixelSize: Theme.fontSizeMd
-                    color: root.enabled ? Theme.textPrimary : Theme.textDisabled
-                    placeholderText: root.placeholderText
-                    placeholderTextColor: Theme.textTertiary
-                    selectByMouse: true
-                    verticalAlignment: Text.AlignVCenter
-                    leftPadding: root.leadingIcon !== "" || root.variant === "search" ? 0 : 12
-                    rightPadding: 8
-                    background: Item {}
-
-                    onEditingFinished: root.editingFinished()
-                    onTextEdited: root.textEdited(newText)
-                }
-
-                Item {
-                    id: leadingIconSlot
-                    width: 0
-                    height: 0
-                }
-
-                // Clear button (search variant)
-                Item {
-                    id: clearBtnSlot
-                    width: root.variant === "search" && input.text !== "" ? 32 : 0
-                    height: parent.height
-                    visible: width > 0
-
-                    Rectangle {
-                        width: 18; height: 18; radius: 9
-                        anchors.centerIn: parent
-                        color: clearMA.containsMouse ? Theme.surfacePressed : Theme.surfaceHover
-                        visible: parent.visible
-                        Behavior on color { ColorAnimation { duration: Theme.animFast } }
-
-                        Text {
-                            anchors.centerIn: parent
-                            text: "×"
-                            font.pixelSize: 14
-                            font.weight: Font.Bold
-                            color: Theme.textSecondary
-                        }
-
-                        MouseArea {
-                            id: clearMA
-                            anchors.fill: parent
-                            hoverEnabled: true
-                            cursorShape: Qt.PointingHandCursor
-                            onClicked: input.text = ""
-                        }
-                    }
-                }
+                hoverEnabled: true
+                cursorShape: Qt.IBeamCursor
+                acceptedButtons: Qt.NoButton
             }
         }
 
-        // Helper / error text
         Text {
-            visible: root.error ? root.errorText !== "" : root.helperText !== ""
-            text: root.error && root.errorText !== "" ? root.errorText : root.helperText
-            font.family: Theme.fontFamily
-            font.pixelSize: Theme.fontSizeXs
-            color: root.error ? Theme.coral : Theme.textTertiary
+            text: root.errorText
+            font.family: "Poppins"
+            font.pixelSize: 10
+            color: "#e11d48"
+            visible: root.showError && root.errorText !== ""
+            height: (root.showError && root.errorText !== "") ? implicitHeight : 0
         }
     }
 }

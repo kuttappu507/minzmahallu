@@ -1,84 +1,57 @@
 import QtQuick
-import QtQuick.Effects
-import MMS.Theme 1.0
 
 // ============================================================================
-// StatusBadge — Modern soft badge with dot indicator
-//
-// Variants:
-//   "active"    — soft green
-//   "pending"   — soft amber
-//   "overdue"   — soft coral/red
-//   "archived"  — soft gray
-//   "paid"      — soft emerald
-//   "approved"  — soft blue
-//   "custom"    — use customColor + customSubtle
-//
-// Usage:
-//   StatusBadge { text: "Active"; variant: "active" }
-//   StatusBadge { text: "Overdue"; variant: "overdue" }
+// StatusBadge — Soft tinted status badge
+// Matches HTML .pill / .stat .delta style
 // ============================================================================
 
 Rectangle {
     id: root
 
     property string text: ""
-    property string variant: "active"
-    property color customColor: Theme.success
-    property color customSubtle: Theme.successSubtle
+    property string variant: "active"    // active|inactive|archived|overdue|paid|pending|custom
+    property color customColor: "#059669"
+    property color customBg: "#ecfdf5"
 
     implicitHeight: 22
-    implicitWidth: row.implicitWidth + 16
-    radius: Theme.radiusSm
-
-    color: _subtleColor
+    implicitWidth: badgeText.implicitWidth + 16
+    radius: 99
+    color: _bgColor
     border.width: 0
 
     readonly property color _mainColor: {
         switch (variant) {
-            case "active":   return Theme.success
-            case "pending":  return Theme.warning
-            case "overdue":  return Theme.coral
-            case "archived": return Theme.textTertiary
-            case "paid":     return Theme.primary
-            case "approved": return Theme.blue
+            case "active":   return "#059669"
+            case "inactive": return "#64748b"
+            case "archived": return "#64748b"
+            case "overdue":  return "#e11d48"
+            case "paid":     return "#059669"
+            case "pending":  return "#d97706"
             case "custom":   return customColor
-            default:         return Theme.success
+            default:         return "#059669"
         }
     }
 
-    readonly property color _subtleColor: {
+    readonly property color _bgColor: {
         switch (variant) {
-            case "active":   return Theme.successSubtle
-            case "pending":  return Theme.warningSubtle
-            case "overdue":  return Theme.coralSubtle
-            case "archived": return Theme.surfacePressed
-            case "paid":     return Theme.primarySubtle
-            case "approved": return Theme.blueSubtle
-            case "custom":   return customSubtle
-            default:         return Theme.successSubtle
+            case "active":   return "#d3f5e6"
+            case "inactive": return "#e6ebf2"
+            case "archived": return "#e6ebf2"
+            case "overdue":  return "#fddfe5"
+            case "paid":     return "#d3f5e6"
+            case "pending":  return "#fcebc8"
+            case "custom":   return customBg
+            default:         return "#d3f5e6"
         }
     }
 
-    Row {
-        id: row
+    Text {
+        id: badgeText
         anchors.centerIn: parent
-        spacing: 5
-
-        // Dot indicator
-        Rectangle {
-            width: 6; height: 6; radius: 3
-            color: root._mainColor
-            anchors.verticalCenter: parent.verticalCenter
-        }
-
-        Text {
-            text: root.text
-            font.family: Theme.fontFamily
-            font.pixelSize: Theme.fontSizeXs
-            font.weight: Theme.fontWeightSemiBold
-            color: root._mainColor
-            anchors.verticalCenter: parent.verticalCenter
-        }
+        text: root.text
+        font.family: "Poppins"
+        font.pixelSize: 10
+        font.weight: Font.Medium
+        color: root._mainColor
     }
 }
