@@ -426,12 +426,8 @@ if(MMS_BUILD_APP)
     if(Qt6Qml_FOUND AND Qt6Quick_FOUND AND Qt6QuickControls2_FOUND AND Qt6QuickLayouts_FOUND)
         message(STATUS "MMS App: building mms_app")
 
-        # App sources: only backend (core + models + repositories + services)
-        # Exclude old widgets views and old main.cpp
-        file(GLOB APP_CORE_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/core/*.cpp")
-        file(GLOB APP_REPO_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/repositories/*.cpp")
-        file(GLOB APP_SVC_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/services/*.cpp")
-        set(APP_SOURCES ${APP_CORE_SOURCES} ${APP_REPO_SOURCES} ${APP_SVC_SOURCES})
+        # App sources: use ALL backend sources (same as MMS but with app_main.cpp instead of main.cpp)
+        set(APP_SOURCES ${MMS_SOURCES})
 
         add_executable(mms_app
             ${APP_SOURCES}
@@ -443,14 +439,14 @@ if(MMS_BUILD_APP)
         )
 
         target_include_directories(mms_app PRIVATE
+            "${CMAKE_CURRENT_SOURCE_DIR}/src"
             "${CMAKE_CURRENT_SOURCE_DIR}/src/core"
             "${CMAKE_CURRENT_SOURCE_DIR}/src/models"
             "${CMAKE_CURRENT_SOURCE_DIR}/src/repositories"
             "${CMAKE_CURRENT_SOURCE_DIR}/src/services"
+            "${CMAKE_CURRENT_SOURCE_DIR}/src/views"
             ${OPENSSL_INCLUDE_DIR}
         )
-        # NOTE: src/ and src/views/ are intentionally NOT in the include path
-        # to prevent AUTOMOC from processing old widgets headers.
 
         target_link_libraries(mms_app PRIVATE
             Qt6::Core Qt6::Gui Qt6::Widgets Qt6::Qml Qt6::Quick Qt6::QuickControls2
