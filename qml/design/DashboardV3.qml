@@ -205,7 +205,7 @@ ApplicationWindow {
                                     source: navIcon
                                     // CSS: .nav-it .ic { color:#c4e7d7; } .nav-it.on .ic { color:#ffd76a; }
                                     colorizationColor: model.active ? "#ffffff" :
-                                                       (navMA.containsMouse ? "#e7fff5" : "#a7d7c5")
+                                                       (navMA.containsMouse ? "#ffffff" : "#ffffff")
                                     colorization: 1.0
                                 }
                             }
@@ -502,18 +502,11 @@ ApplicationWindow {
                                 color: "#ffffff"
                                 border.width: 1
                                 border.color: qaMA.containsMouse ? model.sc : "#d2e5d8"
-                                y: qaMA.containsMouse ? -2 : 0
+                                z: qaMA.containsMouse ? 10 : 0
+                                transform: Translate { y: qaMA.containsMouse ? -2 : 0; Behavior on y { NumberAnimation { duration: 160; easing.type: Easing.OutCubic } } }
                                 Behavior on border.color { ColorAnimation { duration: 160 } }
-                                Behavior on y { NumberAnimation { duration: 160; easing.type: Easing.OutCubic } }
 
-                                // Hover shadow
-                                layer.enabled: qaMA.containsMouse
-                                layer.effect: MultiEffect {
-                                    shadowEnabled: true
-                                    shadowColor: Qt.rgba(6/255,60/255,38/255,0.08)
-                                    shadowBlur: 0.3
-                                    shadowVerticalOffset: 4
-                                }
+
 
                                 Row {
                                     id: qaContent
@@ -625,39 +618,32 @@ ApplicationWindow {
                                 color: model.sb
                                 border.width: 1
                                 border.color: statHover.containsMouse ? model.sc : Qt.lighter(model.sc, 1.15)
-                                clip: true  // CRITICAL: clips decorative circle to rounded corners
-                                y: statHover.hovered ? -2 : 0
-                                Behavior on y { NumberAnimation { duration: 180; easing.type: Easing.OutCubic } }
-                                Behavior on border.color { ColorAnimation { duration: 180 } }
+                                z: statHover.hovered ? 10 : 0
+                                transform: Translate { id: statLift; y: statHover.hovered ? -2 : 0; Behavior on y { NumberAnimation { duration: 160; easing.type: Easing.OutCubic } } }
+                                Behavior on border.color { ColorAnimation { duration: 160 } }
 
                                 HoverHandler {
                                     id: statHover
                                     cursorShape: Qt.PointingHandCursor
                                 }
 
-                                // Subtle hover shadow (layer effect)
-                                layer.enabled: statHover.hovered
-                                layer.effect: MultiEffect {
-                                    shadowEnabled: true
-                                    shadowColor: Qt.rgba(6/255,60/255,38/255,0.10)
-                                    shadowBlur: 0.3
-                                    shadowVerticalOffset: 5
-                                }
 
-                                // Decorative circle — center OUTSIDE card bottom-right
-                                // Only ~35-45% visible normally, grows ~10% on hover
+
+                                // Decorative circle — fully INSIDE card, bottom-right corner
+                                // Positioned with small margins so nothing extends past the card
                                 Rectangle {
                                     id: decorCircle
                                     anchors.right: parent.right
                                     anchors.bottom: parent.bottom
-                                    anchors.rightMargin: -22
-                                    anchors.bottomMargin: -22
-                                    width: statHover.hovered ? 62 : 56
+                                    anchors.rightMargin: 4
+                                    anchors.bottomMargin: 4
+                                    width: statHover.hovered ? 52 : 46
                                     height: width
                                     radius: width / 2
                                     color: model.sc
-                                    opacity: 0.14
+                                    opacity: 0.12
                                     Behavior on width { NumberAnimation { duration: 160; easing.type: Easing.OutCubic } }
+                                    Behavior on opacity { NumberAnimation { duration: 160 } }
                                 }
 
                                 Column {
@@ -779,9 +765,9 @@ ApplicationWindow {
                                 color: "#ffffff"
                                 border.width: 1
                                 border.color: evHover.containsMouse ? "#059669" : "#d2e5d8"
-                                y: evHover.containsMouse ? -2 : 0
+                                z: evHover.containsMouse ? 10 : 0
+                                transform: Translate { y: evHover.containsMouse ? -2 : 0; Behavior on y { NumberAnimation { duration: 150; easing.type: Easing.OutCubic } } }
                                 Behavior on border.color { ColorAnimation { duration: 150 } }
-                                Behavior on y { NumberAnimation { duration: 150; easing.type: Easing.OutCubic } }
 
                                 HoverHandler {
                                     id: evHover
