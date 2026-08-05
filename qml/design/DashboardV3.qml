@@ -133,7 +133,7 @@ ApplicationWindow {
                     width: parent.width
                     height: parent.height - 72 - 36 - 80  // logo + label + user
                     clip: true
-                    spacing: 4  // CSS: margin:2px = 4px between
+                    spacing: 2  // compact: was 4px
                     interactive: false
                     model: ListModel {
                         ListElement { label: "Dashboard";     icon: "dashboard";     active: true }
@@ -156,7 +156,7 @@ ApplicationWindow {
 
                     delegate: Item {
                         width: navList.width - 20  // CSS: margin:2px 10px
-                        height: 44  // CSS: height:44px
+                        height: 40  // compact: was 44px
                         x: 10
 
                         Rectangle {
@@ -170,7 +170,7 @@ ApplicationWindow {
                             // CSS: .nav-it.on::before { left:-10px; width:4px; height:22px; border-radius:4px; background:#f2c14e; }
                             Rectangle {
                                 x: -10
-                                y: (44 - 22) / 2
+                                y: (40 - 22) / 2
                                 width: 4; height: 22; radius: 4
                                 color: "#f2c14e"
                                 visible: model.active
@@ -200,8 +200,8 @@ ApplicationWindow {
                                     anchors.fill: parent
                                     source: navIcon
                                     // CSS: .nav-it .ic { color:#c4e7d7; } .nav-it.on .ic { color:#ffd76a; }
-                                    colorizationColor: model.active ? "#ffd76a" :
-                                                       (navMA.containsMouse ? "#ffffff" : "#c4e7d7")
+                                    colorizationColor: model.active ? "#ffffff" :
+                                                       (navMA.containsMouse ? "#ffffff" : "#a7d7c5")
                                     colorization: 1.0
                                 }
                             }
@@ -498,8 +498,17 @@ ApplicationWindow {
                                 border.width: 1
                                 border.color: qaMA.containsMouse ? model.sc : "#d2e5d8"
                                 y: qaMA.containsMouse ? -2 : 0
-                                Behavior on border.color { ColorAnimation { duration: 140 } }
-                                Behavior on y { NumberAnimation { duration: 140; easing.type: Easing.OutCubic } }
+                                Behavior on border.color { ColorAnimation { duration: 160 } }
+                                Behavior on y { NumberAnimation { duration: 160; easing.type: Easing.OutCubic } }
+
+                                // Hover shadow
+                                layer.enabled: qaMA.containsMouse
+                                layer.effect: MultiEffect {
+                                    shadowEnabled: true
+                                    shadowColor: Qt.rgba(6/255,60/255,38/255,0.08)
+                                    shadowBlur: 0.3
+                                    shadowVerticalOffset: 4
+                                }
 
                                 Row {
                                     id: qaContent
@@ -510,6 +519,8 @@ ApplicationWindow {
                                     Rectangle {
                                         width: 42; height: 42; radius: 9
                                         color: model.sc
+                                        scale: qaMA.containsMouse ? 1.04 : 1.0
+                                        Behavior on scale { NumberAnimation { duration: 160; easing.type: Easing.OutCubic } }
 
                                         Item {
                                             width: 20; height: 20
@@ -601,24 +612,39 @@ ApplicationWindow {
                                 radius: 10
                                 color: model.sb
                                 border.width: 1
-                                border.color: model.sc
-                                y: statHover.containsMouse ? -2 : 0
-                                Behavior on y { NumberAnimation { duration: 150; easing.type: Easing.OutCubic } }
+                                border.color: statHover.containsMouse ? model.sc : Qt.lighter(model.sc, 1.15)
+                                clip: true  // CRITICAL: clips decorative circle to rounded corners
+                                y: statHover.containsMouse ? -3 : 0
+                                Behavior on y { NumberAnimation { duration: 180; easing.type: Easing.OutCubic } }
+                                Behavior on border.color { ColorAnimation { duration: 180 } }
 
                                 HoverHandler {
                                     id: statHover
-                                    cursorShape: Qt.ArrowCursor  // KPI cards are informational, not clickable
+                                    cursorShape: Qt.PointingHandCursor
                                 }
 
-                                // CSS: .stat::after — decorative circle
+                                // Subtle hover shadow (layer effect)
+                                layer.enabled: statHover.hovered
+                                layer.effect: MultiEffect {
+                                    shadowEnabled: true
+                                    shadowColor: Qt.rgba(6/255,60/255,38/255,0.10)
+                                    shadowBlur: 0.3
+                                    shadowVerticalOffset: 5
+                                }
+
+                                // CSS: .stat::after — decorative circle (INSIDE card, clipped)
                                 Rectangle {
+                                    id: decorCircle
                                     anchors.right: parent.right
                                     anchors.bottom: parent.bottom
-                                    anchors.rightMargin: -14
-                                    anchors.bottomMargin: -14
-                                    width: 56; height: 56; radius: 28
+                                    anchors.rightMargin: -10
+                                    anchors.bottomMargin: -10
+                                    width: statHover.containsMouse ? 70 : 56
+                                    height: width
+                                    radius: width / 2
                                     color: model.sc
                                     opacity: 0.14
+                                    Behavior on width { NumberAnimation { duration: 180; easing.type: Easing.OutCubic } }
                                 }
 
                                 Column {
@@ -636,6 +662,8 @@ ApplicationWindow {
                                         Rectangle {
                                             width: 37; height: 37; radius: 9
                                             color: model.sc
+                                            scale: statHover.containsMouse ? 1.05 : 1.0
+                                            Behavior on scale { NumberAnimation { duration: 180; easing.type: Easing.OutCubic } }
 
                                             Item {
                                                 width: 18; height: 18
