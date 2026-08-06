@@ -22,8 +22,11 @@
     <file alias="qml/pages/AccountingPage.qml">qml/pages/AccountingPage.qml</file>
     <file alias="qml/pages/TransactionEditDialog.qml">qml/pages/TransactionEditDialog.qml</file>
     <file alias="qml/pages/MarriagePage.qml">qml/pages/MarriagePage.qml</file>
+    <file alias="qml/pages/MarriageEditDialog.qml">qml/pages/MarriageEditDialog.qml</file>
     <file alias="qml/pages/DeathPage.qml">qml/pages/DeathPage.qml</file>
+    <file alias="qml/pages/DeathEditDialog.qml">qml/pages/DeathEditDialog.qml</file>
     <file alias="qml/pages/WelfarePage.qml">qml/pages/WelfarePage.qml</file>
+    <file alias="qml/pages/WelfareEditDialog.qml">qml/pages/WelfareEditDialog.qml</file>
     <file alias="qml/pages/CertificatesPage.qml">qml/pages/CertificatesPage.qml</file>
     <file alias="qml/pages/TokensPage.qml">qml/pages/TokensPage.qml</file>
     <file alias="qml/pages/ReportsPage.qml">qml/pages/ReportsPage.qml</file>

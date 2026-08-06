@@ -48,6 +48,7 @@ public:
     Q_INVOKABLE QVariantMap remove(qint64 id);
     Q_INVOKABLE QVariantMap get(qint64 id);
     Q_INVOKABLE QString nextNumber();
+    Q_INVOKABLE QVariantList activeFamilies();
 
 signals:
     void lastErrorChanged();
@@ -80,6 +81,7 @@ public:
     Q_INVOKABLE QVariantMap get(qint64 id);
     Q_INVOKABLE QString nextNumber();
     Q_INVOKABLE QStringList categories() const;
+    Q_INVOKABLE QVariantList activeFamilies();
 
 signals:
     void lastErrorChanged();

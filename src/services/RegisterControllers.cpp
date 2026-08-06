@@ -2,6 +2,7 @@
  * RegisterControllers.cpp — Implementation for Marriage/Death/Welfare controllers
  */
 #include "RegisterControllers.h"
+#include "FamilyService.h"
 #include "../repositories/MarriageRepository.h"
 #include "../repositories/DeathRepository.h"
 #include "../repositories/WelfareRepository.h"
@@ -121,6 +122,20 @@ QVariantMap DeathController::get(qint64 id) {
 
 QString DeathController::nextNumber() { return svc_.nextDeathNumber(); }
 
+QVariantList DeathController::activeFamilies() {
+    QVariantList out;
+    mms::FamilyService famSvc;
+    auto families = famSvc.searchFamilies("", 1, 10000, "", "");
+    for (const auto& f : families) {
+        QVariantMap m;
+        m["id"] = f.id;
+        m["familyNumber"] = f.familyNumber;
+        m["houseName"] = f.houseName;
+        out.append(m);
+    }
+    return out;
+}
+
 mms::Death DeathController::mapToDeath(const QVariantMap& d) {
     mms::Death de;
     de.id = d.value("id").toLongLong();
@@ -214,6 +229,20 @@ QString WelfareController::nextNumber() { return svc_.nextRequestNumber(); }
 
 QStringList WelfareController::categories() const {
     return {"Medical Aid", "Education Aid", "Marriage Assistance", "Financial Assistance"};
+}
+
+QVariantList WelfareController::activeFamilies() {
+    QVariantList out;
+    mms::FamilyService famSvc;
+    auto families = famSvc.searchFamilies("", 1, 10000, "Active", "");
+    for (const auto& f : families) {
+        QVariantMap m;
+        m["id"] = f.id;
+        m["familyNumber"] = f.familyNumber;
+        m["houseName"] = f.houseName;
+        out.append(m);
+    }
+    return out;
 }
 
 mms::WelfareRequest WelfareController::mapToWelfare(const QVariantMap& d) {

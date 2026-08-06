@@ -10,6 +10,11 @@ Item {
 
     Component.onCompleted: welfareModel.refresh()
 
+    WelfareEditDialog {
+        id: editDialog
+        onSaved: welfareModel.refresh()
+    }
+
     ConfirmDialog {
         id: deleteDialog
         message: "Delete Welfare Request?"
@@ -46,6 +51,11 @@ Item {
             Column { Layout.fillWidth: true; spacing: 2
                 Text { text: "Welfare"; font.family: "Poppins"; font.pixelSize: 21; font.weight: Font.DemiBold; color: "#12241b" }
                 Text { text: "Assistance requests and disbursements"; font.family: "Poppins"; font.pixelSize: 12; color: "#4f6b5c" } }
+            AppButton {
+                text: "Add Request"; variant: "primary"; iconName: "plus"
+                Layout.alignment: Qt.AlignTop
+                onClicked: { editDialog.requestId = 0; editDialog.readOnly = false; editDialog.show() }
+            }
         }
 
         RowLayout {
@@ -89,7 +99,8 @@ Item {
                             Text { text: model.reason || "—"; width: parent.width - 120 - 180 - 160 - 100 - 100 - 100 - 80; height: 44; verticalAlignment: Text.AlignVCenter; font.family: "Poppins"; font.pixelSize: 12; color: "#4f6b5c"; elide: Text.ElideRight }
                             Row { width: 80; height: 44; spacing: 4; layoutDirection: Qt.RightToLeft
                                 TableActionButton { iconSource: "qrc:/icons/svg/trash.svg"; variantColor: "#e11d48"; anchors.verticalCenter: parent.verticalCenter; onClicked: { deleteDialog._id = model.id; deleteDialog.warningText = "Welfare request " + model.requestNumber + " will be permanently deleted."; deleteDialog.visible = true } }
-                                TableActionButton { iconSource: "qrc:/icons/svg/search.svg"; variantColor: "#0284c7"; anchors.verticalCenter: parent.verticalCenter; onClicked: toast.show("View dialog - coming soon", "#7e968a") } } }
+                                TableActionButton { iconSource: "qrc:/icons/svg/edit.svg"; variantColor: "#059669"; anchors.verticalCenter: parent.verticalCenter; onClicked: { editDialog.requestId = model.id; editDialog.readOnly = false; editDialog.show() } }
+                                TableActionButton { iconSource: "qrc:/icons/svg/search.svg"; variantColor: "#0284c7"; anchors.verticalCenter: parent.verticalCenter; onClicked: { editDialog.requestId = model.id; editDialog.readOnly = true; editDialog.show() } } } }
                         MouseArea { id: rowMA; anchors.fill: parent; hoverEnabled: true; acceptedButtons: Qt.NoButton } } }
                 Item { Layout.fillWidth: true; Layout.fillHeight: true; visible: welfareModel.rowCount === 0
                     Column { anchors.centerIn: parent; spacing: 8
