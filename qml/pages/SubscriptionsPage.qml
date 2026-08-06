@@ -77,6 +77,16 @@ Item {
         RowLayout {
             Layout.fillWidth: true; spacing: 10
 
+            // Summary cards — reference summaryRevision so they re-evaluate on data change
+            Rectangle { Layout.fillWidth: true; height: 48; radius: 9; color: "#d3f5e6"; border.width: 1; border.color: "#059669"
+                Column { anchors.centerIn: parent; spacing: 0
+                    Text { text: "Total Collected"; font.family: "Poppins"; font.pixelSize: 9; font.weight: Font.Medium; color: "#04543c"; anchors.horizontalCenter: parent.horizontalCenter }
+                    Text { text: { var _r = subscriptionController.summaryRevision; return "₹" + subscriptionController.totalCollected("", "").toFixed(0); } font.family: "Poppins"; font.pixelSize: 16; font.weight: Font.Bold; color: "#04543c"; anchors.horizontalCenter: parent.horizontalCenter } } }
+            Rectangle { Layout.fillWidth: true; height: 48; radius: 9; color: "#fcebc8"; border.width: 1; border.color: "#d97706"
+                Column { anchors.centerIn: parent; spacing: 0
+                    Text { text: "Total Pending"; font.family: "Poppins"; font.pixelSize: 9; font.weight: Font.Medium; color: "#7c4403"; anchors.horizontalCenter: parent.horizontalCenter }
+                    Text { text: { var _r = subscriptionController.summaryRevision; return "₹" + subscriptionController.totalPending().toFixed(0); } font.family: "Poppins"; font.pixelSize: 16; font.weight: Font.Bold; color: "#7c4403"; anchors.horizontalCenter: parent.horizontalCenter } } }
+
             AppComboBox {
                 model: ["All Status", "Paid", "Pending", "Overdue", "Partial"]
                 implicitHeight: 38

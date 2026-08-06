@@ -26,6 +26,7 @@ QVariantMap SubscriptionController::create(const QVariantMap& data) {
         result["id"] = id;
         setLastError(QString());
         emit created(id);
+        bumpSummary();
     } else {
         result["success"] = false;
         result["id"] = 0;
@@ -49,6 +50,7 @@ QVariantMap SubscriptionController::update(qint64 id, const QVariantMap& data) {
         result["success"] = true;
         setLastError(QString());
         emit updated(id);
+        bumpSummary();
     } else {
         result["success"] = false;
         result["error"] = err;
@@ -66,6 +68,7 @@ QVariantMap SubscriptionController::remove(qint64 id) {
         result["success"] = true;
         setLastError(QString());
         emit removed(id);
+        bumpSummary();
     } else {
         result["success"] = false;
         result["error"] = lastError();
@@ -75,7 +78,9 @@ QVariantMap SubscriptionController::remove(qint64 id) {
 }
 
 int SubscriptionController::markOverdue() {
-    return svc_.markOverdue();
+    int count = svc_.markOverdue();
+    if (count > 0) bumpSummary();
+    return count;
 }
 
 QVariantMap SubscriptionController::get(qint64 id) {

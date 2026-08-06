@@ -16,6 +16,7 @@ Item {
     Component.onCompleted: refresh()
 
     function refresh() {
+        AuditLogController.refresh()  // bump summaryRevision so countToday re-evaluates
         entries = AuditLogController.list(currentPage, pageSize, actionFilter, "", "")
     }
 
@@ -26,7 +27,7 @@ Item {
             Layout.fillWidth: true; spacing: 16
             Column { Layout.fillWidth: true; spacing: 2
                 Text { text: "Audit Log"; font.family: "Poppins"; font.pixelSize: 21; font.weight: Font.DemiBold; color: "#12241b" }
-                Text { text: "System activity history (" + AuditLogController.countToday() + " actions today)"; font.family: "Poppins"; font.pixelSize: 12; color: "#4f6b5c" } }
+                Text { text: { var _r = AuditLogController.summaryRevision; return "System activity history (" + AuditLogController.countToday() + " actions today)"; } font.family: "Poppins"; font.pixelSize: 12; color: "#4f6b5c" } }
         }
 
         RowLayout {

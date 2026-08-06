@@ -71,6 +71,12 @@ Item {
         RowLayout {
             Layout.fillWidth: true; spacing: 10
 
+            // Summary card — Total Donations (auto-refreshes via summaryRevision)
+            Rectangle { Layout.fillWidth: true; height: 48; radius: 9; color: "#fadfeb"; border.width: 1; border.color: "#db2777"
+                Column { anchors.centerIn: parent; spacing: 0
+                    Text { text: "Total Donations"; font.family: "Poppins"; font.pixelSize: 9; font.weight: Font.Medium; color: "#93184f"; anchors.horizontalCenter: parent.horizontalCenter }
+                    Text { text: { var _r = donationController.summaryRevision; return "₹" + donationController.totalDonations("", "").toFixed(0); } font.family: "Poppins"; font.pixelSize: 16; font.weight: Font.Bold; color: "#93184f"; anchors.horizontalCenter: parent.horizontalCenter } } }
+
             Rectangle {
                 Layout.fillWidth: true; Layout.minimumWidth: 180
                 height: 38; radius: 9; color: "#f2faf4"; border.width: 1

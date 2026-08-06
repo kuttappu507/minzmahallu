@@ -14,7 +14,7 @@ QVariantMap DonationController::create(const QVariantMap& data) {
     qint64 id = svc_.createDonation(d, &err);
     if (id > 0) {
         result["success"] = true; result["id"] = id;
-        setLastError(QString()); emit created(id);
+        setLastError(QString()); emit created(id); bumpSummary();
     } else {
         result["success"] = false; result["id"] = 0;
         result["error"] = err; result["field"] = guessField(err);
@@ -29,7 +29,7 @@ QVariantMap DonationController::update(qint64 id, const QVariantMap& data) {
     d.id = id;
     QString err;
     bool ok = svc_.updateDonation(d, &err);
-    if (ok) { result["success"] = true; setLastError(QString()); emit updated(id); }
+    if (ok) { result["success"] = true; setLastError(QString()); emit updated(id); bumpSummary(); }
     else { result["success"] = false; result["error"] = err; result["field"] = guessField(err); setLastError(err); emit errorOccurred(err); }
     return result;
 }
@@ -37,7 +37,7 @@ QVariantMap DonationController::update(qint64 id, const QVariantMap& data) {
 QVariantMap DonationController::remove(qint64 id) {
     QVariantMap result;
     bool ok = svc_.deleteDonation(id);
-    if (ok) { result["success"] = true; setLastError(QString()); emit removed(id); }
+    if (ok) { result["success"] = true; setLastError(QString()); emit removed(id); bumpSummary(); }
     else { result["success"] = false; result["error"] = lastError(); emit errorOccurred(lastError()); }
     return result;
 }
