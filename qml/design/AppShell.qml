@@ -217,13 +217,16 @@ ApplicationWindow {
                 // 3 - Subscriptions
                 SubscriptionsPage {}
 
-                // 4-15 - Placeholder pages
+                // 4 - Donations
+                DonationsPage {}
+
+                // 5-15 - Placeholder pages
                 Repeater {
-                    model: 12
+                    model: 11
                     delegate: Item {
                         Column {
                             anchors.centerIn: parent; spacing: 8
-                            Text { text: navList.model.get(index + 4) ? navList.model.get(index + 4).label : ""; font.family: "Poppins"; font.pixelSize: 18; font.weight: Font.DemiBold; color: "#7e968a"; anchors.horizontalCenter: parent.horizontalCenter }
+                            Text { text: navList.model.get(index + 5) ? navList.model.get(index + 5).label : ""; font.family: "Poppins"; font.pixelSize: 18; font.weight: Font.DemiBold; color: "#7e968a"; anchors.horizontalCenter: parent.horizontalCenter }
                             Text { text: "Coming soon"; font.family: "Poppins"; font.pixelSize: 12; color: "#7e968a"; anchors.horizontalCenter: parent.horizontalCenter }
                         }
                     }
