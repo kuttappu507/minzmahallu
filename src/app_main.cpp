@@ -39,6 +39,8 @@
 #include "services/QmlServices.h"
 #include "services/FamilyController.h"
 #include "services/FamilyListModel.h"
+#include "services/MemberController.h"
+#include "services/MemberListModel.h"
 
 static std::ofstream g_logFile;
 
@@ -145,10 +147,14 @@ int main(int argc, char* argv[]) {
     catch (...) { logMsg("  Settings FAILED (non-fatal)"); }
 
     // Create FamilyController + FamilyListModel
-    logMsg("Step 9: Creating FamilyController + FamilyListModel...");
+    logMsg("Step 9: Creating FamilyController + FamilyListModel + MemberController + MemberListModel...");
     FamilyController* familyController = new FamilyController(&app);
     FamilyListModel* familyModel = new FamilyListModel(&app);
     familyModel->setController(familyController);  // auto-refresh on CRUD
+
+    MemberController* memberController = new MemberController(&app);
+    MemberListModel* memberModel = new MemberListModel(&app);
+    memberModel->setController(memberController);  // auto-refresh on CRUD
     logMsg("  Controllers OK");
 
     // Create QML engine
@@ -158,6 +164,10 @@ int main(int argc, char* argv[]) {
     engine.rootContext()->setContextProperty("familyController", familyController);
     engine.rootContext()->setContextProperty("FamilyModel", familyModel);
     engine.rootContext()->setContextProperty("familyModel", familyModel);
+    engine.rootContext()->setContextProperty("MemberController", memberController);
+    engine.rootContext()->setContextProperty("memberController", memberController);
+    engine.rootContext()->setContextProperty("MemberModel", memberModel);
+    engine.rootContext()->setContextProperty("memberModel", memberModel);
 
     // Keep legacy QmlServices for backward compat during migration (other
     // modules may still reference "Services"). Can be removed once all
