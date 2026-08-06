@@ -45,6 +45,8 @@
 #include "services/SubscriptionListModel.h"
 #include "services/DonationController.h"
 #include "services/DonationListModel.h"
+#include "services/AccountingController.h"
+#include "services/TransactionListModel.h"
 
 static std::ofstream g_logFile;
 
@@ -167,6 +169,10 @@ int main(int argc, char* argv[]) {
     DonationController* donationController = new DonationController(&app);
     DonationListModel* donationModel = new DonationListModel(&app);
     donationModel->setController(donationController);
+
+    AccountingController* accountingController = new AccountingController(&app);
+    TransactionListModel* transactionModel = new TransactionListModel(&app);
+    transactionModel->setController(accountingController);
     logMsg("  Controllers OK");
 
     // Create QML engine
@@ -188,6 +194,10 @@ int main(int argc, char* argv[]) {
     engine.rootContext()->setContextProperty("donationController", donationController);
     engine.rootContext()->setContextProperty("DonationModel", donationModel);
     engine.rootContext()->setContextProperty("donationModel", donationModel);
+    engine.rootContext()->setContextProperty("AccountingController", accountingController);
+    engine.rootContext()->setContextProperty("accountingController", accountingController);
+    engine.rootContext()->setContextProperty("TransactionModel", transactionModel);
+    engine.rootContext()->setContextProperty("transactionModel", transactionModel);
 
     // Keep legacy QmlServices for backward compat during migration (other
     // modules may still reference "Services"). Can be removed once all
