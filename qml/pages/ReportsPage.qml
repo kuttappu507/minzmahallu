@@ -4,28 +4,30 @@ import QtQuick.Layouts
 import QtQuick.Effects
 import "../components"
 
-// Reports page — list of available reports (read-only)
+// ============================================================================
+// ReportsPage — Generate reports + CSV/PDF/Excel export
+// ============================================================================
+
 Item {
     id: page
 
-    property var reports: [
-        { name: "Family Register", desc: "Complete list of all families", icon: "families" },
-        { name: "Member Directory", desc: "All members with contact info", icon: "members" },
-        { name: "Subscription Report", desc: "Collections and defaulters", icon: "subscriptions" },
-        { name: "Donation Report", desc: "Donations by category and date", icon: "donations" },
-        { name: "Cash Book", desc: "Income and expense transactions", icon: "accounting" },
-        { name: "Marriage Register", desc: "All marriage records", icon: "marriage" },
-        { name: "Death Register", desc: "All death records", icon: "death" },
-        { name: "Welfare Report", desc: "Welfare requests and disbursements", icon: "welfare" },
-        { name: "Financial Summary", desc: "Monthly income vs expense", icon: "reports" },
-        { name: "Audit Log Report", desc: "System activity history", icon: "audit" }
-    ]
+    property var reportTypes: ReportController.reportTypes()
+    property int selectedReport: 0
+    property string dateFrom: ""
+    property string dateTo: ""
+    property var reportData: null
+
+    function generate() {
+        reportData = ReportController.generate(selectedReport, dateFrom, dateTo)
+    }
+
+    Component.onCompleted: generate()
 
     Rectangle {
         id: toast
         property bool visible_: false
         property string message: ""
-        property color bgColor: "#7e968a"
+        property color bgColor: "#059669"
         anchors.top: parent.top; anchors.horizontalCenter: parent.horizontalCenter
         anchors.topMargin: visible_ ? 18 : -60
         width: toastText.implicitWidth + 40; height: 40; radius: 9
@@ -33,43 +35,105 @@ Item {
         Behavior on anchors.topMargin { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
         Text { id: toastText; anchors.centerIn: parent; text: toast.message; font.family: "Poppins"; font.pixelSize: 13; font.weight: Font.DemiBold; color: "#ffffff" }
         Timer { id: toastTimer; interval: 3000; onTriggered: toast.visible_ = false }
-        function show(msg) { message = msg; visible_ = true; toastTimer.restart() }
+        function show(msg, color) { message = msg; bgColor = color || "#059669"; visible_ = true; toastTimer.restart() }
     }
 
     ColumnLayout {
         anchors.fill: parent; anchors.margins: 24; spacing: 16
 
+        // Header
         Column { Layout.fillWidth: true; spacing: 2
             Text { text: "Reports"; font.family: "Poppins"; font.pixelSize: 21; font.weight: Font.DemiBold; color: "#12241b" }
             Text { text: "Generate and export reports"; font.family: "Poppins"; font.pixelSize: 12; color: "#4f6b5c" } }
 
-        // Reports grid
-        ScrollView {
-            Layout.fillWidth: true; Layout.fillHeight: true; clip: true
-            ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-            GridLayout {
-                width: parent.width; columns: page.width > 800 ? 3 : (page.width > 500 ? 2 : 1)
-                columnSpacing: 12; rowSpacing: 12
+        // Toolbar
+        RowLayout {
+            Layout.fillWidth: true; spacing: 10
 
-                Repeater {
-                    model: page.reports
-                    delegate: Rectangle {
-                        Layout.fillWidth: true; Layout.minimumWidth: 200; height: 100; radius: 9
-                        color: "#ffffff"; border.width: 1; border.color: repMA.containsMouse ? "#059669" : "#d2e5d8"
-                        Behavior on border.color { ColorAnimation { duration: 120 } }
-                        MouseArea { id: repMA; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: toast.show("Report generation: " + modelData.name + " — use the legacy app for now") }
+            AppComboBox {
+                implicitHeight: 38; Layout.fillWidth: true; Layout.minimumWidth: 200
+                model: page.reportTypes
+                currentIndex: 0
+                onActivated: function(index) { selectedReport = index; generate() }
+            }
 
-                        Row {
-                            anchors.fill: parent; anchors.margins: 16; spacing: 12
-                            Item { width: 32; height: 32; anchors.verticalCenter: parent.verticalCenter
-                                Image { id: repIcon; source: "qrc:/icons/svg/" + modelData.icon + ".svg"; sourceSize: Qt.size(32, 32); anchors.fill: parent; fillMode: Image.Pad; visible: false }
-                                MultiEffect { anchors.fill: parent; source: repIcon; colorizationColor: repMA.containsMouse ? "#059669" : "#7e968a"; colorization: 1.0; Behavior on colorizationColor { ColorAnimation { duration: 120 } } } }
-                            Column { anchors.verticalCenter: parent.verticalCenter; spacing: 2
-                                Text { text: modelData.name; font.family: "Poppins"; font.pixelSize: 13; font.weight: Font.DemiBold; color: "#12241b" }
-                                Text { text: modelData.desc; font.family: "Poppins"; font.pixelSize: 11; color: "#7e968a"; width: 200; elide: Text.ElideRight } }
+            AppTextField { Layout.preferredWidth: 140; implicitHeight: 38; label: ""; placeholderText: "From (YYYY-MM-DD)"; text: dateFrom; onTextChanged: dateFrom = text }
+            AppTextField { Layout.preferredWidth: 140; implicitHeight: 38; label: ""; placeholderText: "To (YYYY-MM-DD)"; text: dateTo; onTextChanged: dateTo = text }
+
+            AppButton { text: "Generate"; variant: "primary"; iconName: "reports"; onClicked: generate() }
+
+            AppButton { text: "CSV"; variant: "secondary"; iconName: "download"; onClicked: {
+                var path = ReportController.ensureExportPath("report.csv")
+                var result = ReportController.exportToCsv(selectedReport, dateFrom, dateTo, path)
+                toast.show(result && result.length > 0 ? "Exported: " + result : "Export failed", result && result.length > 0 ? "#059669" : "#e11d48")
+            } }
+            AppButton { text: "PDF"; variant: "secondary"; iconName: "print"; onClicked: {
+                var path = ReportController.ensureExportPath("report.pdf")
+                var result = ReportController.exportToPdf(selectedReport, dateFrom, dateTo, path)
+                toast.show(result && result.length > 0 ? "Exported: " + result : "Export failed", result && result.length > 0 ? "#059669" : "#e11d48")
+            } }
+            AppButton { text: "Excel"; variant: "secondary"; iconName: "download"; onClicked: {
+                var path = ReportController.ensureExportPath("report.xlsx")
+                var result = ReportController.exportToExcel(selectedReport, dateFrom, dateTo, path)
+                toast.show(result && result.length > 0 ? "Exported: " + result : "Export failed", result && result.length > 0 ? "#059669" : "#e11d48")
+            } }
+        }
+
+        // Results table
+        Rectangle {
+            Layout.fillWidth: true; Layout.fillHeight: true; radius: 10; color: "#ffffff"; border.width: 1; border.color: "#d2e5d8"
+            ColumnLayout { anchors.fill: parent; spacing: 0
+
+                // Header row (dynamic based on report headers)
+                Rectangle { Layout.fillWidth: true; Layout.preferredHeight: 40; color: "#f2faf4"
+                    Rectangle { anchors.bottom: parent.bottom; anchors.left: parent.left; anchors.right: parent.right; height: 1; color: "#d2e5d8" }
+                    Row {
+                        x: 16; width: parent.width - 32; spacing: 0
+                        Repeater {
+                            model: page.reportData ? page.reportData.headers : []
+                            delegate: Text {
+                                text: modelData; width: Math.max(100, (parent.width - 32) / (page.reportData ? page.reportData.columnCount : 1))
+                                height: 40; verticalAlignment: Text.AlignVCenter
+                                font.family: "Poppins"; font.pixelSize: 10; font.weight: Font.Medium; color: "#7e968a"
+                                elide: Text.ElideRight
+                            }
                         }
                     }
                 }
+
+                // Data rows
+                ListView {
+                    id: table; Layout.fillWidth: true; Layout.fillHeight: true; clip: true; spacing: 0
+                    model: page.reportData ? page.reportData.rows : []
+                    delegate: Rectangle {
+                        width: table.width; height: 36; color: index % 2 === 0 ? "#ffffff" : "#fafdfa"
+                        Rectangle { anchors.bottom: parent.bottom; anchors.left: parent.left; anchors.right: parent.right; height: 1; color: "#eef8f1" }
+                        Row {
+                            x: 16; width: parent.width - 32; spacing: 0
+                            Repeater {
+                                model: modelData
+                                delegate: Text {
+                                    text: (modelData === null || modelData === undefined) ? "—" : modelData.toString()
+                                    width: Math.max(100, (parent.width - 32) / (page.reportData ? page.reportData.columnCount : 1))
+                                    height: 36; verticalAlignment: Text.AlignVCenter
+                                    font.family: "Poppins"; font.pixelSize: 11; color: "#12241b"
+                                    elide: Text.ElideRight
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // Empty state
+                Item { Layout.fillWidth: true; Layout.fillHeight: true; visible: !page.reportData || page.reportData.rowCount === 0
+                    Column { anchors.centerIn: parent; spacing: 8
+                        Text { text: "No data"; font.family: "Poppins"; font.pixelSize: 14; font.weight: Font.DemiBold; color: "#12241b"; anchors.horizontalCenter: parent.horizontalCenter }
+                        Text { text: "Select a report and click Generate"; font.family: "Poppins"; font.pixelSize: 11; color: "#7e968a"; anchors.horizontalCenter: parent.horizontalCenter } } }
+
+                // Footer with count
+                Rectangle { Layout.fillWidth: true; Layout.preferredHeight: 36; color: "#f2faf4"
+                    Rectangle { anchors.top: parent.top; anchors.left: parent.left; anchors.right: parent.right; height: 1; color: "#d2e5d8" }
+                    Text { anchors.centerIn: parent; text: page.reportData ? (page.reportData.rowCount + " rows") : ""; font.family: "Poppins"; font.pixelSize: 11; color: "#7e968a" } }
             }
         }
     }
