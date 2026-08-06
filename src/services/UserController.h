@@ -8,6 +8,7 @@
 #include <QObject>
 #include <QVariantMap>
 #include "AuthService.h"
+#include "../repositories/UserRepository.h"
 
 class UserController : public QObject {
     Q_OBJECT
