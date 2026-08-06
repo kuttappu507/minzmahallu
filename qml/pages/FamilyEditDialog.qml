@@ -29,6 +29,10 @@ ModalDialog {
     property bool readOnly: false
     signal saved()
 
+    // Title text — property so show() can set it and the Component's Text can bind to it.
+    // (ids declared inside a Component are NOT accessible from outside it.)
+    property string _dialogTitle: "Add Family"
+
     // ===== Form data properties =====
     property string _familyNumber: ""
     property string _houseName: ""
@@ -64,16 +68,16 @@ ModalDialog {
                 _altPhone = f.alternativePhone || ""
                 _status = f.status || "Active"
                 _notes = f.notes || ""
-                titleText.text = readOnly ? "View Family" : "Edit Family"
+                _dialogTitle = readOnly ? "View Family" : "Edit Family"
             } else {
                 _errorMessage = "Could not load family (id: " + familyId + ")"
-                titleText.text = "Edit Family"
+                _dialogTitle = "Edit Family"
             }
         } else {
             _familyNumber = ""; _houseName = ""; _houseNumber = ""; _ward = ""
             _area = ""; _address = ""; _pincode = ""; _phone = ""
             _altPhone = ""; _status = "Active"; _notes = ""
-            titleText.text = "Add Family"
+            _dialogTitle = "Add Family"
         }
         visible = true
     }
@@ -159,8 +163,7 @@ ModalDialog {
                     Rectangle { anchors.bottom: parent.bottom; anchors.left: parent.left; anchors.right: parent.right; height: 1; color: "#eef8f1" }
 
                     Text {
-                        id: titleText
-                        text: "Add Family"
+                        text: dialog._dialogTitle
                         font.family: "Poppins"; font.pixelSize: 16; font.weight: Font.DemiBold; color: "#12241b"
                         anchors.left: parent.left; anchors.leftMargin: 24; anchors.verticalCenter: parent.verticalCenter
                     }
