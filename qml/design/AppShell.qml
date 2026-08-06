@@ -214,13 +214,16 @@ ApplicationWindow {
                 // 2 - Members
                 MembersPage {}
 
-                // 3-15 - Placeholder pages
+                // 3 - Subscriptions
+                SubscriptionsPage {}
+
+                // 4-15 - Placeholder pages
                 Repeater {
-                    model: 13
+                    model: 12
                     delegate: Item {
                         Column {
                             anchors.centerIn: parent; spacing: 8
-                            Text { text: navList.model.get(index + 3) ? navList.model.get(index + 3).label : ""; font.family: "Poppins"; font.pixelSize: 18; font.weight: Font.DemiBold; color: "#7e968a"; anchors.horizontalCenter: parent.horizontalCenter }
+                            Text { text: navList.model.get(index + 4) ? navList.model.get(index + 4).label : ""; font.family: "Poppins"; font.pixelSize: 18; font.weight: Font.DemiBold; color: "#7e968a"; anchors.horizontalCenter: parent.horizontalCenter }
                             Text { text: "Coming soon"; font.family: "Poppins"; font.pixelSize: 12; color: "#7e968a"; anchors.horizontalCenter: parent.horizontalCenter }
                         }
                     }
