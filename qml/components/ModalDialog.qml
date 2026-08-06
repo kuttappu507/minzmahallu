@@ -1,7 +1,6 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import QtQuick.Effects
 
 // ============================================================================
 // ModalDialog — Shared modal shell for all dialogs
@@ -9,19 +8,14 @@ import QtQuick.Effects
 // Provides:
 //   - Semi-transparent backdrop covering the entire window
 //   - White modal card centered in the content area (right of sidebar)
-//   - Rounded corners (radius 12) + drop shadow
+//   - Rounded corners (radius 12)
 //   - ESC key closes (when closeOnEscape is true)
 //   - Click on backdrop closes (when closeOnBackdrop is true)
 //
-// Usage:
-//   ModalDialog {
-//       modalWidth: 440; modalHeight: 200
-//       content: Component {
-//           ColumnLayout { ... }
-//       }
-//   }
-//
-// The content Component is loaded inside the white card.
+// CRITICAL: The card's background MouseArea is declared BEFORE the Loader
+// so the Loader content (form fields, buttons) is painted ON TOP and
+// receives mouse events. The background MouseArea only catches clicks on
+// empty card areas (preventing backdrop close).
 // ============================================================================
 
 ApplicationWindow {
@@ -36,10 +30,10 @@ ApplicationWindow {
     property int modalHeight: 200
     property bool closeOnBackdrop: true
     property bool closeOnEscape: true
-    property int sidebarWidth: 260      // offset card right of sidebar
+    property int sidebarWidth: 260
     property Component content
 
-    // ===== Center the window over the parent and size it to match =====
+    // ===== Size window to match parent (for full backdrop coverage) =====
     onVisibleChanged: {
         if (visible) {
             var parentWin = root.transientParent
@@ -52,8 +46,12 @@ ApplicationWindow {
         }
     }
 
-    // ===== Semi-transparent backdrop =====
+    // ===== Semi-transparent backdrop (full window) =====
+    // Clicking the backdrop closes the dialog (if closeOnBackdrop is true).
+    // The card sits ON TOP of this and has its own MouseArea to prevent
+    // backdrop clicks from firing when clicking on the card.
     Rectangle {
+        id: backdrop
         anchors.fill: parent
         color: Qt.rgba(0.02, 0.05, 0.15, 0.35)
         MouseArea {
@@ -65,43 +63,30 @@ ApplicationWindow {
     }
 
     // ===== Modal card — centered in content area =====
-    Item {
-        anchors.fill: parent
+    Rectangle {
+        id: card
+        x: root.sidebarWidth + (root.width - root.sidebarWidth - root.modalWidth) / 2
+        y: (root.height - root.modalHeight) / 2
+        width: root.modalWidth
+        height: root.modalHeight
+        radius: 12
+        color: "#ffffff"
+        clip: true
 
-        // Card with shadow
-        Rectangle {
-            id: card
-            x: root.sidebarWidth + (root.width - root.sidebarWidth - root.modalWidth) / 2
-            y: (root.height - root.modalHeight) / 2
-            width: root.modalWidth
-            height: root.modalHeight
-            radius: 12
-            color: "#ffffff"
-            clip: true
-
-            // Drop shadow via layer + MultiEffect
-            layer.enabled: true
-            layer.effect: MultiEffect {
-                shadowEnabled: true
-                shadowColor: Qt.rgba(0, 0, 0, 0.18)
-                shadowBlur: 0.6
-                shadowVerticalOffset: 6
-                shadowHorizontalOffset: 0
-            }
-
-            // Content loader
-            Loader {
-                anchors.fill: parent
-                sourceComponent: root.content
-            }
+        // Background MouseArea — swallows clicks on the card background
+        // so they don't reach the backdrop. Declared BEFORE the Loader so
+        // the Loader's content (buttons, text fields) is painted ON TOP
+        // and receives mouse events normally.
+        MouseArea {
+            anchors.fill: parent
+            onClicked: {}   // swallow — prevent backdrop close
         }
 
-        // Prevent clicks from passing through the card to the backdrop
-        MouseArea {
-            x: card.x; y: card.y; width: card.width; height: card.height
-            acceptedButtons: Qt.AllButtons
-            onClicked: {}   // swallow
-            onWheel: {}
+        // Content loader — painted on top of the background MouseArea.
+        // Form fields, buttons, etc. inside receive mouse events.
+        Loader {
+            anchors.fill: parent
+            sourceComponent: root.content
         }
     }
 
