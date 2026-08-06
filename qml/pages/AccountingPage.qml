@@ -66,21 +66,21 @@ Item {
             }
         }
 
-        // Summary cards
+        // Summary cards — reference summaryRevision so they re-evaluate on data change
         RowLayout {
             Layout.fillWidth: true; spacing: 12
             Rectangle { Layout.fillWidth: true; height: 60; radius: 9; color: "#d3f5e6"; border.width: 1; border.color: "#059669"
                 Column { anchors.centerIn: parent; spacing: 0
                     Text { text: "Total Income"; font.family: "Poppins"; font.pixelSize: 10; font.weight: Font.Medium; color: "#04543c"; anchors.horizontalCenter: parent.horizontalCenter }
-                    Text { text: "₹" + accountingController.totalIncome("", "").toFixed(0); font.family: "Poppins"; font.pixelSize: 18; font.weight: Font.Bold; color: "#04543c"; anchors.horizontalCenter: parent.horizontalCenter } } }
+                    Text { text: { var _r = accountingController.summaryRevision; return "₹" + accountingController.totalIncome("", "").toFixed(0); } font.family: "Poppins"; font.pixelSize: 18; font.weight: Font.Bold; color: "#04543c"; anchors.horizontalCenter: parent.horizontalCenter } } }
             Rectangle { Layout.fillWidth: true; height: 60; radius: 9; color: "#fddfe5"; border.width: 1; border.color: "#e11d48"
                 Column { anchors.centerIn: parent; spacing: 0
                     Text { text: "Total Expense"; font.family: "Poppins"; font.pixelSize: 10; font.weight: Font.Medium; color: "#95102e"; anchors.horizontalCenter: parent.horizontalCenter }
-                    Text { text: "₹" + accountingController.totalExpense("", "").toFixed(0); font.family: "Poppins"; font.pixelSize: 18; font.weight: Font.Bold; color: "#95102e"; anchors.horizontalCenter: parent.horizontalCenter } } }
+                    Text { text: { var _r = accountingController.summaryRevision; return "₹" + accountingController.totalExpense("", "").toFixed(0); } font.family: "Poppins"; font.pixelSize: 18; font.weight: Font.Bold; color: "#95102e"; anchors.horizontalCenter: parent.horizontalCenter } } }
             Rectangle { Layout.fillWidth: true; height: 60; radius: 9; color: "#dbe7fd"; border.width: 1; border.color: "#2563eb"
                 Column { anchors.centerIn: parent; spacing: 0
                     Text { text: "Balance"; font.family: "Poppins"; font.pixelSize: 10; font.weight: Font.Medium; color: "#1e3fae"; anchors.horizontalCenter: parent.horizontalCenter }
-                    Text { text: "₹" + accountingController.balance("", "").toFixed(0); font.family: "Poppins"; font.pixelSize: 18; font.weight: Font.Bold; color: "#1e3fae"; anchors.horizontalCenter: parent.horizontalCenter } } }
+                    Text { text: { var _r = accountingController.summaryRevision; return "₹" + accountingController.balance("", "").toFixed(0); } font.family: "Poppins"; font.pixelSize: 18; font.weight: Font.Bold; color: "#1e3fae"; anchors.horizontalCenter: parent.horizontalCenter } } }
         }
 
         // Toolbar

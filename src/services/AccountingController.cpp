@@ -11,7 +11,7 @@ QVariantMap AccountingController::create(const QVariantMap& data) {
     mms::Transaction t = mapToTransaction(data);
     QString err;
     qint64 id = svc_.createTransaction(t, &err);
-    if (id > 0) { result["success"] = true; result["id"] = id; setLastError(QString()); emit created(id); }
+    if (id > 0) { result["success"] = true; result["id"] = id; setLastError(QString()); emit created(id); bumpSummary(); }
     else { result["success"] = false; result["id"] = 0; result["error"] = err; result["field"] = guessField(err); setLastError(err); emit errorOccurred(err); }
     return result;
 }
@@ -22,7 +22,7 @@ QVariantMap AccountingController::update(qint64 id, const QVariantMap& data) {
     t.id = id;
     QString err;
     bool ok = svc_.updateTransaction(t, &err);
-    if (ok) { result["success"] = true; setLastError(QString()); emit updated(id); }
+    if (ok) { result["success"] = true; setLastError(QString()); emit updated(id); bumpSummary(); }
     else { result["success"] = false; result["error"] = err; result["field"] = guessField(err); setLastError(err); emit errorOccurred(err); }
     return result;
 }
@@ -30,7 +30,7 @@ QVariantMap AccountingController::update(qint64 id, const QVariantMap& data) {
 QVariantMap AccountingController::remove(qint64 id) {
     QVariantMap result;
     bool ok = svc_.deleteTransaction(id);
-    if (ok) { result["success"] = true; setLastError(QString()); emit removed(id); }
+    if (ok) { result["success"] = true; setLastError(QString()); emit removed(id); bumpSummary(); }
     else { result["success"] = false; result["error"] = lastError(); emit errorOccurred(lastError()); }
     return result;
 }

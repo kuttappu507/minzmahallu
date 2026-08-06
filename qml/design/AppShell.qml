@@ -72,7 +72,7 @@ ApplicationWindow {
                 ListView {
                     id: navList
                     width: parent.width; height: parent.height - 72 - 36 - 80
-                    clip: true; spacing: 2; interactive: false
+                    clip: true; spacing: 1; interactive: false
                     currentIndex: window.currentNavIndex
                     model: ListModel {
                         ListElement { label: "Dashboard";     icon: "dashboard" }
@@ -94,27 +94,27 @@ ApplicationWindow {
                     }
 
                     delegate: Item {
-                        width: navList.width - 20; height: 40; x: 10
+                        width: navList.width - 20; height: 34; x: 10
 
                         // Background: selected = stronger tint + gold indicator;
                         //             hover (non-selected) = subtle tint only
                         Rectangle {
-                            id: navRect; anchors.fill: parent; radius: 9
+                            id: navRect; anchors.fill: parent; radius: 7
                             color: ListView.isCurrentItem
                                    ? Qt.rgba(255,255,255,0.14)
                                    : (navMA.containsMouse ? Qt.rgba(255,255,255,0.06) : "transparent")
                             Behavior on color { ColorAnimation { duration: 140 } }
                             // Gold indicator ONLY on selected item
                             Rectangle {
-                                x: -10; y: (40 - 22) / 2; width: 4; height: 22; radius: 4
+                                x: -10; y: (34 - 20) / 2; width: 4; height: 20; radius: 4
                                 color: "#f2c14e"; visible: ListView.isCurrentItem
                             }
                         }
 
                         Row {
-                            x: 13; y: 0; height: 40; spacing: 12
-                            Item { width: 18; height: 18; y: (40 - 18) / 2
-                                Image { id: navIcon; source: "qrc:/icons/svg/" + model.icon + ".svg"; sourceSize: Qt.size(18, 18); anchors.fill: parent; fillMode: Image.Pad; visible: false }
+                            x: 13; y: 0; height: 34; spacing: 12
+                            Item { width: 17; height: 17; y: (34 - 17) / 2
+                                Image { id: navIcon; source: "qrc:/icons/svg/" + model.icon + ".svg"; sourceSize: Qt.size(17, 17); anchors.fill: parent; fillMode: Image.Pad; visible: false }
                                 MultiEffect {
                                     anchors.fill: parent; source: navIcon
                                     // Selected = white; hover (non-selected) = light green; normal = muted green
@@ -128,7 +128,7 @@ ApplicationWindow {
                                 // Selected = DemiBold + white; hover = Medium + light green; normal = Medium + muted green
                                 font.weight: ListView.isCurrentItem ? Font.DemiBold : Font.Medium
                                 color: ListView.isCurrentItem ? "#ffffff" : (navMA.containsMouse ? "#d6f5e7" : "#a5dcc6")
-                                y: (40 - height) / 2
+                                y: (34 - height) / 2
                                 Behavior on color { ColorAnimation { duration: 140 } }
                             }
                         }
