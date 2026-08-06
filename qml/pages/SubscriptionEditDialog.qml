@@ -195,7 +195,7 @@ ModalDialog {
                         // Member selector (depends on family)
                         ColumnLayout { Layout.fillWidth: true; spacing: 4; enabled: dialog._familyId !== ""
                             Text { text: "Member (optional)"; font.family: "Poppins"; font.pixelSize: 11; font.weight: Font.Medium; color: "#7e968a" }
-                            Rectangle { Layout.fillWidth: true; height: 38; radius: 9; color: "#f2faf4"; border.width: 1; border.color: memberMA.containsMouse ? "#b2cfbd" : "#d2e5d8"; Behavior on border.color { ColorAnimation { duration: 120 } }; opacity: enabled ? 1 : 0.5
+                            Rectangle { Layout.fillWidth: true; height: 38; radius: 9; color: "#f2faf4"; border.width: 1; border.color: memberMA.containsMouse ? "#b2cfbd" : "#d2e5d8"; Behavior on border.color { ColorAnimation { duration: 120 } } opacity: enabled ? 1 : 0.5
                                 MouseArea { id: memberMA; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: memberPopup.visible = !memberPopup.visible }
                                 Text { anchors.left: parent.left; anchors.leftMargin: 10; anchors.verticalCenter: parent.verticalCenter
                                     text: { if (dialog._memberId === "") return "(any member)"; for (var i = 0; i < dialog._members.length; i++) { if (dialog._members[i].id === parseInt(dialog._memberId)) return dialog._members[i].name + " (" + dialog._members[i].relationship + ")" } return "(any member)" }
