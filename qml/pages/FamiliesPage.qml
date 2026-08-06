@@ -17,9 +17,6 @@ import "../components"
 Item {
     id: page
 
-    // familyModel and familyController are context properties registered
-    // in app_main.cpp. They are available as "familyModel" and "familyController".
-
     FamilyEditDialog {
         id: editDialog
         onSaved: familyModel.refresh()
@@ -42,7 +39,7 @@ Item {
         }
     }
 
-    // Toast notification
+    // ===== Toast notification =====
     Rectangle {
         id: toast
         property bool visible_: false
@@ -75,15 +72,16 @@ Item {
 
     ColumnLayout {
         anchors.fill: parent
-        anchors.margins: 18
+        anchors.margins: 24
         spacing: 16
 
-        // ===== Page header =====
-        Row {
+        // ===== Page header — title+subtitle left, Add button right =====
+        RowLayout {
             Layout.fillWidth: true
-            spacing: 14
+            spacing: 16
 
             Column {
+                Layout.fillWidth: true
                 spacing: 2
                 Text {
                     text: "Families"
@@ -94,20 +92,23 @@ Item {
                     font.family: "Poppins"; font.pixelSize: 12; font.weight: Font.Normal; color: "#4f6b5c"
                 }
             }
-            Item { width: 1; height: 1; Layout.fillWidth: true }
+
             AppButton {
                 text: "Add Family"; variant: "primary"; iconName: "plus"
+                Layout.alignment: Qt.AlignTop
                 onClicked: { editDialog.familyId = 0; editDialog.readOnly = false; editDialog.show() }
             }
         }
 
-        // ===== Toolbar =====
-        Row {
-            Layout.fillWidth: true; spacing: 10
+        // ===== Toolbar — search + filters + count =====
+        RowLayout {
+            Layout.fillWidth: true
+            spacing: 10
 
             // Search field
             Rectangle {
-                width: 260; height: 38; radius: 9
+                Layout.fillWidth: true; Layout.minimumWidth: 180
+                height: 38; radius: 9
                 color: "#f2faf4"; border.width: 1
                 border.color: searchField.activeFocus ? "#059669" : (searchHover.containsMouse ? "#b2cfbd" : "#d2e5d8")
                 Behavior on border.color { ColorAnimation { duration: 120 } }
@@ -127,10 +128,11 @@ Item {
                     placeholderTextColor: "#7e968a"
                     font.family: "Poppins"; font.pixelSize: 13; color: "#12241b"
                     background: Item {} verticalAlignment: Text.AlignVCenter
-                    onTextEdited: { familyModel.searchTerm = text }
+                    onTextEdited: searchDebounce.restart()
                 }
                 Timer {
-                    interval: 300; running: searchField.text !== familyModel.searchTerm
+                    id: searchDebounce
+                    interval: 300
                     onTriggered: familyModel.searchTerm = searchField.text
                 }
             }
@@ -144,7 +146,7 @@ Item {
                 }
             }
 
-            // Ward filter — populated from backend
+            // Ward filter
             AppComboBox {
                 id: wardCombo
                 implicitHeight: 38
@@ -161,11 +163,11 @@ Item {
                 }
             }
 
-            Item { width: 1; height: 1; Layout.fillWidth: true }
+            // Count label
             Text {
-                text: "Showing " + familyModel.rowCount + " of " + familyModel.totalCount + " families"
-                font.family: "Poppins"; font.pixelSize: 11; font.weight: Font.Normal; color: "#7e968a"
-                y: (38 - height) / 2
+                text: "Showing " + familyModel.rowCount + " of " + familyModel.totalCount
+                font.family: "Poppins"; font.pixelSize: 11; color: "#7e968a"
+                Layout.alignment: Qt.AlignVCenter
             }
         }
 
@@ -177,25 +179,25 @@ Item {
             ColumnLayout {
                 anchors.fill: parent; spacing: 0
 
-                // Headers
+                // ===== Table header =====
                 Rectangle {
                     Layout.fillWidth: true; Layout.preferredHeight: 40; color: "#f2faf4"
                     Rectangle { anchors.bottom: parent.bottom; anchors.left: parent.left; anchors.right: parent.right; height: 1; color: "#d2e5d8" }
                     Row {
                         x: 16; width: parent.width - 32; spacing: 0
-                        Text { text: "FAMILY #"; width: 110; height: 40; verticalAlignment: Text.AlignVCenter; font.family: "Poppins"; font.pixelSize: 10; font.weight: Font.Bold; color: "#7e968a" }
-                        Text { text: "HOUSE NAME"; width: 160; height: 40; verticalAlignment: Text.AlignVCenter; font.family: "Poppins"; font.pixelSize: 10; font.weight: Font.Bold; color: "#7e968a" }
-                        Text { text: "HEAD"; width: 140; height: 40; verticalAlignment: Text.AlignVCenter; font.family: "Poppins"; font.pixelSize: 10; font.weight: Font.Bold; color: "#7e968a" }
-                        Text { text: "WARD"; width: 80; height: 40; verticalAlignment: Text.AlignVCenter; font.family: "Poppins"; font.pixelSize: 10; font.weight: Font.Bold; color: "#7e968a" }
-                        Text { text: "MEMBERS"; width: 70; height: 40; verticalAlignment: Text.AlignVCenter; horizontalAlignment: Text.AlignHCenter; font.family: "Poppins"; font.pixelSize: 10; font.weight: Font.Bold; color: "#7e968a" }
-                        Text { text: "PHONE"; width: 120; height: 40; verticalAlignment: Text.AlignVCenter; font.family: "Poppins"; font.pixelSize: 10; font.weight: Font.Bold; color: "#7e968a" }
-                        Text { text: "STATUS"; width: 100; height: 40; verticalAlignment: Text.AlignVCenter; font.family: "Poppins"; font.pixelSize: 10; font.weight: Font.Bold; color: "#7e968a" }
+                        Text { text: "FAMILY #"; width: 110; height: 40; verticalAlignment: Text.AlignVCenter; font.family: "Poppins"; font.pixelSize: 10; font.weight: Font.Medium; color: "#7e968a" }
+                        Text { text: "HOUSE NAME"; width: 160; height: 40; verticalAlignment: Text.AlignVCenter; font.family: "Poppins"; font.pixelSize: 10; font.weight: Font.Medium; color: "#7e968a" }
+                        Text { text: "HEAD"; width: 140; height: 40; verticalAlignment: Text.AlignVCenter; font.family: "Poppins"; font.pixelSize: 10; font.weight: Font.Medium; color: "#7e968a" }
+                        Text { text: "WARD"; width: 80; height: 40; verticalAlignment: Text.AlignVCenter; font.family: "Poppins"; font.pixelSize: 10; font.weight: Font.Medium; color: "#7e968a" }
+                        Text { text: "MEMBERS"; width: 70; height: 40; verticalAlignment: Text.AlignVCenter; horizontalAlignment: Text.AlignHCenter; font.family: "Poppins"; font.pixelSize: 10; font.weight: Font.Medium; color: "#7e968a" }
+                        Text { text: "PHONE"; width: 120; height: 40; verticalAlignment: Text.AlignVCenter; font.family: "Poppins"; font.pixelSize: 10; font.weight: Font.Medium; color: "#7e968a" }
+                        Text { text: "STATUS"; width: 100; height: 40; verticalAlignment: Text.AlignVCenter; font.family: "Poppins"; font.pixelSize: 10; font.weight: Font.Medium; color: "#7e968a" }
                         Item { width: parent.width - 110 - 160 - 140 - 80 - 70 - 120 - 100 - 80; height: 40 }
-                        Text { text: "ACTIONS"; width: 80; height: 40; verticalAlignment: Text.AlignVCenter; horizontalAlignment: Text.AlignHCenter; font.family: "Poppins"; font.pixelSize: 10; font.weight: Font.Bold; color: "#7e968a" }
+                        Text { text: "ACTIONS"; width: 80; height: 40; verticalAlignment: Text.AlignVCenter; horizontalAlignment: Text.AlignHCenter; font.family: "Poppins"; font.pixelSize: 10; font.weight: Font.Medium; color: "#7e968a" }
                     }
                 }
 
-                // Rows — using FamilyListModel (QAbstractListModel)
+                // ===== Table rows =====
                 ListView {
                     id: table
                     Layout.fillWidth: true; Layout.fillHeight: true
@@ -214,24 +216,25 @@ Item {
                             Text { text: model.ward || "—"; width: 80; height: 44; verticalAlignment: Text.AlignVCenter; font.family: "Poppins"; font.pixelSize: 12; font.weight: Font.Normal; color: "#4f6b5c" }
                             Text { text: model.memberCount; width: 70; height: 44; verticalAlignment: Text.AlignVCenter; horizontalAlignment: Text.AlignHCenter; font.family: "Poppins"; font.pixelSize: 12; font.weight: Font.DemiBold; color: "#12241b" }
                             Text { text: model.phone; width: 120; height: 44; verticalAlignment: Text.AlignVCenter; font.family: "Poppins"; font.pixelSize: 12; font.weight: Font.Normal; color: "#4f6b5c" }
-                            Item { width: 100; height: 44; StatusBadge { y: (44 - height) / 2; text: model.status; variant: model.status.toLowerCase() } }
+                            Item { width: 100; height: 44; StatusBadge { anchors.centerIn: parent; text: model.status; variant: model.status.toLowerCase() } }
                             Item { width: parent.width - 110 - 160 - 140 - 80 - 70 - 120 - 100 - 80; height: 44 }
                             Row {
                                 width: 80; height: 44; spacing: 4
-                                // View
-                                Rectangle { width: 28; height: 28; radius: 6; color: viewMA.containsMouse ? "#d7edfb" : "transparent"; border.width: 1; border.color: viewMA.containsMouse ? "#0284c7" : "#d2e5d8"; y: (44 - 28) / 2; Behavior on color { ColorAnimation { duration: 120 } }
-                                    Item { width: 14; height: 14; anchors.centerIn: parent; Image { id: viewIcon; source: "qrc:/icons/svg/search.svg"; sourceSize: Qt.size(14, 14); anchors.fill: parent; fillMode: Image.Pad; visible: false } MultiEffect { anchors.fill: parent; source: viewIcon; colorizationColor: "#0284c7"; colorization: 1.0 } }
-                                    MouseArea { id: viewMA; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: { editDialog.familyId = model.id; editDialog.readOnly = true; editDialog.show() } }
+                                layoutDirection: Qt.RightToLeft
+                                // Delete
+                                Rectangle { width: 28; height: 28; radius: 6; color: delMA.containsMouse ? "#fddfe5" : "transparent"; border.width: 1; border.color: delMA.containsMouse ? "#e11d48" : "#d2e5d8"; anchors.verticalCenter: parent.verticalCenter; Behavior on color { ColorAnimation { duration: 120 } }
+                                    Item { width: 14; height: 14; anchors.centerIn: parent; Image { id: delIcon; source: "qrc:/icons/svg/trash.svg"; sourceSize: Qt.size(14, 14); anchors.fill: parent; fillMode: Image.Pad; visible: false } MultiEffect { anchors.fill: parent; source: delIcon; colorizationColor: delMA.containsMouse ? "#e11d48" : "#7e968a"; colorization: 1.0; Behavior on colorizationColor { ColorAnimation { duration: 120 } } } }
+                                    MouseArea { id: delMA; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: { deleteDialog._familyId = model.id; deleteDialog.warningText = "Family \"" + model.houseName + "\" (" + model.familyNumber + ") will be permanently deleted."; deleteDialog.visible = true } }
                                 }
                                 // Edit
-                                Rectangle { width: 28; height: 28; radius: 6; color: editMA.containsMouse ? "#ecfdf5" : "transparent"; border.width: 1; border.color: editMA.containsMouse ? "#059669" : "#d2e5d8"; y: (44 - 28) / 2; Behavior on color { ColorAnimation { duration: 120 } }
-                                    Item { width: 14; height: 14; anchors.centerIn: parent; Image { id: editIcon; source: "qrc:/icons/svg/edit.svg"; sourceSize: Qt.size(14, 14); anchors.fill: parent; fillMode: Image.Pad; visible: false } MultiEffect { anchors.fill: parent; source: editIcon; colorizationColor: "#059669"; colorization: 1.0 } }
+                                Rectangle { width: 28; height: 28; radius: 6; color: editMA.containsMouse ? "#ecfdf5" : "transparent"; border.width: 1; border.color: editMA.containsMouse ? "#059669" : "#d2e5d8"; anchors.verticalCenter: parent.verticalCenter; Behavior on color { ColorAnimation { duration: 120 } }
+                                    Item { width: 14; height: 14; anchors.centerIn: parent; Image { id: editIcon; source: "qrc:/icons/svg/edit.svg"; sourceSize: Qt.size(14, 14); anchors.fill: parent; fillMode: Image.Pad; visible: false } MultiEffect { anchors.fill: parent; source: editIcon; colorizationColor: editMA.containsMouse ? "#059669" : "#7e968a"; colorization: 1.0; Behavior on colorizationColor { ColorAnimation { duration: 120 } } } }
                                     MouseArea { id: editMA; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: { editDialog.familyId = model.id; editDialog.readOnly = false; editDialog.show() } }
                                 }
-                                // Delete
-                                Rectangle { width: 28; height: 28; radius: 6; color: delMA.containsMouse ? "#fddfe5" : "transparent"; border.width: 1; border.color: delMA.containsMouse ? "#e11d48" : "#d2e5d8"; y: (44 - 28) / 2; Behavior on color { ColorAnimation { duration: 120 } }
-                                    Item { width: 14; height: 14; anchors.centerIn: parent; Image { id: delIcon; source: "qrc:/icons/svg/trash.svg"; sourceSize: Qt.size(14, 14); anchors.fill: parent; fillMode: Image.Pad; visible: false } MultiEffect { anchors.fill: parent; source: delIcon; colorizationColor: "#e11d48"; colorization: 1.0 } }
-                                    MouseArea { id: delMA; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: { deleteDialog._familyId = model.id; deleteDialog.warningText = "Family \"" + model.houseName + "\" (" + model.familyNumber + ") will be permanently deleted."; deleteDialog.visible = true } }
+                                // View
+                                Rectangle { width: 28; height: 28; radius: 6; color: viewMA.containsMouse ? "#d7edfb" : "transparent"; border.width: 1; border.color: viewMA.containsMouse ? "#0284c7" : "#d2e5d8"; anchors.verticalCenter: parent.verticalCenter; Behavior on color { ColorAnimation { duration: 120 } }
+                                    Item { width: 14; height: 14; anchors.centerIn: parent; Image { id: viewIcon; source: "qrc:/icons/svg/search.svg"; sourceSize: Qt.size(14, 14); anchors.fill: parent; fillMode: Image.Pad; visible: false } MultiEffect { anchors.fill: parent; source: viewIcon; colorizationColor: viewMA.containsMouse ? "#0284c7" : "#7e968a"; colorization: 1.0; Behavior on colorizationColor { ColorAnimation { duration: 120 } } } }
+                                    MouseArea { id: viewMA; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: { editDialog.familyId = model.id; editDialog.readOnly = true; editDialog.show() } }
                                 }
                             }
                         }
@@ -239,7 +242,7 @@ Item {
                     }
                 }
 
-                // Empty state
+                // ===== Empty state =====
                 Item {
                     Layout.fillWidth: true; Layout.fillHeight: true
                     visible: familyModel.rowCount === 0
@@ -259,20 +262,20 @@ Item {
                     }
                 }
 
-                // Pagination
+                // ===== Pagination =====
                 Rectangle {
                     Layout.fillWidth: true; Layout.preferredHeight: 44; color: "#f2faf4"
                     Rectangle { anchors.top: parent.top; anchors.left: parent.left; anchors.right: parent.right; height: 1; color: "#d2e5d8" }
-                    Row {
+                    RowLayout {
                         anchors.fill: parent; anchors.leftMargin: 16; anchors.rightMargin: 16; spacing: 8
-                        Text { text: "Page " + familyModel.currentPage + " of " + familyModel.totalPages; font.family: "Poppins"; font.pixelSize: 11; font.weight: Font.Normal; color: "#7e968a"; y: (44 - height) / 2 }
-                        Item { width: 1; height: 1; Layout.fillWidth: true }
-                        Rectangle { width: 28; height: 28; radius: 6; color: prevMA.containsMouse ? "#f2faf4" : "transparent"; border.width: 1; border.color: "#d2e5d8"; y: (44 - 28) / 2; opacity: familyModel.currentPage > 1 ? 1 : 0.4
-                            Item { width: 14; height: 14; anchors.centerIn: parent; Image { source: "qrc:/icons/svg/chevron-left.svg"; sourceSize: Qt.size(14, 14); anchors.fill: parent; fillMode: Image.Pad; visible: false; MultiEffect { anchors.fill: parent; source: parent; colorizationColor: "#4f6b5c"; colorization: 1.0 } } }
+                        Text { text: "Page " + familyModel.currentPage + " of " + familyModel.totalPages; font.family: "Poppins"; font.pixelSize: 11; color: "#7e968a"; Layout.alignment: Qt.AlignVCenter }
+                        Item { Layout.fillWidth: true }
+                        Rectangle { width: 28; height: 28; radius: 6; color: prevMA.containsMouse ? "#ffffff" : "transparent"; border.width: 1; border.color: prevMA.containsMouse ? "#b2cfbd" : "#d2e5d8"; Layout.alignment: Qt.AlignVCenter; opacity: familyModel.currentPage > 1 ? 1 : 0.4
+                            Item { width: 14; height: 14; anchors.centerIn: parent; Image { id: prevIcon; source: "qrc:/icons/svg/chevron-left.svg"; sourceSize: Qt.size(14, 14); anchors.fill: parent; fillMode: Image.Pad; visible: false } MultiEffect { anchors.fill: parent; source: prevIcon; colorizationColor: "#4f6b5c"; colorization: 1.0 } }
                             MouseArea { id: prevMA; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: if (familyModel.currentPage > 1) familyModel.currentPage = familyModel.currentPage - 1 }
                         }
-                        Rectangle { width: 28; height: 28; radius: 6; color: nextMA.containsMouse ? "#f2faf4" : "transparent"; border.width: 1; border.color: "#d2e5d8"; y: (44 - 28) / 2; opacity: familyModel.currentPage < familyModel.totalPages ? 1 : 0.4
-                            Item { width: 14; height: 14; anchors.centerIn: parent; Image { source: "qrc:/icons/svg/chevron-right.svg"; sourceSize: Qt.size(14, 14); anchors.fill: parent; fillMode: Image.Pad; visible: false; MultiEffect { anchors.fill: parent; source: parent; colorizationColor: "#4f6b5c"; colorization: 1.0 } } }
+                        Rectangle { width: 28; height: 28; radius: 6; color: nextMA.containsMouse ? "#ffffff" : "transparent"; border.width: 1; border.color: nextMA.containsMouse ? "#b2cfbd" : "#d2e5d8"; Layout.alignment: Qt.AlignVCenter; opacity: familyModel.currentPage < familyModel.totalPages ? 1 : 0.4
+                            Item { width: 14; height: 14; anchors.centerIn: parent; Image { id: nextIcon; source: "qrc:/icons/svg/chevron-right.svg"; sourceSize: Qt.size(14, 14); anchors.fill: parent; fillMode: Image.Pad; visible: false } MultiEffect { anchors.fill: parent; source: nextIcon; colorizationColor: "#4f6b5c"; colorization: 1.0 } }
                             MouseArea { id: nextMA; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: if (familyModel.currentPage < familyModel.totalPages) familyModel.currentPage = familyModel.currentPage + 1 }
                         }
                     }

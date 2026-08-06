@@ -135,44 +135,43 @@ ApplicationWindow {
         ColumnLayout {
             Layout.fillWidth: true; Layout.fillHeight: true; spacing: 0
 
-            // Topbar
+            // ===== Topbar — breadcrumb left, search right. Nothing in center. =====
             Rectangle {
                 Layout.fillWidth: true; Layout.preferredHeight: 58; color: "#ffffff"
                 Rectangle { anchors.bottom: parent.bottom; anchors.left: parent.left; anchors.right: parent.right; height: 1; color: "#d2e5d8" }
-                Item {
-                    anchors.fill: parent; anchors.leftMargin: 18; anchors.rightMargin: 18
-                    Row {
-                        anchors.left: parent.left; anchors.verticalCenter: parent.verticalCenter; spacing: 6
-                        Text { text: "MINZ MAHALLU /"; font.family: "Poppins"; font.pixelSize: 11; font.weight: Font.Bold; color: "#7e968a"; y: (parent.height - height) / 2 }
-                        Text { text: navList.model.get(navList.currentIndex) ? navList.model.get(navList.currentIndex).label : "Dashboard"; font.family: "Poppins"; font.pixelSize: 16; font.weight: Font.DemiBold; color: "#12241b"; y: (parent.height - height) / 2 }
+
+                // Breadcrumb (left)
+                Row {
+                    anchors.left: parent.left; anchors.leftMargin: 24; anchors.verticalCenter: parent.verticalCenter; spacing: 6
+                    Text { text: "MINZ MAHALLU /"; font.family: "Poppins"; font.pixelSize: 11; font.weight: Font.Bold; color: "#7e968a"; anchors.verticalCenter: parent.verticalCenter }
+                    Text { text: navList.model.get(navList.currentIndex) ? navList.model.get(navList.currentIndex).label : "Dashboard"; font.family: "Poppins"; font.pixelSize: 16; font.weight: Font.DemiBold; color: "#12241b"; anchors.verticalCenter: parent.verticalCenter }
+                }
+
+                // Search field (right)
+                Rectangle {
+                    anchors.right: parent.right; anchors.rightMargin: 24; anchors.verticalCenter: parent.verticalCenter
+                    width: 250; height: 38; radius: 9
+                    color: "#f2faf4"; border.width: 1
+                    border.color: searchInput.activeFocus ? "#059669" : (searchHover.containsMouse ? "#b2cfbd" : "#d2e5d8")
+                    Behavior on border.color { ColorAnimation { duration: 120 } }
+                    HoverHandler { id: searchHover; cursorShape: Qt.IBeamCursor }
+                    Item {
+                        width: 16; height: 16
+                        anchors.left: parent.left; anchors.leftMargin: 10
+                        anchors.verticalCenter: parent.verticalCenter
+                        Image { id: shellSearchIcon; source: "qrc:/icons/svg/search.svg"; sourceSize: Qt.size(16, 16); anchors.fill: parent; fillMode: Image.Pad; visible: false }
+                        MultiEffect { anchors.fill: parent; source: shellSearchIcon; colorizationColor: searchInput.activeFocus ? "#059669" : "#7e968a"; colorization: 1.0; Behavior on colorizationColor { ColorAnimation { duration: 120 } } }
                     }
-                    Rectangle {
-                        anchors.right: parent.right; anchors.verticalCenter: parent.verticalCenter
-                        width: window.contentWidth > 800 ? 250 : (window.contentWidth > 500 ? 180 : 120); height: 38; radius: 9
-                        color: "#f2faf4"; border.width: 1
-                        border.color: searchInput.activeFocus ? "#059669" : (searchHover.containsMouse ? "#b2cfbd" : "#d2e5d8")
-                        Behavior on border.color { ColorAnimation { duration: 120 } }
-                        Rectangle { anchors.fill: parent; anchors.margins: -2; radius: parent.radius + 2; color: "transparent"; border.width: 2; border.color: Qt.rgba(5/255,150/255,105/255,0.12); visible: searchInput.activeFocus }
-                        HoverHandler { id: searchHover; cursorShape: Qt.IBeamCursor }
-                        Item {
-                            width: 16; height: 16
-                            anchors.left: parent.left; anchors.leftMargin: 10
-                            anchors.verticalCenter: parent.verticalCenter
-                            Image { id: shellSearchIcon; source: "qrc:/icons/svg/search.svg"; sourceSize: Qt.size(16, 16); anchors.fill: parent; fillMode: Image.Pad; visible: false }
-                            MultiEffect { anchors.fill: parent; source: shellSearchIcon; colorizationColor: searchInput.activeFocus ? "#059669" : "#7e968a"; colorization: 1.0; Behavior on colorizationColor { ColorAnimation { duration: 120 } } }
-                        }
-                        TextField {
-                            id: searchInput
-                            anchors.left: parent.left; anchors.leftMargin: 32
-                            anchors.right: parent.right; anchors.rightMargin: 10
-                            anchors.verticalCenter: parent.verticalCenter
-                            placeholderText: "Search records..."
-                            placeholderTextColor: "#7e968a"
-                            font.family: "Poppins"; font.pixelSize: 13; color: "#12241b"
-                            background: Item {}
-                            verticalAlignment: Text.AlignVCenter
-                            cursorDelegate: Rectangle { visible: searchInput.activeFocus; color: "#059669"; width: 1 }
-                        }
+                    TextField {
+                        id: searchInput
+                        anchors.left: parent.left; anchors.leftMargin: 32
+                        anchors.right: parent.right; anchors.rightMargin: 10
+                        anchors.verticalCenter: parent.verticalCenter
+                        placeholderText: "Search records..."
+                        placeholderTextColor: "#7e968a"
+                        font.family: "Poppins"; font.pixelSize: 13; color: "#12241b"
+                        background: Item {}
+                        verticalAlignment: Text.AlignVCenter
                     }
                 }
             }
