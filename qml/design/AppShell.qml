@@ -232,17 +232,26 @@ ApplicationWindow {
                 // 8 - Welfare
                 WelfarePage {}
 
-                // 9-15 - Placeholder pages
-                Repeater {
-                    model: 7
-                    delegate: Item {
-                        Column {
-                            anchors.centerIn: parent; spacing: 8
-                            Text { text: navList.model.get(index + 9) ? navList.model.get(index + 9).label : ""; font.family: "Poppins"; font.pixelSize: 18; font.weight: Font.DemiBold; color: "#7e968a"; anchors.horizontalCenter: parent.horizontalCenter }
-                            Text { text: "Coming soon"; font.family: "Poppins"; font.pixelSize: 12; color: "#7e968a"; anchors.horizontalCenter: parent.horizontalCenter }
-                        }
-                    }
-                }
+                // 9 - Certificates
+                CertificatesPage {}
+
+                // 10 - Tokens
+                TokensPage {}
+
+                // 11 - Reports
+                ReportsPage {}
+
+                // 12 - Settings
+                SettingsPage {}
+
+                // 13 - Users
+                UsersPage {}
+
+                // 14 - Audit Log
+                AuditLogPage {}
+
+                // 15 - Backup
+                BackupPage {}
             }
         }
     }
