@@ -1,0 +1,407 @@
+# MMS Migration Checklist
+
+Tracking the migration of all 14 modules from Qt Widgets to QML.
+
+Legend: `[x]` done · `[ ]` pending · `[-]` N/A
+
+---
+
+## Dashboard
+- [x] Legacy functionality inspected (DashboardView.cpp, DashboardService)
+- [x] UI migrated (DashboardPage.qml)
+- [ ] Real backend connected (currently hardcoded mock data — needs DashboardController)
+- [ ] Real database data
+- [-] Add/Create (read-only module)
+- [x] View
+- [-] Edit (read-only module)
+- [-] Delete (read-only module)
+- [-] Search
+- [-] Filters
+- [-] Validation
+- [-] Relationships
+- [ ] Error handling
+- [-] Persistence after restart (read-only)
+- [ ] Responsive 1600x900
+- [ ] Responsive 1366x768
+- [ ] Responsive 1280x720
+- [ ] Windows 100%
+- [ ] Windows 125%
+- [ ] Windows 150%
+- [ ] No QML runtime errors
+- [ ] Functional acceptance passed
+- [ ] Completed
+
+## Families (REFERENCE MODULE)
+- [x] Legacy functionality inspected (FamilyView.cpp, FamilyEditDialog.cpp, FamilyService, FamilyRepository)
+- [x] UI migrated (FamiliesPage.qml, FamilyEditDialog.qml)
+- [x] Real backend connected (FamilyController + FamilyListModel)
+- [x] Real database data
+- [x] Add/Create
+- [x] View
+- [x] Edit
+- [x] Delete
+- [x] Search
+- [x] Filters (status, ward)
+- [x] Validation (client + server)
+- [x] Relationships (member count, head name joined)
+- [x] Error handling (error banner + toast)
+- [x] Persistence after restart
+- [ ] Responsive 1600x900
+- [ ] Responsive 1366x768
+- [ ] Responsive 1280x720
+- [ ] Windows 100%
+- [ ] Windows 125%
+- [ ] Windows 150%
+- [x] No QML runtime errors
+- [x] Functional acceptance passed
+- [x] Completed
+
+## Members
+- [ ] Legacy functionality inspected
+- [ ] UI migrated
+- [ ] Real backend connected
+- [ ] Real database data
+- [ ] Add/Create
+- [ ] View
+- [ ] Edit
+- [ ] Delete
+- [ ] Search
+- [ ] Filters
+- [ ] Validation
+- [ ] Relationships (family link)
+- [ ] Error handling
+- [ ] Persistence after restart
+- [ ] Responsive 1600x900
+- [ ] Responsive 1366x768
+- [ ] Responsive 1280x720
+- [ ] Windows 100%
+- [ ] Windows 125%
+- [ ] Windows 150%
+- [ ] No QML runtime errors
+- [ ] Functional acceptance passed
+- [ ] Completed
+
+## Subscriptions
+- [ ] Legacy functionality inspected
+- [ ] UI migrated
+- [ ] Real backend connected
+- [ ] Real database data
+- [ ] Add/Create
+- [ ] View
+- [ ] Edit
+- [ ] Delete
+- [ ] Search
+- [ ] Filters
+- [ ] Validation
+- [ ] Relationships (family, member, plan)
+- [ ] Error handling
+- [ ] Persistence after restart
+- [ ] Responsive 1600x900
+- [ ] Responsive 1366x768
+- [ ] Responsive 1280x720
+- [ ] Windows 100%
+- [ ] Windows 125%
+- [ ] Windows 150%
+- [ ] No QML runtime errors
+- [ ] Functional acceptance passed
+- [ ] Completed
+
+## Donations
+- [ ] Legacy functionality inspected
+- [ ] UI migrated
+- [ ] Real backend connected
+- [ ] Real database data
+- [ ] Add/Create
+- [ ] View
+- [ ] Edit
+- [ ] Delete
+- [ ] Search
+- [ ] Filters
+- [ ] Validation
+- [ ] Relationships (donor, family, category)
+- [ ] Error handling
+- [ ] Persistence after restart
+- [ ] Responsive 1600x900
+- [ ] Responsive 1366x768
+- [ ] Responsive 1280x720
+- [ ] Windows 100%
+- [ ] Windows 125%
+- [ ] Windows 150%
+- [ ] No QML runtime errors
+- [ ] Functional acceptance passed
+- [ ] Completed
+
+## Accounting
+- [ ] Legacy functionality inspected
+- [ ] UI migrated
+- [ ] Real backend connected
+- [ ] Real database data
+- [ ] Add/Create
+- [ ] View
+- [ ] Edit
+- [ ] Delete
+- [ ] Search
+- [ ] Filters
+- [ ] Validation
+- [ ] Relationships (ledger accounts)
+- [ ] Error handling
+- [ ] Persistence after restart
+- [ ] Responsive 1600x900
+- [ ] Responsive 1366x768
+- [ ] Responsive 1280x720
+- [ ] Windows 100%
+- [ ] Windows 125%
+- [ ] Windows 150%
+- [ ] No QML runtime errors
+- [ ] Functional acceptance passed
+- [ ] Completed
+
+## Marriage
+- [ ] Legacy functionality inspected
+- [ ] UI migrated
+- [ ] Real backend connected
+- [ ] Real database data
+- [ ] Add/Create
+- [ ] View
+- [ ] Edit
+- [ ] Delete
+- [ ] Search
+- [ ] Filters
+- [ ] Validation
+- [ ] Relationships (imam, families)
+- [ ] Error handling
+- [ ] Persistence after restart
+- [ ] Responsive 1600x900
+- [ ] Responsive 1366x768
+- [ ] Responsive 1280x720
+- [ ] Windows 100%
+- [ ] Windows 125%
+- [ ] Windows 150%
+- [ ] No QML runtime errors
+- [ ] Functional acceptance passed
+- [ ] Completed
+
+## Death
+- [ ] Legacy functionality inspected
+- [ ] UI migrated
+- [ ] Real backend connected
+- [ ] Real database data
+- [ ] Add/Create
+- [ ] View
+- [ ] Edit
+- [ ] Delete
+- [ ] Search
+- [ ] Filters
+- [ ] Validation
+- [ ] Relationships (family, member status update)
+- [ ] Error handling
+- [ ] Persistence after restart
+- [ ] Responsive 1600x900
+- [ ] Responsive 1366x768
+- [ ] Responsive 1280x720
+- [ ] Windows 100%
+- [ ] Windows 125%
+- [ ] Windows 150%
+- [ ] No QML runtime errors
+- [ ] Functional acceptance passed
+- [ ] Completed
+
+## Welfare
+- [ ] Legacy functionality inspected
+- [ ] UI migrated
+- [ ] Real backend connected
+- [ ] Real database data
+- [ ] Add/Create
+- [ ] View
+- [ ] Edit
+- [ ] Delete
+- [ ] Search
+- [ ] Filters
+- [ ] Validation
+- [ ] Relationships (family, approver)
+- [ ] Error handling
+- [ ] Persistence after restart
+- [ ] Responsive 1600x900
+- [ ] Responsive 1366x768
+- [ ] Responsive 1280x720
+- [ ] Windows 100%
+- [ ] Windows 125%
+- [ ] Windows 150%
+- [ ] No QML runtime errors
+- [ ] Functional acceptance passed
+- [ ] Completed
+
+## Certificates
+- [ ] Legacy functionality inspected
+- [ ] UI migrated
+- [ ] Real backend connected
+- [ ] Real database data
+- [ ] Add/Create (generate)
+- [ ] View
+- [-] Edit
+- [ ] Delete
+- [ ] Search
+- [ ] Filters
+- [ ] Validation
+- [ ] Relationships (member, family, marriage, death)
+- [ ] Error handling
+- [ ] Persistence after restart
+- [ ] Responsive 1600x900
+- [ ] Responsive 1366x768
+- [ ] Responsive 1280x720
+- [ ] Windows 100%
+- [ ] Windows 125%
+- [ ] Windows 150%
+- [ ] No QML runtime errors
+- [ ] Functional acceptance passed
+- [ ] Completed
+
+## Tokens
+- [ ] Legacy functionality inspected
+- [ ] UI migrated
+- [ ] Real backend connected
+- [ ] Real database data
+- [ ] Add/Create
+- [ ] View
+- [ ] Edit
+- [ ] Delete
+- [ ] Search
+- [ ] Filters
+- [ ] Validation
+- [ ] Relationships (events, families)
+- [ ] Error handling
+- [ ] Persistence after restart
+- [ ] Responsive 1600x900
+- [ ] Responsive 1366x768
+- [ ] Responsive 1280x720
+- [ ] Windows 100%
+- [ ] Windows 125%
+- [ ] Windows 150%
+- [ ] No QML runtime errors
+- [ ] Functional acceptance passed
+- [ ] Completed
+
+## Reports
+- [ ] Legacy functionality inspected
+- [ ] UI migrated
+- [ ] Real backend connected
+- [ ] Real database data
+- [-] Add/Create
+- [x] View (generate report)
+- [-] Edit
+- [-] Delete
+- [ ] Search
+- [-] Filters
+- [-] Validation
+- [ ] Relationships (aggregates all modules)
+- [ ] Error handling
+- [-] Persistence after restart
+- [ ] Responsive 1600x900
+- [ ] Responsive 1366x768
+- [ ] Responsive 1280x720
+- [ ] Windows 100%
+- [ ] Windows 125%
+- [ ] Windows 150%
+- [ ] No QML runtime errors
+- [ ] Functional acceptance passed
+- [ ] Completed
+
+## Settings
+- [ ] Legacy functionality inspected
+- [ ] UI migrated
+- [ ] Real backend connected
+- [ ] Real database data
+- [-] Add/Create
+- [x] View
+- [x] Edit
+- [-] Delete
+- [-] Search
+- [-] Filters
+- [ ] Validation
+- [-] Relationships
+- [ ] Error handling
+- [x] Persistence after restart
+- [ ] Responsive 1600x900
+- [ ] Responsive 1366x768
+- [ ] Responsive 1280x720
+- [ ] Windows 100%
+- [ ] Windows 125%
+- [ ] Windows 150%
+- [ ] No QML runtime errors
+- [ ] Functional acceptance passed
+- [ ] Completed
+
+## Users
+- [ ] Legacy functionality inspected
+- [ ] UI migrated
+- [ ] Real backend connected
+- [ ] Real database data
+- [ ] Add/Create
+- [ ] View
+- [ ] Edit
+- [ ] Delete
+- [ ] Search
+- [ ] Filters
+- [ ] Validation
+- [ ] Relationships (roles, permissions)
+- [ ] Error handling
+- [ ] Persistence after restart
+- [ ] Responsive 1600x900
+- [ ] Responsive 1366x768
+- [ ] Responsive 1280x720
+- [ ] Windows 100%
+- [ ] Windows 125%
+- [ ] Windows 150%
+- [ ] No QML runtime errors
+- [ ] Functional acceptance passed
+- [ ] Completed
+
+## Audit Log
+- [ ] Legacy functionality inspected
+- [ ] UI migrated
+- [ ] Real backend connected
+- [ ] Real database data
+- [-] Add/Create
+- [x] View
+- [-] Edit
+- [-] Delete
+- [ ] Search
+- [ ] Filters
+- [-] Validation
+- [-] Relationships
+- [ ] Error handling
+- [-] Persistence after restart
+- [ ] Responsive 1600x900
+- [ ] Responsive 1366x768
+- [ ] Responsive 1280x720
+- [ ] Windows 100%
+- [ ] Windows 125%
+- [ ] Windows 150%
+- [ ] No QML runtime errors
+- [ ] Functional acceptance passed
+- [ ] Completed
+
+## Backup
+- [ ] Legacy functionality inspected
+- [ ] UI migrated
+- [ ] Real backend connected
+- [ ] Real database data
+- [ ] Add/Create (backup)
+- [ ] View (list backups)
+- [-] Edit
+- [ ] Delete
+- [-] Search
+- [-] Filters
+- [-] Validation
+- [-] Relationships
+- [ ] Error handling
+- [-] Persistence after restart
+- [ ] Responsive 1600x900
+- [ ] Responsive 1366x768
+- [ ] Responsive 1280x720
+- [ ] Windows 100%
+- [ ] Windows 125%
+- [ ] Windows 150%
+- [ ] No QML runtime errors
+- [ ] Functional acceptance passed
+- [ ] Completed

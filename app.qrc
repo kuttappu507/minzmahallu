@@ -9,6 +9,7 @@
     <file alias="qml/components/StatusBadge.qml">qml/components/StatusBadge.qml</file>
     <file alias="qml/components/ModalDialog.qml">qml/components/ModalDialog.qml</file>
     <file alias="qml/components/ConfirmDialog.qml">qml/components/ConfirmDialog.qml</file>
+    <file alias="qml/components/TableActionButton.qml">qml/components/TableActionButton.qml</file>
     <!-- Pages -->
     <file alias="qml/pages/FamiliesPage.qml">qml/pages/FamiliesPage.qml</file>
     <file alias="qml/pages/FamilyEditDialog.qml">qml/pages/FamilyEditDialog.qml</file>

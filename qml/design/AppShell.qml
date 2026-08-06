@@ -95,19 +95,42 @@ ApplicationWindow {
 
                     delegate: Item {
                         width: navList.width - 20; height: 40; x: 10
+
+                        // Background: selected = stronger tint + gold indicator;
+                        //             hover (non-selected) = subtle tint only
                         Rectangle {
                             id: navRect; anchors.fill: parent; radius: 9
-                            color: ListView.isCurrentItem ? Qt.rgba(255/255,255/255,255/255,0.14) : (navMA.containsMouse ? Qt.rgba(255/255,255/255,255/255,0.09) : "transparent")
+                            color: ListView.isCurrentItem
+                                   ? Qt.rgba(255,255,255,0.14)
+                                   : (navMA.containsMouse ? Qt.rgba(255,255,255,0.06) : "transparent")
                             Behavior on color { ColorAnimation { duration: 140 } }
-                            Rectangle { x: -10; y: (40 - 22) / 2; width: 4; height: 22; radius: 4; color: "#f2c14e"; visible: ListView.isCurrentItem }
+                            // Gold indicator ONLY on selected item
+                            Rectangle {
+                                x: -10; y: (40 - 22) / 2; width: 4; height: 22; radius: 4
+                                color: "#f2c14e"; visible: ListView.isCurrentItem
+                            }
                         }
+
                         Row {
                             x: 13; y: 0; height: 40; spacing: 12
                             Item { width: 18; height: 18; y: (40 - 18) / 2
                                 Image { id: navIcon; source: "qrc:/icons/svg/" + model.icon + ".svg"; sourceSize: Qt.size(18, 18); anchors.fill: parent; fillMode: Image.Pad; visible: false }
-                                MultiEffect { anchors.fill: parent; source: navIcon; colorizationColor: "#ffffff"; colorization: 1.0 }
+                                MultiEffect {
+                                    anchors.fill: parent; source: navIcon
+                                    // Selected = white; hover (non-selected) = light green; normal = muted green
+                                    colorizationColor: ListView.isCurrentItem ? "#ffffff" : (navMA.containsMouse ? "#d6f5e7" : "#a5dcc6")
+                                    colorization: 1.0
+                                    Behavior on colorizationColor { ColorAnimation { duration: 140 } }
+                                }
                             }
-                            Text { text: model.label; font.family: "Poppins"; font.pixelSize: 13; font.weight: ListView.isCurrentItem ? Font.DemiBold : Font.Medium; color: ListView.isCurrentItem ? "#ffffff" : (navMA.containsMouse ? "#ffffff" : "#c4e7d7"); y: (40 - height) / 2 }
+                            Text {
+                                text: model.label; font.family: "Poppins"; font.pixelSize: 13
+                                // Selected = DemiBold + white; hover = Medium + light green; normal = Medium + muted green
+                                font.weight: ListView.isCurrentItem ? Font.DemiBold : Font.Medium
+                                color: ListView.isCurrentItem ? "#ffffff" : (navMA.containsMouse ? "#d6f5e7" : "#a5dcc6")
+                                y: (40 - height) / 2
+                                Behavior on color { ColorAnimation { duration: 140 } }
+                            }
                         }
                         MouseArea { id: navMA; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: { navList.currentIndex = index; window.currentNavIndex = index } }
                     }

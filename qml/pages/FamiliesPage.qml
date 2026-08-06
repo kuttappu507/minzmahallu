@@ -221,20 +221,38 @@ Item {
                             Row {
                                 width: 80; height: 44; spacing: 4
                                 layoutDirection: Qt.RightToLeft
-                                // Delete
-                                Rectangle { width: 28; height: 28; radius: 6; color: delMA.containsMouse ? "#fddfe5" : "transparent"; border.width: 1; border.color: delMA.containsMouse ? "#e11d48" : "#d2e5d8"; anchors.verticalCenter: parent.verticalCenter; Behavior on color { ColorAnimation { duration: 120 } }
-                                    Item { width: 14; height: 14; anchors.centerIn: parent; Image { id: delIcon; source: "qrc:/icons/svg/trash.svg"; sourceSize: Qt.size(14, 14); anchors.fill: parent; fillMode: Image.Pad; visible: false } MultiEffect { anchors.fill: parent; source: delIcon; colorizationColor: delMA.containsMouse ? "#e11d48" : "#7e968a"; colorization: 1.0; Behavior on colorizationColor { ColorAnimation { duration: 120 } } } }
-                                    MouseArea { id: delMA; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: { deleteDialog._familyId = model.id; deleteDialog.warningText = "Family \"" + model.houseName + "\" (" + model.familyNumber + ") will be permanently deleted."; deleteDialog.visible = true } }
+                                // Delete — momentary action, red only on hover
+                                TableActionButton {
+                                    iconSource: "qrc:/icons/svg/trash.svg"
+                                    variantColor: "#e11d48"
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    onClicked: {
+                                        deleteDialog._familyId = model.id
+                                        deleteDialog.warningText = "Family \"" + model.houseName + "\" (" + model.familyNumber + ") will be permanently deleted."
+                                        deleteDialog.visible = true
+                                    }
                                 }
-                                // Edit
-                                Rectangle { width: 28; height: 28; radius: 6; color: editMA.containsMouse ? "#ecfdf5" : "transparent"; border.width: 1; border.color: editMA.containsMouse ? "#059669" : "#d2e5d8"; anchors.verticalCenter: parent.verticalCenter; Behavior on color { ColorAnimation { duration: 120 } }
-                                    Item { width: 14; height: 14; anchors.centerIn: parent; Image { id: editIcon; source: "qrc:/icons/svg/edit.svg"; sourceSize: Qt.size(14, 14); anchors.fill: parent; fillMode: Image.Pad; visible: false } MultiEffect { anchors.fill: parent; source: editIcon; colorizationColor: editMA.containsMouse ? "#059669" : "#7e968a"; colorization: 1.0; Behavior on colorizationColor { ColorAnimation { duration: 120 } } } }
-                                    MouseArea { id: editMA; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: { editDialog.familyId = model.id; editDialog.readOnly = false; editDialog.show() } }
+                                // Edit — momentary action, emerald only on hover
+                                TableActionButton {
+                                    iconSource: "qrc:/icons/svg/edit.svg"
+                                    variantColor: "#059669"
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    onClicked: {
+                                        editDialog.familyId = model.id
+                                        editDialog.readOnly = false
+                                        editDialog.show()
+                                    }
                                 }
-                                // View
-                                Rectangle { width: 28; height: 28; radius: 6; color: viewMA.containsMouse ? "#d7edfb" : "transparent"; border.width: 1; border.color: viewMA.containsMouse ? "#0284c7" : "#d2e5d8"; anchors.verticalCenter: parent.verticalCenter; Behavior on color { ColorAnimation { duration: 120 } }
-                                    Item { width: 14; height: 14; anchors.centerIn: parent; Image { id: viewIcon; source: "qrc:/icons/svg/search.svg"; sourceSize: Qt.size(14, 14); anchors.fill: parent; fillMode: Image.Pad; visible: false } MultiEffect { anchors.fill: parent; source: viewIcon; colorizationColor: viewMA.containsMouse ? "#0284c7" : "#7e968a"; colorization: 1.0; Behavior on colorizationColor { ColorAnimation { duration: 120 } } } }
-                                    MouseArea { id: viewMA; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: { editDialog.familyId = model.id; editDialog.readOnly = true; editDialog.show() } }
+                                // View — momentary action, blue only on hover
+                                TableActionButton {
+                                    iconSource: "qrc:/icons/svg/search.svg"
+                                    variantColor: "#0284c7"
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    onClicked: {
+                                        editDialog.familyId = model.id
+                                        editDialog.readOnly = true
+                                        editDialog.show()
+                                    }
                                 }
                             }
                         }
