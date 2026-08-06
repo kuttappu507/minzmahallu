@@ -47,6 +47,8 @@
 #include "services/DonationListModel.h"
 #include "services/AccountingController.h"
 #include "services/TransactionListModel.h"
+#include "services/RegisterControllers.h"
+#include "services/RegisterListModels.h"
 
 static std::ofstream g_logFile;
 
@@ -173,6 +175,18 @@ int main(int argc, char* argv[]) {
     AccountingController* accountingController = new AccountingController(&app);
     TransactionListModel* transactionModel = new TransactionListModel(&app);
     transactionModel->setController(accountingController);
+
+    MarriageController* marriageController = new MarriageController(&app);
+    MarriageListModel* marriageModel = new MarriageListModel(&app);
+    marriageModel->connectController(marriageController);
+
+    DeathController* deathController = new DeathController(&app);
+    DeathListModel* deathModel = new DeathListModel(&app);
+    deathModel->connectController(deathController);
+
+    WelfareController* welfareController = new WelfareController(&app);
+    WelfareListModel* welfareModel = new WelfareListModel(&app);
+    welfareModel->connectController(welfareController);
     logMsg("  Controllers OK");
 
     // Create QML engine
@@ -198,6 +212,18 @@ int main(int argc, char* argv[]) {
     engine.rootContext()->setContextProperty("accountingController", accountingController);
     engine.rootContext()->setContextProperty("TransactionModel", transactionModel);
     engine.rootContext()->setContextProperty("transactionModel", transactionModel);
+    engine.rootContext()->setContextProperty("MarriageController", marriageController);
+    engine.rootContext()->setContextProperty("marriageController", marriageController);
+    engine.rootContext()->setContextProperty("MarriageModel", marriageModel);
+    engine.rootContext()->setContextProperty("marriageModel", marriageModel);
+    engine.rootContext()->setContextProperty("DeathController", deathController);
+    engine.rootContext()->setContextProperty("deathController", deathController);
+    engine.rootContext()->setContextProperty("DeathModel", deathModel);
+    engine.rootContext()->setContextProperty("deathModel", deathModel);
+    engine.rootContext()->setContextProperty("WelfareController", welfareController);
+    engine.rootContext()->setContextProperty("welfareController", welfareController);
+    engine.rootContext()->setContextProperty("WelfareModel", welfareModel);
+    engine.rootContext()->setContextProperty("welfareModel", welfareModel);
 
     // Keep legacy QmlServices for backward compat during migration (other
     // modules may still reference "Services"). Can be removed once all

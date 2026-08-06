@@ -21,6 +21,9 @@
     <file alias="qml/pages/DonationEditDialog.qml">qml/pages/DonationEditDialog.qml</file>
     <file alias="qml/pages/AccountingPage.qml">qml/pages/AccountingPage.qml</file>
     <file alias="qml/pages/TransactionEditDialog.qml">qml/pages/TransactionEditDialog.qml</file>
+    <file alias="qml/pages/MarriagePage.qml">qml/pages/MarriagePage.qml</file>
+    <file alias="qml/pages/DeathPage.qml">qml/pages/DeathPage.qml</file>
+    <file alias="qml/pages/WelfarePage.qml">qml/pages/WelfarePage.qml</file>
     <!-- Design -->
     <file alias="qml/design/AppShell.qml">qml/design/AppShell.qml</file>
     <file alias="qml/design/DashboardPage.qml">qml/design/DashboardPage.qml</file>

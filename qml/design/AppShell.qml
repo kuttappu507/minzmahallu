@@ -223,13 +223,22 @@ ApplicationWindow {
                 // 5 - Accounting
                 AccountingPage {}
 
-                // 6-15 - Placeholder pages
+                // 6 - Marriage
+                MarriagePage {}
+
+                // 7 - Death
+                DeathPage {}
+
+                // 8 - Welfare
+                WelfarePage {}
+
+                // 9-15 - Placeholder pages
                 Repeater {
-                    model: 10
+                    model: 7
                     delegate: Item {
                         Column {
                             anchors.centerIn: parent; spacing: 8
-                            Text { text: navList.model.get(index + 6) ? navList.model.get(index + 6).label : ""; font.family: "Poppins"; font.pixelSize: 18; font.weight: Font.DemiBold; color: "#7e968a"; anchors.horizontalCenter: parent.horizontalCenter }
+                            Text { text: navList.model.get(index + 9) ? navList.model.get(index + 9).label : ""; font.family: "Poppins"; font.pixelSize: 18; font.weight: Font.DemiBold; color: "#7e968a"; anchors.horizontalCenter: parent.horizontalCenter }
                             Text { text: "Coming soon"; font.family: "Poppins"; font.pixelSize: 12; color: "#7e968a"; anchors.horizontalCenter: parent.horizontalCenter }
                         }
                     }
