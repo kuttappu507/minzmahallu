@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import QtQuick.Effects
 import "../components"
 
 // Certificates page — placeholder (certificate generation is complex, uses legacy app for now)

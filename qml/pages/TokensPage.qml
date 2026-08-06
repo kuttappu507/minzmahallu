@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import QtQuick.Effects
 import "../components"
 
 // Tokens page — placeholder (token tables missing from schema, needs migration first)
