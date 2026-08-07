@@ -1,7 +1,7 @@
 #include "FontManager.h"
 #include "Logger.h"
 #include <QFontDatabase>
-#include <QApplication>
+#include <QGuiApplication>
 #include <QFont>
 #include <QFile>
 

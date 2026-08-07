@@ -31,7 +31,7 @@ endif()
 # Find dependencies
 # -----------------------------------------------------------------------------
 find_package(Qt6 6.5 COMPONENTS
-    Core Gui Qml Quick QuickControls2 QuickLayouts
+    Core Gui Widgets Qml Quick QuickControls2 QuickLayouts
     Sql PrintSupport Svg Network
 )
 message(STATUS "Qt6 version: ${Qt6Core_VERSION}")
@@ -92,7 +92,7 @@ if(Qt6Qml_FOUND AND Qt6Quick_FOUND AND Qt6QuickControls2_FOUND AND Qt6QuickLayou
     )
 
     target_link_libraries(mms_app PRIVATE
-        Qt6::Core Qt6::Gui Qt6::Qml Qt6::Quick Qt6::QuickControls2
+        Qt6::Core Qt6::Gui Qt6::Widgets Qt6::Qml Qt6::Quick Qt6::QuickControls2
         Qt6::QuickLayouts Qt6::Sql Qt6::PrintSupport Qt6::Svg Qt6::Network
         OpenSSL::Crypto OpenSSL::SSL ZLIB::ZLIB
     )

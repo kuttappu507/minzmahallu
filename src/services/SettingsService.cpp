@@ -6,7 +6,7 @@
 #include "../core/I18N.h"
 #include "../repositories/AuditLogRepository.h"
 #include "AuthSession.h"
-#include <QApplication>
+#include <QGuiApplication>
 #include <QFile>
 #include <QFont>
 #include <QDir>
