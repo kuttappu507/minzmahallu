@@ -182,6 +182,10 @@ QString CertificateController::exportToCsv(const QString& outputPath) {
     return "";
 }
 
+QString CertificateController::exportDir() const {
+    return mms::Config::instance().exportDir();
+}
+
 QVariantMap CertificateController::certToMap(const mms::Certificate& c) {
     QVariantMap m;
     m["id"] = c.id;

@@ -6,6 +6,8 @@ import "../components"
 
 // ============================================================================
 // SettingsPage — Organization info, logo/seal, theme, backup config
+// Uses Component.onCompleted to avoid binding loops (text:onTextChanged creates
+// a loop — load once, then only write back on user edit).
 // ============================================================================
 
 Item {
@@ -44,18 +46,18 @@ Item {
 
                     Text { text: "Organization"; font.family: "Poppins"; font.pixelSize: 14; font.weight: Font.DemiBold; color: "#12241b" }
 
-                    AppTextField { Layout.fillWidth: true; label: "Mahallu Name"; text: SettingsController.mahalluName; onTextChanged: SettingsController.mahalluName = text }
+                    AppTextField { id: mahalluNameField; Layout.fillWidth: true; label: "Mahallu Name"; onTextChanged: SettingsController.mahalluName = text }
                     RowLayout { Layout.fillWidth: true; spacing: 16
-                        AppTextField { Layout.fillWidth: true; label: "Phone"; text: SettingsController.phone; onTextChanged: SettingsController.phone = text }
-                        AppTextField { Layout.fillWidth: true; label: "Email"; text: SettingsController.email; onTextChanged: SettingsController.email = text } }
+                        AppTextField { id: phoneField; Layout.fillWidth: true; label: "Phone"; onTextChanged: SettingsController.phone = text }
+                        AppTextField { id: emailField; Layout.fillWidth: true; label: "Email"; onTextChanged: SettingsController.email = text } }
                     RowLayout { Layout.fillWidth: true; spacing: 16
-                        AppTextField { Layout.fillWidth: true; label: "Financial Year Start (MM-DD)"; placeholderText: "04-01"; text: SettingsController.financialYearStart; onTextChanged: SettingsController.financialYearStart = text }
-                        AppTextField { Layout.fillWidth: true; label: "Currency Symbol"; text: SettingsController.currencySymbol; onTextChanged: SettingsController.currencySymbol = text }
-                        AppTextField { Layout.fillWidth: true; label: "Receipt Prefix"; text: SettingsController.receiptPrefix; onTextChanged: SettingsController.receiptPrefix = text } }
+                        AppTextField { id: fysField; Layout.fillWidth: true; label: "Financial Year Start (MM-DD)"; placeholderText: "04-01"; onTextChanged: SettingsController.financialYearStart = text }
+                        AppTextField { id: currencyField; Layout.fillWidth: true; label: "Currency Symbol"; onTextChanged: SettingsController.currencySymbol = text }
+                        AppTextField { id: receiptPrefixField; Layout.fillWidth: true; label: "Receipt Prefix"; onTextChanged: SettingsController.receiptPrefix = text } }
 
                     ColumnLayout { Layout.fillWidth: true; spacing: 4
                         Text { text: "ADDRESS"; font.family: "Poppins"; font.pixelSize: 11; font.weight: Font.Medium; color: "#7e968a" }
-                        TextArea { Layout.fillWidth: true; Layout.preferredHeight: 56; text: SettingsController.address; font.family: "Poppins"; font.pixelSize: 13; color: "#12241b"; placeholderText: "Mahallu address..."; placeholderTextColor: "#7e968a"; selectByMouse: true; wrapMode: TextArea.Wrap
+                        TextArea { id: addressField; Layout.fillWidth: true; Layout.preferredHeight: 56; font.family: "Poppins"; font.pixelSize: 13; color: "#12241b"; placeholderText: "Mahallu address..."; placeholderTextColor: "#7e968a"; selectByMouse: true; wrapMode: TextArea.Wrap
                             background: Rectangle { radius: 9; color: "#f2faf4"; border.width: 1; border.color: parent.activeFocus ? "#059669" : parent.hovered ? "#b2cfbd" : "#d2e5d8"; Behavior on border.color { ColorAnimation { duration: 120 } } }
                             padding: 10; onTextChanged: SettingsController.address = text } }
                 }
@@ -66,8 +68,33 @@ Item {
                 ColumnLayout { anchors.fill: parent; anchors.margins: 20; spacing: 14
                     Text { text: "User Interface"; font.family: "Poppins"; font.pixelSize: 14; font.weight: Font.DemiBold; color: "#12241b" }
                     RowLayout { Layout.fillWidth: true; spacing: 16
-                        AppComboBox { Layout.fillWidth: true; label: "Theme"; model: ["light", "dark"]; currentIndex: model.indexOf(SettingsController.theme); onActivated: function(index) { SettingsController.theme = model[index] } }
-                        AppComboBox { Layout.fillWidth: true; label: "Language"; model: ["en", "ml"]; currentIndex: model.indexOf(SettingsController.language); onActivated: function(index) { SettingsController.language = model[index] } } }
+                        ColumnLayout { Layout.fillWidth: true; spacing: 4
+                            Text { text: "Theme"; font.family: "Poppins"; font.pixelSize: 11; font.weight: Font.Medium; color: "#7e968a" }
+                            Rectangle { Layout.fillWidth: true; height: 38; radius: 9; color: "#f2faf4"; border.width: 1; border.color: themeMA.containsMouse ? "#b2cfbd" : "#d2e5d8"
+                                Behavior on border.color { ColorAnimation { duration: 120 } }
+                                MouseArea { id: themeMA; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: themePopup.visible = !themePopup.visible }
+                                Text { anchors.left: parent.left; anchors.leftMargin: 10; anchors.verticalCenter: parent.verticalCenter; text: SettingsController.theme; font.family: "Poppins"; font.pixelSize: 13; color: "#12241b" }
+                                Popup { id: themePopup; y: parent.height + 4; width: parent.width; padding: 4; background: Rectangle { color: "#ffffff"; border.width: 1; border.color: "#d2e5d8"; radius: 9 }
+                                    ColumnLayout { anchors.fill: parent; spacing: 2
+                                        Repeater { model: ["light", "dark"]
+                                            delegate: ItemDelegate { width: parent.width; height: 34; padding: 0
+                                                contentItem: Text { text: modelData; font.family: "Poppins"; font.pixelSize: 13; color: "#12241b"; anchors.left: parent.left; anchors.leftMargin: 8; anchors.verticalCenter: parent.verticalCenter }
+                                                background: Rectangle { color: highlighted ? "#ecfdf5" : "transparent"; radius: 4 }
+                                                onClicked: { SettingsController.theme = modelData; themePopup.visible = false } } } } } } }
+                        ColumnLayout { Layout.fillWidth: true; spacing: 4
+                            Text { text: "Language"; font.family: "Poppins"; font.pixelSize: 11; font.weight: Font.Medium; color: "#7e968a" }
+                            Rectangle { Layout.fillWidth: true; height: 38; radius: 9; color: "#f2faf4"; border.width: 1; border.color: langMA.containsMouse ? "#b2cfbd" : "#d2e5d8"
+                                Behavior on border.color { ColorAnimation { duration: 120 } }
+                                MouseArea { id: langMA; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: langPopup.visible = !langPopup.visible }
+                                Text { anchors.left: parent.left; anchors.leftMargin: 10; anchors.verticalCenter: parent.verticalCenter; text: SettingsController.language === "ml" ? "Malayalam" : "English"; font.family: "Poppins"; font.pixelSize: 13; color: "#12241b" }
+                                Popup { id: langPopup; y: parent.height + 4; width: parent.width; padding: 4; background: Rectangle { color: "#ffffff"; border.width: 1; border.color: "#d2e5d8"; radius: 9 }
+                                    ColumnLayout { anchors.fill: parent; spacing: 2
+                                        Repeater { model: [{v: "en", l: "English"}, {v: "ml", l: "Malayalam"}]
+                                            delegate: ItemDelegate { width: parent.width; height: 34; padding: 0
+                                                contentItem: Text { text: modelData.l; font.family: "Poppins"; font.pixelSize: 13; color: "#12241b"; anchors.left: parent.left; anchors.leftMargin: 8; anchors.verticalCenter: parent.verticalCenter }
+                                                background: Rectangle { color: highlighted ? "#ecfdf5" : "transparent"; radius: 4 }
+                                                onClicked: { SettingsController.language = modelData.v; langPopup.visible = false } } } } } } }
+                    }
                 }
             }
 
@@ -77,8 +104,8 @@ Item {
                     Text { text: "Backup"; font.family: "Poppins"; font.pixelSize: 14; font.weight: Font.DemiBold; color: "#12241b" }
                     RowLayout { Layout.fillWidth: true; spacing: 16
                         Text { text: "Auto Backup"; font.family: "Poppins"; font.pixelSize: 12; color: "#4f6b5c"; Layout.alignment: Qt.AlignVCenter }
-                        Switch { checked: SettingsController.autoBackup; onCheckedChanged: SettingsController.autoBackup = checked }
-                        AppTextField { Layout.fillWidth: true; label: "Interval (hours)"; text: SettingsController.backupIntervalHours.toString(); onTextChanged: { var v = parseInt(text); if (!isNaN(v) && v > 0) SettingsController.backupIntervalHours = v } } }
+                        Switch { id: autoBackupSwitch; onCheckedChanged: SettingsController.autoBackup = checked }
+                        AppTextField { id: intervalField; Layout.fillWidth: true; label: "Interval (hours)"; onTextChanged: { var v = parseInt(text); if (!isNaN(v) && v > 0) SettingsController.backupIntervalHours = v } } }
                 }
             }
 
@@ -90,5 +117,18 @@ Item {
                 } }
             }
         }
+    }
+
+    // Load settings ONCE on completed — avoids binding loops
+    Component.onCompleted: {
+        mahalluNameField.text = SettingsController.mahalluName
+        phoneField.text = SettingsController.phone
+        emailField.text = SettingsController.email
+        fysField.text = SettingsController.financialYearStart
+        currencyField.text = SettingsController.currencySymbol
+        receiptPrefixField.text = SettingsController.receiptPrefix
+        addressField.text = SettingsController.address
+        intervalField.text = SettingsController.backupIntervalHours.toString()
+        autoBackupSwitch.checked = SettingsController.autoBackup
     }
 }

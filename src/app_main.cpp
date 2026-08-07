@@ -77,10 +77,27 @@ int main(int argc, char* argv[]) {
     AllocConsole();
     freopen("CONOUT$", "w", stdout);
     freopen("CONOUT$", "w", stderr);
-    SetProcessDPIAware();
+    // Use SetProcessDpiAwarenessContext for per-monitor V2 DPI awareness
+    // This makes the app properly scale on high-DPI displays (125%, 150%, etc.)
+    typedef BOOL(WINAPI* SetProcessDpiAwarenessContextFunc)(HANDLE);
+    HMODULE hUser32 = GetModuleHandleW(L"user32.dll");
+    if (hUser32) {
+        auto pSetProcessDpiAwarenessContext = (SetProcessDpiAwarenessContextFunc)GetProcAddress(hUser32, "SetProcessDpiAwarenessContext");
+        if (pSetProcessDpiAwarenessContext) {
+            // DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2 = ((DPI_CONTEXT_HANDLE)-4)
+            pSetProcessDpiAwarenessContext((HANDLE)-4);
+        } else {
+            SetProcessDPIAware();
+        }
+    } else {
+        SetProcessDPIAware();
+    }
 #endif
 
+    // Qt 6 high-DPI scaling — must be set BEFORE QGuiApplication is created
     qputenv("QT_ENABLE_HIGHDPI_SCALING", "1");
+    qputenv("QT_AUTO_SCREEN_SCALE_FACTOR", "1");
+    qputenv("QT_SCALE_FACTOR_ROUNDING_POLICY", "PassThrough");
 
     logMsg("Step 1: Creating QGuiApplication...");
     QGuiApplication app(argc, argv);

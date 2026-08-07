@@ -78,5 +78,10 @@
     <file alias="icons/svg/log-out.svg">resources/icons/svg/log-out.svg</file>
     <file alias="icons/svg/trending-up.svg">resources/icons/svg/trending-up.svg</file>
     <file alias="icons/svg/trending-down.svg">resources/icons/svg/trending-down.svg</file>
+    <file alias="icons/svg/refresh.svg">resources/icons/svg/refresh.svg</file>
+    <file alias="icons/svg/download.svg">resources/icons/svg/download.svg</file>
+    <file alias="icons/svg/print.svg">resources/icons/svg/print.svg</file>
+    <file alias="icons/svg/sun.svg">resources/icons/svg/sun.svg</file>
+    <file alias="icons/svg/moon.svg">resources/icons/svg/moon.svg</file>
 </qresource>
 </RCC>

@@ -50,6 +50,7 @@ public:
 
     // Export list to CSV
     Q_INVOKABLE QString exportToCsv(const QString& outputPath);
+    Q_INVOKABLE QString exportDir() const;
 
 signals:
     void lastErrorChanged();

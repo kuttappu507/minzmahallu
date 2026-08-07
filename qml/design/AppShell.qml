@@ -14,13 +14,10 @@ ApplicationWindow {
     color: "#e7f4ea"
 
     property int currentNavIndex: 0
-    readonly property int contentWidth: width - 260
+    property bool sidebarCollapsed: false
+    readonly property int sidebarWidth: sidebarCollapsed ? 64 : 260
+    readonly property int contentWidth: width - sidebarWidth
 
-    // Responsive column count for dashboard grids.
-    // Bound to contentWidth (window width minus 260px sidebar).
-    // 5 cards × 180px min + 4 × 12px gap + 36px margins = 984px needed for 5 cols.
-    // At default 1600px window → contentWidth 1340 → 5 columns.
-    // At 1920px full screen → contentWidth 1660 → 5 columns.
     readonly property int responsiveColumns: {
         var cw = contentWidth
         if (cw >= 1000) return 5
@@ -30,13 +27,19 @@ ApplicationWindow {
         return 1
     }
 
+    Behavior on sidebarWidth { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
+
     RowLayout {
         anchors.fill: parent
         spacing: 0
 
-        // ===== SIDEBAR =====
+        // ===== SIDEBAR (collapsible) =====
         Rectangle {
-            Layout.fillHeight: true; Layout.fillWidth: false; implicitWidth: 260
+            id: sidebar
+            Layout.fillHeight: true; Layout.fillWidth: false
+            implicitWidth: window.sidebarWidth
+            clip: true
+
             gradient: Gradient {
                 orientation: Gradient.Vertical
                 GradientStop { position: 0.0;  color: "#0a7f5d" }
@@ -44,13 +47,57 @@ ApplicationWindow {
                 GradientStop { position: 1.0;  color: "#044633" }
             }
 
+            // Islamic calligraphic pattern overlay (very light)
+            Canvas {
+                anchors.fill: parent
+                opacity: 0.04
+                onPaint: {
+                    var ctx = getContext("2d")
+                    ctx.reset()
+                    ctx.strokeStyle = "#ffffff"
+                    ctx.lineWidth = 1
+                    // Draw Islamic geometric star pattern
+                    var tileSize = 40
+                    for (var y = 0; y < height; y += tileSize) {
+                        for (var x = 0; x < width; x += tileSize) {
+                            // 8-pointed star
+                            var cx = x + tileSize/2
+                            var cy = y + tileSize/2
+                            var r = tileSize/2 - 2
+                            ctx.beginPath()
+                            for (var i = 0; i < 8; i++) {
+                                var angle = (i * Math.PI) / 4
+                                var px = cx + r * Math.cos(angle)
+                                var py = cy + r * Math.sin(angle)
+                                if (i === 0) ctx.moveTo(px, py)
+                                else ctx.lineTo(px, py)
+                            }
+                            ctx.closePath()
+                            ctx.stroke()
+                            // Inner star
+                            ctx.beginPath()
+                            for (var j = 0; j < 8; j++) {
+                                var angle2 = (j * Math.PI) / 4 + Math.PI/8
+                                var px2 = cx + (r * 0.5) * Math.cos(angle2)
+                                var py2 = cy + (r * 0.5) * Math.sin(angle2)
+                                if (j === 0) ctx.moveTo(px2, py2)
+                                else ctx.lineTo(px2, py2)
+                            }
+                            ctx.closePath()
+                            ctx.stroke()
+                        }
+                    }
+                }
+            }
+
             Column {
                 anchors.fill: parent; spacing: 0
 
+                // Logo header
                 Item {
                     width: parent.width; height: 72
                     Row {
-                        x: 18; y: 18; spacing: 11
+                        x: 18; y: 18; spacing: 11; visible: !window.sidebarCollapsed
                         Rectangle {
                             width: 38; height: 38; radius: 14; color: Qt.rgba(255,255,255,0.14)
                             Text { anchors.centerIn: parent; text: "M"; font.family: "Poppins"; font.pixelSize: 16; font.weight: Font.Bold; color: "#ffffff" }
@@ -61,12 +108,41 @@ ApplicationWindow {
                             Text { text: "Minz Mahallu"; font.family: "Poppins"; font.pixelSize: 10; font.weight: Font.DemiBold; color: "#a5dcc6" }
                         }
                     }
+                    // Collapsed logo (just M icon)
+                    Rectangle {
+                        anchors.centerIn: parent; visible: window.sidebarCollapsed
+                        width: 38; height: 38; radius: 14; color: Qt.rgba(255,255,255,0.14)
+                        Text { anchors.centerIn: parent; text: "M"; font.family: "Poppins"; font.pixelSize: 16; font.weight: Font.Bold; color: "#ffffff" }
+                    }
+                }
+
+                // Collapse/expand flap button (centered at the right edge)
+                Rectangle {
+                    width: 24; height: 48; radius: 8
+                    color: collapseMA.containsMouse ? "#f2c14e" : "#ffffff"
+                    border.width: 1; border.color: "#d2e5d8"
+                    x: parent.width - 12; y: parent.height / 2 - 24
+                    z: 100
+                    Behavior on color { ColorAnimation { duration: 120 } }
+
+                    Text {
+                        anchors.centerIn: parent
+                        text: window.sidebarCollapsed ? "\u203A" : "\u2039"
+                        font.pixelSize: 20; font.weight: Font.Bold
+                        color: collapseMA.containsMouse ? "#4a3606" : "#065f46"
+                    }
+                    MouseArea {
+                        id: collapseMA; anchors.fill: parent; hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: window.sidebarCollapsed = !window.sidebarCollapsed
+                    }
                 }
 
                 Text {
                     text: "OVERVIEW"; font.family: "Poppins"; font.pixelSize: 9; font.weight: Font.Bold
                     color: Qt.rgba(214/255, 240/255, 228/255, 0.42)
                     leftPadding: 24; topPadding: 15; bottomPadding: 5
+                    visible: !window.sidebarCollapsed
                 }
 
                 ListView {
@@ -96,15 +172,12 @@ ApplicationWindow {
                     delegate: Item {
                         width: navList.width - 20; height: 34; x: 10
 
-                        // Background: selected = stronger tint + gold indicator;
-                        //             hover (non-selected) = subtle tint only
                         Rectangle {
                             id: navRect; anchors.fill: parent; radius: 7
                             color: ListView.isCurrentItem
                                    ? Qt.rgba(255,255,255,0.14)
                                    : (navMA.containsMouse ? Qt.rgba(255,255,255,0.06) : "transparent")
                             Behavior on color { ColorAnimation { duration: 140 } }
-                            // Gold indicator ONLY on selected item
                             Rectangle {
                                 x: -10; y: (34 - 20) / 2; width: 4; height: 20; radius: 4
                                 color: "#f2c14e"; visible: ListView.isCurrentItem
@@ -117,7 +190,6 @@ ApplicationWindow {
                                 Image { id: navIcon; source: "qrc:/icons/svg/" + model.icon + ".svg"; sourceSize: Qt.size(17, 17); anchors.fill: parent; fillMode: Image.Pad; visible: false }
                                 MultiEffect {
                                     anchors.fill: parent; source: navIcon
-                                    // Selected = white; hover (non-selected) = light green; normal = muted green
                                     colorizationColor: ListView.isCurrentItem ? "#ffffff" : (navMA.containsMouse ? "#d6f5e7" : "#a5dcc6")
                                     colorization: 1.0
                                     Behavior on colorizationColor { ColorAnimation { duration: 140 } }
@@ -125,10 +197,10 @@ ApplicationWindow {
                             }
                             Text {
                                 text: model.label; font.family: "Poppins"; font.pixelSize: 13
-                                // Selected = DemiBold + white; hover = Medium + light green; normal = Medium + muted green
                                 font.weight: ListView.isCurrentItem ? Font.DemiBold : Font.Medium
                                 color: ListView.isCurrentItem ? "#ffffff" : (navMA.containsMouse ? "#d6f5e7" : "#a5dcc6")
                                 y: (34 - height) / 2
+                                visible: !window.sidebarCollapsed
                                 Behavior on color { ColorAnimation { duration: 140 } }
                             }
                         }
@@ -136,13 +208,14 @@ ApplicationWindow {
                     }
                 }
 
+                // User profile (bottom)
                 Item {
                     width: parent.width; height: 80
-                    Rectangle { anchors.top: parent.top; anchors.left: parent.left; anchors.right: parent.right; height: 1; color: Qt.rgba(255/255,255/255,255/255,0.14) }
-                    Rectangle { x: 10; y: 9; width: profileRow.width + 8; height: profileRow.height + 8; radius: 9; color: Qt.rgba(255/255,255/255,255/255, profileHover.containsMouse ? 0.06 : 0); Behavior on color { ColorAnimation { duration: 120 } } z: -1 }
+                    Rectangle { anchors.top: parent.top; anchors.left: parent.left; anchors.right: parent.right; height: 1; color: Qt.rgba(255,255,255,0.14) }
+                    Rectangle { x: 10; y: 9; width: profileRow.width + 8; height: profileRow.height + 8; radius: 9; color: Qt.rgba(255,255,255, profileHover.containsMouse ? 0.06 : 0); Behavior on color { ColorAnimation { duration: 120 } } z: -1; visible: !window.sidebarCollapsed }
                     HoverHandler { id: profileHover; cursorShape: Qt.PointingHandCursor }
                     Row {
-                        id: profileRow; x: 14; y: 13; spacing: 10
+                        id: profileRow; x: 14; y: 13; spacing: 10; visible: !window.sidebarCollapsed
                         Rectangle { width: 36; height: 36; radius: 9; color: "#f2c14e"; border.width: 2; border.color: "#b98317"
                             Text { anchors.centerIn: parent; text: "AK"; font.family: "Poppins"; font.pixelSize: 13; font.weight: Font.DemiBold; color: "#4a3606" } }
                         Column { spacing: 0
@@ -150,6 +223,9 @@ ApplicationWindow {
                             Text { text: "Administrator"; font.family: "Poppins"; font.pixelSize: 11; font.weight: Font.Normal; color: "#9fd8c3" }
                         }
                     }
+                    // Collapsed: just avatar
+                    Rectangle { anchors.centerIn: parent; visible: window.sidebarCollapsed; width: 36; height: 36; radius: 9; color: "#f2c14e"; border.width: 2; border.color: "#b98317"
+                        Text { anchors.centerIn: parent; text: "AK"; font.family: "Poppins"; font.pixelSize: 13; font.weight: Font.DemiBold; color: "#4a3606" } }
                 }
             }
         }
@@ -158,7 +234,7 @@ ApplicationWindow {
         ColumnLayout {
             Layout.fillWidth: true; Layout.fillHeight: true; spacing: 0
 
-            // ===== Topbar — breadcrumb left, search right. Nothing in center. =====
+            // ===== Topbar — breadcrumb left, toggles + search right =====
             Rectangle {
                 Layout.fillWidth: true; Layout.preferredHeight: 58; color: "#ffffff"
                 Rectangle { anchors.bottom: parent.bottom; anchors.left: parent.left; anchors.right: parent.right; height: 1; color: "#d2e5d8" }
@@ -170,31 +246,66 @@ ApplicationWindow {
                     Text { text: navList.model.get(navList.currentIndex) ? navList.model.get(navList.currentIndex).label : "Dashboard"; font.family: "Poppins"; font.pixelSize: 16; font.weight: Font.DemiBold; color: "#12241b"; anchors.verticalCenter: parent.verticalCenter }
                 }
 
-                // Search field (right)
-                Rectangle {
-                    anchors.right: parent.right; anchors.rightMargin: 24; anchors.verticalCenter: parent.verticalCenter
-                    width: 250; height: 38; radius: 9
-                    color: "#f2faf4"; border.width: 1
-                    border.color: searchInput.activeFocus ? "#059669" : (searchHover.containsMouse ? "#b2cfbd" : "#d2e5d8")
-                    Behavior on border.color { ColorAnimation { duration: 120 } }
-                    HoverHandler { id: searchHover; cursorShape: Qt.IBeamCursor }
-                    Item {
-                        width: 16; height: 16
-                        anchors.left: parent.left; anchors.leftMargin: 10
-                        anchors.verticalCenter: parent.verticalCenter
-                        Image { id: shellSearchIcon; source: "qrc:/icons/svg/search.svg"; sourceSize: Qt.size(16, 16); anchors.fill: parent; fillMode: Image.Pad; visible: false }
-                        MultiEffect { anchors.fill: parent; source: shellSearchIcon; colorizationColor: searchInput.activeFocus ? "#059669" : "#7e968a"; colorization: 1.0; Behavior on colorizationColor { ColorAnimation { duration: 120 } } }
-                    }
-                    TextField {
-                        id: searchInput
-                        anchors.left: parent.left; anchors.leftMargin: 32
-                        anchors.right: parent.right; anchors.rightMargin: 10
-                        anchors.verticalCenter: parent.verticalCenter
-                        placeholderText: "Search records..."
-                        placeholderTextColor: "#7e968a"
-                        font.family: "Poppins"; font.pixelSize: 13; color: "#12241b"
-                        background: Item {}
-                        verticalAlignment: Text.AlignVCenter
+                // Right side: language toggle + theme toggle + search
+                Row {
+                    anchors.right: parent.right; anchors.rightMargin: 24; anchors.verticalCenter: parent.verticalCenter; spacing: 10
+
+                        // Language toggle (EN/ML)
+                        Rectangle {
+                            width: 44; height: 38; radius: 9; color: langToggleMA.containsMouse ? "#f2faf4" : "#ffffff"; border.width: 1; border.color: langToggleMA.containsMouse ? "#b2cfbd" : "#d2e5d8"
+                            Behavior on color { ColorAnimation { duration: 120 } }
+                            HoverHandler { id: langToggleMA; cursorShape: Qt.PointingHandCursor }
+                            MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: {
+                                if (typeof SettingsController !== "undefined") {
+                                    SettingsController.language = SettingsController.language === "en" ? "ml" : "en"
+                                    SettingsController.save()
+                                }
+                            } }
+                            Text { anchors.centerIn: parent; text: typeof SettingsController !== "undefined" ? (SettingsController.language === "ml" ? "ML" : "EN") : "EN"; font.family: "Poppins"; font.pixelSize: 12; font.weight: Font.DemiBold; color: "#059669" }
+                        }
+
+                        // Theme toggle (sun/moon)
+                        Rectangle {
+                            width: 38; height: 38; radius: 9; color: themeToggleMA.containsMouse ? "#f2faf4" : "#ffffff"; border.width: 1; border.color: themeToggleMA.containsMouse ? "#b2cfbd" : "#d2e5d8"
+                            Behavior on color { ColorAnimation { duration: 120 } }
+                            HoverHandler { id: themeToggleMA; cursorShape: Qt.PointingHandCursor }
+                            MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: {
+                                if (typeof SettingsController !== "undefined") {
+                                    SettingsController.theme = SettingsController.theme === "light" ? "dark" : "light"
+                                    SettingsController.save()
+                                }
+                            } }
+                            Item { width: 16; height: 16; anchors.centerIn: parent
+                                Image { id: themeIcon; source: "qrc:/icons/svg/" + (typeof SettingsController !== "undefined" && SettingsController.theme === "dark" ? "sun" : "moon") + ".svg"; sourceSize: Qt.size(16, 16); anchors.fill: parent; fillMode: Image.Pad; visible: false }
+                                MultiEffect { anchors.fill: parent; source: themeIcon; colorizationColor: "#7e968a"; colorization: 1.0 }
+                            }
+                        }
+
+                    // Search field
+                    Rectangle {
+                        width: 250; height: 38; radius: 9
+                        color: "#f2faf4"; border.width: 1
+                        border.color: searchInput.activeFocus ? "#059669" : (searchHover.containsMouse ? "#b2cfbd" : "#d2e5d8")
+                        Behavior on border.color { ColorAnimation { duration: 120 } }
+                        HoverHandler { id: searchHover; cursorShape: Qt.IBeamCursor }
+                        Item {
+                            width: 16; height: 16
+                            anchors.left: parent.left; anchors.leftMargin: 10
+                            anchors.verticalCenter: parent.verticalCenter
+                            Image { id: shellSearchIcon; source: "qrc:/icons/svg/search.svg"; sourceSize: Qt.size(16, 16); anchors.fill: parent; fillMode: Image.Pad; visible: false }
+                            MultiEffect { anchors.fill: parent; source: shellSearchIcon; colorizationColor: searchInput.activeFocus ? "#059669" : "#7e968a"; colorization: 1.0; Behavior on colorizationColor { ColorAnimation { duration: 120 } } }
+                        }
+                        TextField {
+                            id: searchInput
+                            anchors.left: parent.left; anchors.leftMargin: 32
+                            anchors.right: parent.right; anchors.rightMargin: 10
+                            anchors.verticalCenter: parent.verticalCenter
+                            placeholderText: "Search records..."
+                            placeholderTextColor: "#7e968a"
+                            font.family: "Poppins"; font.pixelSize: 13; color: "#12241b"
+                            background: Item {}
+                            verticalAlignment: Text.AlignVCenter
+                        }
                     }
                 }
             }

@@ -125,7 +125,8 @@ Item {
             AppButton { text: "Death"; variant: "secondary"; iconName: "death"; onClicked: { issueDialog.certType = "Death"; issueDialog.labelText = "Death Number"; issueDialog.placeholderText = "DTH-2026-001"; issueDialog.visible = true } }
             Item { Layout.fillWidth: true }
             AppButton { text: "Export CSV"; variant: "secondary"; iconName: "download"; onClicked: {
-                var path = CertificateController.exportToCsv(mmsConfig_exportDir() + "/certificates.csv")
+                var dir = CertificateController.exportDir()
+                var path = CertificateController.exportToCsv(dir + "/certificates.csv")
                 toast.show(path && path.length > 0 ? "Exported: " + path : "Export failed", path && path.length > 0 ? "#059669" : "#e11d48")
             } }
         }
@@ -175,8 +176,4 @@ Item {
         }
     }
 
-    function mmsConfig_exportDir() {
-        if (typeof configExportDir !== "undefined") return configExportDir
-        return ""
-    }
 }

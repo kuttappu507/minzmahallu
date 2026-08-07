@@ -192,8 +192,8 @@ Item {
                         Text { text: "MEMBERS"; width: 70; height: 40; verticalAlignment: Text.AlignVCenter; horizontalAlignment: Text.AlignHCenter; font.family: "Poppins"; font.pixelSize: 10; font.weight: Font.Medium; color: "#7e968a" }
                         Text { text: "PHONE"; width: 120; height: 40; verticalAlignment: Text.AlignVCenter; font.family: "Poppins"; font.pixelSize: 10; font.weight: Font.Medium; color: "#7e968a" }
                         Text { text: "STATUS"; width: 100; height: 40; verticalAlignment: Text.AlignVCenter; font.family: "Poppins"; font.pixelSize: 10; font.weight: Font.Medium; color: "#7e968a" }
-                        Item { width: parent.width - 110 - 160 - 140 - 80 - 70 - 120 - 100 - 80; height: 40 }
-                        Text { text: "ACTIONS"; width: 80; height: 40; verticalAlignment: Text.AlignVCenter; horizontalAlignment: Text.AlignHCenter; font.family: "Poppins"; font.pixelSize: 10; font.weight: Font.Medium; color: "#7e968a" }
+                        Item { width: parent.width - 110 - 160 - 140 - 80 - 70 - 120 - 100 - 100; height: 40 }
+                        Text { text: "ACTIONS"; width: 100; height: 40; verticalAlignment: Text.AlignVCenter; horizontalAlignment: Text.AlignHCenter; font.family: "Poppins"; font.pixelSize: 10; font.weight: Font.Medium; color: "#7e968a" }
                     }
                 }
 
@@ -217,9 +217,9 @@ Item {
                             Text { text: model.memberCount; width: 70; height: 44; verticalAlignment: Text.AlignVCenter; horizontalAlignment: Text.AlignHCenter; font.family: "Poppins"; font.pixelSize: 12; font.weight: Font.DemiBold; color: "#12241b" }
                             Text { text: model.phone; width: 120; height: 44; verticalAlignment: Text.AlignVCenter; font.family: "Poppins"; font.pixelSize: 12; font.weight: Font.Normal; color: "#4f6b5c" }
                             Item { width: 100; height: 44; StatusBadge { anchors.centerIn: parent; text: model.status; variant: model.status.toLowerCase() } }
-                            Item { width: parent.width - 110 - 160 - 140 - 80 - 70 - 120 - 100 - 80; height: 44 }
+                            Item { width: parent.width - 110 - 160 - 140 - 80 - 70 - 120 - 100 - 100; height: 44 }
                             Row {
-                                width: 80; height: 44; spacing: 4
+                                width: 100; height: 44; spacing: 4
                                 layoutDirection: Qt.RightToLeft
                                 // Delete — momentary action, red only on hover
                                 TableActionButton {
