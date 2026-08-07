@@ -13,6 +13,28 @@ ApplicationWindow {
     title: "Minz Mahallu Management System"
     color: "#e7f4ea"
 
+    // ===== Splash screen (shown for 2s on startup) =====
+    SplashScreen {
+        id: splashScreen
+        anchors.fill: parent
+        z: 9999
+        visible: true
+    }
+
+    // ===== Login page (shown when not logged in) =====
+    LoginPage {
+        id: loginPage
+        anchors.fill: parent
+        z: 9998
+        visible: !splashScreen.visible && !AuthController.isLoggedIn
+    }
+
+    // ===== Main app (shown when logged in) =====
+    Item {
+        id: mainApp
+        anchors.fill: parent
+        visible: !splashScreen.visible && AuthController.isLoggedIn
+
     property int currentNavIndex: 0
     property bool sidebarCollapsed: false
     property int sidebarWidth: sidebarCollapsed ? 64 : 260
@@ -37,7 +59,7 @@ ApplicationWindow {
         Rectangle {
             id: sidebar
             Layout.fillHeight: true; Layout.fillWidth: false
-            implicitWidth: window.sidebarWidth
+            implicitWidth: mainApp.sidebarWidth
             clip: true
 
             gradient: Gradient {
@@ -97,7 +119,7 @@ ApplicationWindow {
                 Item {
                     width: parent.width; height: 72
                     Row {
-                        x: 18; y: 18; spacing: 11; visible: !window.sidebarCollapsed
+                        x: 18; y: 18; spacing: 11; visible: !mainApp.sidebarCollapsed
                         Rectangle {
                             width: 38; height: 38; radius: 14; color: Qt.rgba(255,255,255,0.14)
                             Text { anchors.centerIn: parent; text: "M"; font.family: "Poppins"; font.pixelSize: 16; font.weight: Font.Bold; color: "#ffffff" }
@@ -110,7 +132,7 @@ ApplicationWindow {
                     }
                     // Collapsed logo (just M icon)
                     Rectangle {
-                        anchors.centerIn: parent; visible: window.sidebarCollapsed
+                        anchors.centerIn: parent; visible: mainApp.sidebarCollapsed
                         width: 38; height: 38; radius: 14; color: Qt.rgba(255,255,255,0.14)
                         Text { anchors.centerIn: parent; text: "M"; font.family: "Poppins"; font.pixelSize: 16; font.weight: Font.Bold; color: "#ffffff" }
                     }
@@ -127,14 +149,14 @@ ApplicationWindow {
 
                     Text {
                         anchors.centerIn: parent
-                        text: window.sidebarCollapsed ? "\u203A" : "\u2039"
+                        text: mainApp.sidebarCollapsed ? "\u203A" : "\u2039"
                         font.pixelSize: 20; font.weight: Font.Bold
                         color: collapseMA.containsMouse ? "#4a3606" : "#065f46"
                     }
                     MouseArea {
                         id: collapseMA; anchors.fill: parent; hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
-                        onClicked: window.sidebarCollapsed = !window.sidebarCollapsed
+                        onClicked: mainApp.sidebarCollapsed = !mainApp.sidebarCollapsed
                     }
                 }
 
@@ -142,14 +164,14 @@ ApplicationWindow {
                     text: "OVERVIEW"; font.family: "Poppins"; font.pixelSize: 9; font.weight: Font.Bold
                     color: Qt.rgba(214/255, 240/255, 228/255, 0.42)
                     leftPadding: 24; topPadding: 15; bottomPadding: 5
-                    visible: !window.sidebarCollapsed
+                    visible: !mainApp.sidebarCollapsed
                 }
 
                 ListView {
                     id: navList
                     width: parent.width; height: parent.height - 72 - 36 - 80
                     clip: true; spacing: 1; interactive: false
-                    currentIndex: window.currentNavIndex
+                    currentIndex: mainApp.currentNavIndex
                     model: ListModel {
                         ListElement { label: "Dashboard";     icon: "dashboard" }
                         ListElement { label: "Families";      icon: "families" }
@@ -200,32 +222,33 @@ ApplicationWindow {
                                 font.weight: ListView.isCurrentItem ? Font.DemiBold : Font.Medium
                                 color: ListView.isCurrentItem ? "#ffffff" : (navMA.containsMouse ? "#d6f5e7" : "#a5dcc6")
                                 y: (34 - height) / 2
-                                visible: !window.sidebarCollapsed
+                                visible: !mainApp.sidebarCollapsed
                                 Behavior on color { ColorAnimation { duration: 140 } }
                             }
                         }
-                        MouseArea { id: navMA; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: { navList.currentIndex = index; window.currentNavIndex = index } }
+                        MouseArea { id: navMA; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: { navList.currentIndex = index; mainApp.currentNavIndex = index } }
                     }
                 }
 
-                // User profile (bottom)
+                // User profile (bottom) — uses AuthController for real user data
                 Item {
                     width: parent.width; height: 80
                     Rectangle { anchors.top: parent.top; anchors.left: parent.left; anchors.right: parent.right; height: 1; color: Qt.rgba(255,255,255,0.14) }
-                    Rectangle { x: 10; y: 9; width: profileRow.width + 8; height: profileRow.height + 8; radius: 9; color: Qt.rgba(255,255,255, profileHover.containsMouse ? 0.06 : 0); Behavior on color { ColorAnimation { duration: 120 } } z: -1; visible: !window.sidebarCollapsed }
+                    Rectangle { x: 10; y: 9; width: profileRow.width + 8; height: profileRow.height + 8; radius: 9; color: Qt.rgba(255,255,255, profileHover.containsMouse ? 0.06 : 0); Behavior on color { ColorAnimation { duration: 120 } } z: -1; visible: !mainApp.sidebarCollapsed }
                     HoverHandler { id: profileHover; cursorShape: Qt.PointingHandCursor }
+                    MouseArea { anchors.fill: parent; onClicked: AuthController.logout() }
                     Row {
-                        id: profileRow; x: 14; y: 13; spacing: 10; visible: !window.sidebarCollapsed
+                        id: profileRow; x: 14; y: 13; spacing: 10; visible: !mainApp.sidebarCollapsed
                         Rectangle { width: 36; height: 36; radius: 9; color: "#f2c14e"; border.width: 2; border.color: "#b98317"
-                            Text { anchors.centerIn: parent; text: "AK"; font.family: "Poppins"; font.pixelSize: 13; font.weight: Font.DemiBold; color: "#4a3606" } }
+                            Text { anchors.centerIn: parent; text: AuthController.initials; font.family: "Poppins"; font.pixelSize: 13; font.weight: Font.DemiBold; color: "#4a3606" } }
                         Column { spacing: 0
-                            Text { text: "Abdul Kareem"; font.family: "Poppins"; font.pixelSize: 13; font.weight: Font.DemiBold; color: "#ffffff" }
-                            Text { text: "Administrator"; font.family: "Poppins"; font.pixelSize: 11; font.weight: Font.Normal; color: "#9fd8c3" }
+                            Text { text: AuthController.fullName; font.family: "Poppins"; font.pixelSize: 13; font.weight: Font.DemiBold; color: "#ffffff" }
+                            Text { text: AuthController.role; font.family: "Poppins"; font.pixelSize: 11; font.weight: Font.Normal; color: "#9fd8c3" }
                         }
                     }
                     // Collapsed: just avatar
-                    Rectangle { anchors.centerIn: parent; visible: window.sidebarCollapsed; width: 36; height: 36; radius: 9; color: "#f2c14e"; border.width: 2; border.color: "#b98317"
-                        Text { anchors.centerIn: parent; text: "AK"; font.family: "Poppins"; font.pixelSize: 13; font.weight: Font.DemiBold; color: "#4a3606" } }
+                    Rectangle { anchors.centerIn: parent; visible: mainApp.sidebarCollapsed; width: 36; height: 36; radius: 9; color: "#f2c14e"; border.width: 2; border.color: "#b98317"
+                        Text { anchors.centerIn: parent; text: AuthController.initials; font.family: "Poppins"; font.pixelSize: 13; font.weight: Font.DemiBold; color: "#4a3606" } }
                 }
             }
         }
@@ -250,18 +273,19 @@ ApplicationWindow {
                 Row {
                     anchors.right: parent.right; anchors.rightMargin: 24; anchors.verticalCenter: parent.verticalCenter; spacing: 10
 
-                        // Language toggle (EN/ML)
+                        // Language toggle (EN/ML) — uses I18NController
                         Rectangle {
                             width: 44; height: 38; radius: 9; color: langToggleMA.containsMouse ? "#f2faf4" : "#ffffff"; border.width: 1; border.color: langToggleMA.containsMouse ? "#b2cfbd" : "#d2e5d8"
                             Behavior on color { ColorAnimation { duration: 120 } }
                             HoverHandler { id: langToggleMA; cursorShape: Qt.PointingHandCursor }
                             MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: {
+                                I18NController.toggleLanguage()
                                 if (typeof SettingsController !== "undefined") {
-                                    SettingsController.language = SettingsController.language === "en" ? "ml" : "en"
+                                    SettingsController.language = I18NController.currentLanguage
                                     SettingsController.save()
                                 }
                             } }
-                            Text { anchors.centerIn: parent; text: typeof SettingsController !== "undefined" ? (SettingsController.language === "ml" ? "ML" : "EN") : "EN"; font.family: "Poppins"; font.pixelSize: 12; font.weight: Font.DemiBold; color: "#059669" }
+                            Text { anchors.centerIn: parent; text: I18NController.isMalayalam ? "ML" : "EN"; font.family: "Poppins"; font.pixelSize: 12; font.weight: Font.DemiBold; color: "#059669" }
                         }
 
                         // Theme toggle (sun/moon)
@@ -314,7 +338,7 @@ ApplicationWindow {
             StackLayout {
                 id: pageStack
                 Layout.fillWidth: true; Layout.fillHeight: true
-                currentIndex: window.currentNavIndex
+                currentIndex: mainApp.currentNavIndex
 
                 // 0 - Dashboard
                 Loader { source: "qrc:/qml/design/DashboardPage.qml" }
@@ -366,4 +390,5 @@ ApplicationWindow {
             }
         }
     }
+    } // mainApp
 }

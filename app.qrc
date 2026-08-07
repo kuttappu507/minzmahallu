@@ -34,6 +34,8 @@
     <file alias="qml/pages/UsersPage.qml">qml/pages/UsersPage.qml</file>
     <file alias="qml/pages/AuditLogPage.qml">qml/pages/AuditLogPage.qml</file>
     <file alias="qml/pages/BackupPage.qml">qml/pages/BackupPage.qml</file>
+    <file alias="qml/pages/LoginPage.qml">qml/pages/LoginPage.qml</file>
+    <file alias="qml/pages/SplashScreen.qml">qml/pages/SplashScreen.qml</file>
     <!-- Design -->
     <file alias="qml/design/AppShell.qml">qml/design/AppShell.qml</file>
     <file alias="qml/design/DashboardPage.qml">qml/design/DashboardPage.qml</file>
@@ -43,6 +45,10 @@
     <file alias="fonts/Poppins-Medium.ttf">resources/fonts/Poppins-Medium.ttf</file>
     <file alias="fonts/Poppins-SemiBold.ttf">resources/fonts/Poppins-SemiBold.ttf</file>
     <file alias="fonts/Poppins-Bold.ttf">resources/fonts/Poppins-Bold.ttf</file>
+    <file alias="fonts/AnekMalayalam-Regular.ttf">resources/fonts/AnekMalayalam-Regular.ttf</file>
+    <file alias="fonts/AnekMalayalam-Medium.ttf">resources/fonts/AnekMalayalam-Medium.ttf</file>
+    <file alias="fonts/AnekMalayalam-SemiBold.ttf">resources/fonts/AnekMalayalam-SemiBold.ttf</file>
+    <file alias="fonts/AnekMalayalam-Bold.ttf">resources/fonts/AnekMalayalam-Bold.ttf</file>
     <!-- SQL -->
     <file alias="sql/schema.sql">sql/schema.sql</file>
     <file alias="sql/seed.sql">sql/seed.sql</file>

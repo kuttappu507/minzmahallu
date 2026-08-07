@@ -52,6 +52,8 @@
 #include "services/UserController.h"
 #include "services/AuditLogController.h"
 #include "services/MiscControllers.h"
+#include "services/AuthController.h"
+#include "services/I18NController.h"
 
 static std::ofstream g_logFile;
 
@@ -118,6 +120,11 @@ int main(int argc, char* argv[]) {
     QFontDatabase::addApplicationFont(":/fonts/Poppins-Bold.ttf");
     QFontDatabase::addApplicationFont(":/fonts/NotoSans-Regular.ttf");
     QFontDatabase::addApplicationFont(":/fonts/NotoSans-Bold.ttf");
+    // Load Anek Malayalam fonts for Malayalam language support
+    QFontDatabase::addApplicationFont(":/fonts/AnekMalayalam-Regular.ttf");
+    QFontDatabase::addApplicationFont(":/fonts/AnekMalayalam-Medium.ttf");
+    QFontDatabase::addApplicationFont(":/fonts/AnekMalayalam-SemiBold.ttf");
+    QFontDatabase::addApplicationFont(":/fonts/AnekMalayalam-Bold.ttf");
     logMsg("  Fonts OK");
 
     // Register Theme singleton
@@ -164,9 +171,9 @@ int main(int argc, char* argv[]) {
     // Skip FontManager — fonts already loaded above via QFontDatabase
     logMsg("Step 6: FontManager (skipped — fonts loaded in Step 2)");
 
-    // I18N
+    // I18N — load language from settings
     logMsg("Step 7: I18N...");
-    try { mms::I18N::instance().setLanguage("en"); logMsg("  I18N OK"); }
+    try { mms::I18N::instance().loadFromSettings(); logMsg("  I18N OK"); }
     catch (...) { logMsg("  I18N FAILED (non-fatal)"); }
 
     // Settings
@@ -215,6 +222,9 @@ int main(int argc, char* argv[]) {
     ReportController* reportController = new ReportController(&app);
     BackupController* backupController = new BackupController(&app);
     SettingsController* settingsController = new SettingsController(&app);
+
+    AuthController* authController = new AuthController(&app);
+    I18NController* i18nController = new I18NController(&app);
     logMsg("  Controllers OK");
 
     // Create QML engine
@@ -260,6 +270,8 @@ int main(int argc, char* argv[]) {
     engine.rootContext()->setContextProperty("ReportController", reportController);
     engine.rootContext()->setContextProperty("BackupController", backupController);
     engine.rootContext()->setContextProperty("SettingsController", settingsController);
+    engine.rootContext()->setContextProperty("AuthController", authController);
+    engine.rootContext()->setContextProperty("I18NController", i18nController);
 
     // Keep legacy QmlServices for backward compat during migration (other
     // modules may still reference "Services"). Can be removed once all
