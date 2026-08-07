@@ -19,7 +19,6 @@ Button {
     implicitWidth: Math.max(80, contentRow.implicitWidth + 28)
     padding: 0
     hoverEnabled: true
-    horizontalAlignment: Qt.AlignHCenter
 
     // contentItem fills the entire button (padding:0). We use an Item wrapper
     // with the Row anchored to centerIn so icon+text are centered BOTH
