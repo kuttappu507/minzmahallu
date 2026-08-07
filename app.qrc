@@ -39,7 +39,6 @@
     <!-- Design -->
     <file alias="qml/design/AppShell.qml">qml/design/AppShell.qml</file>
     <file alias="qml/design/DashboardPage.qml">qml/design/DashboardPage.qml</file>
-    <file alias="qml/design/DashboardV3.qml">qml/design/DashboardV3.qml</file>
     <!-- Fonts -->
     <file alias="fonts/Poppins-Regular.ttf">resources/fonts/Poppins-Regular.ttf</file>
     <file alias="fonts/Poppins-Medium.ttf">resources/fonts/Poppins-Medium.ttf</file>

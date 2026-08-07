@@ -50,21 +50,19 @@ jobs:
         shell: pwsh
         run: |
           mkdir dist -Force
-          Copy-Item build/MMS.exe dist/
-          & "$env:RUNNER_WORKSPACE/Qt/$env:QT_VERSION/msvc2022_64/bin/windeployqt.exe" --release --no-translations --no-system-d3d-compiler --no-opengl-sw "dist/MMS.exe"
+          Copy-Item build/mms_app.exe dist/
+          & "$env:RUNNER_WORKSPACE/Qt/$env:QT_VERSION/msvc2022_64/bin/windeployqt.exe" --release --no-translations --no-system-d3d-compiler --no-opengl-sw --qmldir "$PWD/qml" "dist/mms_app.exe"
+          Write-Host "Deployed QML runtime for mms_app.exe"
           Copy-Item "$env:RUNNER_WORKSPACE/Qt/Tools/OpenSSLv3/Win_x64/bin/libcrypto-3-x64.dll" dist/
           Copy-Item "$env:RUNNER_WORKSPACE/Qt/Tools/OpenSSLv3/Win_x64/bin/libssl-3-x64.dll" dist/
           Copy-Item "C:/vcpkg/installed/x64-windows/bin/z.dll" dist/
           
-          # Copy MSVC Runtime DLLs (msvcp140.dll, vcruntime140.dll, vcruntime140_1.dll)
-          # Without these, the app silently fails to launch on machines without VS installed
-          # Search the entire VS install for the CRT DLLs
+          # Copy MSVC Runtime DLLs
           $msvcDll = Get-ChildItem "C:\Program Files\Microsoft Visual Studio" -Recurse -Filter "msvcp140.dll" -ErrorAction SilentlyContinue | Where-Object { $_.FullName -match "x64" -and $_.FullName -match "CRT" } | Select-Object -First 1
           if ($msvcDll) {
             $crtDir = $msvcDll.DirectoryName
             Write-Host "Copying MSVC CRT from: $crtDir"
             Copy-Item "$crtDir\*.dll" dist/ -Force
-            Get-ChildItem "dist/msvcp*.dll", "dist/vcruntime*.dll" | ForEach-Object { Write-Host "  Copied: $($_.Name)" }
           } else {
             Write-Host "WARNING: MSVC CRT not found! Downloading from Microsoft..."
             Invoke-WebRequest -Uri "https://aka.ms/vs/17/release/vc_redist.x64.exe" -OutFile dist/vc_redist.x64.exe -UseBasicParsing
@@ -74,106 +72,18 @@ jobs:
           $redistExe = Get-ChildItem "C:\Program Files\Microsoft Visual Studio" -Recurse -Filter "vc_redist.x64.exe" -ErrorAction SilentlyContinue | Select-Object -First 1
           if ($redistExe) {
             Copy-Item $redistExe.FullName dist/ -Force
-            Write-Host "Included vc_redist.x64.exe"
           } else {
             if (-not (Test-Path dist/vc_redist.x64.exe)) {
               Invoke-WebRequest -Uri "https://aka.ms/vs/17/release/vc_redist.x64.exe" -OutFile dist/vc_redist.x64.exe -UseBasicParsing
-              Write-Host "Downloaded vc_redist.x64.exe from Microsoft"
             }
           }
-          
-          # ── Phase 2: QML smoke test executable ──────────────────────────
-          # Copy the QML smoke test exe into dist/ and run windeployqt with
-          # --qmldir so it deploys Qt Quick / QML runtime DLLs + QML plugins
-          # (QtQuick, QtQuick.Controls, QtQuick.Layouts, etc.) into dist/.
-          # Both exes share the same dist/ folder and its DLLs.
-          Copy-Item build/mms_qml_smoke.exe dist/
-          & "$env:RUNNER_WORKSPACE/Qt/$env:QT_VERSION/msvc2022_64/bin/windeployqt.exe" --release --no-translations --no-system-d3d-compiler --no-opengl-sw --qmldir "$PWD/qml" "dist/mms_qml_smoke.exe"
-          Write-Host "Deployed QML runtime for mms_qml_smoke.exe"
 
-          # run_smoke.bat — launcher for the QML smoke test
-          @"
-          @echo off
-          cd /d "%~dp0"
-          echo Starting MMS QML Smoke Test...
-          echo.
-          mms_qml_smoke.exe
-          echo.
-          echo mms_qml_smoke.exe exited with code %errorlevel%
-          echo.
-          echo Press any key to close...
-          pause >nul
-          "@ | Out-File dist/run_smoke.bat -Encoding ASCII
-          # ── End Phase 2 ─────────────────────────────────────────────────
-          
-          # ── Phase 3: Design Preview executable ──────────────────────────
-          # Copy the design preview exe and run windeployqt with --qmldir
-          # so it deploys any additional QML dependencies (e.g. QtQuick.Effects
-          # for MultiEffect icon tinting).
-          Copy-Item build/mms_design_preview.exe dist/
-          & "$env:RUNNER_WORKSPACE/Qt/$env:QT_VERSION/msvc2022_64/bin/windeployqt.exe" --release --no-translations --no-system-d3d-compiler --no-opengl-sw --qmldir "$PWD/qml" "dist/mms_design_preview.exe"
-          Write-Host "Deployed QML runtime for mms_design_preview.exe"
+          # Copy SQL + templates
+          Copy-Item sql dist/ -Recurse
+          mkdir dist/templates -Force
+          Copy-Item resources/templates/* dist/templates/ -Recurse
 
-          # run_design_preview.bat — launcher for the design preview
-          @"
-          @echo off
-          cd /d "%~dp0"
-          echo Starting MMS Design Preview...
-          echo.
-          mms_design_preview.exe
-          echo.
-          echo mms_design_preview.exe exited with code %errorlevel%
-          echo.
-          echo Press any key to close...
-          pause >nul
-          "@ | Out-File dist/run_design_preview.bat -Encoding ASCII
-          # ── End Phase 3 ─────────────────────────────────────────────────
-          
-          # ── Phase 3.3: DashboardV2 executable ───────────────────────────
-          Copy-Item build/mms_dashboard_v2.exe dist/
-          & "$env:RUNNER_WORKSPACE/Qt/$env:QT_VERSION/msvc2022_64/bin/windeployqt.exe" --release --no-translations --no-system-d3d-compiler --no-opengl-sw --qmldir "$PWD/qml" "dist/mms_dashboard_v2.exe"
-          Write-Host "Deployed QML runtime for mms_dashboard_v2.exe"
-
-          @"
-          @echo off
-          cd /d "%~dp0"
-          echo Starting MMS DashboardV2...
-          echo.
-          mms_dashboard_v2.exe
-          echo.
-          echo mms_dashboard_v2.exe exited with code %errorlevel%
-          echo.
-          echo Press any key to close...
-          pause >nul
-          "@ | Out-File dist/run_dashboard_v2.bat -Encoding ASCII
-          # ── End Phase 3.3 ───────────────────────────────────────────────
-          
-
-          # ── Phase 3.4: DashboardV3 executable ───────────────────────────
-          Copy-Item build/mms_dashboard_v3.exe dist/
-          & "$env:RUNNER_WORKSPACE/Qt/$env:QT_VERSION/msvc2022_64/bin/windeployqt.exe" --release --no-translations --no-system-d3d-compiler --no-opengl-sw --qmldir "$PWD/qml" "dist/mms_dashboard_v3.exe"
-          Write-Host "Deployed QML runtime for mms_dashboard_v3.exe"
-
-          @"
-          @echo off
-          cd /d "%~dp0"
-          echo Starting MMS DashboardV3...
-          echo.
-          mms_dashboard_v3.exe
-          echo.
-          echo mms_dashboard_v3.exe exited with code %errorlevel%
-          echo.
-          echo Press any key to close...
-          pause >nul
-          "@ | Out-File dist/run_dashboard_v3.bat -Encoding ASCII
-          # ── End Phase 3.4 ───────────────────────────────────────────────
-          
-
-          # ── MMS App (full QML application) ────────────────────────────────
-          Copy-Item build/mms_app.exe dist/
-          & "$env:RUNNER_WORKSPACE/Qt/$env:QT_VERSION/msvc2022_64/bin/windeployqt.exe" --release --no-translations --no-system-d3d-compiler --no-opengl-sw --qmldir "$PWD/qml" "dist/mms_app.exe"
-          Write-Host "Deployed QML runtime for mms_app.exe"
-
+          # Launcher batch file
           @"
           @echo off
           cd /d "%~dp0"
@@ -182,23 +92,6 @@ jobs:
           mms_app.exe
           echo.
           echo mms_app.exe exited with code %errorlevel%
-          echo.
-          echo Press any key to close...
-          pause >nul
-          "@ | Out-File dist/run_app.bat -Encoding ASCII
-          # ── End MMS App ───────────────────────────────────────────────────
-          
-          Copy-Item sql dist/ -Recurse
-          mkdir dist/resources -Force
-          Copy-Item resources/* dist/resources/ -Recurse
-          @"
-          @echo off
-          cd /d "%~dp0"
-          echo Starting MMS...
-          echo.
-          MMS.exe
-          echo.
-          echo MMS.exe exited with code %errorlevel%
           echo.
           if exist mms_error.log (
             echo === mms_error.log contents ===
@@ -210,6 +103,7 @@ jobs:
           echo Press any key to close...
           pause >nul
           "@ | Out-File dist/run_mms.bat -Encoding ASCII
+
           Compress-Archive dist/* MMS-portable.zip
 
       - name: Upload
