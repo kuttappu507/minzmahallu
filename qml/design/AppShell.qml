@@ -15,7 +15,7 @@ ApplicationWindow {
 
     property int currentNavIndex: 0
     property bool sidebarCollapsed: false
-    readonly property int sidebarWidth: sidebarCollapsed ? 64 : 260
+    property int sidebarWidth: sidebarCollapsed ? 64 : 260
     readonly property int contentWidth: width - sidebarWidth
 
     readonly property int responsiveColumns: {
