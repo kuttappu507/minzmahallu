@@ -22,6 +22,8 @@
 #include <QStandardPaths>
 #include <QFile>
 #include <QScreen>
+#include <QSurfaceFormat>
+#include <QColorSpace>
 #include <cstdio>
 #include <csignal>
 #include <fstream>
@@ -80,17 +82,33 @@ int main(int argc, char* argv[]) {
     AllocConsole();
     freopen("CONOUT$", "w", stdout);
     freopen("CONOUT$", "w", stderr);
-    // Qt 6 is natively Per-Monitor-V2 DPI aware on Windows.
-    // Do NOT set SetProcessDpiAwarenessContext or SetProcessDPIAware here —
-    // Qt 6 handles this automatically via its embedded application manifest.
-    // Setting it manually can conflict with Qt's own DPI handling.
+    // Qt 6 is natively Per-Monitor-V2 DPI aware on Windows via the
+    // embedded application manifest (resources/app.manifest).
+    // Do NOT call SetProcessDpiAwarenessContext — it conflicts with Qt.
 #endif
 
-    // Qt 6 handles high-DPI scaling natively.
-    // Do NOT set QT_ENABLE_HIGHDPI_SCALING, QT_AUTO_SCREEN_SCALE_FACTOR,
-    // QT_SCALE_FACTOR, or QT_SCALE_FACTOR_ROUNDING_POLICY.
-    // These are Qt 5 era env vars that conflict with Qt 6's native handling.
-    // QML dimensions remain logical pixels — Qt scales to physical pixels.
+    // ===== HIGH-DPI COLOR FIX (BEFORE QGuiApplication) =====
+    // Force explicit 8-bit RGBA channel depth and standard sRGB color space.
+    // This prevents DXGI swapchain from negotiating BGRA or extended color
+    // spaces under Windows High-DPI scaling or HDR environments, which
+    // causes Red/Blue channel swap.
+    QSurfaceFormat format;
+    format.setRedBufferSize(8);
+    format.setGreenBufferSize(8);
+    format.setBlueBufferSize(8);
+    format.setAlphaBufferSize(8);
+    format.setColorSpace(QColorSpace::SRgb);
+    QSurfaceFormat::setDefaultFormat(format);
+
+    // Fix Windows High-DPI rounding policy — PassThrough means exact scaling
+    // (e.g. 1.25x for 125%, 1.5x for 150%) — no integer rounding blur.
+    QGuiApplication::setHighDpiScaleFactorRoundingPolicy(
+        Qt::HighDpiScaleFactorRoundingPolicy::PassThrough
+    );
+
+    // RHI backend fallback — if D3D11 causes color distortion, try OpenGL.
+    // Default: let Qt choose (usually D3D11 on Windows).
+    // qputenv("QSG_RHI_BACKEND", "opengl");  // Uncomment if D3D causes issues
 
     logMsg("Step 1: Creating QGuiApplication...");
     QGuiApplication app(argc, argv);
