@@ -24,8 +24,8 @@
 
 #include <QObject>
 #include <QString>
-#include "core/I18N.h"
-#include "core/FontManager.h"
+#include "../core/I18N.h"
+#include "../core/FontManager.h"
 
 class I18NController : public QObject {
     Q_OBJECT
