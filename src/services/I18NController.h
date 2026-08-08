@@ -25,9 +25,12 @@ public:
     bool isMalayalam() const { return currentLanguage() == "ml"; }
 
     Q_INVOKABLE QString tr(const QString& key) const {
-        // Tell Qt that this function is a translation binding. When the QML
-        // engine's uiLanguage changes, every binding calling tr() is reevaluated.
-        QQmlEngine::markCurrentFunctionAsTranslationBinding();
+        // In Qt 6.8 this is an instance method, not a static method.
+        // Mark the current QML function as a translation binding so Qt can
+        // reevaluate bindings when uiLanguage changes.
+        if (QQmlEngine* engine = qmlEngine(const_cast<I18NController*>(this))) {
+            engine->markCurrentFunctionAsTranslationBinding();
+        }
         return mms::I18N::instance().tr(key);
     }
 
@@ -38,8 +41,7 @@ public:
         mms::SettingsService::instance().setLanguage(code);
 
         // Keep Qt Quick's translation binding system in sync with the
-        // application's existing catalog. This is what causes all QML
-        // tr() bindings (including sidebar delegates) to update live.
+        // application's existing catalog.
         if (QQmlEngine* engine = qmlEngine(this)) {
             engine->setUiLanguage(code);
         }
