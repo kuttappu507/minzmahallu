@@ -29,12 +29,16 @@ Item {
     }
 
     ScrollView {
+        id: scrollView
         anchors.fill: parent
         clip: true
         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
 
         ColumnLayout {
-            width: parent.width
+            // Never bind to the Flickable contentItem's parent width. That
+            // creates a circular contentWidth dependency and can collapse the
+            // page at certain window sizes/DPI factors.
+            width: scrollView.width
             spacing: Theme.spaceLg
 
             Column {
@@ -100,7 +104,11 @@ Item {
                                                 width: parent.width; height: 34; padding: 0
                                                 contentItem: Text { text: modelData; font.family: Theme.fontFamily; font.pixelSize: Theme.fontSizeMd; color: Theme.textPrimary; anchors.left: parent.left; anchors.leftMargin: 8; anchors.verticalCenter: parent.verticalCenter }
                                                 background: Rectangle { color: highlighted ? Theme.primarySubtle : "transparent"; radius: Theme.radiusSm }
-                                                onClicked: { SettingsController.theme = modelData; themePopup.visible = false }
+                                                onClicked: {
+                                                    SettingsController.theme = modelData
+                                                    SettingsController.save()
+                                                    themePopup.visible = false
+                                                }
                                             }
                                         }
                                     }
@@ -113,7 +121,7 @@ Item {
                                 Layout.fillWidth: true; height: 38; radius: Theme.radiusXl; color: Theme.surfaceSubtle; border.width: 1; border.color: langMA.containsMouse ? Theme.borderHover : Theme.border
                                 Behavior on border.color { ColorAnimation { duration: Theme.animFast } }
                                 MouseArea { id: langMA; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: langPopup.visible = !langPopup.visible }
-                                Text { anchors.left: parent.left; anchors.leftMargin: 10; anchors.verticalCenter: parent.verticalCenter; text: SettingsController.language === "ml" ? "Malayalam" : "English"; font.family: Theme.fontFamily; font.pixelSize: Theme.fontSizeMd; color: Theme.textPrimary }
+                                Text { anchors.left: parent.left; anchors.leftMargin: 10; anchors.verticalCenter: parent.verticalCenter; text: I18NController.isMalayalam ? "Malayalam" : "English"; font.family: Theme.fontFamily; font.pixelSize: Theme.fontSizeMd; color: Theme.textPrimary }
                                 Popup {
                                     id: langPopup; y: parent.height + 4; width: parent.width; padding: 4
                                     background: Rectangle { color: Theme.surfaceRaised; border.width: 1; border.color: Theme.border; radius: Theme.radiusXl }
@@ -124,8 +132,9 @@ Item {
                                                 contentItem: Text { text: modelData.l; font.family: Theme.fontFamily; font.pixelSize: Theme.fontSizeMd; color: Theme.textPrimary; anchors.left: parent.left; anchors.leftMargin: 8; anchors.verticalCenter: parent.verticalCenter }
                                                 background: Rectangle { color: highlighted ? Theme.primarySubtle : "transparent"; radius: Theme.radiusSm }
                                                 onClicked: {
-                                                    SettingsController.language = modelData.v
                                                     I18NController.setLanguage(modelData.v)
+                                                    SettingsController.language = modelData.v
+                                                    SettingsController.save()
                                                     langPopup.visible = false
                                                 }
                                             }
@@ -146,7 +155,7 @@ Item {
                     Text { text: "Backup"; font.family: Theme.fontFamily; font.pixelSize: Theme.fontSizeLg - 1; font.weight: Theme.fontWeightSemiBold; color: Theme.textPrimary }
                     RowLayout { Layout.fillWidth: true; spacing: Theme.spaceLg
                         Text { text: "Auto Backup"; font.family: Theme.fontFamily; font.pixelSize: Theme.fontSizeMd - 1; color: Theme.textSecondary; Layout.alignment: Qt.AlignVCenter }
-                        Switch { id: autoBackupSwitch; onCheckedChanged: SettingsController.autoBackup = checked }
+                        Switch { id: autoBackupSwitch; onCheckedChanged: if (SettingsController.autoBackup !== checked) SettingsController.autoBackup = checked }
                         AppTextField { id: intervalField; Layout.fillWidth: true; label: "Interval (hours)"; onTextChanged: { var v = parseInt(text); if (!isNaN(v) && v > 0) SettingsController.backupIntervalHours = v } }
                     }
                 }
