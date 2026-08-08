@@ -51,7 +51,7 @@ public:
         if (mms::I18N::instance().currentLanguage() == code) return;
         mms::I18N::instance().setLanguage(code);
         // Apply the correct font for the language
-        FontManager::instance().applyFont(code);
+        mms::FontManager::instance().applyFont(code);
         ++revision_;
         emit languageChanged();
     }
