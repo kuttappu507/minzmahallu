@@ -16,7 +16,6 @@ ApplicationWindow {
     title: "Minz Mahallu Management System"
     color: Theme.canvas
 
-    // Public window-level metrics used by route components.
     readonly property int sidebarWidth: mainApp.sidebarWidth
     readonly property int contentWidth: width - sidebarWidth
     readonly property int responsiveColumns: {
@@ -46,7 +45,6 @@ ApplicationWindow {
         id: mainApp
         anchors.fill: parent
         visible: !splashScreen.visible && AuthController.isLoggedIn
-
         property int currentNavIndex: 0
         property bool sidebarCollapsed: false
         property int sidebarWidth: sidebarCollapsed ? 64 : 260
@@ -65,7 +63,9 @@ ApplicationWindow {
                 Layout.preferredWidth: mainApp.sidebarWidth
                 Layout.minimumWidth: mainApp.sidebarWidth
                 color: Theme.sidebarMid
-                clip: true
+                // The collapse flap intentionally overlaps the sidebar edge.
+                // Do not clip it; clipping was the reason it was half-hidden.
+                clip: false
 
                 gradient: Gradient {
                     orientation: Gradient.Vertical
@@ -87,14 +87,7 @@ ApplicationWindow {
                             Rectangle {
                                 width: 38; height: 38; radius: 14
                                 color: Qt.rgba(255,255,255,0.14)
-                                Text {
-                                    anchors.centerIn: parent
-                                    text: "M"
-                                    font.family: Theme.fontFamily
-                                    font.pixelSize: 16
-                                    font.weight: Font.Bold
-                                    color: Theme.sidebarLogo
-                                }
+                                Text { anchors.centerIn: parent; text: "M"; font.family: Theme.fontFamily; font.pixelSize: 16; font.weight: Font.Bold; color: Theme.sidebarLogo }
                             }
                             Column {
                                 spacing: 0
@@ -114,7 +107,7 @@ ApplicationWindow {
                     Text {
                         width: parent.width
                         height: 28
-                        text: "OVERVIEW"
+                        text: I18NController.isMalayalam ? "അവലോകനം" : "OVERVIEW"
                         font.family: Theme.fontFamily
                         font.pixelSize: 9
                         font.weight: Font.Medium
@@ -156,21 +149,17 @@ ApplicationWindow {
                             width: navList.width - 20
                             height: 34
                             x: 10
-
                             Rectangle {
                                 anchors.fill: parent
                                 radius: 7
                                 color: ListView.isCurrentItem ? Qt.rgba(255,255,255,0.14) : (navMA.containsMouse ? Qt.rgba(255,255,255,0.06) : "transparent")
                                 Behavior on color { ColorAnimation { duration: Theme.animNormal } }
                                 Rectangle {
-                                    x: -10
-                                    y: 7
-                                    width: 4; height: 20; radius: 4
+                                    x: -10; y: 7; width: 4; height: 20; radius: 4
                                     color: "#f2c14e"
                                     visible: ListView.isCurrentItem
                                 }
                             }
-
                             Row {
                                 x: 13; width: parent.width - 13; height: 34; spacing: 12
                                 Item {
@@ -185,7 +174,6 @@ ApplicationWindow {
                                     }
                                 }
                                 Text {
-                                    Layout.fillWidth: true
                                     width: parent.width - 29
                                     text: I18NController.tr(model.key)
                                     font.family: Theme.fontFamily
@@ -197,7 +185,6 @@ ApplicationWindow {
                                     anchors.verticalCenter: parent.verticalCenter
                                 }
                             }
-
                             MouseArea {
                                 id: navMA
                                 anchors.fill: parent
@@ -240,16 +227,18 @@ ApplicationWindow {
                     }
                 }
 
-                // Fully inside the sidebar and vertically centered. The previous
-                // version deliberately crossed the clipped edge and was cut off.
                 Rectangle {
                     id: collapseButton
-                    x: sidebar.width - width - 6
+                    // The flap overlaps the sidebar edge by 12px and is always
+                    // centered against the actual sidebar height.
+                    x: sidebar.width - 12
                     y: Math.round((sidebar.height - height) / 2)
                     width: 24; height: 48; radius: 8
                     z: 100
                     color: collapseMA.containsMouse ? "#f2c14e" : Theme.surfaceRaised
                     border.width: 1; border.color: Theme.border
+                    Behavior on x { NumberAnimation { duration: Theme.animSlow; easing.type: Easing.OutCubic } }
+                    Behavior on y { NumberAnimation { duration: Theme.animSlow; easing.type: Easing.OutCubic } }
                     Behavior on color { ColorAnimation { duration: Theme.animFast } }
                     Text {
                         anchors.centerIn: parent
@@ -279,7 +268,6 @@ ApplicationWindow {
                     Layout.preferredHeight: 58
                     color: Theme.surface
                     Rectangle { anchors.bottom: parent.bottom; width: parent.width; height: 1; color: Theme.border }
-
                     Row {
                         anchors.left: parent.left
                         anchors.leftMargin: 24
@@ -291,13 +279,11 @@ ApplicationWindow {
                             font.family: Theme.fontFamily; font.pixelSize: 16; font.weight: Font.DemiBold; color: Theme.textPrimary
                         }
                     }
-
                     Row {
                         anchors.right: parent.right
                         anchors.rightMargin: 24
                         anchors.verticalCenter: parent.verticalCenter
                         spacing: 10
-
                         Rectangle {
                             width: 44; height: 38; radius: 9
                             color: langMA.containsMouse ? Theme.surfaceHover : Theme.surface
@@ -305,14 +291,9 @@ ApplicationWindow {
                             Text { anchors.centerIn: parent; text: I18NController.isMalayalam ? "ML" : "EN"; font.family: Theme.fontFamily; font.pixelSize: 12; font.weight: Font.DemiBold; color: Theme.primary }
                             MouseArea {
                                 id: langMA; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
-                                onClicked: {
-                                    I18NController.toggleLanguage()
-                                    SettingsController.language = I18NController.currentLanguage
-                                    SettingsController.save()
-                                }
+                                onClicked: I18NController.toggleLanguage()
                             }
                         }
-
                         Rectangle {
                             width: 38; height: 38; radius: 9
                             color: themeMA.containsMouse ? Theme.surfaceHover : Theme.surface
@@ -326,7 +307,6 @@ ApplicationWindow {
                                 }
                             }
                         }
-
                         Rectangle {
                             width: 250; height: 38; radius: 9
                             color: Theme.surfaceSubtle
@@ -345,7 +325,6 @@ ApplicationWindow {
                                 }
                                 TextField {
                                     id: searchInput
-                                    Layout.fillWidth: true
                                     width: parent.width - 23
                                     anchors.verticalCenter: parent.verticalCenter
                                     placeholderText: I18NController.isMalayalam ? "തിരയുക..." : "Search records..."
@@ -391,8 +370,6 @@ ApplicationWindow {
     }
 
     Component.onCompleted: {
-        // Theme.dark is derived directly from SettingsController.theme.
-        // Do not call a mutable Theme setter here.
         I18NController.setLanguage(SettingsController.language)
     }
 }
