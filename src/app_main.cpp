@@ -21,6 +21,7 @@
 #include <QDir>
 #include <QStandardPaths>
 #include <QFile>
+#include <QScreen>
 #include <cstdio>
 #include <csignal>
 #include <fstream>
