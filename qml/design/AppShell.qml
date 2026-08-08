@@ -139,12 +139,15 @@ ApplicationWindow {
                     }
                 }
 
-                // Collapse/expand flap button (centered at the right edge)
+                // Collapse/expand flap button — centered vertically on right edge of sidebar
                 Rectangle {
                     width: 24; height: 48; radius: 8
                     color: collapseMA.containsMouse ? "#f2c14e" : "#ffffff"
                     border.width: 1; border.color: Theme.border
-                    x: parent.width - 12; y: parent.height / 2 - 24
+                    // Position: right edge of sidebar (x = sidebar width - 12 = half button outside)
+                    // Vertically centered on the FULL sidebar height
+                    anchors.right: parent.right; anchors.rightMargin: -12
+                    anchors.verticalCenter: parent.verticalCenter
                     z: 100
                     Behavior on color { ColorAnimation { duration: 120 } }
 
@@ -213,7 +216,7 @@ ApplicationWindow {
                                 Image { id: navIcon; source: "qrc:/icons/svg/" + model.icon + ".svg"; sourceSize: Qt.size(17, 17); anchors.fill: parent; fillMode: Image.Pad; visible: false }
                                 MultiEffect {
                                     anchors.fill: parent; source: navIcon
-                                    colorizationColor: ListView.isCurrentItem ? "#ffffff" : (navMA.containsMouse ? "#d6f5e7" : "#a5dcc6")
+                                    colorizationColor: ListView.isCurrentItem ? "#ffffff" : (navMA.containsMouse ? "#ffffff" : "#ffffff")
                                     colorization: 1.0
                                     Behavior on colorizationColor { ColorAnimation { duration: 140 } }
                                 }
@@ -223,7 +226,7 @@ ApplicationWindow {
                                 text: { var _l = I18NController.currentLanguage; return I18NController.tr(model.i18nKey) }
                                 font.family: Theme.activeFontFamily; font.pixelSize: 13
                                 font.weight: ListView.isCurrentItem ? Font.DemiBold : Font.Medium
-                                color: ListView.isCurrentItem ? "#ffffff" : (navMA.containsMouse ? "#d6f5e7" : "#a5dcc6")
+                                color: ListView.isCurrentItem ? "#ffffff" : (navMA.containsMouse ? "#ffffff" : "#ffffff")
                                 y: (34 - height) / 2
                                 visible: !mainApp.sidebarCollapsed
                                 Behavior on color { ColorAnimation { duration: 140 } }

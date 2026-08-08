@@ -122,7 +122,7 @@ Item {
 
             Item { Layout.fillWidth: true }
             Text {
-                text: "Showing " + donationModel.rowCount + " of " + donationModel.totalCount
+                text: { var _l = I18NController.currentLanguage; return I18NController.tr("ui_records") + ": " + donationModel.rowCount + " / " + donationModel.totalCount }
                 font.family: Theme.activeFontFamily; font.pixelSize: 11; color: Theme.textTertiary
                 Layout.alignment: Qt.AlignVCenter
             }

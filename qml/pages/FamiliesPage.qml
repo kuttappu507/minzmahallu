@@ -89,7 +89,7 @@ Item {
                     font.family: Theme.activeFontFamily; font.pixelSize: 21; font.weight: Font.DemiBold; color: Theme.textPrimary
                 }
                 Text {
-                    text: "Manage all registered families in the mahallu"
+                    text: { var _l = I18NController.currentLanguage; return I18NController.tr("family_subtitle") }
                     font.family: Theme.activeFontFamily; font.pixelSize: 12; font.weight: Font.Normal; color: Theme.textSecondary
                 }
             }
@@ -166,7 +166,7 @@ Item {
 
             // Count label
             Text {
-                text: "Showing " + familyModel.rowCount + " of " + familyModel.totalCount
+                text: { var _l = I18NController.currentLanguage; return I18NController.tr("ui_records") + ": " + familyModel.rowCount + " / " + familyModel.totalCount }
                 font.family: Theme.activeFontFamily; font.pixelSize: 11; color: Theme.textTertiary
                 Layout.alignment: Qt.AlignVCenter
             }

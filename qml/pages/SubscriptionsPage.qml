@@ -97,7 +97,7 @@ Item {
             }
 
             AppButton {
-                text: "Mark Overdue"; variant: "secondary"; iconName: "alert"
+                text: { var _l = I18NController.currentLanguage; return I18NController.tr("sub_mark_overdue") }; variant: "secondary"; iconName: "alert"
                 onClicked: {
                     var count = subscriptionController.markOverdue()
                     subscriptionModel.refresh()
@@ -108,7 +108,7 @@ Item {
             Item { Layout.fillWidth: true }
 
             Text {
-                text: "Showing " + subscriptionModel.rowCount + " of " + subscriptionModel.totalCount
+                text: { var _l = I18NController.currentLanguage; return I18NController.tr("ui_records") + ": " + subscriptionModel.rowCount + " / " + subscriptionModel.totalCount }
                 font.family: Theme.activeFontFamily; font.pixelSize: 11; color: Theme.textTertiary
                 Layout.alignment: Qt.AlignVCenter
             }

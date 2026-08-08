@@ -67,7 +67,7 @@ ScrollView {
                         Layout.fillWidth: true
                         Layout.leftMargin: 18
                         Layout.rightMargin: 18
-                        columns: window.responsiveColumns
+                        columns: mainApp.responsiveColumns
                         columnSpacing: 12
                         rowSpacing: 12
 
@@ -104,7 +104,6 @@ ScrollView {
                                     Rectangle {
                                         width: 42; height: 42; radius: 9
                                         color: model.sc
-                                        scale: qaMA.containsMouse ? 1.02 : 1.0
                                         Behavior on scale { NumberAnimation { duration: 160; easing.type: Easing.OutCubic } }
 
                                         Item {
@@ -178,7 +177,7 @@ ScrollView {
                         Layout.fillWidth: true
                         Layout.leftMargin: 18
                         Layout.rightMargin: 18
-                        columns: window.responsiveColumns
+                        columns: mainApp.responsiveColumns
                         columnSpacing: 12
                         rowSpacing: 12
 
@@ -248,7 +247,6 @@ ScrollView {
                                         Rectangle {
                                             width: 37; height: 37; radius: 9
                                             color: model.sc
-                                            scale: statHover.hovered ? 1.02 : 1.0
                                             Behavior on scale { NumberAnimation { duration: 180; easing.type: Easing.OutCubic } }
 
                                             Item {

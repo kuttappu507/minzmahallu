@@ -87,6 +87,7 @@ void I18N::initTranslations() {
     ADD("dash_chart_income_expense","Income vs Expense","വരുമാനം vs ചെലവ്");
     ADD("dash_chart_membership_growth","Membership Growth","അംഗത്വ വളർച്ച");
     ADD("family_title","Family Management","കുടുംബ ഭരണം");
+    ADD("family_subtitle","Manage all registered families in the mahallu","മഹല്ലിലെ എല്ലാ രജിസ്റ്റർ ചെയ്ത കുടുംബങ്ങളെ കൈകാര്യം ചെയ്യുക");
     ADD("family_number","Family No","കുടുംബ നമ്പർ");
     ADD("family_house_name","House Name","വീടിന്റെ പേര്");
     ADD("family_house_number","House Number","വീട്ട് നമ്പർ");
@@ -106,6 +107,7 @@ void I18N::initTranslations() {
     ADD("family_delete_confirm","Permanently delete this family?","ഈ കുടുംബം എന്നെന്നേക്കുമായി ഇല്ലാതാക്കണമോ?");
     ADD("family_search_placeholder","Search by family no, house name, phone, area...","കുടുംബ നമ്പർ, വീടിന്റെ പേര്, ഫോൺ എന്നിവ ഉപയോഗിച്ച് തിരയുക...");
     ADD("member_title","Member Management","അംഗ ഭരണം");
+    ADD("member_subtitle","Manage all registered members in the mahallu","മഹല്ലിലെ എല്ലാ രജിസ്റ്റർ ചെയ്ത അംഗങ്ങളെ കൈകാര്യം ചെയ്യുക");
     ADD("member_code","Code","കോഡ്");
     ADD("member_name","Name","പേര്");
     ADD("member_arabic_name","Arabic Name","അറബി പേര്");

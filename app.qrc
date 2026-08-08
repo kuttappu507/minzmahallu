@@ -88,5 +88,6 @@
     <file alias="icons/svg/print.svg">resources/icons/svg/print.svg</file>
     <file alias="icons/svg/sun.svg">resources/icons/svg/sun.svg</file>
     <file alias="icons/svg/moon.svg">resources/icons/svg/moon.svg</file>
+    <file alias="icons/svg/key.svg">resources/icons/svg/key.svg</file>
 </qresource>
 </RCC>
