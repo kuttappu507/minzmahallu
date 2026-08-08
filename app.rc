@@ -1,4 +1,3 @@
 // Windows application resources.
-// Embed the Per-Monitor-V2 application manifest so Windows establishes the
-// correct DPI awareness before Qt creates the application object.
-1 RT_MANIFEST "app.manifest"
+// The manifest is supplied to the MSVC linker via /MANIFESTINPUT in CMake.
+// Do not embed a second RT_MANIFEST resource here.
