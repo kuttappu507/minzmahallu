@@ -61,11 +61,19 @@ file(GLOB_RECURSE APP_HEADERS
 )
 
 # -----------------------------------------------------------------------------
-# Windows resource file (app icon)
+# Windows resource file — embeds DPI-aware manifest (PerMonitorV2)
+# Without this, Windows applies DWM bitmap scaling → blurry text on high-DPI.
 # -----------------------------------------------------------------------------
 set(APP_RC_FILE "")
 if(WIN32)
-    set(APP_RC_FILE "")
+    # Get native manifest path for RC compiler (backslashes on Windows)
+    file(TO_NATIVE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/resources/app.manifest" MANIFEST_PATH)
+    configure_file(
+        "${CMAKE_CURRENT_SOURCE_DIR}/resources/app.rc.in"
+        "${CMAKE_CURRENT_BINARY_DIR}/app.rc"
+        @ONLY
+    )
+    set(APP_RC_FILE "${CMAKE_CURRENT_BINARY_DIR}/app.rc")
 endif()
 
 # -----------------------------------------------------------------------------

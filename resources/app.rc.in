@@ -1,0 +1,6 @@
+// app.rc.in — configured by CMake to embed the DPI-aware manifest
+// The @MANIFEST_PATH@ is replaced with the absolute path to app.manifest
+// 1 = CREATEPROCESS_MANIFEST_RESOURCE_ID
+// 24 = RT_MANIFEST resource type
+
+1 24 "@MANIFEST_PATH@"
