@@ -61,11 +61,11 @@ file(GLOB_RECURSE APP_HEADERS
 )
 
 # -----------------------------------------------------------------------------
-# Windows resource file (app icon)
+# Windows resource file (app icon + manifest)
 # -----------------------------------------------------------------------------
 set(APP_RC_FILE "")
 if(WIN32)
-    set(APP_RC_FILE "")
+    set(APP_RC_FILE "${CMAKE_CURRENT_SOURCE_DIR}/app.manifest")
 endif()
 
 # -----------------------------------------------------------------------------
