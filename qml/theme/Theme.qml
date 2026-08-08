@@ -3,18 +3,14 @@ import QtQuick
 
 // ============================================================================
 // Theme.qml — Minz Mahallu Design System
-// Centralized light/dark palette. Components should consume these tokens
-// instead of embedding page-specific surface/text colors.
+// Single source of truth for palette, typography and layout tokens.
 // ============================================================================
 
 QtObject {
     readonly property bool dark: typeof SettingsController !== "undefined" && SettingsController.theme === "dark"
 
-    // Compatibility shim for older AppShell code. The theme is now derived
-    // directly from SettingsController.theme, so no mutable theme state is needed.
     function setDark(_enabled) { }
 
-    // Canvas / surfaces
     readonly property color canvas:        dark ? "#111827" : "#e7f4ea"
     readonly property color canvasAlt:     dark ? "#0f172a" : "#eef8f1"
     readonly property color surface:       dark ? "#1f2937" : "#ffffff"
@@ -23,7 +19,6 @@ QtObject {
     readonly property color surfaceSubtle: dark ? "#182231" : "#f2faf4"
     readonly property color surfaceRaised: dark ? "#243044" : "#ffffff"
 
-    // Sidebar
     readonly property color sidebarTop:    dark ? "#064e3b" : "#0a7f5d"
     readonly property color sidebarMid:    dark ? "#053d2e" : "#065f46"
     readonly property color sidebarBot:    dark ? "#03291f" : "#044633"
@@ -37,7 +32,6 @@ QtObject {
     readonly property color sidebarSubTitle: dark ? "#91cbb7" : "#a5dcc6"
     readonly property color sidebarBg:     dark ? "#053d2e" : "#065f46"
 
-    // Brand / accents
     readonly property color primary:       "#059669"
     readonly property color primaryHover:  "#047857"
     readonly property color primaryPressed:"#036049"
@@ -65,7 +59,6 @@ QtObject {
     readonly property color coralSubtle:   dark ? "#4c0519" : "#fff1f2"
     readonly property color coralSubtleAlt:dark ? "#881337" : "#fecdd3"
 
-    // Semantic
     readonly property color success:       "#10b981"
     readonly property color successSubtle: dark ? "#063b2d" : "#ecfdf5"
     readonly property color warning:       "#f59e0b"
@@ -76,7 +69,6 @@ QtObject {
     readonly property color info:          "#0ea5e9"
     readonly property color infoSubtle:    dark ? "#082f49" : "#f0f9ff"
 
-    // Text
     readonly property color textPrimary:   dark ? "#e5e7eb" : "#12241b"
     readonly property color textSecondary: dark ? "#a7b4c2" : "#4f6b5c"
     readonly property color textTertiary:  dark ? "#7f8ea3" : "#7e968a"
@@ -85,14 +77,15 @@ QtObject {
     readonly property color textOnDark:    "#ffffff"
     readonly property color textInverse:   dark ? "#111827" : "#ffffff"
 
-    // Borders
     readonly property color border:        dark ? "#334155" : "#d2e5d8"
     readonly property color borderHover:   dark ? "#475569" : "#b2cfbd"
     readonly property color borderFocused: "#059669"
     readonly property color borderSubtle:  dark ? "#263548" : "#d2e5d8"
 
-    // Typography
-    readonly property string fontFamily: "Poppins"
+    // Poppins remains the English/UI baseline. When Malayalam is selected,
+    // all shared controls automatically use the bundled Anek Malayalam face,
+    // which has proper Malayalam glyph metrics instead of relying on fallback.
+    readonly property string fontFamily: (typeof I18NController !== "undefined" && I18NController.isMalayalam) ? "Anek Malayalam" : "Poppins"
     readonly property string fontFamilyDisplay: "Poppins"
     readonly property string fontFamilyMono: "Cascadia Code"
     readonly property int fontSizeXs: 11
@@ -108,7 +101,6 @@ QtObject {
     readonly property int fontWeightSemiBold: Font.DemiBold
     readonly property int fontWeightBold: Font.Bold
 
-    // Layout tokens
     readonly property int spaceXs: 4
     readonly property int spaceSm: 8
     readonly property int spaceMd: 12
