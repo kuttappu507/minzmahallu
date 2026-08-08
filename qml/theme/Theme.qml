@@ -10,6 +10,10 @@ import QtQuick
 QtObject {
     readonly property bool dark: typeof SettingsController !== "undefined" && SettingsController.theme === "dark"
 
+    // Compatibility shim for older AppShell code. The theme is now derived
+    // directly from SettingsController.theme, so no mutable theme state is needed.
+    function setDark(_enabled) { }
+
     // Canvas / surfaces
     readonly property color canvas:        dark ? "#111827" : "#e7f4ea"
     readonly property color canvasAlt:     dark ? "#0f172a" : "#eef8f1"
