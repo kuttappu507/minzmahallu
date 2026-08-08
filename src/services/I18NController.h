@@ -1,15 +1,13 @@
 /*
  * I18NController.h — QML-facing controller for internationalization.
- * Wraps existing I18N singleton. Exposes tr() and setLanguage() to QML.
- * Emits languageChanged so QML bindings re-evaluate.
- *
- * Language changes are also forwarded to SettingsService so the selected
- * language is immediately persisted and remains consistent with Config/I18N.
+ * Keeps the existing translation catalog as the single source of truth
+ * and makes QML translation bindings react immediately to language changes.
  */
 #pragma once
 
 #include <QObject>
 #include <QString>
+#include <QQmlEngine>
 #include "core/I18N.h"
 #include "SettingsService.h"
 
@@ -20,7 +18,6 @@ class I18NController : public QObject {
 
 public:
     explicit I18NController(QObject* parent = nullptr) : QObject(parent) {
-        // Load the persisted language before QML starts evaluating bindings.
         mms::I18N::instance().loadFromSettings();
     }
 
@@ -28,6 +25,9 @@ public:
     bool isMalayalam() const { return currentLanguage() == "ml"; }
 
     Q_INVOKABLE QString tr(const QString& key) const {
+        // Tell Qt that this function is a translation binding. When the QML
+        // engine's uiLanguage changes, every binding calling tr() is reevaluated.
+        QQmlEngine::markCurrentFunctionAsTranslationBinding();
         return mms::I18N::instance().tr(key);
     }
 
@@ -35,9 +35,15 @@ public:
         if (code != "en" && code != "ml") return;
         if (mms::I18N::instance().currentLanguage() == code) return;
 
-        // Keep all three layers in sync: persistent config, font selection,
-        // and the live translation singleton.
         mms::SettingsService::instance().setLanguage(code);
+
+        // Keep Qt Quick's translation binding system in sync with the
+        // application's existing catalog. This is what causes all QML
+        // tr() bindings (including sidebar delegates) to update live.
+        if (QQmlEngine* engine = qmlEngine(this)) {
+            engine->setUiLanguage(code);
+        }
+
         emit languageChanged();
     }
 
