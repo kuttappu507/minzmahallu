@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Controls
+import MMS.Theme 1.0
 import QtQuick.Layouts
 
 // ============================================================================
@@ -70,7 +71,7 @@ ApplicationWindow {
         width: root.modalWidth
         height: root.modalHeight
         radius: 12
-        color: "#ffffff"
+        color: Theme.surface
         clip: true
 
         // Background MouseArea — swallows clicks on the card background

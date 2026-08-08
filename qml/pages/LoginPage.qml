@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Controls
+import MMS.Theme 1.0
 import QtQuick.Layouts
 import QtQuick.Effects
 import "../components"
@@ -18,7 +19,7 @@ Item {
         gradient: Gradient {
             orientation: Gradient.Vertical
             GradientStop { position: 0.0;  color: "#0a7f5d" }
-            GradientStop { position: 0.42; color: "#065f46" }
+            GradientStop { position: 0.42; color: Theme.primaryPressed }
             GradientStop { position: 1.0;  color: "#044633" }
         }
     }
@@ -28,7 +29,7 @@ Item {
         id: loginCard
         anchors.centerIn: parent
         width: 420; height: 460
-        radius: 16; color: "#ffffff"
+        radius: 16; color: Theme.surface
 
         // Subtle shadow
         Rectangle {
@@ -45,20 +46,20 @@ Item {
                 Layout.fillWidth: true; Layout.preferredHeight: 60
                 Rectangle {
                     anchors.centerIn: parent; width: 56; height: 56; radius: 20
-                    color: "#059669"
-                    Text { anchors.centerIn: parent; text: "M"; font.family: "Poppins"; font.pixelSize: 28; font.weight: Font.Bold; color: "#ffffff" }
+                    color: Theme.primary
+                    Text { anchors.centerIn: parent; text: "M"; font.family: Theme.activeFontFamily; font.pixelSize: 28; font.weight: Font.Bold; color: Theme.surface }
                 }
             }
 
             // Title
             Text {
                 text: "Minz Mahallu"
-                font.family: "Anek Malayalam"; font.pixelSize: 20; font.weight: Font.Bold; color: "#12241b"
+                font.family: "Anek Malayalam"; font.pixelSize: 20; font.weight: Font.Bold; color: Theme.textPrimary
                 Layout.alignment: Qt.AlignHCenter
             }
             Text {
                 text: "Management System"
-                font.family: "Poppins"; font.pixelSize: 12; color: "#7e968a"
+                font.family: Theme.activeFontFamily; font.pixelSize: 12; color: Theme.textTertiary
                 Layout.alignment: Qt.AlignHCenter
                 Layout.topMargin: -12
             }
@@ -66,8 +67,8 @@ Item {
             // Error banner
             Rectangle {
                 Layout.fillWidth: true; visible: errorText.text !== ""
-                height: 36; radius: 8; color: "#fddfe5"; border.width: 1; border.color: "#e11d48"
-                Text { id: errorText; anchors.fill: parent; anchors.margins: 8; verticalAlignment: Text.AlignVCenter; font.family: "Poppins"; font.pixelSize: 12; color: "#95102e"; elide: Text.ElideRight }
+                height: 36; radius: 8; color: Theme.coralSubtle; border.width: 1; border.color: Theme.danger
+                Text { id: errorText; anchors.fill: parent; anchors.margins: 8; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: 12; color: "#95102e"; elide: Text.ElideRight }
             }
 
             // Username field
@@ -82,9 +83,9 @@ Item {
             // Password field
             ColumnLayout {
                 Layout.fillWidth: true; spacing: 4
-                Text { text: "Password"; font.family: "Poppins"; font.pixelSize: 11; font.weight: Font.Medium; color: "#7e968a" }
+                Text { text: "Password"; font.family: Theme.activeFontFamily; font.pixelSize: 11; font.weight: Font.Medium; color: Theme.textTertiary }
                 Rectangle {
-                    Layout.fillWidth: true; height: 38; radius: 9; color: "#f2faf4"; border.width: 1
+                    Layout.fillWidth: true; height: 38; radius: 9; color: Theme.surfaceHover; border.width: 1
                     border.color: passwordField.activeFocus ? "#059669" : (pwdHover.containsMouse ? "#b2cfbd" : "#d2e5d8")
                     Behavior on border.color { ColorAnimation { duration: 120 } }
                     HoverHandler { id: pwdHover; cursorShape: Qt.IBeamCursor }
@@ -93,7 +94,7 @@ Item {
                         anchors.fill: parent; anchors.leftMargin: 10; anchors.rightMargin: 38
                         verticalAlignment: Text.AlignVCenter
                         placeholderText: "Enter password"; placeholderTextColor: "#7e968a"
-                        font.family: "Poppins"; font.pixelSize: 13; color: "#12241b"
+                        font.family: Theme.activeFontFamily; font.pixelSize: 13; color: Theme.textPrimary
                         echoMode: showPassword.checked ? TextInput.Normal : TextInput.Password
                         background: Item {}
                         onTextChanged: errorText.text = ""
@@ -110,7 +111,7 @@ Item {
                             width: 18; height: 18; radius: 4; anchors.centerIn: parent
                             color: showPassword.checked ? "#059669" : "transparent"
                             border.width: 1; border.color: showPassword.checked ? "#059669" : "#d2e5d8"
-                            Text { anchors.centerIn: parent; text: showPassword.checked ? "\u{1F441}" : "\u25CF"; font.pixelSize: 10; color: "#ffffff"; visible: showPassword.checked }
+                            Text { anchors.centerIn: parent; text: showPassword.checked ? "\u{1F441}" : "\u25CF"; font.pixelSize: 10; color: Theme.surface; visible: showPassword.checked }
                         }
                     }
                 }
@@ -137,7 +138,7 @@ Item {
             // Hint text
             Text {
                 text: "Default: admin / admin123"
-                font.family: "Poppins"; font.pixelSize: 10; color: "#b2cfbd"
+                font.family: Theme.activeFontFamily; font.pixelSize: 10; color: Theme.textDisabled
                 Layout.alignment: Qt.AlignHCenter
             }
 

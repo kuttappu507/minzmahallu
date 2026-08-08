@@ -1,5 +1,6 @@
 import QtQuick
 
+import MMS.Theme 1.0
 // ============================================================================
 // StatusBadge — Soft tinted status badge
 // Matches HTML .pill / .stat .delta style
@@ -49,7 +50,7 @@ Rectangle {
         id: badgeText
         anchors.centerIn: parent
         text: root.text
-        font.family: "Poppins"
+        font.family: Theme.activeFontFamily
         font.pixelSize: 10
         font.weight: Font.Medium
         color: root._mainColor

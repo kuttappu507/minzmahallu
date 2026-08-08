@@ -79,27 +79,17 @@ int main(int argc, char* argv[]) {
     AllocConsole();
     freopen("CONOUT$", "w", stdout);
     freopen("CONOUT$", "w", stderr);
-    // Use SetProcessDpiAwarenessContext for per-monitor V2 DPI awareness
-    // This makes the app properly scale on high-DPI displays (125%, 150%, etc.)
-    typedef BOOL(WINAPI* SetProcessDpiAwarenessContextFunc)(HANDLE);
-    HMODULE hUser32 = GetModuleHandleW(L"user32.dll");
-    if (hUser32) {
-        auto pSetProcessDpiAwarenessContext = (SetProcessDpiAwarenessContextFunc)GetProcAddress(hUser32, "SetProcessDpiAwarenessContext");
-        if (pSetProcessDpiAwarenessContext) {
-            // DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2 = ((DPI_CONTEXT_HANDLE)-4)
-            pSetProcessDpiAwarenessContext((HANDLE)-4);
-        } else {
-            SetProcessDPIAware();
-        }
-    } else {
-        SetProcessDPIAware();
-    }
+    // Qt 6 is natively Per-Monitor-V2 DPI aware on Windows.
+    // Do NOT set SetProcessDpiAwarenessContext or SetProcessDPIAware here —
+    // Qt 6 handles this automatically via its embedded application manifest.
+    // Setting it manually can conflict with Qt's own DPI handling.
 #endif
 
-    // Qt 6 high-DPI scaling — must be set BEFORE QGuiApplication is created
-    qputenv("QT_ENABLE_HIGHDPI_SCALING", "1");
-    qputenv("QT_AUTO_SCREEN_SCALE_FACTOR", "1");
-    qputenv("QT_SCALE_FACTOR_ROUNDING_POLICY", "PassThrough");
+    // Qt 6 handles high-DPI scaling natively.
+    // Do NOT set QT_ENABLE_HIGHDPI_SCALING, QT_AUTO_SCREEN_SCALE_FACTOR,
+    // QT_SCALE_FACTOR, or QT_SCALE_FACTOR_ROUNDING_POLICY.
+    // These are Qt 5 era env vars that conflict with Qt 6's native handling.
+    // QML dimensions remain logical pixels — Qt scales to physical pixels.
 
     logMsg("Step 1: Creating QGuiApplication...");
     QGuiApplication app(argc, argv);
@@ -111,6 +101,19 @@ int main(int argc, char* argv[]) {
     QString exeDir = QCoreApplication::applicationDirPath();
     g_logFile.open((exeDir + "/mms_error.log").toStdString(), std::ios::out | std::ios::trunc);
     logMsg(QString("Exe dir: %1").arg(exeDir));
+
+    // Log DPI diagnostics
+    auto screen = app.primaryScreen();
+    if (screen) {
+        logMsg(QString("  Screen: %1 | Logical DPI: %2 | Physical DPI: %3 | devicePixelRatio: %4")
+               .arg(screen->name())
+               .arg(screen->logicalDotsPerInch())
+               .arg(screen->physicalDotsPerInch())
+               .arg(screen->devicePixelRatio()));
+        logMsg(QString("  Geometry: %1x%2 | Available: %3x%4")
+               .arg(screen->size().width()).arg(screen->size().height())
+               .arg(screen->availableSize().width()).arg(screen->availableSize().height()));
+    }
 
     // Load fonts from qrc
     logMsg("Step 2: Loading fonts...");

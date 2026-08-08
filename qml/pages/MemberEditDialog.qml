@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Controls
+import MMS.Theme 1.0
 import QtQuick.Layouts
 import "../components"
 
@@ -162,7 +163,7 @@ ModalDialog {
     content: Component {
         Rectangle {
             anchors.fill: parent
-            color: "#ffffff"
+            color: Theme.surface
             radius: 12
             clip: true
 
@@ -173,10 +174,10 @@ ModalDialog {
                 // Header
                 Item {
                     Layout.fillWidth: true; Layout.preferredHeight: 56
-                    Rectangle { anchors.bottom: parent.bottom; anchors.left: parent.left; anchors.right: parent.right; height: 1; color: "#eef8f1" }
+                    Rectangle { anchors.bottom: parent.bottom; anchors.left: parent.left; anchors.right: parent.right; height: 1; color: Theme.surfacePressed }
                     Text {
                         text: dialog._dialogTitle
-                        font.family: "Poppins"; font.pixelSize: 16; font.weight: Font.DemiBold; color: "#12241b"
+                        font.family: Theme.activeFontFamily; font.pixelSize: 16; font.weight: Font.DemiBold; color: Theme.textPrimary
                         anchors.left: parent.left; anchors.leftMargin: 24; anchors.verticalCenter: parent.verticalCenter
                     }
                     Rectangle {
@@ -193,11 +194,11 @@ ModalDialog {
                 Rectangle {
                     Layout.fillWidth: true; Layout.leftMargin: 24; Layout.rightMargin: 24; Layout.topMargin: 8
                     visible: dialog._errorMessage !== ""
-                    height: 36; radius: 8; color: "#fddfe5"; border.width: 1; border.color: "#e11d48"
+                    height: 36; radius: 8; color: Theme.coralSubtle; border.width: 1; border.color: Theme.danger
                     Text {
                         anchors.fill: parent; anchors.margins: 8
                         text: dialog._errorMessage
-                        font.family: "Poppins"; font.pixelSize: 12; color: "#95102e"
+                        font.family: Theme.activeFontFamily; font.pixelSize: 12; color: "#95102e"
                         verticalAlignment: Text.AlignVCenter; elide: Text.ElideRight
                     }
                 }
@@ -212,13 +213,13 @@ ModalDialog {
 
                         // Member Code (read-only)
                         ColumnLayout { Layout.fillWidth: true; spacing: 4
-                            Text { text: "MEMBER CODE"; font.family: "Poppins"; font.pixelSize: 11; font.weight: Font.Medium; color: "#7e968a" }
+                            Text { text: "MEMBER CODE"; font.family: Theme.activeFontFamily; font.pixelSize: 11; font.weight: Font.Medium; color: Theme.textTertiary }
                             Rectangle {
-                                Layout.fillWidth: true; height: 38; radius: 9; color: "#f2faf4"; border.width: 1; border.color: "#d2e5d8"
+                                Layout.fillWidth: true; height: 38; radius: 9; color: Theme.surfaceHover; border.width: 1; border.color: Theme.border
                                 Text {
                                     anchors.left: parent.left; anchors.leftMargin: 10; anchors.verticalCenter: parent.verticalCenter
                                     text: dialog._memberCode || "Auto-generated on save"
-                                    font.family: "Poppins"; font.pixelSize: 13; color: dialog._memberCode ? "#12241b" : "#7e968a"
+                                    font.family: Theme.activeFontFamily; font.pixelSize: 13; color: dialog._memberCode ? "#12241b" : "#7e968a"
                                 }
                             }
                         }
@@ -236,9 +237,9 @@ ModalDialog {
 
                             // Family combo (custom — needs id+label)
                             ColumnLayout { Layout.fillWidth: true; spacing: 4
-                                Text { text: "Family *"; font.family: "Poppins"; font.pixelSize: 11; font.weight: Font.Medium; color: dialog._errorField === "familyId" ? "#e11d48" : "#7e968a" }
+                                Text { text: "Family *"; font.family: Theme.activeFontFamily; font.pixelSize: 11; font.weight: Font.Medium; color: dialog._errorField === "familyId" ? "#e11d48" : "#7e968a" }
                                 Rectangle {
-                                    Layout.fillWidth: true; height: 38; radius: 9; color: "#f2faf4"; border.width: 1
+                                    Layout.fillWidth: true; height: 38; radius: 9; color: Theme.surfaceHover; border.width: 1
                                     border.color: dialog._errorField === "familyId" ? "#e11d48" : (familyMA.containsMouse ? "#b2cfbd" : "#d2e5d8")
                                     Behavior on border.color { ColorAnimation { duration: 120 } }
                                     MouseArea { id: familyMA; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: familyPopup.visible = !familyPopup.visible }
@@ -252,14 +253,14 @@ ModalDialog {
                                             }
                                             return "Select family..."
                                         }
-                                        font.family: "Poppins"; font.pixelSize: 13
+                                        font.family: Theme.activeFontFamily; font.pixelSize: 13
                                         color: dialog._familyId !== "" ? "#12241b" : "#7e968a"
                                     }
                                     // Family popup
                                     Popup {
                                         id: familyPopup
                                         y: parent.height + 4; width: parent.width; implicitHeight: 280; padding: 4
-                                        background: Rectangle { color: "#ffffff"; border.width: 1; border.color: "#d2e5d8"; radius: 9 }
+                                        background: Rectangle { color: Theme.surface; border.width: 1; border.color: Theme.border; radius: 9 }
                                         ListView {
                                             anchors.fill: parent; clip: true; spacing: 2
                                             model: dialog._families
@@ -267,7 +268,7 @@ ModalDialog {
                                                 width: parent.width; height: 34; padding: 0
                                                 contentItem: Text {
                                                     text: modelData.familyNumber + " - " + modelData.houseName + (modelData.ward ? " (Ward " + modelData.ward + ")" : "")
-                                                    font.family: "Poppins"; font.pixelSize: 13; color: "#12241b"
+                                                    font.family: Theme.activeFontFamily; font.pixelSize: 13; color: Theme.textPrimary
                                                     anchors.left: parent.left; anchors.leftMargin: 8; anchors.verticalCenter: parent.verticalCenter
                                                 }
                                                 background: Rectangle { color: highlighted ? "#ecfdf5" : "transparent"; radius: 4 }
@@ -378,14 +379,14 @@ ModalDialog {
 
                         // Address (full width)
                         ColumnLayout { Layout.fillWidth: true; spacing: 4
-                            Text { text: "ADDRESS"; font.family: "Poppins"; font.pixelSize: 11; font.weight: Font.Medium; color: "#7e968a" }
+                            Text { text: "ADDRESS"; font.family: Theme.activeFontFamily; font.pixelSize: 11; font.weight: Font.Medium; color: Theme.textTertiary }
                             TextArea {
                                 Layout.fillWidth: true; Layout.preferredHeight: 56
                                 text: dialog._address; readOnly: dialog.readOnly
-                                font.family: "Poppins"; font.pixelSize: 13; color: "#12241b"
+                                font.family: Theme.activeFontFamily; font.pixelSize: 13; color: Theme.textPrimary
                                 placeholderText: "Member address (if different from family)..."; placeholderTextColor: "#7e968a"
                                 selectByMouse: true; wrapMode: TextArea.Wrap
-                                background: Rectangle { radius: 9; color: "#f2faf4"; border.width: 1; border.color: parent.activeFocus ? "#059669" : parent.hovered ? "#b2cfbd" : "#d2e5d8"; Behavior on border.color { ColorAnimation { duration: 120 } } }
+                                background: Rectangle { radius: 9; color: Theme.surfaceHover; border.width: 1; border.color: parent.activeFocus ? "#059669" : parent.hovered ? "#b2cfbd" : "#d2e5d8"; Behavior on border.color { ColorAnimation { duration: 120 } } }
                                 padding: 10
                                 onTextChanged: dialog._address = text
                             }
@@ -397,8 +398,8 @@ ModalDialog {
 
                 // Footer
                 Rectangle {
-                    Layout.fillWidth: true; Layout.preferredHeight: 64; color: "#f2faf4"
-                    Rectangle { anchors.top: parent.top; anchors.left: parent.left; anchors.right: parent.right; height: 1; color: "#eef8f1" }
+                    Layout.fillWidth: true; Layout.preferredHeight: 64; color: Theme.surfaceHover
+                    Rectangle { anchors.top: parent.top; anchors.left: parent.left; anchors.right: parent.right; height: 1; color: Theme.surfacePressed }
                     Row {
                         anchors.right: parent.right; anchors.rightMargin: 24; anchors.verticalCenter: parent.verticalCenter; spacing: 10
                         AppButton { text: "Cancel"; variant: "secondary"; onClicked: dialog.visible = false }

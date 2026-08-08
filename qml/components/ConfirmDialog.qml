@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Controls
+import MMS.Theme 1.0
 import QtQuick.Layouts
 import "../components"
 
@@ -26,7 +27,7 @@ ModalDialog {
     content: Component {
         Rectangle {
             anchors.fill: parent
-            color: "#ffffff"
+            color: Theme.surface
             radius: 12
             clip: true
 
@@ -43,18 +44,18 @@ ModalDialog {
                     // Warning icon circle
                     Rectangle {
                         width: 40; height: 40; radius: 20
-                        color: "#fddfe5"
+                        color: Theme.coralSubtle
                         border.width: 1
-                        border.color: "#e11d48"
+                        border.color: Theme.danger
                         Layout.alignment: Qt.AlignTop
 
                         Text {
                             anchors.centerIn: parent
                             text: "!"
-                            font.family: "Poppins"
+                            font.family: Theme.activeFontFamily
                             font.pixelSize: 20
                             font.weight: Font.Bold
-                            color: "#e11d48"
+                            color: Theme.danger
                         }
                     }
 
@@ -64,19 +65,19 @@ ModalDialog {
 
                         Text {
                             text: dialog.message
-                            font.family: "Poppins"
+                            font.family: Theme.activeFontFamily
                             font.pixelSize: 15
                             font.weight: Font.DemiBold
-                            color: "#12241b"
+                            color: Theme.textPrimary
                             Layout.fillWidth: true
                             wrapMode: Text.Wrap
                         }
                         Text {
                             text: dialog.warningText
-                            font.family: "Poppins"
+                            font.family: Theme.activeFontFamily
                             font.pixelSize: 12
                             font.weight: Font.Normal
-                            color: "#7e968a"
+                            color: Theme.textTertiary
                             Layout.fillWidth: true
                             wrapMode: Text.Wrap
                         }
@@ -102,10 +103,10 @@ ModalDialog {
                         Text {
                             anchors.centerIn: parent
                             text: "Delete"
-                            font.family: "Poppins"
+                            font.family: Theme.activeFontFamily
                             font.pixelSize: 13
                             font.weight: Font.DemiBold
-                            color: "#ffffff"
+                            color: Theme.surface
                         }
 
                         MouseArea {
@@ -131,10 +132,10 @@ ModalDialog {
                         Text {
                             anchors.centerIn: parent
                             text: "Cancel"
-                            font.family: "Poppins"
+                            font.family: Theme.activeFontFamily
                             font.pixelSize: 13
                             font.weight: Font.DemiBold
-                            color: "#12241b"
+                            color: Theme.textPrimary
                         }
 
                         MouseArea {

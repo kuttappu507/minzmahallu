@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Controls
+import MMS.Theme 1.0
 import QtQuick.Effects
 
 // ============================================================================
@@ -53,7 +54,7 @@ Button {
 
             Text {
                 text: root.text
-                font.family: "Poppins"
+                font.family: Theme.activeFontFamily
                 font.pixelSize: 13
                 font.weight: Font.DemiBold
                 color: root.enabled ? _textColor : "#b2cfbd"

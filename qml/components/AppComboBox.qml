@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Controls
+import MMS.Theme 1.0
 import QtQuick.Effects
 
 // ============================================================================
@@ -27,10 +28,10 @@ FocusScope {
         Text {
             id: labelItem
             text: root.label
-            font.family: "Poppins"
+            font.family: Theme.activeFontFamily
             font.pixelSize: 11
             font.weight: Font.Medium
-            color: "#7e968a"
+            color: Theme.textTertiary
             visible: root.label !== ""
             height: root.label !== "" ? implicitHeight : 0
         }
@@ -41,7 +42,7 @@ FocusScope {
             implicitHeight: 38
             model: root.model
             currentIndex: root.currentIndex
-            font.family: "Poppins"
+            font.family: Theme.activeFontFamily
             font.pixelSize: 13
             padding: 0
 
@@ -58,7 +59,7 @@ FocusScope {
 
                 Text {
                     text: combo.displayText
-                    font.family: "Poppins"
+                    font.family: Theme.activeFontFamily
                     font.pixelSize: 13
                     color: combo.enabled ? "#12241b" : "#b2cfbd"
                     anchors.left: parent.left
@@ -95,7 +96,7 @@ FocusScope {
 
             background: Rectangle {
                 radius: 9
-                color: "#f2faf4"
+                color: Theme.surfaceHover
                 border.width: 1
                 border.color: combo.popup.visible || combo.activeFocus ? "#059669" :
                               combo.hovered ? "#b2cfbd" : "#d2e5d8"
@@ -109,9 +110,9 @@ FocusScope {
                 padding: 4
 
                 background: Rectangle {
-                    color: "#ffffff"
+                    color: Theme.surface
                     border.width: 1
-                    border.color: "#d2e5d8"
+                    border.color: Theme.border
                     radius: 9
                 }
 
@@ -132,7 +133,7 @@ FocusScope {
 
                 contentItem: Text {
                     text: modelData
-                    font.family: "Poppins"
+                    font.family: Theme.activeFontFamily
                     font.pixelSize: 13
                     color: highlighted ? "#059669" : "#12241b"
                     anchors.left: parent.left

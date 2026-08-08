@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Controls
+import MMS.Theme 1.0
 import QtQuick.Layouts
 import QtQuick.Effects
 import "../components"
@@ -55,7 +56,7 @@ Item {
             id: toastText
             anchors.centerIn: parent
             text: toast.message
-            font.family: "Poppins"; font.pixelSize: 13; font.weight: Font.DemiBold; color: "#ffffff"
+            font.family: Theme.activeFontFamily; font.pixelSize: 13; font.weight: Font.DemiBold; color: Theme.surface
         }
 
         Timer { id: toastTimer; interval: 3000; onTriggered: toast.visible_ = false }
@@ -85,11 +86,11 @@ Item {
                 spacing: 2
                 Text {
                     text: "Families"
-                    font.family: "Poppins"; font.pixelSize: 21; font.weight: Font.DemiBold; color: "#12241b"
+                    font.family: Theme.activeFontFamily; font.pixelSize: 21; font.weight: Font.DemiBold; color: Theme.textPrimary
                 }
                 Text {
                     text: "Manage all registered families in the mahallu"
-                    font.family: "Poppins"; font.pixelSize: 12; font.weight: Font.Normal; color: "#4f6b5c"
+                    font.family: Theme.activeFontFamily; font.pixelSize: 12; font.weight: Font.Normal; color: Theme.textSecondary
                 }
             }
 
@@ -109,7 +110,7 @@ Item {
             Rectangle {
                 Layout.fillWidth: true; Layout.minimumWidth: 180
                 height: 38; radius: 9
-                color: "#f2faf4"; border.width: 1
+                color: Theme.surfaceHover; border.width: 1
                 border.color: searchField.activeFocus ? "#059669" : (searchHover.containsMouse ? "#b2cfbd" : "#d2e5d8")
                 Behavior on border.color { ColorAnimation { duration: 120 } }
                 HoverHandler { id: searchHover; cursorShape: Qt.IBeamCursor }
@@ -126,7 +127,7 @@ Item {
                     anchors.verticalCenter: parent.verticalCenter
                     placeholderText: "Search by family #, house name, phone..."
                     placeholderTextColor: "#7e968a"
-                    font.family: "Poppins"; font.pixelSize: 13; color: "#12241b"
+                    font.family: Theme.activeFontFamily; font.pixelSize: 13; color: Theme.textPrimary
                     background: Item {} verticalAlignment: Text.AlignVCenter
                     onTextEdited: searchDebounce.restart()
                 }
@@ -166,7 +167,7 @@ Item {
             // Count label
             Text {
                 text: "Showing " + familyModel.rowCount + " of " + familyModel.totalCount
-                font.family: "Poppins"; font.pixelSize: 11; color: "#7e968a"
+                font.family: Theme.activeFontFamily; font.pixelSize: 11; color: Theme.textTertiary
                 Layout.alignment: Qt.AlignVCenter
             }
         }
@@ -174,26 +175,26 @@ Item {
         // ===== Data table =====
         Rectangle {
             Layout.fillWidth: true; Layout.fillHeight: true
-            radius: 10; color: "#ffffff"; border.width: 1; border.color: "#d2e5d8"
+            radius: 10; color: Theme.surface; border.width: 1; border.color: Theme.border
 
             ColumnLayout {
                 anchors.fill: parent; spacing: 0
 
                 // ===== Table header =====
                 Rectangle {
-                    Layout.fillWidth: true; Layout.preferredHeight: 40; color: "#f2faf4"
-                    Rectangle { anchors.bottom: parent.bottom; anchors.left: parent.left; anchors.right: parent.right; height: 1; color: "#d2e5d8" }
+                    Layout.fillWidth: true; Layout.preferredHeight: 40; color: Theme.surfaceHover
+                    Rectangle { anchors.bottom: parent.bottom; anchors.left: parent.left; anchors.right: parent.right; height: 1; color: Theme.border }
                     Row {
                         x: 16; width: parent.width - 32; spacing: 0
-                        Text { text: "FAMILY #"; width: 110; height: 40; verticalAlignment: Text.AlignVCenter; font.family: "Poppins"; font.pixelSize: 10; font.weight: Font.Medium; color: "#7e968a" }
-                        Text { text: "HOUSE NAME"; width: 160; height: 40; verticalAlignment: Text.AlignVCenter; font.family: "Poppins"; font.pixelSize: 10; font.weight: Font.Medium; color: "#7e968a" }
-                        Text { text: "HEAD"; width: 140; height: 40; verticalAlignment: Text.AlignVCenter; font.family: "Poppins"; font.pixelSize: 10; font.weight: Font.Medium; color: "#7e968a" }
-                        Text { text: "WARD"; width: 80; height: 40; verticalAlignment: Text.AlignVCenter; font.family: "Poppins"; font.pixelSize: 10; font.weight: Font.Medium; color: "#7e968a" }
-                        Text { text: "MEMBERS"; width: 70; height: 40; verticalAlignment: Text.AlignVCenter; horizontalAlignment: Text.AlignHCenter; font.family: "Poppins"; font.pixelSize: 10; font.weight: Font.Medium; color: "#7e968a" }
-                        Text { text: "PHONE"; width: 120; height: 40; verticalAlignment: Text.AlignVCenter; font.family: "Poppins"; font.pixelSize: 10; font.weight: Font.Medium; color: "#7e968a" }
-                        Text { text: "STATUS"; width: 100; height: 40; verticalAlignment: Text.AlignVCenter; font.family: "Poppins"; font.pixelSize: 10; font.weight: Font.Medium; color: "#7e968a" }
+                        Text { text: "FAMILY #"; width: 110; height: 40; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: 10; font.weight: Font.Medium; color: Theme.textTertiary }
+                        Text { text: "HOUSE NAME"; width: 160; height: 40; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: 10; font.weight: Font.Medium; color: Theme.textTertiary }
+                        Text { text: "HEAD"; width: 140; height: 40; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: 10; font.weight: Font.Medium; color: Theme.textTertiary }
+                        Text { text: "WARD"; width: 80; height: 40; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: 10; font.weight: Font.Medium; color: Theme.textTertiary }
+                        Text { text: "MEMBERS"; width: 70; height: 40; verticalAlignment: Text.AlignVCenter; horizontalAlignment: Text.AlignHCenter; font.family: Theme.activeFontFamily; font.pixelSize: 10; font.weight: Font.Medium; color: Theme.textTertiary }
+                        Text { text: "PHONE"; width: 120; height: 40; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: 10; font.weight: Font.Medium; color: Theme.textTertiary }
+                        Text { text: "STATUS"; width: 100; height: 40; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: 10; font.weight: Font.Medium; color: Theme.textTertiary }
                         Item { width: parent.width - 110 - 160 - 140 - 80 - 70 - 120 - 100 - 100; height: 40 }
-                        Text { text: "ACTIONS"; width: 100; height: 40; verticalAlignment: Text.AlignVCenter; horizontalAlignment: Text.AlignHCenter; font.family: "Poppins"; font.pixelSize: 10; font.weight: Font.Medium; color: "#7e968a" }
+                        Text { text: "ACTIONS"; width: 100; height: 40; verticalAlignment: Text.AlignVCenter; horizontalAlignment: Text.AlignHCenter; font.family: Theme.activeFontFamily; font.pixelSize: 10; font.weight: Font.Medium; color: Theme.textTertiary }
                     }
                 }
 
@@ -207,15 +208,15 @@ Item {
                     delegate: Rectangle {
                         width: table.width; height: 44
                         color: rowMA.containsMouse ? "#f2faf4" : (index % 2 === 0 ? "#ffffff" : "#fafdfa")
-                        Rectangle { anchors.bottom: parent.bottom; anchors.left: parent.left; anchors.right: parent.right; height: 1; color: "#eef8f1" }
+                        Rectangle { anchors.bottom: parent.bottom; anchors.left: parent.left; anchors.right: parent.right; height: 1; color: Theme.surfacePressed }
                         Row {
                             x: 16; width: parent.width - 32; spacing: 0
-                            Text { text: model.familyNumber; width: 110; height: 44; verticalAlignment: Text.AlignVCenter; font.family: "Poppins"; font.pixelSize: 12; font.weight: Font.DemiBold; color: "#12241b"; elide: Text.ElideRight }
-                            Text { text: model.houseName; width: 160; height: 44; verticalAlignment: Text.AlignVCenter; font.family: "Poppins"; font.pixelSize: 12; font.weight: Font.Normal; color: "#12241b"; elide: Text.ElideRight }
-                            Text { text: model.headName || "—"; width: 140; height: 44; verticalAlignment: Text.AlignVCenter; font.family: "Poppins"; font.pixelSize: 12; font.weight: Font.Normal; color: "#4f6b5c"; elide: Text.ElideRight }
-                            Text { text: model.ward || "—"; width: 80; height: 44; verticalAlignment: Text.AlignVCenter; font.family: "Poppins"; font.pixelSize: 12; font.weight: Font.Normal; color: "#4f6b5c" }
-                            Text { text: model.memberCount; width: 70; height: 44; verticalAlignment: Text.AlignVCenter; horizontalAlignment: Text.AlignHCenter; font.family: "Poppins"; font.pixelSize: 12; font.weight: Font.DemiBold; color: "#12241b" }
-                            Text { text: model.phone; width: 120; height: 44; verticalAlignment: Text.AlignVCenter; font.family: "Poppins"; font.pixelSize: 12; font.weight: Font.Normal; color: "#4f6b5c" }
+                            Text { text: model.familyNumber; width: 110; height: 44; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: 12; font.weight: Font.DemiBold; color: Theme.textPrimary; elide: Text.ElideRight }
+                            Text { text: model.houseName; width: 160; height: 44; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: 12; font.weight: Font.Normal; color: Theme.textPrimary; elide: Text.ElideRight }
+                            Text { text: model.headName || "—"; width: 140; height: 44; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: 12; font.weight: Font.Normal; color: Theme.textSecondary; elide: Text.ElideRight }
+                            Text { text: model.ward || "—"; width: 80; height: 44; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: 12; font.weight: Font.Normal; color: Theme.textSecondary }
+                            Text { text: model.memberCount; width: 70; height: 44; verticalAlignment: Text.AlignVCenter; horizontalAlignment: Text.AlignHCenter; font.family: Theme.activeFontFamily; font.pixelSize: 12; font.weight: Font.DemiBold; color: Theme.textPrimary }
+                            Text { text: model.phone; width: 120; height: 44; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: 12; font.weight: Font.Normal; color: Theme.textSecondary }
                             Item { width: 100; height: 44; StatusBadge { anchors.centerIn: parent; text: model.status; variant: model.status.toLowerCase() } }
                             Item { width: parent.width - 110 - 160 - 140 - 80 - 70 - 120 - 100 - 100; height: 44 }
                             Row {
@@ -267,7 +268,7 @@ Item {
                     Column {
                         anchors.centerIn: parent; spacing: 12
                         Rectangle {
-                            width: 56; height: 56; radius: 28; color: "#f2faf4"; border.width: 1; border.color: "#d2e5d8"
+                            width: 56; height: 56; radius: 28; color: Theme.surfaceHover; border.width: 1; border.color: Theme.border
                             anchors.horizontalCenter: parent.horizontalCenter
                             Item {
                                 width: 28; height: 28; anchors.centerIn: parent
@@ -275,18 +276,18 @@ Item {
                                 MultiEffect { anchors.fill: parent; source: emptyIcon; colorizationColor: "#b2cfbd"; colorization: 1.0 }
                             }
                         }
-                        Text { text: "No families found"; font.family: "Poppins"; font.pixelSize: 14; font.weight: Font.DemiBold; color: "#12241b"; anchors.horizontalCenter: parent.horizontalCenter }
-                        Text { text: "Click 'Add Family' to create your first family record"; font.family: "Poppins"; font.pixelSize: 11; font.weight: Font.Normal; color: "#7e968a"; anchors.horizontalCenter: parent.horizontalCenter }
+                        Text { text: "No families found"; font.family: Theme.activeFontFamily; font.pixelSize: 14; font.weight: Font.DemiBold; color: Theme.textPrimary; anchors.horizontalCenter: parent.horizontalCenter }
+                        Text { text: "Click 'Add Family' to create your first family record"; font.family: Theme.activeFontFamily; font.pixelSize: 11; font.weight: Font.Normal; color: Theme.textTertiary; anchors.horizontalCenter: parent.horizontalCenter }
                     }
                 }
 
                 // ===== Pagination =====
                 Rectangle {
-                    Layout.fillWidth: true; Layout.preferredHeight: 44; color: "#f2faf4"
-                    Rectangle { anchors.top: parent.top; anchors.left: parent.left; anchors.right: parent.right; height: 1; color: "#d2e5d8" }
+                    Layout.fillWidth: true; Layout.preferredHeight: 44; color: Theme.surfaceHover
+                    Rectangle { anchors.top: parent.top; anchors.left: parent.left; anchors.right: parent.right; height: 1; color: Theme.border }
                     RowLayout {
                         anchors.fill: parent; anchors.leftMargin: 16; anchors.rightMargin: 16; spacing: 8
-                        Text { text: "Page " + familyModel.currentPage + " of " + familyModel.totalPages; font.family: "Poppins"; font.pixelSize: 11; color: "#7e968a"; Layout.alignment: Qt.AlignVCenter }
+                        Text { text: "Page " + familyModel.currentPage + " of " + familyModel.totalPages; font.family: Theme.activeFontFamily; font.pixelSize: 11; color: Theme.textTertiary; Layout.alignment: Qt.AlignVCenter }
                         Item { Layout.fillWidth: true }
                         Rectangle { width: 28; height: 28; radius: 6; color: prevMA.containsMouse ? "#ffffff" : "transparent"; border.width: 1; border.color: prevMA.containsMouse ? "#b2cfbd" : "#d2e5d8"; Layout.alignment: Qt.AlignVCenter; opacity: familyModel.currentPage > 1 ? 1 : 0.4
                             Item { width: 14; height: 14; anchors.centerIn: parent; Image { id: prevIcon; source: "qrc:/icons/svg/chevron-left.svg"; sourceSize: Qt.size(14, 14); anchors.fill: parent; fillMode: Image.Pad; visible: false } MultiEffect { anchors.fill: parent; source: prevIcon; colorizationColor: "#4f6b5c"; colorization: 1.0 } }

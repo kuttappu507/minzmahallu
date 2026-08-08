@@ -2,123 +2,125 @@ pragma Singleton
 import QtQuick
 
 // ============================================================================
-// Theme.qml — Minz Mahallu Design System
+// Theme.qml — The ONE source of application visual tokens
 //
-// Colorful + Modern + Premium + Clean Desktop Management Application
+// All colors, typography, spacing, radii, control heights, shadows, and
+// animation durations live here. Pages and components reference Theme.*
+// — they do NOT inline hex colors.
 //
-// Color strategy:
-//   - Navy sidebar (deep, authoritative)
-//   - Cool light canvas (blue-gray neutral, not pure white)
-//   - White cards with subtle borders + very subtle shadows
-//   - 6 coordinated accent colors, each with a purpose:
-//       Emerald  → Families / Brand
-//       Blue     → Members
-//       Orange   → Nikah / Marriage
-//       Violet   → Collections / Finance
-//       Cyan     → Events / Tokens
-//       Coral    → Errors / Overdue
-//   - 70-80% neutral surfaces, 20-30% accent color
+// Dark mode is driven by SettingsController.theme:
+//   "light" → light palette
+//   "dark"  → dark palette
+//
+// Changing SettingsController.theme immediately re-evaluates all Theme
+// bindings — no restart required.
 // ============================================================================
 
 QtObject {
-    // ===== CANVAS (matches HTML --bg) =====
-    readonly property color canvas:          "#e7f4ea"   // light green-tinted background
-    readonly property color canvasAlt:       "#eef8f1"   // slightly lighter
+    // ===== THEME STATE =====
+    // Driven by SettingsController.theme — ONE source of truth.
+    readonly property bool dark: typeof SettingsController !== "undefined" && SettingsController.theme === "dark"
 
-    // ===== SURFACES (matches HTML --panel, --panel2) =====
-    readonly property color surface:         "#ffffff"   // cards, panels (--panel)
-    readonly property color surfaceHover:    "#f2faf4"   // hover background (--panel2)
-    readonly property color surfacePressed:  "#eef8f1"   // pressed background (--header)
-    readonly property color surfaceSubtle:   "#f2faf4"   // table alt rows (--panel2)
-    readonly property color surfaceRaised:   "#ffffff"   // elevated cards
+    // ===== CANVAS =====
+    readonly property color canvas:          dark ? "#0a1a12" : "#e7f4ea"
+    readonly property color canvasAlt:       dark ? "#0f1e16" : "#eef8f1"
 
-    // ===== GREEN SIDEBAR (matches HTML gradient) =====
-    readonly property color sidebarTop:      "#0a7f5d"   // gradient stop 0%
-    readonly property color sidebarMid:      "#065f46"   // gradient stop 42%
-    readonly property color sidebarBot:      "#044633"   // gradient stop 100%
-    readonly property color sidebarHover:    "#ffffff14" // rgba(255,255,255,0.09)
-    readonly property color sidebarActive:   "#ffffff24" // rgba(255,255,255,0.14)
-    readonly property color sidebarBorder:   "#ffffff24" // rgba(255,255,255,0.14)
-    readonly property color sidebarText:     "#c4e7d7"   // nav text color
-    readonly property color sidebarTextActive: "#ffffff" // active nav text
-    readonly property color sidebarTextMuted: "#d6f0e46c" // section labels rgba(214,240,228,0.42)
-    readonly property color sidebarLogo:     "#ffffff"   // logo text
-    readonly property color sidebarSubTitle: "#a5dcc6"   // logo subtitle
-    // Keep sidebarBg as a fallback (gradient applied in QML)
-    readonly property color sidebarBg:       "#065f46"   // fallback solid color
+    // ===== SURFACES =====
+    readonly property color surface:         dark ? "#13221a" : "#ffffff"
+    readonly property color surfaceHover:     dark ? "#1a2e22" : "#f2faf4"
+    readonly property color surfacePressed:  dark ? "#1e3327" : "#eef8f1"
+    readonly property color surfaceSubtle:   dark ? "#0f1e16" : "#f2faf4"
+    readonly property color surfaceRaised:   dark ? "#1a2e22" : "#ffffff"
+
+    // ===== GREEN SIDEBAR (same in both themes — sidebar is always dark green) =====
+    readonly property color sidebarTop:      "#0a7f5d"
+    readonly property color sidebarMid:      "#065f46"
+    readonly property color sidebarBot:      "#044633"
+    readonly property color sidebarHover:    Qt.rgba(255/255, 255/255, 255/255, 0.06)
+    readonly property color sidebarActive:   Qt.rgba(255/255, 255/255, 255/255, 0.14)
+    readonly property color sidebarBorder:   Qt.rgba(255/255, 255/255, 255/255, 0.14)
+    readonly property color sidebarText:     dark ? "#a5dcc6" : "#a5dcc6"
+    readonly property color sidebarTextActive: "#ffffff"
+    readonly property color sidebarTextMuted: Qt.rgba(214/255, 240/255, 228/255, 0.42)
+    readonly property color sidebarLogo:     "#ffffff"
+    readonly property color sidebarSubTitle: "#a5dcc6"
+    readonly property color sidebarBg:       "#065f46"
+    readonly property color sidebarTextHover: dark ? "#d6f5e7" : "#d6f5e7"
 
     // ===== BRAND — Emerald =====
     readonly property color primary:         "#059669"
     readonly property color primaryHover:    "#047857"
     readonly property color primaryPressed:  "#036049"
-    readonly property color primarySubtle:   "#ecfdf5"   // very light emerald
-    readonly property color primarySubtleAlt:"#d1fae5"   // light emerald for badges
+    readonly property color primarySubtle:   dark ? "#0a2e22" : "#ecfdf5"
+    readonly property color primarySubtleAlt: dark ? "#0d3b2c" : "#d1fae5"
     readonly property color primaryOn:       "#ffffff"
 
-    // ===== ACCENT — Blue (Members) =====
+    // ===== ACCENT — Blue =====
     readonly property color blue:            "#3b82f6"
     readonly property color blueHover:       "#2563eb"
-    readonly property color blueSubtle:      "#eff6ff"
-    readonly property color blueSubtleAlt:   "#dbeafe"
+    readonly property color blueSubtle:     dark ? "#0d1830" : "#eff6ff"
+    readonly property color blueSubtleAlt:  dark ? "#1a2a4a" : "#dbeafe"
 
-    // ===== ACCENT — Orange (Nikah) =====
+    // ===== ACCENT — Orange =====
     readonly property color orange:          "#f97316"
     readonly property color orangeHover:     "#ea580c"
-    readonly property color orangeSubtle:    "#fff7ed"
-    readonly property color orangeSubtleAlt: "#fed7aa"
+    readonly property color orangeSubtle:    dark ? "#2a1a0a" : "#fff7ed"
+    readonly property color orangeSubtleAlt: dark ? "#3a2410" : "#fed7aa"
 
-    // ===== ACCENT — Violet (Collections) =====
+    // ===== ACCENT — Violet =====
     readonly property color violet:          "#8b5cf6"
     readonly property color violetHover:     "#7c3aed"
-    readonly property color violetSubtle:    "#f5f3ff"
-    readonly property color violetSubtleAlt: "#ddd6fe"
+    readonly property color violetSubtle:    dark ? "#1a1530" : "#f5f3ff"
+    readonly property color violetSubtleAlt: dark ? "#241d3d" : "#ddd6fe"
 
-    // ===== ACCENT — Cyan (Events/Tokens) =====
+    // ===== ACCENT — Cyan =====
     readonly property color cyan:            "#06b6d4"
     readonly property color cyanHover:       "#0891b2"
-    readonly property color cyanSubtle:      "#ecfeff"
-    readonly property color cyanSubtleAlt:   "#a5f3fc"
+    readonly property color cyanSubtle:     dark ? "#0a2a30" : "#ecfeff"
+    readonly property color cyanSubtleAlt:  dark ? "#0d3740" : "#a5f3fc"
 
-    // ===== ACCENT — Coral/Red (Errors/Overdue) =====
+    // ===== ACCENT — Coral/Red =====
     readonly property color coral:           "#f43f5e"
-    readonly property color coralHover:      "#e11d48"
-    readonly property color coralSubtle:     "#fff1f2"
-    readonly property color coralSubtleAlt:  "#fecdd3"
+    readonly property color coralHover:     "#e11d48"
+    readonly property color coralSubtle:    dark ? "#2a0f15" : "#fff1f2"
+    readonly property color coralSubtleAlt: dark ? "#3a151d" : "#fecdd3"
 
     // ===== SEMANTIC =====
     readonly property color success:         "#10b981"
-    readonly property color successSubtle:   "#ecfdf5"
+    readonly property color successSubtle:   dark ? "#0a2e22" : "#ecfdf5"
     readonly property color warning:         "#f59e0b"
-    readonly property color warningSubtle:   "#fffbeb"
+    readonly property color warningSubtle:   dark ? "#2a1f0a" : "#fffbeb"
     readonly property color danger:          "#ef4444"
     readonly property color dangerHover:     "#dc2626"
-    readonly property color dangerSubtle:    "#fef2f2"
+    readonly property color dangerSubtle:    dark ? "#2a0f0f" : "#fef2f2"
     readonly property color info:            "#0ea5e9"
-    readonly property color infoSubtle:      "#f0f9ff"
+    readonly property color infoSubtle:      dark ? "#0a1f2a" : "#f0f9ff"
 
     // ===== TEXT =====
-    readonly property color textPrimary:     "#12241b"   // HTML --text
-    readonly property color textSecondary:   "#4f6b5c"   // HTML --muted
-    readonly property color textTertiary:    "#7e968a"   // HTML --faint
-    readonly property color textDisabled:    "#b2cfbd"   // HTML --border2
+    readonly property color textPrimary:     dark ? "#e6f2ea" : "#12241b"
+    readonly property color textSecondary:   dark ? "#9fb8aa" : "#4f6b5c"
+    readonly property color textTertiary:    dark ? "#6d8878" : "#7e968a"
+    readonly property color textDisabled:    dark ? "#3a5048" : "#b2cfbd"
     readonly property color textOnPrimary:   "#ffffff"
     readonly property color textOnDark:      "#ffffff"
     readonly property color textInverse:     "#ffffff"
 
     // ===== BORDERS =====
-    readonly property color border:          "#d2e5d8"   // HTML --border
-    readonly property color borderHover:     "#b2cfbd"   // HTML --border2
-    readonly property color borderFocused:   "#059669"   // focused input
-    readonly property color borderSubtle:    "#d2e5d8"   // HTML --border (same as border)
+    readonly property color border:          dark ? "#23402f" : "#d2e5d8"
+    readonly property color borderHover:     dark ? "#335944" : "#b2cfbd"
+    readonly property color borderFocused:   "#059669"
+    readonly property color borderSubtle:    dark ? "#1a3020" : "#d2e5d8"
 
     // ===== TYPOGRAPHY =====
-    // Use "Segoe UI" on Windows (falls back to system sans on Linux)
-    // Poppins kept for branding/display only
-    readonly property string fontFamily:     "Poppins"   // HTML uses Manrope (closest available)
-    readonly property string fontFamilyDisplay: "Poppins"  // for logo, big numbers
+    readonly property string fontFamily:     "Poppins"
+    readonly property string fontFamilyDisplay: "Poppins"
+    readonly property string fontFamilyMalayalam: "Anek Malayalam"
     readonly property string fontFamilyMono:  "Cascadia Code"
 
-    // Font sizes
+    // Active font family — switches based on language
+    readonly property string activeFontFamily: typeof I18NController !== "undefined" && I18NController.isMalayalam ? fontFamilyMalayalam : fontFamily
+
+    // Font sizes (logical pixels — do NOT scale by DPI)
     readonly property int fontSizeXs:   11
     readonly property int fontSizeSm:   12
     readonly property int fontSizeMd:   13
@@ -155,7 +157,8 @@ QtObject {
     readonly property int controlHeightSm:  28
     readonly property int controlHeightMd:  32
     readonly property int controlHeightLg:  36
-    readonly property int sidebarWidth:     260   // HTML sidebar width
+    readonly property int sidebarWidth:     260
+    readonly property int sidebarCollapsedWidth: 64
 
     // ===== ICON SIZES =====
     readonly property int iconSizeXs:   12
@@ -172,14 +175,13 @@ QtObject {
     readonly property int easingStandard: Easing.OutCubic
     readonly property int easingEntrance: Easing.OutQuint
 
-    // ===== SHADOWS (subtle) =====
-    readonly property color shadowColor:       "#94a3b8"
-    readonly property real shadowOpacitySmall: 0.08
-    readonly property real shadowOpacityMedium: 0.12
-    readonly property real shadowOpacityLarge:  0.16
+    // ===== SHADOWS =====
+    readonly property color shadowColor:       dark ? "#000000" : "#94a3b8"
+    readonly property real shadowOpacitySmall: dark ? 0.15 : 0.08
+    readonly property real shadowOpacityMedium: dark ? 0.20 : 0.12
+    readonly property real shadowOpacityLarge:  dark ? 0.25 : 0.16
 
     // ===== ACCENT HELPER =====
-    // Returns an accent object {main, hover, subtle, subtleAlt} by name
     function accent(name) {
         var accents = {
             "emerald": { main: primary, hover: primaryHover, subtle: primarySubtle, subtleAlt: primarySubtleAlt, deep: "#04543c" },
@@ -188,7 +190,7 @@ QtObject {
             "violet":  { main: violet,  hover: violetHover,  subtle: violetSubtle,  subtleAlt: violetSubtleAlt, deep: "#5423b7" },
             "cyan":    { main: cyan,    hover: cyanHover,    subtle: cyanSubtle,    subtleAlt: cyanSubtleAlt, deep: "#0f5e54" },
             "coral":   { main: coral,   hover: coralHover,   subtle: coralSubtle,   subtleAlt: coralSubtleAlt, deep: "#95102e" },
-        "gold":    { main: "#d97706", hover: "#b45309", subtle: "#fcebc8", subtleAlt: "#fde68a", deep: "#7c4403" }
+            "gold":    { main: "#d97706", hover: "#b45309", subtle: warningSubtle, subtleAlt: "#fde68a", deep: "#7c4403" }
         }
         return accents[name] || accents.emerald
     }

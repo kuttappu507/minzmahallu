@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Controls
+import MMS.Theme 1.0
 import QtQuick.Layouts
 import QtQuick.Effects
 
@@ -41,17 +42,17 @@ ScrollView {
 
                         Text {
                             text: "Good evening, Abdul Kareem"
-                            font.family: "Poppins"
+                            font.family: Theme.activeFontFamily
                             font.pixelSize: 21
                             font.weight: Font.DemiBold
-                            color: "#12241b"
+                            color: Theme.textPrimary
                         }
                         Text {
                             text: "Here is what is happening in your mahallu today."
-                            font.family: "Poppins"
+                            font.family: Theme.activeFontFamily
                             font.pixelSize: 12
                             font.weight: Font.DemiBold
-                            color: "#4f6b5c"
+                            color: Theme.textSecondary
                         }
                     }
 
@@ -85,7 +86,7 @@ ScrollView {
                                 Layout.minimumWidth: 180
                                 implicitHeight: qaContent.implicitHeight + 24
                                 radius: 10
-                                color: "#ffffff"
+                                color: Theme.surface
                                 border.width: 1
                                 border.color: qaMA.containsMouse ? model.sc : "#d2e5d8"
                                 z: qaMA.containsMouse ? 10 : 0
@@ -133,20 +134,20 @@ ScrollView {
 
                                         Text {
                                             text: model.label
-                                            font.family: "Poppins"
+                                            font.family: Theme.activeFontFamily
                                             font.pixelSize: 13
                                             font.weight: Font.DemiBold
-                                            color: "#12241b"
+                                            color: Theme.textPrimary
                                             elide: Text.ElideRight
                                             maximumLineCount: 1
                                             width: qaCard.width - 42 - 12 - 28
                                         }
                                         Text {
                                             text: model.sub
-                                            font.family: "Poppins"
+                                            font.family: Theme.activeFontFamily
                                             font.pixelSize: 11
                                             font.weight: Font.Normal
-                                            color: "#7e968a"
+                                            color: Theme.textTertiary
                                             elide: Text.ElideRight
                                             maximumLineCount: 1
                                             width: qaCard.width - 42 - 12 - 28
@@ -278,7 +279,7 @@ ScrollView {
                                             height: 18
                                             width: deltaText.implicitWidth + 16  // 3.5*2 padding + border
                                             radius: 99
-                                            color: "#ffffff"
+                                            color: Theme.surface
                                             border.width: 1
                                             border.color: model.sc
 
@@ -286,7 +287,7 @@ ScrollView {
                                                 id: deltaText
                                                 anchors.centerIn: parent
                                                 text: model.delta
-                                                font.family: "Poppins"
+                                                font.family: Theme.activeFontFamily
                                                 font.pixelSize: 10
                                                 font.weight: Font.Medium
                                                 color: model.st
@@ -297,7 +298,7 @@ ScrollView {
                                     // CSS: .stat .val { font:700 24px/1 "Space Grotesk"; color:var(--st); }
                                     Text {
                                         text: model.value
-                                        font.family: "Poppins"
+                                        font.family: Theme.activeFontFamily
                                         font.pixelSize: 24
                                         font.weight: Font.Bold
                                         color: model.st
@@ -310,7 +311,7 @@ ScrollView {
                                     // CSS: .stat .slab { font:800 10px Manrope; letter-spacing:.09em; text-transform:uppercase; color:var(--st); opacity:.75; margin-top:6px; }
                                     Text {
                                         text: model.label
-                                        font.family: "Poppins"
+                                        font.family: Theme.activeFontFamily
                                         font.pixelSize: 10
                                         font.weight: Font.Medium
                                         color: model.st
@@ -348,7 +349,7 @@ ScrollView {
                                 Layout.fillWidth: true
                                 implicitHeight: evContent.implicitHeight + 28
                                 radius: 10
-                                color: "#ffffff"
+                                color: Theme.surface
                                 border.width: 1
                                 border.color: evHover.containsMouse ? "#059669" : "#d2e5d8"
                                 z: evHover.containsMouse ? 10 : 0
@@ -397,19 +398,19 @@ ScrollView {
 
                                         Text {
                                             text: model.title
-                                            font.family: "Poppins"
+                                            font.family: Theme.activeFontFamily
                                             font.pixelSize: 14
                                             font.weight: Font.DemiBold
-                                            color: "#12241b"
+                                            color: Theme.textPrimary
                                             elide: Text.ElideRight
                                             width: evCard.width - 42 - 13 - 32
                                         }
                                         Text {
                                             text: model.sub
-                                            font.family: "Poppins"
+                                            font.family: Theme.activeFontFamily
                                             font.pixelSize: 12
                                             font.weight: Font.Normal
-                                            color: "#4f6b5c"
+                                            color: Theme.textSecondary
                                             elide: Text.ElideRight
                                             width: evCard.width - 42 - 13 - 32
                                         }

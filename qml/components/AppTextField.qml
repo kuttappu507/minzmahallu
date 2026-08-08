@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Effects
+import MMS.Theme 1.0
 import QtQuick.Controls
 
 // ============================================================================
@@ -34,7 +35,7 @@ FocusScope {
         Text {
             id: labelItem
             text: root.label
-            font.family: "Poppins"
+            font.family: Theme.activeFontFamily
             font.pixelSize: 11
             font.weight: Font.Medium
             color: root.showError ? "#e11d48" : "#7e968a"
@@ -46,7 +47,7 @@ FocusScope {
             width: parent.width
             height: 38
             radius: 9
-            color: "#f2faf4"
+            color: Theme.surfaceHover
             border.width: 1
             border.color: root.showError ? "#e11d48" :
                           input.activeFocus ? "#059669" :
@@ -96,14 +97,14 @@ FocusScope {
                 anchors.verticalCenter: parent.verticalCenter
                 placeholderText: root.placeholderText
                 placeholderTextColor: "#7e968a"
-                font.family: "Poppins"
+                font.family: Theme.activeFontFamily
                 font.pixelSize: 13
-                color: "#12241b"
+                color: Theme.textPrimary
                 background: Item {}
                 verticalAlignment: Text.AlignVCenter
                 cursorDelegate: Rectangle {
                     visible: input.activeFocus
-                    color: "#059669"
+                    color: Theme.primary
                     width: 1
                 }
                 onEditingFinished: root.editingFinished()
@@ -120,9 +121,9 @@ FocusScope {
 
         Text {
             text: root.errorText
-            font.family: "Poppins"
+            font.family: Theme.activeFontFamily
             font.pixelSize: 10
-            color: "#e11d48"
+            color: Theme.danger
             visible: root.showError && root.errorText !== ""
             height: (root.showError && root.errorText !== "") ? implicitHeight : 0
         }

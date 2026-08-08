@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Controls
+import MMS.Theme 1.0
 import QtQuick.Layouts
 import "../components"
 
@@ -91,38 +92,38 @@ ModalDialog {
 
     content: Component {
         Rectangle {
-            anchors.fill: parent; color: "#ffffff"; radius: 12; clip: true
+            anchors.fill: parent; color: Theme.surface; radius: 12; clip: true
 
             ColumnLayout {
                 anchors.fill: parent; spacing: 0
 
                 Item {
                     Layout.fillWidth: true; Layout.preferredHeight: 56
-                    Rectangle { anchors.bottom: parent.bottom; anchors.left: parent.left; anchors.right: parent.right; height: 1; color: "#eef8f1" }
-                    Text { text: dialog._dialogTitle; font.family: "Poppins"; font.pixelSize: 16; font.weight: Font.DemiBold; color: "#12241b"; anchors.left: parent.left; anchors.leftMargin: 24; anchors.verticalCenter: parent.verticalCenter }
+                    Rectangle { anchors.bottom: parent.bottom; anchors.left: parent.left; anchors.right: parent.right; height: 1; color: Theme.surfacePressed }
+                    Text { text: dialog._dialogTitle; font.family: Theme.activeFontFamily; font.pixelSize: 16; font.weight: Font.DemiBold; color: Theme.textPrimary; anchors.left: parent.left; anchors.leftMargin: 24; anchors.verticalCenter: parent.verticalCenter }
                     Rectangle { anchors.right: parent.right; anchors.rightMargin: 16; anchors.verticalCenter: parent.verticalCenter; width: 28; height: 28; radius: 6; color: closeMA.containsMouse ? "#f2faf4" : "transparent"; Behavior on color { ColorAnimation { duration: 120 } }
                         Text { anchors.centerIn: parent; text: "\u00D7"; font.pixelSize: 18; font.weight: Font.Bold; color: closeMA.containsMouse ? "#12241b" : "#7e968a" }
                         MouseArea { id: closeMA; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: dialog.visible = false } }
                 }
 
-                Rectangle { Layout.fillWidth: true; Layout.leftMargin: 24; Layout.rightMargin: 24; Layout.topMargin: 8; visible: dialog._errorMessage !== ""; height: 36; radius: 8; color: "#fddfe5"; border.width: 1; border.color: "#e11d48"
-                    Text { anchors.fill: parent; anchors.margins: 8; text: dialog._errorMessage; font.family: "Poppins"; font.pixelSize: 12; color: "#95102e"; verticalAlignment: Text.AlignVCenter; elide: Text.ElideRight } }
+                Rectangle { Layout.fillWidth: true; Layout.leftMargin: 24; Layout.rightMargin: 24; Layout.topMargin: 8; visible: dialog._errorMessage !== ""; height: 36; radius: 8; color: Theme.coralSubtle; border.width: 1; border.color: Theme.danger
+                    Text { anchors.fill: parent; anchors.margins: 8; text: dialog._errorMessage; font.family: Theme.activeFontFamily; font.pixelSize: 12; color: "#95102e"; verticalAlignment: Text.AlignVCenter; elide: Text.ElideRight } }
 
                 ColumnLayout {
                     Layout.fillWidth: true; Layout.fillHeight: true; Layout.margins: 24; spacing: 14
 
                     // Account selector (popup)
                     ColumnLayout { Layout.fillWidth: true; spacing: 4
-                        Text { text: "Account *"; font.family: "Poppins"; font.pixelSize: 11; font.weight: Font.Medium; color: dialog._errorField === "accountId" ? "#e11d48" : "#7e968a" }
-                        Rectangle { Layout.fillWidth: true; height: 38; radius: 9; color: "#f2faf4"; border.width: 1; border.color: dialog._errorField === "accountId" ? "#e11d48" : (accMA.containsMouse ? "#b2cfbd" : "#d2e5d8"); Behavior on border.color { ColorAnimation { duration: 120 } }
+                        Text { text: "Account *"; font.family: Theme.activeFontFamily; font.pixelSize: 11; font.weight: Font.Medium; color: dialog._errorField === "accountId" ? "#e11d48" : "#7e968a" }
+                        Rectangle { Layout.fillWidth: true; height: 38; radius: 9; color: Theme.surfaceHover; border.width: 1; border.color: dialog._errorField === "accountId" ? "#e11d48" : (accMA.containsMouse ? "#b2cfbd" : "#d2e5d8"); Behavior on border.color { ColorAnimation { duration: 120 } }
                             MouseArea { id: accMA; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: accPopup.visible = !accPopup.visible }
                             Text { anchors.left: parent.left; anchors.leftMargin: 10; anchors.verticalCenter: parent.verticalCenter
                                 text: { if (dialog._accountId === "") return "Select account..."; for (var i = 0; i < dialog._accounts.length; i++) { if (dialog._accounts[i].id === parseInt(dialog._accountId)) return dialog._accounts[i].code + " - " + dialog._accounts[i].name + " (" + dialog._accounts[i].type + ")" } return "Select account..." }
-                                font.family: "Poppins"; font.pixelSize: 13; color: dialog._accountId !== "" ? "#12241b" : "#7e968a" }
-                            Popup { id: accPopup; y: parent.height + 4; width: parent.width; implicitHeight: 280; padding: 4; background: Rectangle { color: "#ffffff"; border.width: 1; border.color: "#d2e5d8"; radius: 9 }
+                                font.family: Theme.activeFontFamily; font.pixelSize: 13; color: dialog._accountId !== "" ? "#12241b" : "#7e968a" }
+                            Popup { id: accPopup; y: parent.height + 4; width: parent.width; implicitHeight: 280; padding: 4; background: Rectangle { color: Theme.surface; border.width: 1; border.color: Theme.border; radius: 9 }
                                 ListView { anchors.fill: parent; clip: true; spacing: 2; model: dialog._accounts
                                     delegate: ItemDelegate { width: parent.width; height: 34; padding: 0
-                                        contentItem: Text { text: modelData.code + " - " + modelData.name + " (" + modelData.type + ")"; font.family: "Poppins"; font.pixelSize: 13; color: "#12241b"; anchors.left: parent.left; anchors.leftMargin: 8; anchors.verticalCenter: parent.verticalCenter }
+                                        contentItem: Text { text: modelData.code + " - " + modelData.name + " (" + modelData.type + ")"; font.family: Theme.activeFontFamily; font.pixelSize: 13; color: Theme.textPrimary; anchors.left: parent.left; anchors.leftMargin: 8; anchors.verticalCenter: parent.verticalCenter }
                                         background: Rectangle { color: highlighted ? "#ecfdf5" : "transparent"; radius: 4 }
                                         onClicked: { dialog._accountId = modelData.id.toString(); accPopup.visible = false } } } } } }
 
@@ -138,16 +139,16 @@ ModalDialog {
 
                     // Description
                     ColumnLayout { Layout.fillWidth: true; spacing: 4
-                        Text { text: "DESCRIPTION"; font.family: "Poppins"; font.pixelSize: 11; font.weight: Font.Medium; color: "#7e968a" }
-                        TextArea { Layout.fillWidth: true; Layout.preferredHeight: 56; text: dialog._description; readOnly: dialog.readOnly; font.family: "Poppins"; font.pixelSize: 13; color: "#12241b"; placeholderText: "Transaction description..."; placeholderTextColor: "#7e968a"; selectByMouse: true; wrapMode: TextArea.Wrap
-                            background: Rectangle { radius: 9; color: "#f2faf4"; border.width: 1; border.color: parent.activeFocus ? "#059669" : parent.hovered ? "#b2cfbd" : "#d2e5d8"; Behavior on border.color { ColorAnimation { duration: 120 } } }
+                        Text { text: "DESCRIPTION"; font.family: Theme.activeFontFamily; font.pixelSize: 11; font.weight: Font.Medium; color: Theme.textTertiary }
+                        TextArea { Layout.fillWidth: true; Layout.preferredHeight: 56; text: dialog._description; readOnly: dialog.readOnly; font.family: Theme.activeFontFamily; font.pixelSize: 13; color: Theme.textPrimary; placeholderText: "Transaction description..."; placeholderTextColor: "#7e968a"; selectByMouse: true; wrapMode: TextArea.Wrap
+                            background: Rectangle { radius: 9; color: Theme.surfaceHover; border.width: 1; border.color: parent.activeFocus ? "#059669" : parent.hovered ? "#b2cfbd" : "#d2e5d8"; Behavior on border.color { ColorAnimation { duration: 120 } } }
                             padding: 10; onTextChanged: dialog._description = text } }
 
                     Item { Layout.fillWidth: true; Layout.fillHeight: true }
                 }
 
-                Rectangle { Layout.fillWidth: true; Layout.preferredHeight: 64; color: "#f2faf4"
-                    Rectangle { anchors.top: parent.top; anchors.left: parent.left; anchors.right: parent.right; height: 1; color: "#eef8f1" }
+                Rectangle { Layout.fillWidth: true; Layout.preferredHeight: 64; color: Theme.surfaceHover
+                    Rectangle { anchors.top: parent.top; anchors.left: parent.left; anchors.right: parent.right; height: 1; color: Theme.surfacePressed }
                     Row { anchors.right: parent.right; anchors.rightMargin: 24; anchors.verticalCenter: parent.verticalCenter; spacing: 10
                         AppButton { text: "Cancel"; variant: "secondary"; onClicked: dialog.visible = false }
                         AppButton { text: dialog.readOnly ? "Close" : (dialog.transactionId > 0 ? "Save Changes" : "Add Transaction"); variant: "primary"; iconName: dialog.readOnly ? "" : "check"; onClicked: dialog.submit() } } }

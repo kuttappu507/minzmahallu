@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Controls
+import MMS.Theme 1.0
 
 // ============================================================================
 // SplashScreen — shown for 2 seconds on startup, then transitions to main app
@@ -13,7 +14,7 @@ Rectangle {
     gradient: Gradient {
         orientation: Gradient.Vertical
         GradientStop { position: 0.0;  color: "#0a7f5d" }
-        GradientStop { position: 0.42; color: "#065f46" }
+        GradientStop { position: 0.42; color: Theme.primaryPressed }
         GradientStop { position: 1.0;  color: "#044633" }
     }
 
@@ -24,18 +25,18 @@ Rectangle {
         Rectangle {
             width: 80; height: 80; radius: 28; color: Qt.rgba(255,255,255,0.14)
             anchors.horizontalCenter: parent.horizontalCenter
-            Text { anchors.centerIn: parent; text: "M"; font.family: "Poppins"; font.pixelSize: 36; font.weight: Font.Bold; color: "#ffffff" }
+            Text { anchors.centerIn: parent; text: "M"; font.family: Theme.activeFontFamily; font.pixelSize: 36; font.weight: Font.Bold; color: Theme.surface }
         }
 
         Text {
             text: "Minz Mahallu"
-            font.family: "Anek Malayalam"; font.pixelSize: 24; font.weight: Font.Bold; color: "#ffffff"
+            font.family: "Anek Malayalam"; font.pixelSize: 24; font.weight: Font.Bold; color: Theme.surface
             anchors.horizontalCenter: parent.horizontalCenter
         }
 
         Text {
             text: "Management System"
-            font.family: "Poppins"; font.pixelSize: 12; font.weight: Font.Medium; color: "#a5dcc6"
+            font.family: Theme.activeFontFamily; font.pixelSize: 12; font.weight: Font.Medium; color: "#a5dcc6"
             anchors.horizontalCenter: parent.horizontalCenter
         }
 
@@ -66,7 +67,7 @@ Rectangle {
     // Version at bottom
     Text {
         text: "v1.0.0"
-        font.family: "Poppins"; font.pixelSize: 10; color: "#a5dcc6"
+        font.family: Theme.activeFontFamily; font.pixelSize: 10; color: "#a5dcc6"
         anchors.bottom: parent.bottom; anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottomMargin: 24
     }
