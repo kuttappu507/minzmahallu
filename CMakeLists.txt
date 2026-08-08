@@ -66,8 +66,9 @@ file(GLOB_RECURSE APP_HEADERS
 # -----------------------------------------------------------------------------
 set(APP_RC_FILE "")
 if(WIN32)
-    # Get native manifest path for RC compiler (backslashes on Windows)
-    file(TO_NATIVE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/resources/app.manifest" MANIFEST_PATH)
+    # Use forward slashes — MSVC RC compiler accepts them and avoids
+    # backslash escape issues in paths
+    set(MANIFEST_PATH "${CMAKE_CURRENT_SOURCE_DIR}/resources/app.manifest")
     configure_file(
         "${CMAKE_CURRENT_SOURCE_DIR}/resources/app.rc.in"
         "${CMAKE_CURRENT_BINARY_DIR}/app.rc"
