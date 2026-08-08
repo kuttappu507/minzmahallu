@@ -15,10 +15,6 @@
 #include <fstream>
 #include <QDateTime>
 
-#ifdef Q_OS_WIN
-#include <windows.h>
-#endif
-
 #include "core/Config.h"
 #include "core/Database.h"
 #include "core/Logger.h"
@@ -63,26 +59,9 @@ int main(int argc, char* argv[]) {
     std::signal(SIGSEGV, crashHandler);
     std::signal(SIGABRT, crashHandler);
 
-#ifdef Q_OS_WIN
-    AllocConsole();
-    freopen("CONOUT$", "w", stdout);
-    freopen("CONOUT$", "w", stderr);
-    typedef BOOL(WINAPI* SetProcessDpiAwarenessContextFunc)(HANDLE);
-    HMODULE hUser32 = GetModuleHandleW(L"user32.dll");
-    if (hUser32) {
-        auto pSetProcessDpiAwarenessContext = (SetProcessDpiAwarenessContextFunc)GetProcAddress(hUser32, "SetProcessDpiAwarenessContext");
-        if (pSetProcessDpiAwarenessContext) pSetProcessDpiAwarenessContext((HANDLE)-4);
-        else SetProcessDPIAware();
-    } else {
-        SetProcessDPIAware();
-    }
-#endif
-
-    // Qt 6 already provides high-DPI support. Keep the OS scale factor
-    // unchanged; route geometry is now designed in device-independent pixels.
-    qputenv("QT_ENABLE_HIGHDPI_SCALING", "1");
-    qputenv("QT_AUTO_SCREEN_SCALE_FACTOR", "1");
-    qputenv("QT_SCALE_FACTOR_ROUNDING_POLICY", "PassThrough");
+    // Qt 6 uses the Windows Per-Monitor-V2 manifest and native fractional
+    // scaling. Do not call Win32 DPI APIs or override Qt scale environment
+    // variables here; doing both causes double-scaling and blurry Quick UI.
 
     logMsg("Step 1: Creating QGuiApplication...");
     QGuiApplication app(argc, argv);
@@ -91,9 +70,11 @@ int main(int argc, char* argv[]) {
     app.setApplicationVersion("1.0.0");
     QQuickStyle::setStyle("Basic");
 
-    // Curve text rendering keeps glyphs crisp at fractional Windows scales
-    // while remaining hardware accelerated in Qt Quick 6.7+.
-    QQuickWindow::setTextRenderType(QQuickWindow::CurveTextRendering);
+    // Native text rendering is the correct desktop baseline for crisp text
+    // on Windows at 100/125/150% DPI. Avoid CurveTextRendering here because
+    // it can make the complete UI appear soft on some Windows GPU/driver
+    // combinations.
+    QQuickWindow::setTextRenderType(QQuickWindow::NativeTextRendering);
 
     QString exeDir = QCoreApplication::applicationDirPath();
     g_logFile.open((exeDir + "/mms_error.log").toStdString(), std::ios::out | std::ios::trunc);
@@ -199,9 +180,11 @@ int main(int argc, char* argv[]) {
     CTX("WelfareModel", welfareModel); CTX("welfareModel", welfareModel);
     CTX("UserController", userController); CTX("userController", userController);
     CTX("AuditLogController", auditLogController); CTX("auditLogController", auditLogController);
-    CTX("CertificateController", certificateController); CTX("ReportController", reportController);
-    CTX("BackupController", backupController); CTX("SettingsController", settingsController);
-    CTX("AuthController", authController); CTX("I18NController", i18nController);
+    CTX("CertificateController", certificateController); CTX("certificateController", certificateController);
+    CTX("ReportController", reportController); CTX("reportController", reportController);
+    CTX("BackupController", backupController); CTX("backupController", backupController);
+    CTX("SettingsController", settingsController); CTX("AuthController", authController);
+    CTX("I18NController", i18nController);
     QmlServices* services = new QmlServices(&app); CTX("Services", services);
 #undef CTX
     logMsg("  Engine OK");
