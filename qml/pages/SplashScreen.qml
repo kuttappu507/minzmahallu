@@ -3,78 +3,100 @@ import QtQuick.Controls
 import MMS.Theme 1.0
 
 // ============================================================================
-// SplashScreen — shown for 2 seconds on startup, then transitions to main app
+// SplashScreen — small centered box (not full window)
+// Shows for 2 seconds then disappears.
 // ============================================================================
 
-Rectangle {
+Item {
     id: splash
     anchors.fill: parent
-    color: Theme.sidebarBot
 
-    gradient: Gradient {
-        orientation: Gradient.Vertical
-        GradientStop { position: 0.0;  color: Theme.sidebarTop }
-        GradientStop { position: 0.42; color: Theme.primaryPressed }
-        GradientStop { position: 1.0;  color: Theme.sidebarBot }
+    // Semi-transparent backdrop
+    Rectangle {
+        anchors.fill: parent
+        color: Qt.rgba(0, 0, 0, 0.4)
+
+        MouseArea {
+            anchors.fill: parent
+            acceptedButtons: Qt.AllButtons
+            onClicked: {}
+            onWheel: {}
+        }
     }
 
-    // Logo + app name centered
-    Column {
-        anchors.centerIn: parent; spacing: 16
+    // Small centered box — no full window background
+    Rectangle {
+        id: splashCard
+        anchors.centerIn: parent
+        width: 320; height: 200
+        radius: Theme.radiusXl
+        color: Theme.sidebarBot
 
-        Rectangle {
-            width: 80; height: 80; radius: 28; color: Qt.rgba(255,255,255,0.14)
-            anchors.horizontalCenter: parent.horizontalCenter
-            Text { anchors.centerIn: parent; text: "M"; font.family: Theme.activeFontFamily; font.pixelSize: 36; font.weight: Font.Bold; color: Theme.surface }
+        gradient: Gradient {
+            orientation: Gradient.Vertical
+            GradientStop { position: 0.0; color: Theme.sidebarTop }
+            GradientStop { position: 1.0; color: Theme.sidebarBot }
         }
 
-        Text {
-            text: { var _l = I18NController.currentLanguage; return I18NController.tr("app_name") }
-            font.family: "Anek Malayalam"; font.pixelSize: 24; font.weight: Font.Bold; color: Theme.surface
-            anchors.horizontalCenter: parent.horizontalCenter
-        }
+        Column {
+            anchors.centerIn: parent; spacing: 12
 
-        Text {
-            text: { var _l = I18NController.currentLanguage; return I18NController.tr("app_subtitle") }
-            font.family: Theme.activeFontFamily; font.pixelSize: 12; font.weight: Font.Medium; color: "#a5dcc6"
-            anchors.horizontalCenter: parent.horizontalCenter
-        }
+            // Logo circle
+            Rectangle {
+                width: 48; height: 48; radius: 18; color: Qt.rgba(255, 255, 255, 0.14)
+                anchors.horizontalCenter: parent.horizontalCenter
+                Text { anchors.centerIn: parent; text: "M"; font.family: Theme.activeFontFamily; font.pixelSize: 22; font.weight: Font.Bold; color: "#ffffff" }
+            }
 
-        // Loading indicator
-        BusyIndicator {
-            running: true; anchors.horizontalCenter: parent.horizontalCenter
-            visible: true
-            contentItem: Item {
-                implicitWidth: 24; implicitHeight: 24
-                Rectangle {
-                    width: 24; height: 24; radius: 12; color: "transparent"
-                    border.width: 2; border.color: Qt.rgba(255,255,255,0.2)
+            // App name
+            Text {
+                text: { var _l = I18NController.currentLanguage; return I18NController.tr("app_name") }
+                font.family: Theme.activeFontFamily; font.pixelSize: 14; font.weight: Font.Bold; color: "#ffffff"
+                anchors.horizontalCenter: parent.horizontalCenter
+            }
+
+            // Loading spinner
+            BusyIndicator {
+                running: splash.visible; anchors.horizontalCenter: parent.horizontalCenter
+                width: 24; height: 24
+                contentItem: Item {
+                    implicitWidth: 24; implicitHeight: 24
                     Rectangle {
-                        width: 24; height: 12; color: "transparent"
-                        clip: true
+                        width: 24; height: 24; radius: 12; color: "transparent"
+                        border.width: 2; border.color: Qt.rgba(255, 255, 255, 0.2)
                         Rectangle {
-                            width: 24; height: 24; radius: 12; color: "transparent"
-                            border.width: 2; border.color: Theme.gold
-                            anchors.bottom: parent.bottom
+                            width: 24; height: 12; color: "transparent"; clip: true
+                            Rectangle {
+                                width: 24; height: 24; radius: 12; color: "transparent"
+                                border.width: 2; border.color: Theme.gold
+                                anchors.bottom: parent.bottom
+                            }
                         }
+                        RotationAnimator on rotation { running: splash.visible; from: 0; to: 360; duration: 1000; loops: Animation.Infinite }
                     }
-                    RotationAnimator on rotation { running: true; from: 0; to: 360; duration: 1000; loops: Animation.Infinite }
                 }
             }
         }
-    }
 
-    // Version at bottom
-    Text {
-        text: "v1.0.0"
-        font.family: Theme.activeFontFamily; font.pixelSize: 10; color: "#a5dcc6"
-        anchors.bottom: parent.bottom; anchors.horizontalCenter: parent.horizontalCenter
-        anchors.bottomMargin: 24
+        // Entrance animation
+        scale: 0.9
+        opacity: 0
+        Behavior on scale { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
+        Behavior on opacity { NumberAnimation { duration: 200 } }
+        Component.onCompleted: { scale = 1; opacity = 1 }
     }
 
     // Auto-dismiss after 2 seconds
     Timer {
         interval: 2000; running: true; repeat: false
-        onTriggered: splash.visible = false
+        onTriggered: {
+            splashCard.scale = 0.9
+            splashCard.opacity = 0
+            dismissTimer.start()
+        }
+    }
+    Timer {
+        id: dismissTimer
+        interval: 200; onTriggered: splash.visible = false
     }
 }

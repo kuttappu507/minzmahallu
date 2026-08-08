@@ -39,7 +39,6 @@
 #include "core/FontManager.h"
 #include "core/I18N.h"
 #include "services/SettingsService.h"
-#include "services/QmlServices.h"
 #include "services/FamilyController.h"
 #include "services/FamilyListModel.h"
 #include "services/MemberController.h"
@@ -294,12 +293,6 @@ int main(int argc, char* argv[]) {
     engine.rootContext()->setContextProperty("SettingsController", settingsController);
     engine.rootContext()->setContextProperty("AuthController", authController);
     engine.rootContext()->setContextProperty("I18NController", i18nController);
-
-    // Keep legacy QmlServices for backward compat during migration (other
-    // modules may still reference "Services"). Can be removed once all
-    // modules have their own controllers.
-    QmlServices* services = new QmlServices(&app);
-    engine.rootContext()->setContextProperty("Services", services);
     logMsg("  Engine OK");
 
     QObject::connect(&engine, &QQmlApplicationEngine::warnings,

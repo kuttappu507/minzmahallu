@@ -52,7 +52,7 @@ Item {
                     Item { Layout.fillHeight: true; Layout.fillWidth: true }
 
                     Row { spacing: 10; layoutDirection: Qt.RightToLeft
-                        AppButton { text: "Cancel"; variant: "secondary"; onClicked: issueDialog.visible = false }
+                        AppButton { text: { var _l = I18NController.currentLanguage; return I18NController.tr("action_cancel") }; variant: "secondary"; onClicked: issueDialog.visible = false }
                         AppButton { text: "Issue Certificate"; variant: "primary"; iconName: "check"; onClicked: {
                             var result
                             if (issueDialog.certType === "Membership") result = CertificateController.issueMembership(codeInput.text)

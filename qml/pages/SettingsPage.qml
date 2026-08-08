@@ -112,7 +112,7 @@ Item {
 
             // Save button
             Row { Layout.fillWidth: true; Layout.leftMargin: 24; Layout.rightMargin: 24; Layout.bottomMargin: 24; layoutDirection: Qt.RightToLeft
-                AppButton { text: "Save Settings"; variant: "primary"; iconName: "check"; onClicked: {
+                AppButton { text: { var _l = I18NController.currentLanguage; return I18NController.tr("action_save") }; variant: "primary"; iconName: "check"; onClicked: {
                     var ok = SettingsController.save()
                     toast.show(ok ? "Settings saved successfully" : "Save failed", ok ? "#059669" : "#e11d48")
                 } }

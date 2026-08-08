@@ -131,7 +131,7 @@ ModalDialog {
 
                         Text {
                             anchors.centerIn: parent
-                            text: "Cancel"
+                            text: { var _l = I18NController.currentLanguage; return I18NController.tr("action_cancel") }
                             font.family: Theme.activeFontFamily
                             font.pixelSize: 13
                             font.weight: Font.DemiBold

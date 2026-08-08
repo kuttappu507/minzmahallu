@@ -53,7 +53,7 @@ Item {
                 Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("dth_title") }; font.family: Theme.activeFontFamily; font.pixelSize: 21; font.weight: Font.DemiBold; color: Theme.textPrimary }
                 Text { text: "Death and burial records"; font.family: Theme.activeFontFamily; font.pixelSize: 12; color: Theme.textSecondary } }
             AppButton {
-                text: "Add Record"; variant: "primary"; iconName: "plus"
+                text: { var _l = I18NController.currentLanguage; return I18NController.tr("action_add") }; variant: "primary"; iconName: "plus"
                 Layout.alignment: Qt.AlignTop
                 onClicked: { editDialog.deathId = 0; editDialog.readOnly = false; editDialog.show() }
             }

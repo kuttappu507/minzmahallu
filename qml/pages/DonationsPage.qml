@@ -62,7 +62,7 @@ Item {
                 Text { text: "Manage one-off donations and contributions"; font.family: Theme.activeFontFamily; font.pixelSize: 12; font.weight: Font.Normal; color: Theme.textSecondary }
             }
             AppButton {
-                text: "Add Donation"; variant: "primary"; iconName: "plus"
+                text: { var _l = I18NController.currentLanguage; return I18NController.tr("action_add") + " " + I18NController.tr("nav_donations") }; variant: "primary"; iconName: "plus"
                 Layout.alignment: Qt.AlignTop
                 onClicked: { editDialog.donationId = 0; editDialog.readOnly = false; editDialog.show() }
             }

@@ -61,7 +61,7 @@ Item {
                 Text { text: "Manage ledger accounts and transactions"; font.family: Theme.activeFontFamily; font.pixelSize: 12; font.weight: Font.Normal; color: Theme.textSecondary }
             }
             AppButton {
-                text: "Add Transaction"; variant: "primary"; iconName: "plus"
+                text: { var _l = I18NController.currentLanguage; return I18NController.tr("action_add") + " " + I18NController.tr("nav_accounting") }; variant: "primary"; iconName: "plus"
                 Layout.alignment: Qt.AlignTop
                 onClicked: { editDialog.transactionId = 0; editDialog.readOnly = false; editDialog.show() }
             }

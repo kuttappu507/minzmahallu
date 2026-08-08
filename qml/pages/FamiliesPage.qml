@@ -95,7 +95,7 @@ Item {
             }
 
             AppButton {
-                text: "Add Family"; variant: "primary"; iconName: "plus"
+                text: { var _l = I18NController.currentLanguage; return I18NController.tr("action_add") + " " + I18NController.tr("nav_families") }; variant: "primary"; iconName: "plus"
                 Layout.alignment: Qt.AlignTop
                 onClicked: { editDialog.familyId = 0; editDialog.readOnly = false; editDialog.show() }
             }

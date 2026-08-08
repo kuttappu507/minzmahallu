@@ -23,14 +23,12 @@ QtObject {
 
     // ===== CANVAS =====
     readonly property color canvas:          dark ? "#0a1a12" : "#e7f4ea"
-    readonly property color canvasAlt:       dark ? "#0f1e16" : "#eef8f1"
 
     // ===== SURFACES =====
     readonly property color surface:         dark ? "#13221a" : "#ffffff"
     readonly property color surfaceHover:     dark ? "#1a2e22" : "#f2faf4"
     readonly property color surfacePressed:  dark ? "#1e3327" : "#eef8f1"
     readonly property color surfaceSubtle:   dark ? "#0f1e16" : "#f2faf4"
-    readonly property color surfaceRaised:   dark ? "#1a2e22" : "#ffffff"
 
     // ===== GREEN SIDEBAR (same in both themes — sidebar is always dark green) =====
     readonly property color sidebarTop:      "#0a7f5d"
@@ -38,13 +36,10 @@ QtObject {
     readonly property color sidebarBot:      "#044633"
     readonly property color sidebarHover:    Qt.rgba(255/255, 255/255, 255/255, 0.06)
     readonly property color sidebarActive:   Qt.rgba(255/255, 255/255, 255/255, 0.14)
-    readonly property color sidebarBorder:   Qt.rgba(255/255, 255/255, 255/255, 0.14)
     readonly property color sidebarText:     dark ? "#a5dcc6" : "#a5dcc6"
     readonly property color sidebarTextActive: "#ffffff"
     readonly property color sidebarTextMuted: Qt.rgba(214/255, 240/255, 228/255, 0.42)
-    readonly property color sidebarLogo:     "#ffffff"
     readonly property color sidebarSubTitle: "#a5dcc6"
-    readonly property color sidebarBg:       "#065f46"
     readonly property color sidebarTextHover: dark ? "#d6f5e7" : "#d6f5e7"
 
     // ===== GOLD ACCENT (sidebar indicator, avatar) =====
@@ -71,13 +66,11 @@ QtObject {
     readonly property color blue:            "#3b82f6"
     readonly property color blueHover:       "#2563eb"
     readonly property color blueSubtle:     dark ? "#0d1830" : "#eff6ff"
-    readonly property color blueSubtleAlt:  dark ? "#1a2a4a" : "#dbeafe"
 
     // ===== ACCENT — Orange =====
     readonly property color orange:          "#f97316"
     readonly property color orangeHover:     "#ea580c"
     readonly property color orangeSubtle:    dark ? "#2a1a0a" : "#fff7ed"
-    readonly property color orangeSubtleAlt: dark ? "#3a2410" : "#fed7aa"
 
     // ===== ACCENT — Violet =====
     readonly property color violet:          "#8b5cf6"
@@ -89,13 +82,11 @@ QtObject {
     readonly property color cyan:            "#06b6d4"
     readonly property color cyanHover:       "#0891b2"
     readonly property color cyanSubtle:     dark ? "#0a2a30" : "#ecfeff"
-    readonly property color cyanSubtleAlt:  dark ? "#0d3740" : "#a5f3fc"
 
     // ===== ACCENT — Coral/Red =====
     readonly property color coral:           "#f43f5e"
     readonly property color coralHover:     "#e11d48"
     readonly property color coralSubtle:    dark ? "#2a0f15" : "#fff1f2"
-    readonly property color coralSubtleAlt: dark ? "#3a151d" : "#fecdd3"
 
     // ===== SEMANTIC =====
     readonly property color success:         "#10b981"
@@ -113,9 +104,6 @@ QtObject {
     readonly property color textSecondary:   dark ? "#9fb8aa" : "#4f6b5c"
     readonly property color textTertiary:    dark ? "#6d8878" : "#7e968a"
     readonly property color textDisabled:    dark ? "#3a5048" : "#b2cfbd"
-    readonly property color textOnPrimary:   "#ffffff"
-    readonly property color textOnDark:      "#ffffff"
-    readonly property color textInverse:     "#ffffff"
 
     // ===== BORDERS =====
     readonly property color border:          dark ? "#23402f" : "#d2e5d8"
