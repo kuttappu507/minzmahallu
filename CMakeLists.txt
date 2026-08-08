@@ -65,7 +65,7 @@ file(GLOB_RECURSE APP_HEADERS
 # -----------------------------------------------------------------------------
 set(APP_RC_FILE "")
 if(WIN32)
-    set(APP_RC_FILE "${CMAKE_CURRENT_SOURCE_DIR}/app.manifest")
+    set(APP_RC_FILE "${CMAKE_CURRENT_SOURCE_DIR}/app.rc")
 endif()
 
 # -----------------------------------------------------------------------------
