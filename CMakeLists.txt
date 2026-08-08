@@ -13,9 +13,6 @@ project(MMS
     LANGUAGES CXX
 )
 
-# -----------------------------------------------------------------------------
-# Global settings
-# -----------------------------------------------------------------------------
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
@@ -27,9 +24,6 @@ if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release CACHE STRING "Build type" FORCE)
 endif()
 
-# -----------------------------------------------------------------------------
-# Find dependencies
-# -----------------------------------------------------------------------------
 find_package(Qt6 6.5 COMPONENTS
     Core Gui Widgets Qml Quick QuickControls2 QuickLayouts
     Sql PrintSupport Svg Network
@@ -38,39 +32,21 @@ message(STATUS "Qt6 version: ${Qt6Core_VERSION}")
 
 find_package(OpenSSL REQUIRED)
 message(STATUS "OpenSSL version: ${OPENSSL_VERSION}")
-
 find_package(ZLIB REQUIRED)
 
-# -----------------------------------------------------------------------------
-# Application metadata
-# -----------------------------------------------------------------------------
 set(APP_NAME "MMS")
 set(APP_VERSION "1.0.0")
 set(APP_COMPANY "Mahallu Management System")
 
-# -----------------------------------------------------------------------------
-# Sources — glob all backend C++ (no views, no legacy mains)
-# -----------------------------------------------------------------------------
-file(GLOB_RECURSE APP_SOURCES
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp"
-)
+file(GLOB_RECURSE APP_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
 list(FILTER APP_SOURCES EXCLUDE REGEX "app_main\\.cpp$")
+file(GLOB_RECURSE APP_HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/src/*.h")
 
-file(GLOB_RECURSE APP_HEADERS
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/*.h"
-)
-
-# -----------------------------------------------------------------------------
-# Windows resource file (app icon)
-# -----------------------------------------------------------------------------
 set(APP_RC_FILE "")
 if(WIN32)
-    set(APP_RC_FILE "")
+    set(APP_RC_FILE "${CMAKE_CURRENT_SOURCE_DIR}/app.rc")
 endif()
 
-# -----------------------------------------------------------------------------
-# mms_app — the ONE production executable
-# -----------------------------------------------------------------------------
 if(Qt6Qml_FOUND AND Qt6Quick_FOUND AND Qt6QuickControls2_FOUND AND Qt6QuickLayouts_FOUND)
     message(STATUS "MMS App: building mms_app")
 
@@ -105,22 +81,22 @@ if(Qt6Qml_FOUND AND Qt6Quick_FOUND AND Qt6QuickControls2_FOUND AND Qt6QuickLayou
         QT_DISABLE_DEPRECATED_BEFORE=0x060000
     )
 
-    # -----------------------------------------------------------------------------
-    # Compiler flags
-    # -----------------------------------------------------------------------------
     if(MSVC)
         target_compile_options(mms_app PRIVATE
-            /W4
-            /permissive-
-            /utf-8
-            /EHsc
-            /Zc:__cplusplus
+            /W4 /permissive- /utf-8 /EHsc /Zc:__cplusplus
             $<$<CONFIG:Release>:/O2>
             $<$<CONFIG:Debug>:/Zi /Od>
         )
         set_target_properties(mms_app PROPERTIES
             WIN32_EXECUTABLE TRUE
             LINK_FLAGS "/ENTRY:mainCRTStartup"
+        )
+        # Let the linker embed the single authoritative Per-Monitor-V2
+        # manifest. app.rc intentionally contains no RT_MANIFEST resource,
+        # avoiding duplicate-manifest linker errors.
+        target_link_options(mms_app PRIVATE
+            "/MANIFEST:EMBED"
+            "/MANIFESTINPUT:${CMAKE_CURRENT_SOURCE_DIR}/app.manifest"
         )
     else()
         target_compile_options(mms_app PRIVATE
@@ -130,9 +106,6 @@ if(Qt6Qml_FOUND AND Qt6Quick_FOUND AND Qt6QuickControls2_FOUND AND Qt6QuickLayou
         )
     endif()
 
-    # -----------------------------------------------------------------------------
-    # Copy SQL files & templates to build dir
-    # -----------------------------------------------------------------------------
     add_custom_command(TARGET mms_app POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory
             "${CMAKE_CURRENT_SOURCE_DIR}/sql"
@@ -143,29 +116,18 @@ if(Qt6Qml_FOUND AND Qt6Quick_FOUND AND Qt6QuickControls2_FOUND AND Qt6QuickLayou
         COMMENT "Copying SQL scripts and templates to build directory"
     )
 
-    # -----------------------------------------------------------------------------
-    # Install rules (portable layout)
-    # -----------------------------------------------------------------------------
-    install(TARGETS mms_app
-        RUNTIME DESTINATION bin
-        BUNDLE  DESTINATION .
-    )
-    install(DIRECTORY sql/         DESTINATION sql)
-    install(DIRECTORY resources/   DESTINATION resources)
-    install(DIRECTORY docs/        DESTINATION docs)
+    install(TARGETS mms_app RUNTIME DESTINATION bin BUNDLE DESTINATION .)
+    install(DIRECTORY sql/ DESTINATION sql)
+    install(DIRECTORY resources/ DESTINATION resources)
+    install(DIRECTORY docs/ DESTINATION docs)
 else()
     message(FATAL_ERROR "Qt6 QML modules not found — cannot build mms_app")
 endif()
 
-# =============================================================================
-# Tests (enabled via -DBUILD_TESTS=ON)
-# =============================================================================
 option(BUILD_TESTS "Build unit tests" OFF)
-
 if(BUILD_TESTS)
     enable_testing()
     find_package(Qt6 REQUIRED COMPONENTS Test)
-
     add_executable(mms_tests
         "${CMAKE_CURRENT_SOURCE_DIR}/tests/TestMain.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/tests/TestDatabase.cpp"
@@ -174,35 +136,21 @@ if(BUILD_TESTS)
         "${CMAKE_CURRENT_SOURCE_DIR}/tests/TestMember.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/tests/TestSubscription.cpp"
     )
-    target_include_directories(mms_tests PRIVATE
-        "${CMAKE_CURRENT_SOURCE_DIR}/src"
-        ${OPENSSL_INCLUDE_DIR}
-    )
-    target_link_libraries(mms_tests PRIVATE
-        Qt6::Core
-        Qt6::Sql
-        Qt6::Test
-        OpenSSL::Crypto
-        ZLIB::ZLIB
-    )
+    target_include_directories(mms_tests PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src" ${OPENSSL_INCLUDE_DIR})
+    target_link_libraries(mms_tests PRIVATE Qt6::Core Qt6::Sql Qt6::Test OpenSSL::Crypto ZLIB::ZLIB)
     target_compile_definitions(mms_tests PRIVATE TEST_DATA_DIR="${CMAKE_CURRENT_SOURCE_DIR}/tests/data")
     add_test(NAME mms_tests COMMAND mms_tests)
 endif()
 
-# =============================================================================
-# CPack installer
-# =============================================================================
 set(CPACK_PACKAGE_NAME "Mahallu Management System")
 set(CPACK_PACKAGE_VENDOR "MMS Project")
 set(CPACK_PACKAGE_VERSION "${APP_VERSION}")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Mosque Community Administration System")
 set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
 set(CPACK_PACKAGE_INSTALL_DIRECTORY "MMS")
-
 if(WIN32)
     set(CPACK_GENERATOR "NSIS;ZIP")
     set(CPACK_NSIS_DISPLAY_NAME "Mahallu Management System")
     set(CPACK_NSIS_INSTALL_ROOT "$LOCALAPPDATA")
 endif()
-
 include(CPack)

@@ -1,0 +1,3 @@
+// Windows application resources.
+// The manifest is supplied to the MSVC linker via /MANIFESTINPUT in CMake.
+// Do not embed a second RT_MANIFEST resource here.

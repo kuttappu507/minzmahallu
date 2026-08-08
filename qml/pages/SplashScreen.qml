@@ -1,79 +1,80 @@
 import QtQuick
 import QtQuick.Controls
+import "../theme"
 
-// ============================================================================
-// SplashScreen — shown for 2 seconds on startup, then transitions to main app
-// ============================================================================
-
-Rectangle {
+// Compact in-app splash overlay. The application window remains visible;
+// only this centered card is shown during startup.
+Item {
     id: splash
     anchors.fill: parent
-    color: "#044633"
+    z: 9999
 
-    gradient: Gradient {
-        orientation: Gradient.Vertical
-        GradientStop { position: 0.0;  color: "#0a7f5d" }
-        GradientStop { position: 0.42; color: "#065f46" }
-        GradientStop { position: 1.0;  color: "#044633" }
+    Rectangle {
+        anchors.fill: parent
+        color: "transparent"
     }
 
-    // Logo + app name centered
-    Column {
-        anchors.centerIn: parent; spacing: 16
+    Rectangle {
+        id: card
+        width: 390
+        height: 220
+        anchors.centerIn: parent
+        radius: 18
+        color: Theme.sidebarMid
+        border.width: 1
+        border.color: Qt.rgba(255,255,255,0.12)
 
-        Rectangle {
-            width: 80; height: 80; radius: 28; color: Qt.rgba(255,255,255,0.14)
-            anchors.horizontalCenter: parent.horizontalCenter
-            Text { anchors.centerIn: parent; text: "M"; font.family: "Poppins"; font.pixelSize: 36; font.weight: Font.Bold; color: "#ffffff" }
-        }
+        Column {
+            anchors.centerIn: parent
+            spacing: 10
 
-        Text {
-            text: "Minz Mahallu"
-            font.family: "Anek Malayalam"; font.pixelSize: 24; font.weight: Font.Bold; color: "#ffffff"
-            anchors.horizontalCenter: parent.horizontalCenter
-        }
-
-        Text {
-            text: "Management System"
-            font.family: "Poppins"; font.pixelSize: 12; font.weight: Font.Medium; color: "#a5dcc6"
-            anchors.horizontalCenter: parent.horizontalCenter
-        }
-
-        // Loading indicator
-        BusyIndicator {
-            running: true; anchors.horizontalCenter: parent.horizontalCenter
-            visible: true
-            contentItem: Item {
-                implicitWidth: 24; implicitHeight: 24
-                Rectangle {
-                    width: 24; height: 24; radius: 12; color: "transparent"
-                    border.width: 2; border.color: Qt.rgba(255,255,255,0.2)
-                    Rectangle {
-                        width: 24; height: 12; color: "transparent"
-                        clip: true
-                        Rectangle {
-                            width: 24; height: 24; radius: 12; color: "transparent"
-                            border.width: 2; border.color: "#f2c14e"
-                            anchors.bottom: parent.bottom
-                        }
-                    }
-                    RotationAnimator on rotation { running: true; from: 0; to: 360; duration: 1000; loops: Animation.Infinite }
+            Rectangle {
+                width: 54
+                height: 54
+                radius: 16
+                anchors.horizontalCenter: parent.horizontalCenter
+                color: Qt.rgba(255,255,255,0.12)
+                Text {
+                    anchors.centerIn: parent
+                    text: "M"
+                    font.family: Theme.fontFamily
+                    font.pixelSize: 25
+                    font.weight: Font.Bold
+                    color: "#ffffff"
                 }
+            }
+
+            Text {
+                text: "Minz Mahallu"
+                anchors.horizontalCenter: parent.horizontalCenter
+                font.family: Theme.fontFamily
+                font.pixelSize: 21
+                font.weight: Font.DemiBold
+                color: "#ffffff"
+            }
+
+            Text {
+                text: "Management System"
+                anchors.horizontalCenter: parent.horizontalCenter
+                font.family: Theme.fontFamily
+                font.pixelSize: 11
+                font.weight: Font.Medium
+                color: Theme.sidebarSubTitle
+            }
+
+            BusyIndicator {
+                width: 22
+                height: 22
+                anchors.horizontalCenter: parent.horizontalCenter
+                running: true
             }
         }
     }
 
-    // Version at bottom
-    Text {
-        text: "v1.0.0"
-        font.family: "Poppins"; font.pixelSize: 10; color: "#a5dcc6"
-        anchors.bottom: parent.bottom; anchors.horizontalCenter: parent.horizontalCenter
-        anchors.bottomMargin: 24
-    }
-
-    // Auto-dismiss after 2 seconds
     Timer {
-        interval: 2000; running: true; repeat: false
+        interval: 1200
+        running: true
+        repeat: false
         onTriggered: splash.visible = false
     }
 }

@@ -1,20 +1,14 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Effects
-
-// ============================================================================
-// AppComboBox — Styled dropdown matching DashboardV3
-// CSS: same border/radius as search field. Height: 38px.
-// ============================================================================
+import "../theme"
 
 FocusScope {
     id: root
-
     property string label: ""
     property var model: []
     property int currentIndex: 0
     property string currentText: model[currentIndex] || ""
-
     signal activated(int index)
 
     implicitHeight: label !== "" ? labelItem.implicitHeight + 4 + 38 : 38
@@ -23,57 +17,49 @@ FocusScope {
     Column {
         anchors.fill: parent
         spacing: 4
-
         Text {
             id: labelItem
             text: root.label
-            font.family: "Poppins"
-            font.pixelSize: 11
-            font.weight: Font.Medium
-            color: "#7e968a"
+            font.family: Theme.fontFamily
+            font.pixelSize: Theme.fontSizeSm - 1
+            font.weight: Theme.fontWeightMedium
+            color: Theme.textTertiary
             visible: root.label !== ""
             height: root.label !== "" ? implicitHeight : 0
         }
-
         ComboBox {
             id: combo
             width: parent.width
             implicitHeight: 38
             model: root.model
             currentIndex: root.currentIndex
-            font.family: "Poppins"
-            font.pixelSize: 13
+            font.family: Theme.fontFamily
+            font.pixelSize: Theme.fontSizeMd
             padding: 0
-
             indicator: Item { width: 0; height: 0; visible: false }
-
             onActivated: function(index) {
                 root.currentIndex = index
                 root.activated(index)
             }
-
             contentItem: Item {
                 width: parent.width
                 height: parent.height
-
                 Text {
                     text: combo.displayText
-                    font.family: "Poppins"
-                    font.pixelSize: 13
-                    color: combo.enabled ? "#12241b" : "#b2cfbd"
+                    font.family: Theme.fontFamily
+                    font.pixelSize: Theme.fontSizeMd
+                    color: combo.enabled ? Theme.textPrimary : Theme.textDisabled
                     anchors.left: parent.left
                     anchors.leftMargin: 10
                     anchors.verticalCenter: parent.verticalCenter
                     width: parent.width - 36
                     elide: Text.ElideRight
                 }
-
                 Item {
                     width: 16; height: 16
                     anchors.right: parent.right
                     anchors.rightMargin: 10
                     anchors.verticalCenter: parent.verticalCenter
-
                     Image {
                         id: chevron
                         source: "qrc:/icons/svg/chevron-down.svg"
@@ -85,36 +71,31 @@ FocusScope {
                     MultiEffect {
                         anchors.fill: parent
                         source: chevron
-                        colorizationColor: combo.popup.visible ? "#059669" : "#7e968a"
+                        colorizationColor: combo.popup.visible ? Theme.primary : Theme.textTertiary
                         colorization: 1.0
                         rotation: combo.popup.visible ? 180 : 0
-                        Behavior on rotation { NumberAnimation { duration: 150; easing.type: Easing.OutCubic } }
+                        Behavior on rotation { NumberAnimation { duration: Theme.animNormal; easing.type: Easing.OutCubic } }
                     }
                 }
             }
-
             background: Rectangle {
-                radius: 9
-                color: "#f2faf4"
+                radius: Theme.radiusXl
+                color: Theme.surfaceSubtle
                 border.width: 1
-                border.color: combo.popup.visible || combo.activeFocus ? "#059669" :
-                              combo.hovered ? "#b2cfbd" : "#d2e5d8"
-                Behavior on border.color { ColorAnimation { duration: 120 } }
+                border.color: combo.popup.visible || combo.activeFocus ? Theme.borderFocused : combo.hovered ? Theme.borderHover : Theme.border
+                Behavior on border.color { ColorAnimation { duration: Theme.animFast } }
             }
-
             popup: Popup {
                 y: combo.height + 4
                 width: combo.width
                 implicitHeight: Math.min(listView.contentHeight + 8, 280)
                 padding: 4
-
                 background: Rectangle {
-                    color: "#ffffff"
+                    color: Theme.surfaceRaised
                     border.width: 1
-                    border.color: "#d2e5d8"
-                    radius: 9
+                    border.color: Theme.border
+                    radius: Theme.radiusXl
                 }
-
                 contentItem: ListView {
                     id: listView
                     clip: true
@@ -124,26 +105,23 @@ FocusScope {
                     spacing: 2
                 }
             }
-
             delegate: ItemDelegate {
                 width: combo.width - 8
                 implicitHeight: 34
                 padding: 0
-
                 contentItem: Text {
                     text: modelData
-                    font.family: "Poppins"
-                    font.pixelSize: 13
-                    color: highlighted ? "#059669" : "#12241b"
+                    font.family: Theme.fontFamily
+                    font.pixelSize: Theme.fontSizeMd
+                    color: highlighted ? Theme.primary : Theme.textPrimary
                     anchors.left: parent.left
                     anchors.leftMargin: 8
                     anchors.verticalCenter: parent.verticalCenter
                 }
-
                 background: Rectangle {
-                    color: highlighted ? "#ecfdf5" : "transparent"
-                    radius: 4
-                    Behavior on color { ColorAnimation { duration: 100 } }
+                    color: highlighted ? Theme.primarySubtle : "transparent"
+                    radius: Theme.radiusSm
+                    Behavior on color { ColorAnimation { duration: Theme.animFast } }
                 }
             }
         }
