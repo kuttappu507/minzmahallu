@@ -85,7 +85,7 @@ Item {
                 Layout.fillWidth: true
                 spacing: 2
                 Text {
-                    text: "Families"
+                    text: { var _l = I18NController.currentLanguage; return I18NController.tr("nav_families") }
                     font.family: Theme.activeFontFamily; font.pixelSize: 21; font.weight: Font.DemiBold; color: Theme.textPrimary
                 }
                 Text {

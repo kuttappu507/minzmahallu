@@ -49,7 +49,7 @@ Item {
         RowLayout {
             Layout.fillWidth: true; spacing: 16
             Column { Layout.fillWidth: true; spacing: 2
-                Text { text: "Users"; font.family: Theme.activeFontFamily; font.pixelSize: 21; font.weight: Font.DemiBold; color: Theme.textPrimary }
+                Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("usr_title") }; font.family: Theme.activeFontFamily; font.pixelSize: 21; font.weight: Font.DemiBold; color: Theme.textPrimary }
                 Text { text: "Manage user accounts and roles"; font.family: Theme.activeFontFamily; font.pixelSize: 12; color: Theme.textSecondary } }
             Text { text: users.length + " users"; font.family: Theme.activeFontFamily; font.pixelSize: 11; color: Theme.textTertiary; Layout.alignment: Qt.AlignVCenter }
         }

@@ -113,7 +113,7 @@ Item {
         RowLayout {
             Layout.fillWidth: true; spacing: 16
             Column { Layout.fillWidth: true; spacing: 2
-                Text { text: "Certificates"; font.family: Theme.activeFontFamily; font.pixelSize: 21; font.weight: Font.DemiBold; color: Theme.textPrimary }
+                Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("cert_title") }; font.family: Theme.activeFontFamily; font.pixelSize: 21; font.weight: Font.DemiBold; color: Theme.textPrimary }
                 Text { text: "Issue and manage certificates with PDF generation"; font.family: Theme.activeFontFamily; font.pixelSize: 12; color: Theme.textSecondary } }
         }
 

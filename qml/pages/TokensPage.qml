@@ -13,7 +13,7 @@ Item {
         anchors.fill: parent; anchors.margins: 24; spacing: 16
 
         Column { Layout.fillWidth: true; spacing: 2
-            Text { text: "Tokens"; font.family: Theme.activeFontFamily; font.pixelSize: 21; font.weight: Font.DemiBold; color: Theme.textPrimary }
+            Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("nav_tokens") }; font.family: Theme.activeFontFamily; font.pixelSize: 21; font.weight: Font.DemiBold; color: Theme.textPrimary }
             Text { text: "Meat/food distribution token management"; font.family: Theme.activeFontFamily; font.pixelSize: 12; color: Theme.textSecondary } }
 
         Rectangle {

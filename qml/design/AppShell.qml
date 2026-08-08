@@ -174,22 +174,22 @@ ApplicationWindow {
                     clip: true; spacing: 1; interactive: false
                     currentIndex: mainApp.currentNavIndex
                     model: ListModel {
-                        ListElement { label: "Dashboard";     icon: "dashboard" }
-                        ListElement { label: "Families";      icon: "families" }
-                        ListElement { label: "Members";       icon: "members" }
-                        ListElement { label: "Subscriptions"; icon: "subscriptions" }
-                        ListElement { label: "Donations";     icon: "donations" }
-                        ListElement { label: "Accounting";    icon: "accounting" }
-                        ListElement { label: "Marriage";      icon: "marriage" }
-                        ListElement { label: "Death";         icon: "death" }
-                        ListElement { label: "Welfare";       icon: "welfare" }
-                        ListElement { label: "Certificates";  icon: "certificates" }
-                        ListElement { label: "Tokens";        icon: "token" }
-                        ListElement { label: "Reports";       icon: "reports" }
-                        ListElement { label: "Settings";      icon: "settings" }
-                        ListElement { label: "Users";         icon: "users" }
-                        ListElement { label: "Audit Log";     icon: "audit" }
-                        ListElement { label: "Backup";        icon: "backup" }
+                        ListElement { label: ""; i18nKey: "nav_dashboard";      icon: "dashboard" }
+                        ListElement { label: ""; i18nKey: "nav_families";       icon: "families" }
+                        ListElement { label: ""; i18nKey: "nav_members";        icon: "members" }
+                        ListElement { label: ""; i18nKey: "nav_subscriptions"; icon: "subscriptions" }
+                        ListElement { label: ""; i18nKey: "nav_donations";      icon: "donations" }
+                        ListElement { label: ""; i18nKey: "nav_accounting";    icon: "accounting" }
+                        ListElement { label: ""; i18nKey: "nav_marriage";       icon: "marriage" }
+                        ListElement { label: ""; i18nKey: "nav_death";          icon: "death" }
+                        ListElement { label: ""; i18nKey: "nav_welfare";        icon: "welfare" }
+                        ListElement { label: ""; i18nKey: "nav_certificates";   icon: "certificates" }
+                        ListElement { label: ""; i18nKey: "nav_tokens";        icon: "token" }
+                        ListElement { label: ""; i18nKey: "nav_reports";        icon: "reports" }
+                        ListElement { label: ""; i18nKey: "nav_settings";       icon: "settings" }
+                        ListElement { label: ""; i18nKey: "nav_users";          icon: "users" }
+                        ListElement { label: ""; i18nKey: "nav_audit";          icon: "audit" }
+                        ListElement { label: ""; i18nKey: "nav_backup";         icon: "backup" }
                     }
 
                     delegate: Item {
@@ -219,7 +219,9 @@ ApplicationWindow {
                                 }
                             }
                             Text {
-                                text: model.label; font.family: Theme.activeFontFamily; font.pixelSize: 13
+                                // Depend on I18NController.currentLanguage so binding re-evaluates on language change
+                                text: { var _l = I18NController.currentLanguage; return I18NController.tr(model.i18nKey) }
+                                font.family: Theme.activeFontFamily; font.pixelSize: 13
                                 font.weight: ListView.isCurrentItem ? Font.DemiBold : Font.Medium
                                 color: ListView.isCurrentItem ? "#ffffff" : (navMA.containsMouse ? "#d6f5e7" : "#a5dcc6")
                                 y: (34 - height) / 2
@@ -267,7 +269,7 @@ ApplicationWindow {
                 Row {
                     anchors.left: parent.left; anchors.leftMargin: 24; anchors.verticalCenter: parent.verticalCenter; spacing: 6
                     Text { text: "MINZ MAHALLU /"; font.family: Theme.activeFontFamily; font.pixelSize: 11; font.weight: Font.Bold; color: Theme.textTertiary; anchors.verticalCenter: parent.verticalCenter }
-                    Text { text: navList.model.get(navList.currentIndex) ? navList.model.get(navList.currentIndex).label : "Dashboard"; font.family: Theme.activeFontFamily; font.pixelSize: 16; font.weight: Font.DemiBold; color: Theme.textPrimary; anchors.verticalCenter: parent.verticalCenter }
+                    Text { text: { var _l = I18NController.currentLanguage; var item = navList.model.get(navList.currentIndex); return item ? I18NController.tr(item.i18nKey) : I18NController.tr("nav_dashboard") }; font.family: Theme.activeFontFamily; font.pixelSize: 16; font.weight: Font.DemiBold; color: Theme.textPrimary; anchors.verticalCenter: parent.verticalCenter }
                 }
 
                 // Right side: language toggle + theme toggle + search
@@ -325,7 +327,7 @@ ApplicationWindow {
                             anchors.left: parent.left; anchors.leftMargin: 32
                             anchors.right: parent.right; anchors.rightMargin: 10
                             anchors.verticalCenter: parent.verticalCenter
-                            placeholderText: "Search records..."
+                            placeholderText: { var _l = I18NController.currentLanguage; return I18NController.tr("search_placeholder") }
                             placeholderTextColor: "#7e968a"
                             font.family: Theme.activeFontFamily; font.pixelSize: 13; color: Theme.textPrimary
                             background: Item {}

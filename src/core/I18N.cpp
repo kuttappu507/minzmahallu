@@ -13,6 +13,7 @@ void I18N::initTranslations() {
 
     ADD("app_name","Minz Mahallu Management","മിൻസ് മഹല്ല് മാനേജ്മെന്റ്");
     ADD("app_subtitle","Mosque Community Administration","മസ്ജിദ് കമ്മ്യൂണിറ്റി ഭരണം");
+    ADD("search_placeholder","Search records...","രേഖകൾ തിരയുക...");
     ADD("login_title","Sign In","സൈൻ ഇൻ");
     ADD("login_username","Username","ഉപയോക്തൃനാമം");
     ADD("login_password","Password","രഹസ്യവാക്ക്");
@@ -32,6 +33,7 @@ void I18N::initTranslations() {
     ADD("nav_death","Death Register","മരണ രജിസ്റ്റർ");
     ADD("nav_welfare","Welfare","ക്ഷേമം");
     ADD("nav_certificates","Certificates","സർട്ടിഫിക്കറ്റുകൾ");
+    ADD("nav_tokens","Tokens","ടോക്കണുകൾ");
     ADD("nav_reports","Reports","റിപ്പോർട്ടുകൾ");
     ADD("nav_settings","Settings","ക്രമീകരണങ്ങൾ");
     ADD("nav_users","Users","ഉപയോക്താക്കൾ");

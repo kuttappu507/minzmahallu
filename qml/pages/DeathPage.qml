@@ -50,7 +50,7 @@ Item {
         RowLayout {
             Layout.fillWidth: true; spacing: 16
             Column { Layout.fillWidth: true; spacing: 2
-                Text { text: "Death Register"; font.family: Theme.activeFontFamily; font.pixelSize: 21; font.weight: Font.DemiBold; color: Theme.textPrimary }
+                Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("dth_title") }; font.family: Theme.activeFontFamily; font.pixelSize: 21; font.weight: Font.DemiBold; color: Theme.textPrimary }
                 Text { text: "Death and burial records"; font.family: Theme.activeFontFamily; font.pixelSize: 12; color: Theme.textSecondary } }
             AppButton {
                 text: "Add Record"; variant: "primary"; iconName: "plus"

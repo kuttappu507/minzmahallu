@@ -29,13 +29,13 @@ Rectangle {
         }
 
         Text {
-            text: "Minz Mahallu"
+            text: { var _l = I18NController.currentLanguage; return I18NController.tr("app_name") }
             font.family: "Anek Malayalam"; font.pixelSize: 24; font.weight: Font.Bold; color: Theme.surface
             anchors.horizontalCenter: parent.horizontalCenter
         }
 
         Text {
-            text: "Management System"
+            text: { var _l = I18NController.currentLanguage; return I18NController.tr("app_subtitle") }
             font.family: Theme.activeFontFamily; font.pixelSize: 12; font.weight: Font.Medium; color: "#a5dcc6"
             anchors.horizontalCenter: parent.horizontalCenter
         }
