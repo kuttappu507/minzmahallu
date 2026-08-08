@@ -1,47 +1,46 @@
 import QtQuick
+import "../theme"
 
-// ============================================================================
-// StatusBadge — Soft tinted status badge
-// Matches HTML .pill / .stat .delta style
-// ============================================================================
-
+// Shared soft status badge. Semantic colors remain consistent while the
+// background tint follows the active light/dark palette.
 Rectangle {
     id: root
 
     property string text: ""
-    property string variant: "active"    // active|inactive|archived|overdue|paid|pending|custom
-    property color customColor: "#059669"
-    property color customBg: "#ecfdf5"
+    property string variant: "active"
+    property color customColor: Theme.primary
+    property color customBg: Theme.primarySubtleAlt
 
     implicitHeight: 22
     implicitWidth: badgeText.implicitWidth + 16
     radius: 99
     color: _bgColor
-    border.width: 0
+    border.width: 1
+    border.color: Qt.rgba(_mainColor.r, _mainColor.g, _mainColor.b, Theme.dark ? 0.35 : 0.18)
 
     readonly property color _mainColor: {
         switch (variant) {
-            case "active":   return "#059669"
-            case "inactive": return "#64748b"
-            case "archived": return "#64748b"
-            case "overdue":  return "#e11d48"
-            case "paid":     return "#059669"
-            case "pending":  return "#d97706"
+            case "active":   return Theme.success
+            case "inactive": return Theme.textTertiary
+            case "archived": return Theme.textTertiary
+            case "overdue":  return Theme.coral
+            case "paid":     return Theme.success
+            case "pending":  return Theme.warning
             case "custom":   return customColor
-            default:         return "#059669"
+            default:         return Theme.primary
         }
     }
 
     readonly property color _bgColor: {
         switch (variant) {
-            case "active":   return "#d3f5e6"
-            case "inactive": return "#e6ebf2"
-            case "archived": return "#e6ebf2"
-            case "overdue":  return "#fddfe5"
-            case "paid":     return "#d3f5e6"
-            case "pending":  return "#fcebc8"
+            case "active":   return Theme.successSubtle
+            case "inactive": return Theme.surfaceSubtle
+            case "archived": return Theme.surfaceSubtle
+            case "overdue":  return Theme.dangerSubtle
+            case "paid":     return Theme.successSubtle
+            case "pending":  return Theme.warningSubtle
             case "custom":   return customBg
-            default:         return "#d3f5e6"
+            default:         return Theme.primarySubtle
         }
     }
 
@@ -49,9 +48,10 @@ Rectangle {
         id: badgeText
         anchors.centerIn: parent
         text: root.text
-        font.family: "Poppins"
-        font.pixelSize: 10
-        font.weight: Font.Medium
+        font.family: Theme.fontFamily
+        font.pixelSize: Theme.fontSizeXs
+        font.weight: Theme.fontWeightMedium
         color: root._mainColor
+        elide: Text.ElideRight
     }
 }
