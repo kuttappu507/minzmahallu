@@ -47,6 +47,18 @@ QtObject {
     readonly property color sidebarBg:       "#065f46"
     readonly property color sidebarTextHover: dark ? "#d6f5e7" : "#d6f5e7"
 
+    // ===== GOLD ACCENT (sidebar indicator, avatar) =====
+    readonly property color gold:               "#f2c14e"
+    readonly property color goldBorder:        "#b98317"
+    readonly property color goldText:          "#4a3606"
+
+    // ===== SHADOW =====
+    readonly property color shadow:            "#000000"
+
+    // ===== PINK ACCENT (donation summary card) =====
+    readonly property color pink:              "#db2777"
+    readonly property color pinkSubtle:        "#fadfeb"
+
     // ===== BRAND — Emerald =====
     readonly property color primary:         "#059669"
     readonly property color primaryHover:    "#047857"

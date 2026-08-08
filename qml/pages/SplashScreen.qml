@@ -9,13 +9,13 @@ import MMS.Theme 1.0
 Rectangle {
     id: splash
     anchors.fill: parent
-    color: "#044633"
+    color: Theme.sidebarBot
 
     gradient: Gradient {
         orientation: Gradient.Vertical
-        GradientStop { position: 0.0;  color: "#0a7f5d" }
+        GradientStop { position: 0.0;  color: Theme.sidebarTop }
         GradientStop { position: 0.42; color: Theme.primaryPressed }
-        GradientStop { position: 1.0;  color: "#044633" }
+        GradientStop { position: 1.0;  color: Theme.sidebarBot }
     }
 
     // Logo + app name centered
@@ -54,7 +54,7 @@ Rectangle {
                         clip: true
                         Rectangle {
                             width: 24; height: 24; radius: 12; color: "transparent"
-                            border.width: 2; border.color: "#f2c14e"
+                            border.width: 2; border.color: Theme.gold
                             anchors.bottom: parent.bottom
                         }
                     }

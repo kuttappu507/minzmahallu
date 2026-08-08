@@ -18,9 +18,9 @@ Item {
         anchors.fill: parent
         gradient: Gradient {
             orientation: Gradient.Vertical
-            GradientStop { position: 0.0;  color: "#0a7f5d" }
+            GradientStop { position: 0.0;  color: Theme.sidebarTop }
             GradientStop { position: 0.42; color: Theme.primaryPressed }
-            GradientStop { position: 1.0;  color: "#044633" }
+            GradientStop { position: 1.0;  color: Theme.sidebarBot }
         }
     }
 
@@ -34,7 +34,7 @@ Item {
         // Subtle shadow
         Rectangle {
             anchors.fill: parent; anchors.margins: -2
-            radius: parent.radius + 2; color: "#000000"; opacity: 0.15
+            radius: parent.radius + 2; color: Theme.shadow; opacity: 0.15
             z: -1
         }
 

@@ -203,7 +203,7 @@ ApplicationWindow {
                             Behavior on color { ColorAnimation { duration: 140 } }
                             Rectangle {
                                 x: -10; y: (34 - 20) / 2; width: 4; height: 20; radius: 4
-                                color: "#f2c14e"; visible: ListView.isCurrentItem
+                                color: Theme.gold; visible: ListView.isCurrentItem
                             }
                         }
 
@@ -242,7 +242,7 @@ ApplicationWindow {
                     MouseArea { anchors.fill: parent; onClicked: AuthController.logout() }
                     Row {
                         id: profileRow; x: 14; y: 13; spacing: 10; visible: !mainApp.sidebarCollapsed
-                        Rectangle { width: 36; height: 36; radius: 9; color: "#f2c14e"; border.width: 2; border.color: "#b98317"
+                        Rectangle { width: 36; height: 36; radius: 9; color: Theme.gold; border.width: 2; border.color: Theme.goldBorder
                             Text { anchors.centerIn: parent; text: AuthController.initials; font.family: Theme.activeFontFamily; font.pixelSize: 13; font.weight: Font.DemiBold; color: "#4a3606" } }
                         Column { spacing: 0
                             Text { text: AuthController.fullName; font.family: Theme.activeFontFamily; font.pixelSize: 13; font.weight: Font.DemiBold; color: Theme.surface }
@@ -250,7 +250,7 @@ ApplicationWindow {
                         }
                     }
                     // Collapsed: just avatar
-                    Rectangle { anchors.centerIn: parent; visible: mainApp.sidebarCollapsed; width: 36; height: 36; radius: 9; color: "#f2c14e"; border.width: 2; border.color: "#b98317"
+                    Rectangle { anchors.centerIn: parent; visible: mainApp.sidebarCollapsed; width: 36; height: 36; radius: 9; color: Theme.gold; border.width: 2; border.color: Theme.goldBorder
                         Text { anchors.centerIn: parent; text: AuthController.initials; font.family: Theme.activeFontFamily; font.pixelSize: 13; font.weight: Font.DemiBold; color: "#4a3606" } }
                 }
             }

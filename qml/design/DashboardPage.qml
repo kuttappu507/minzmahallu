@@ -369,7 +369,7 @@ ScrollView {
                                     // CSS: .ev-card .eic
                                     Rectangle {
                                         width: 42; height: 42; radius: 10
-                                        color: "#db2777"
+                                        color: Theme.pink
 
                                         Item {
                                             width: 20; height: 20
