@@ -129,7 +129,7 @@ if(Qt6Qml_FOUND AND Qt6Quick_FOUND AND Qt6QuickControls2_FOUND AND Qt6QuickLayou
         )
         set_target_properties(mms_app PROPERTIES
             WIN32_EXECUTABLE TRUE
-            LINK_FLAGS "/ENTRY:mainCRTStartup"
+            LINK_FLAGS "/ENTRY:mainCRTStartup /MANIFEST:NO"
         )
     else()
         target_compile_options(mms_app PRIVATE
