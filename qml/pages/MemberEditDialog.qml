@@ -402,7 +402,7 @@ ModalDialog {
                     Rectangle { anchors.top: parent.top; anchors.left: parent.left; anchors.right: parent.right; height: 1; color: Theme.surfacePressed }
                     Row {
                         anchors.right: parent.right; anchors.rightMargin: 24; anchors.verticalCenter: parent.verticalCenter; spacing: 10
-                        AppButton { text: { var _l = I18NController.currentLanguage; return I18NController.tr("action_cancel") }; variant: "secondary"; onClicked: dialog.visible = false }
+                        AppButton { text: { var _l = I18NController.currentLanguage; return I18NController.tr("action_cancel") } variant: "secondary"; onClicked: dialog.visible = false }
                         AppButton {
                             text: dialog.readOnly ? "Close" : (dialog.memberId > 0 ? "Save Changes" : "Add Member")
                             variant: "primary"; iconName: dialog.readOnly ? "" : "check"

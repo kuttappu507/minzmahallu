@@ -269,7 +269,7 @@ ApplicationWindow {
                 Row {
                     anchors.left: parent.left; anchors.leftMargin: 24; anchors.verticalCenter: parent.verticalCenter; spacing: 6
                     Text { text: "MINZ MAHALLU /"; font.family: Theme.activeFontFamily; font.pixelSize: 11; font.weight: Font.Bold; color: Theme.textTertiary; anchors.verticalCenter: parent.verticalCenter }
-                    Text { text: { var _l = I18NController.currentLanguage; var item = navList.model.get(navList.currentIndex); return item ? I18NController.tr(item.i18nKey) : I18NController.tr("nav_dashboard") }; font.family: Theme.activeFontFamily; font.pixelSize: 16; font.weight: Font.DemiBold; color: Theme.textPrimary; anchors.verticalCenter: parent.verticalCenter }
+                    Text { text: { var _l = I18NController.currentLanguage; var item = navList.model.get(navList.currentIndex); return item ? I18NController.tr(item.i18nKey) : I18NController.tr("nav_dashboard") } font.family: Theme.activeFontFamily; font.pixelSize: 16; font.weight: Font.DemiBold; color: Theme.textPrimary; anchors.verticalCenter: parent.verticalCenter }
                 }
 
                 // Right side: language toggle + theme toggle + search

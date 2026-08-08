@@ -64,11 +64,11 @@ Item {
             Layout.fillWidth: true; spacing: 16
             Column {
                 Layout.fillWidth: true; spacing: 2
-                Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("nav_subscriptions") }; font.family: Theme.activeFontFamily; font.pixelSize: 21; font.weight: Font.DemiBold; color: Theme.textPrimary }
+                Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("nav_subscriptions") } font.family: Theme.activeFontFamily; font.pixelSize: 21; font.weight: Font.DemiBold; color: Theme.textPrimary }
                 Text { text: "Manage recurring contributions and collections"; font.family: Theme.activeFontFamily; font.pixelSize: 12; font.weight: Font.Normal; color: Theme.textSecondary }
             }
             AppButton {
-                text: { var _l = I18NController.currentLanguage; return I18NController.tr("action_add") + " " + I18NController.tr("nav_subscriptions") }; variant: "primary"; iconName: "plus"
+                text: { var _l = I18NController.currentLanguage; return I18NController.tr("action_add") + " " + I18NController.tr("nav_subscriptions") } variant: "primary"; iconName: "plus"
                 Layout.alignment: Qt.AlignTop
                 onClicked: { editDialog.subscriptionId = 0; editDialog.readOnly = false; editDialog.show() }
             }

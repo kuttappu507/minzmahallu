@@ -38,7 +38,7 @@ Item {
 
             // Header
             Column { Layout.fillWidth: true; Layout.leftMargin: 24; Layout.rightMargin: 24; Layout.topMargin: 24; spacing: 2
-                Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("set_title") }; font.family: Theme.activeFontFamily; font.pixelSize: 21; font.weight: Font.DemiBold; color: Theme.textPrimary }
+                Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("set_title") } font.family: Theme.activeFontFamily; font.pixelSize: 21; font.weight: Font.DemiBold; color: Theme.textPrimary }
                 Text { text: "Application configuration"; font.family: Theme.activeFontFamily; font.pixelSize: 12; color: Theme.textSecondary } }
 
             // Organization info
@@ -112,7 +112,7 @@ Item {
 
             // Save button
             Row { Layout.fillWidth: true; Layout.leftMargin: 24; Layout.rightMargin: 24; Layout.bottomMargin: 24; layoutDirection: Qt.RightToLeft
-                AppButton { text: { var _l = I18NController.currentLanguage; return I18NController.tr("action_save") }; variant: "primary"; iconName: "check"; onClicked: {
+                AppButton { text: { var _l = I18NController.currentLanguage; return I18NController.tr("action_save") } variant: "primary"; iconName: "check"; onClicked: {
                     var ok = SettingsController.save()
                     toast.show(ok ? "Settings saved successfully" : "Save failed", ok ? "#059669" : "#e11d48")
                 } }

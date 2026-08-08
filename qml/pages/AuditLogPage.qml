@@ -27,7 +27,7 @@ Item {
         RowLayout {
             Layout.fillWidth: true; spacing: 16
             Column { Layout.fillWidth: true; spacing: 2
-                Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("audit_title") }; font.family: Theme.activeFontFamily; font.pixelSize: 21; font.weight: Font.DemiBold; color: Theme.textPrimary }
+                Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("audit_title") } font.family: Theme.activeFontFamily; font.pixelSize: 21; font.weight: Font.DemiBold; color: Theme.textPrimary }
                 Text { text: { var _r = AuditLogController.summaryRevision; return "System activity history (" + AuditLogController.countToday() + " actions today)"; } font.family: Theme.activeFontFamily; font.pixelSize: 12; color: Theme.textSecondary } }
         }
 

@@ -354,7 +354,7 @@ ModalDialog {
                         anchors.right: parent.right; anchors.rightMargin: 24; anchors.verticalCenter: parent.verticalCenter; spacing: 10
 
                         AppButton {
-                            text: { var _l = I18NController.currentLanguage; return I18NController.tr("action_cancel") }; variant: "secondary"
+                            text: { var _l = I18NController.currentLanguage; return I18NController.tr("action_cancel") } variant: "secondary"
                             onClicked: dialog.visible = false
                         }
 

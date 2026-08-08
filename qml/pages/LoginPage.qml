@@ -83,7 +83,7 @@ Item {
             // Password field
             ColumnLayout {
                 Layout.fillWidth: true; spacing: 4
-                Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("login_password") }; font.family: Theme.activeFontFamily; font.pixelSize: 11; font.weight: Font.Medium; color: Theme.textTertiary }
+                Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("login_password") } font.family: Theme.activeFontFamily; font.pixelSize: 11; font.weight: Font.Medium; color: Theme.textTertiary }
                 Rectangle {
                     Layout.fillWidth: true; height: 38; radius: 9; color: Theme.surfaceHover; border.width: 1
                     border.color: passwordField.activeFocus ? "#059669" : (pwdHover.containsMouse ? "#b2cfbd" : "#d2e5d8")
@@ -93,7 +93,7 @@ Item {
                         id: passwordField
                         anchors.fill: parent; anchors.leftMargin: 10; anchors.rightMargin: 38
                         verticalAlignment: Text.AlignVCenter
-                        placeholderText: { var _l = I18NController.currentLanguage; return I18NController.tr("login_password") }; placeholderTextColor: "#7e968a"
+                        placeholderText: { var _l = I18NController.currentLanguage; return I18NController.tr("login_password") } placeholderTextColor: "#7e968a"
                         font.family: Theme.activeFontFamily; font.pixelSize: 13; color: Theme.textPrimary
                         echoMode: showPassword.checked ? TextInput.Normal : TextInput.Password
                         background: Item {}
@@ -121,7 +121,7 @@ Item {
             AppButton {
                 id: loginButton
                 Layout.fillWidth: true
-                text: { var _l = I18NController.currentLanguage; return I18NController.tr("login_button") }; variant: "primary"; iconName: "key"
+                text: { var _l = I18NController.currentLanguage; return I18NController.tr("login_button") } variant: "primary"; iconName: "key"
                 onClicked: {
                     if (usernameField.text.trim() === "" || passwordField.text === "") {
                         errorText.text = "Please enter username and password."

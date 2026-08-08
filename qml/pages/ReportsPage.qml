@@ -44,7 +44,7 @@ Item {
 
         // Header
         Column { Layout.fillWidth: true; spacing: 2
-            Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("rpt_title") }; font.family: Theme.activeFontFamily; font.pixelSize: 21; font.weight: Font.DemiBold; color: Theme.textPrimary }
+            Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("rpt_title") } font.family: Theme.activeFontFamily; font.pixelSize: 21; font.weight: Font.DemiBold; color: Theme.textPrimary }
             Text { text: "Generate and export reports"; font.family: Theme.activeFontFamily; font.pixelSize: 12; color: Theme.textSecondary } }
 
         // Toolbar
