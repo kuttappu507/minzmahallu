@@ -56,6 +56,7 @@
 #include "services/MiscControllers.h"
 #include "services/AuthController.h"
 #include "services/I18NController.h"
+#include "services/DashboardController.h"
 
 static std::ofstream g_logFile;
 
@@ -245,7 +246,8 @@ int main(int argc, char* argv[]) {
     SettingsController* settingsController = new SettingsController(&app);
 
     AuthController* authController = new AuthController(&app);
-    I18NController* i18nController = new I18NController(&app);
+    I18NController* i18NController = new I18NController(&app);
+    DashboardController* dashboardController = new DashboardController(&app);
     logMsg("  Controllers OK");
 
     // Create QML engine
@@ -293,6 +295,7 @@ int main(int argc, char* argv[]) {
     engine.rootContext()->setContextProperty("SettingsController", settingsController);
     engine.rootContext()->setContextProperty("AuthController", authController);
     engine.rootContext()->setContextProperty("I18NController", i18nController);
+    engine.rootContext()->setContextProperty("DashboardController", dashboardController);
     logMsg("  Engine OK");
 
     QObject::connect(&engine, &QQmlApplicationEngine::warnings,

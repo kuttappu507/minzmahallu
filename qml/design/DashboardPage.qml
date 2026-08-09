@@ -183,16 +183,16 @@ ScrollView {
 
                         Repeater {
                             model: ListModel {
-                                ListElement { label: "FAMILIES";    value: "248";      delta: "▲ +6 this month";    sc: "#059669"; sb: "#d3f5e6"; st: "#04543c"; icon: "families"; up: 1 }
-                                ListElement { label: "MEMBERS";     value: "1,142";    delta: "▲ +18 this month";   sc: "#0d9488"; sb: "#c8f6f1"; st: "#0f5e54"; icon: "members"; up: 1 }
-                                ListElement { label: "ACTIVE";      value: "986";      delta: "▲ 86.3% active";     sc: "#0284c7"; sb: "#d7edfb"; st: "#0a5480"; icon: "user"; up: 1 }
-                                ListElement { label: "COLLECTION";  value: "₹48,200";  delta: "▲ +9.1% vs June";    sc: "#d97706"; sb: "#fcebc8"; st: "#7c4403"; icon: "dollar"; up: 1 }
-                                ListElement { label: "DUES";        value: "₹36,400";  delta: "▼ 7 families overdue"; sc: "#e11d48"; sb: "#fddfe5"; st: "#95102e"; icon: "alert"; up: 0 }
-                                ListElement { label: "DONATIONS";   value: "₹92,750";  delta: "▲ +12.4% vs June";   sc: "#db2777"; sb: "#fadfeb"; st: "#93184f"; icon: "donations"; up: 1 }
+                                ListElement { label: "FAMILIES";    value: DashboardController.totalFamilies; delta: ""; sc: "#059669"; sb: "#d3f5e6"; st: "#04543c"; icon: "families"; up: 1 }
+                                ListElement { label: "MEMBERS";     value: DashboardController.totalMembers; delta: ""; sc: "#0d9488"; sb: "#c8f6f1"; st: "#0f5e54"; icon: "members"; up: 1 }
+                                ListElement { label: "ACTIVE";      value: DashboardController.activeMembers; delta: ""; sc: "#0284c7"; sb: "#d7edfb"; st: "#0a5480"; icon: "user"; up: 1 }
+                                ListElement { label: "COLLECTION";  value: "₹" + DashboardController.monthlyCollection.toFixed(0); delta: ""; sc: "#d97706"; sb: "#fcebc8"; st: "#7c4403"; icon: "dollar"; up: 1 }
+                                ListElement { label: "DUES";        value: "₹" + DashboardController.pendingDues.toFixed(0); delta: ""; sc: "#e11d48"; sb: "#fddfe5"; st: "#95102e"; icon: "alert"; up: 0 }
+                                ListElement { label: "DONATIONS";   value: "₹" + DashboardController.monthlyDonations.toFixed(0); delta: ""; sc: "#db2777"; sb: "#fadfeb"; st: "#93184f"; icon: "donations"; up: 1 }
                                 ListElement { label: "WELFARE";     value: "₹1,45,000"; delta: "▲ 14 beneficiaries";  sc: "#7c3aed"; sb: "#e7defc"; st: "#5423b7"; icon: "welfare"; up: 1 }
-                                ListElement { label: "MARRIAGES";   value: "17";       delta: "▲ 2 this quarter";    sc: "#ea580c"; sb: "#ffe4cf"; st: "#8f3708"; icon: "marriage"; up: 1 }
-                                ListElement { label: "DEATHS";      value: "9";        delta: "▼ 1 this month";      sc: "#64748b"; sb: "#e6ebf2"; st: "#33415c"; icon: "death"; up: 0 }
-                                ListElement { label: "BALANCE";     value: "₹4,56,320"; delta: "▲ across all funds";  sc: "#2563eb"; sb: "#dbe7fd"; st: "#1e3fae"; icon: "accounting"; up: 1 }
+                                ListElement { label: "MARRIAGES";   value: DashboardController.marriagesThisYear; delta: ""; sc: "#ea580c"; sb: "#ffe4cf"; st: "#8f3708"; icon: "marriage"; up: 1 }
+                                ListElement { label: "DEATHS";      value: DashboardController.deathsThisYear; delta: ""; sc: "#64748b"; sb: "#e6ebf2"; st: "#33415c"; icon: "death"; up: 0 }
+                                ListElement { label: "BALANCE";     value: "₹" + DashboardController.balance.toFixed(0); delta: ""; sc: "#2563eb"; sb: "#dbe7fd"; st: "#1e3fae"; icon: "accounting"; up: 1 }
                             }
 
                             delegate: Rectangle {

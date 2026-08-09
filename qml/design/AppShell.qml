@@ -113,6 +113,29 @@ ApplicationWindow {
                 }
             }
 
+            // Flap button — OUTSIDE Column, positioned on sidebar Rectangle
+            Rectangle {
+                width: 24; height: 48; radius: 8
+                color: collapseMA.containsMouse ? "#f2c14e" : "#ffffff"
+                border.width: 1; border.color: Theme.border
+                anchors.right: parent.right; anchors.rightMargin: -12
+                anchors.verticalCenter: parent.verticalCenter
+                z: 100
+                Behavior on color { ColorAnimation { duration: 120 } }
+
+                Text {
+                    anchors.centerIn: parent
+                    text: mainApp.sidebarCollapsed ? "\u203A" : "\u2039"
+                    font.pixelSize: 20; font.weight: Font.Bold
+                    color: collapseMA.containsMouse ? "#4a3606" : "#065f46"
+                }
+                MouseArea {
+                    id: collapseMA; anchors.fill: parent; hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: mainApp.sidebarCollapsed = !mainApp.sidebarCollapsed
+                }
+            }
+
             Column {
                 anchors.fill: parent; spacing: 0
 
@@ -136,31 +159,6 @@ ApplicationWindow {
                         anchors.centerIn: parent; visible: mainApp.sidebarCollapsed
                         width: 38; height: 38; radius: 14; color: Qt.rgba(255,255,255,0.14)
                         Text { anchors.centerIn: parent; text: "M"; font.family: Theme.activeFontFamily; font.pixelSize: 16; font.weight: Font.Bold; color: Theme.surface }
-                    }
-                }
-
-                // Collapse/expand flap button — centered vertically on right edge of sidebar
-                Rectangle {
-                    width: 24; height: 48; radius: 8
-                    color: collapseMA.containsMouse ? "#f2c14e" : "#ffffff"
-                    border.width: 1; border.color: Theme.border
-                    // Position: right edge of sidebar (x = sidebar width - 12 = half button outside)
-                    // Vertically centered on the FULL sidebar height
-                    anchors.right: parent.right; anchors.rightMargin: -12
-                    anchors.verticalCenter: parent.verticalCenter
-                    z: 100
-                    Behavior on color { ColorAnimation { duration: 120 } }
-
-                    Text {
-                        anchors.centerIn: parent
-                        text: mainApp.sidebarCollapsed ? "\u203A" : "\u2039"
-                        font.pixelSize: 20; font.weight: Font.Bold
-                        color: collapseMA.containsMouse ? "#4a3606" : "#065f46"
-                    }
-                    MouseArea {
-                        id: collapseMA; anchors.fill: parent; hoverEnabled: true
-                        cursorShape: Qt.PointingHandCursor
-                        onClicked: mainApp.sidebarCollapsed = !mainApp.sidebarCollapsed
                     }
                 }
 
