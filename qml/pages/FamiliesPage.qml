@@ -44,6 +44,7 @@ Item {
     Rectangle {
         id: toast
         property bool visible_: false
+        visible: visible_
         property string message: ""
         property color bgColor: "#059669"
         anchors.top: parent.top; anchors.horizontalCenter: parent.horizontalCenter
