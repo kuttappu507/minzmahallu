@@ -294,7 +294,7 @@ int main(int argc, char* argv[]) {
     engine.rootContext()->setContextProperty("BackupController", backupController);
     engine.rootContext()->setContextProperty("SettingsController", settingsController);
     engine.rootContext()->setContextProperty("AuthController", authController);
-    engine.rootContext()->setContextProperty("I18NController", i18nController);
+    engine.rootContext()->setContextProperty("I18NController", i18NController);
     engine.rootContext()->setContextProperty("DashboardController", dashboardController);
     logMsg("  Engine OK");
 
