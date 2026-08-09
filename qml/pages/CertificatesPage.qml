@@ -53,7 +53,7 @@ Item {
 
                     Row { spacing: 10; layoutDirection: Qt.RightToLeft
                         AppButton { text: { var _l = I18NController.currentLanguage; return I18NController.tr("action_cancel") } variant: "secondary"; onClicked: issueDialog.visible = false }
-                        AppButton { text: { var _l = I18NController.currentLanguage; return I18NController.tr("cert_generate_pdf") }; variant: "primary"; iconName: "check"; onClicked: {
+                        AppButton { text: { var _l = I18NController.currentLanguage; return I18NController.tr("cert_generate_pdf") } variant: "primary"; iconName: "check"; onClicked: {
                             var result
                             if (issueDialog.certType === "Membership") result = CertificateController.issueMembership(codeInput.text)
                             else if (issueDialog.certType === "Residence") result = CertificateController.issueResidence(codeInput.text, issuedToInput.text)

@@ -77,7 +77,7 @@ Item {
         // Action buttons
         RowLayout {
             Layout.fillWidth: true; spacing: 10
-            AppButton { text: { var _l = I18NController.currentLanguage; return I18NController.tr("bak_create_now") }; variant: "primary"; iconName: "backup"; onClicked: {
+            AppButton { text: { var _l = I18NController.currentLanguage; return I18NController.tr("bak_create_now") } variant: "primary"; iconName: "backup"; onClicked: {
                 var path = BackupController.createBackup()
                 toast.show(path && path.length > 0 ? "Backup created: " + path : "Backup failed", path && path.length > 0 ? "#059669" : "#e11d48")
                 if (path && path.length > 0) page.refresh()
@@ -87,7 +87,7 @@ Item {
                 toast.show("Removed " + n + " old backup(s)", "#059669")
                 page.refresh()
             } }
-            AppButton { text: { var _l = I18NController.currentLanguage; return I18NController.tr("action_refresh") }; variant: "secondary"; iconName: "refresh"; onClicked: page.refresh() }
+            AppButton { text: { var _l = I18NController.currentLanguage; return I18NController.tr("action_refresh") } variant: "secondary"; iconName: "refresh"; onClicked: page.refresh() }
             Item { Layout.fillWidth: true }
         }
 

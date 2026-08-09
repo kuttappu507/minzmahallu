@@ -61,7 +61,7 @@ Item {
             AppTextField { Layout.preferredWidth: 140; implicitHeight: 38; label: ""; placeholderText: "From (YYYY-MM-DD)"; text: dateFrom; onTextChanged: dateFrom = text }
             AppTextField { Layout.preferredWidth: 140; implicitHeight: 38; label: ""; placeholderText: "To (YYYY-MM-DD)"; text: dateTo; onTextChanged: dateTo = text }
 
-            AppButton { text: { var _l = I18NController.currentLanguage; return I18NController.tr("rpt_generate") }; variant: "primary"; iconName: "reports"; onClicked: generate() }
+            AppButton { text: { var _l = I18NController.currentLanguage; return I18NController.tr("rpt_generate") } variant: "primary"; iconName: "reports"; onClicked: generate() }
 
             AppButton { text: "CSV"; variant: "secondary"; iconName: "download"; onClicked: {
                 var path = ReportController.ensureExportPath("report.csv")
