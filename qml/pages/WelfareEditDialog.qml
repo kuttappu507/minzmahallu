@@ -153,7 +153,7 @@ ModalDialog {
 
                         // Request Number (read-only)
                         ColumnLayout { Layout.fillWidth: true; spacing: 4
-                            Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("wel_request_no") }; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
+                            Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("wel_request_no") } font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
                             Rectangle { Layout.fillWidth: true; height: 38; radius: 9; color: Theme.surfaceHover; border.width: 1; border.color: Theme.border
                                 Text { anchors.left: parent.left; anchors.leftMargin: 10; anchors.verticalCenter: parent.verticalCenter; text: dialog._requestNumber || "Auto-generated on save"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; color: dialog._requestNumber ? "#12241b" : "#7e968a" } } }
 
@@ -184,7 +184,7 @@ ModalDialog {
 
                         // Reason (full width)
                         ColumnLayout { Layout.fillWidth: true; spacing: 4
-                            Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("wel_reason") }; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
+                            Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("wel_reason") } font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
                             TextArea { Layout.fillWidth: true; Layout.preferredHeight: 64; text: dialog._reason; readOnly: dialog.readOnly; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; color: Theme.textPrimary; placeholderText: "Reason for request..."; placeholderTextColor: "#7e968a"; selectByMouse: true; wrapMode: TextArea.Wrap
                                 background: Rectangle { radius: 9; color: Theme.surfaceHover; border.width: 1; border.color: parent.activeFocus ? "#059669" : parent.hovered ? "#b2cfbd" : "#d2e5d8"; Behavior on border.color { ColorAnimation { duration: 120 } } }
                                 padding: 10; onTextChanged: dialog._reason = text } }

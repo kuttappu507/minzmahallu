@@ -117,7 +117,7 @@ ModalDialog {
 
                         // Death Number (read-only)
                         ColumnLayout { Layout.fillWidth: true; spacing: 4
-                            Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("dth_number") }; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
+                            Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("dth_number") } font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
                             Rectangle { Layout.fillWidth: true; height: 38; radius: 9; color: Theme.surfaceHover; border.width: 1; border.color: Theme.border
                                 Text { anchors.left: parent.left; anchors.leftMargin: 10; anchors.verticalCenter: parent.verticalCenter; text: dialog._deathNumber || "Auto-generated on save"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; color: dialog._deathNumber ? "#12241b" : "#7e968a" } } }
 

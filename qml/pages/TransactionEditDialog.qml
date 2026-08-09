@@ -139,7 +139,7 @@ ModalDialog {
 
                     // Description
                     ColumnLayout { Layout.fillWidth: true; spacing: 4
-                        Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("acc_description") }; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
+                        Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("acc_description") } font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
                         TextArea { Layout.fillWidth: true; Layout.preferredHeight: 56; text: dialog._description; readOnly: dialog.readOnly; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; color: Theme.textPrimary; placeholderText: "Transaction description..."; placeholderTextColor: "#7e968a"; selectByMouse: true; wrapMode: TextArea.Wrap
                             background: Rectangle { radius: 9; color: Theme.surfaceHover; border.width: 1; border.color: parent.activeFocus ? "#059669" : parent.hovered ? "#b2cfbd" : "#d2e5d8"; Behavior on border.color { ColorAnimation { duration: 120 } } }
                             padding: 10; onTextChanged: dialog._description = text } }

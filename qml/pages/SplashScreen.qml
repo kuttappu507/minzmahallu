@@ -10,21 +10,9 @@ import MMS.Theme 1.0
 Item {
     id: splash
     anchors.fill: parent
+    visible: true
 
-    // Semi-transparent backdrop
-    Rectangle {
-        anchors.fill: parent
-        color: Qt.rgba(0, 0, 0, 0.4)
-
-        MouseArea {
-            anchors.fill: parent
-            acceptedButtons: Qt.AllButtons
-            onClicked: {}
-            onWheel: {}
-        }
-    }
-
-    // Small centered box — no full window background
+    // Small centered box only — no full-window backdrop
     Rectangle {
         id: splashCard
         anchors.centerIn: parent

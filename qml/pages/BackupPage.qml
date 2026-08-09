@@ -83,7 +83,7 @@ Item {
                 toast.show(path && path.length > 0 ? "Backup created: " + path : "Backup failed", path && path.length > 0 ? "#059669" : "#e11d48")
                 if (path && path.length > 0) page.refresh()
             } }
-            AppButton { text: { var _l = I18NController.currentLanguage; return I18NController.tr("bak_prune") }; variant: "secondary"; iconName: "trash"; onClicked: {
+            AppButton { text: { var _l = I18NController.currentLanguage; return I18NController.tr("bak_prune") } variant: "secondary"; iconName: "trash"; onClicked: {
                 var n = BackupController.pruneOldBackups(10)
                 toast.show("Removed " + n + " old backup(s)", "#059669")
                 page.refresh()
@@ -99,11 +99,11 @@ Item {
                 Rectangle { Layout.fillWidth: true; Layout.preferredHeight: 40; color: Theme.surfaceHover
                     Rectangle { anchors.bottom: parent.bottom; anchors.left: parent.left; anchors.right: parent.right; height: 1; color: Theme.border }
                     Row { x: 16; width: parent.width - 32; spacing: 0
-                        Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("bak_title") }; width: 200; height: 40; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
-                        Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("audit_time") }; width: 160; height: 40; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
-                        Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("ui_type") }; width: 100; height: 40; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
-                        Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("set_title") }; width: parent.width - 200 - 160 - 100 - 120; height: 40; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
-                        Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("action_edit") }; width: 120; height: 40; verticalAlignment: Text.AlignVCenter; horizontalAlignment: Text.AlignHCenter; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary } } }
+                        Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("bak_title") } width: 200; height: 40; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
+                        Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("audit_time") } width: 160; height: 40; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
+                        Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("ui_type") } width: 100; height: 40; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
+                        Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("set_title") } width: parent.width - 200 - 160 - 100 - 120; height: 40; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
+                        Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("action_edit") } width: 120; height: 40; verticalAlignment: Text.AlignVCenter; horizontalAlignment: Text.AlignHCenter; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary } } }
                 ListView { id: table; Layout.fillWidth: true; Layout.fillHeight: true; clip: true; spacing: 0; model: page.backups
                     delegate: Rectangle { width: table.width; height: 44; color: rowMA.containsMouse ? "#f2faf4" : (index % 2 === 0 ? "#ffffff" : "#fafdfa")
                         Rectangle { anchors.bottom: parent.bottom; anchors.left: parent.left; anchors.right: parent.right; height: 1; color: Theme.surfacePressed }
