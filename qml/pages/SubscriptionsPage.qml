@@ -97,7 +97,7 @@ Item {
             }
 
             AppButton {
-                text: { var _l = I18NController.currentLanguage; return I18NController.tr("sub_mark_overdue") }; variant: "secondary"; iconName: "alert"
+                text: { var _l = I18NController.currentLanguage; return I18NController.tr("sub_mark_overdue") } variant: "secondary"; iconName: "alert"
                 onClicked: {
                     var count = subscriptionController.markOverdue()
                     subscriptionModel.refresh()
