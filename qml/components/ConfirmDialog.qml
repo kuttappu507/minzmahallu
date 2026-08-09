@@ -53,7 +53,7 @@ ModalDialog {
                             anchors.centerIn: parent
                             text: "!"
                             font.family: Theme.activeFontFamily
-                            font.pixelSize: 20
+                            font.pixelSize: Theme.fontSizeXl
                             font.weight: Font.Bold
                             color: Theme.danger
                         }
@@ -66,7 +66,7 @@ ModalDialog {
                         Text {
                             text: dialog.message
                             font.family: Theme.activeFontFamily
-                            font.pixelSize: 15
+                            font.pixelSize: Theme.fontSizeLg
                             font.weight: Font.DemiBold
                             color: Theme.textPrimary
                             Layout.fillWidth: true
@@ -75,7 +75,7 @@ ModalDialog {
                         Text {
                             text: dialog.warningText
                             font.family: Theme.activeFontFamily
-                            font.pixelSize: 12
+                            font.pixelSize: Theme.fontSizeSm
                             font.weight: Font.Normal
                             color: Theme.textTertiary
                             Layout.fillWidth: true
@@ -104,7 +104,7 @@ ModalDialog {
                             anchors.centerIn: parent
                             text: "Delete"
                             font.family: Theme.activeFontFamily
-                            font.pixelSize: 13
+                            font.pixelSize: Theme.fontSizeMd
                             font.weight: Font.DemiBold
                             color: Theme.surface
                         }
@@ -133,7 +133,7 @@ ModalDialog {
                             anchors.centerIn: parent
                             text: { var _l = I18NController.currentLanguage; return I18NController.tr("action_cancel") }
                             font.family: Theme.activeFontFamily
-                            font.pixelSize: 13
+                            font.pixelSize: Theme.fontSizeMd
                             font.weight: Font.DemiBold
                             color: Theme.textPrimary
                         }

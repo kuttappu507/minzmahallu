@@ -44,7 +44,7 @@ Item {
         width: toastText.implicitWidth + 40; height: 40; radius: 9
         color: bgColor; z: 1000
         Behavior on anchors.topMargin { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
-        Text { id: toastText; anchors.centerIn: parent; text: toast.message; font.family: Theme.activeFontFamily; font.pixelSize: 13; font.weight: Font.DemiBold; color: Theme.surface }
+        Text { id: toastText; anchors.centerIn: parent; text: toast.message; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; font.weight: Font.DemiBold; color: Theme.surface }
         Timer { id: toastTimer; interval: 3000; onTriggered: toast.visible_ = false }
         function show(msg, color) { message = msg; bgColor = color || "#059669"; visible_ = true; toastTimer.restart() }
     }
@@ -59,8 +59,8 @@ Item {
             Layout.fillWidth: true; spacing: 16
             Column {
                 Layout.fillWidth: true; spacing: 2
-                Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("nav_donations") } font.family: Theme.activeFontFamily; font.pixelSize: 21; font.weight: Font.DemiBold; color: Theme.textPrimary }
-                Text { text: "Manage one-off donations and contributions"; font.family: Theme.activeFontFamily; font.pixelSize: 12; font.weight: Font.Normal; color: Theme.textSecondary }
+                Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("nav_donations") } font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXl; font.weight: Font.DemiBold; color: Theme.textPrimary }
+                Text { text: "Manage one-off donations and contributions"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeSm; font.weight: Font.Normal; color: Theme.textSecondary }
             }
             AppButton {
                 text: { var _l = I18NController.currentLanguage; return I18NController.tr("action_add") + " " + I18NController.tr("nav_donations") } variant: "primary"; iconName: "plus"
@@ -76,8 +76,8 @@ Item {
             // Summary card — Total Donations (auto-refreshes via summaryRevision)
             Rectangle { Layout.fillWidth: true; height: 48; radius: 9; color: Theme.pinkSubtle; border.width: 1; border.color: Theme.pink
                 Column { anchors.centerIn: parent; spacing: 0
-                    Text { text: "Total Donations"; font.family: Theme.activeFontFamily; font.pixelSize: 9; font.weight: Font.Medium; color: "#93184f"; anchors.horizontalCenter: parent.horizontalCenter }
-                    Text { text: { var _r = donationController.summaryRevision; return "₹" + donationController.totalDonations("", "").toFixed(0); } font.family: Theme.activeFontFamily; font.pixelSize: 16; font.weight: Font.Bold; color: "#93184f"; anchors.horizontalCenter: parent.horizontalCenter } } }
+                    Text { text: "Total Donations"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: "#93184f"; anchors.horizontalCenter: parent.horizontalCenter }
+                    Text { text: { var _r = donationController.summaryRevision; return "₹" + donationController.totalDonations("", "").toFixed(0); } font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeLg; font.weight: Font.Bold; color: "#93184f"; anchors.horizontalCenter: parent.horizontalCenter } } }
 
             Rectangle {
                 Layout.fillWidth: true; Layout.minimumWidth: 180
@@ -94,7 +94,7 @@ Item {
                     id: searchField
                     anchors.left: parent.left; anchors.leftMargin: 32; anchors.right: parent.right; anchors.rightMargin: 10; anchors.verticalCenter: parent.verticalCenter
                     placeholderText: "Search by donor, receipt #..."; placeholderTextColor: "#7e968a"
-                    font.family: Theme.activeFontFamily; font.pixelSize: 13; color: Theme.textPrimary
+                    font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; color: Theme.textPrimary
                     background: Item {} verticalAlignment: Text.AlignVCenter
                     onTextEdited: searchDebounce.restart()
                 }
@@ -124,7 +124,7 @@ Item {
             Item { Layout.fillWidth: true }
             Text {
                 text: { var _l = I18NController.currentLanguage; return I18NController.tr("ui_records") + ": " + donationModel.rowCount + " / " + donationModel.totalCount }
-                font.family: Theme.activeFontFamily; font.pixelSize: 11; color: Theme.textTertiary
+                font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; color: Theme.textTertiary
                 Layout.alignment: Qt.AlignVCenter
             }
         }
@@ -142,15 +142,15 @@ Item {
                     Rectangle { anchors.bottom: parent.bottom; anchors.left: parent.left; anchors.right: parent.right; height: 1; color: Theme.border }
                     Row {
                         x: 16; width: parent.width - 32; spacing: 0
-                        Text { text: "RECEIPT #"; width: 120; height: 40; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: 10; font.weight: Font.Medium; color: Theme.textTertiary }
-                        Text { text: "DONOR"; width: 180; height: 40; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: 10; font.weight: Font.Medium; color: Theme.textTertiary }
-                        Text { text: "CATEGORY"; width: 140; height: 40; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: 10; font.weight: Font.Medium; color: Theme.textTertiary }
-                        Text { text: "AMOUNT"; width: 100; height: 40; verticalAlignment: Text.AlignVCenter; horizontalAlignment: Text.AlignRight; font.family: Theme.activeFontFamily; font.pixelSize: 10; font.weight: Font.Medium; color: Theme.textTertiary }
-                        Text { text: "DATE"; width: 110; height: 40; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: 10; font.weight: Font.Medium; color: Theme.textTertiary }
-                        Text { text: "METHOD"; width: 100; height: 40; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: 10; font.weight: Font.Medium; color: Theme.textTertiary }
-                        Text { text: "PURPOSE"; width: 160; height: 40; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: 10; font.weight: Font.Medium; color: Theme.textTertiary }
+                        Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("sub_receipt") } #"; width: 120; height: 40; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
+                        Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("don_donor_name") }; width: 180; height: 40; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
+                        Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("ui_category") }; width: 140; height: 40; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
+                        Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("sub_amount") }; width: 100; height: 40; verticalAlignment: Text.AlignVCenter; horizontalAlignment: Text.AlignRight; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
+                        Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("don_date") }; width: 110; height: 40; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
+                        Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("sub_method") }; width: 100; height: 40; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
+                        Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("don_purpose") }; width: 160; height: 40; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
                         Item { width: parent.width - 120 - 180 - 140 - 100 - 110 - 100 - 160 - 80; height: 40 }
-                        Text { text: "ACTIONS"; width: 80; height: 40; verticalAlignment: Text.AlignVCenter; horizontalAlignment: Text.AlignHCenter; font.family: Theme.activeFontFamily; font.pixelSize: 10; font.weight: Font.Medium; color: Theme.textTertiary }
+                        Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("action_edit") }; width: 80; height: 40; verticalAlignment: Text.AlignVCenter; horizontalAlignment: Text.AlignHCenter; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
                     }
                 }
 
@@ -165,13 +165,13 @@ Item {
                         Rectangle { anchors.bottom: parent.bottom; anchors.left: parent.left; anchors.right: parent.right; height: 1; color: Theme.surfacePressed }
                         Row {
                             x: 16; width: parent.width - 32; spacing: 0
-                            Text { text: model.receiptNumber; width: 120; height: 44; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: 12; font.weight: Font.DemiBold; color: Theme.textPrimary; elide: Text.ElideRight }
-                            Text { text: model.donorName; width: 180; height: 44; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: 12; font.weight: Font.Normal; color: Theme.textPrimary; elide: Text.ElideRight }
-                            Text { text: model.categoryName || "—"; width: 140; height: 44; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: 12; font.weight: Font.Normal; color: Theme.textSecondary; elide: Text.ElideRight }
-                            Text { text: "₹" + model.amount.toFixed(0); width: 100; height: 44; verticalAlignment: Text.AlignVCenter; horizontalAlignment: Text.AlignRight; font.family: Theme.activeFontFamily; font.pixelSize: 12; font.weight: Font.DemiBold; color: Theme.textPrimary }
-                            Text { text: model.donationDate || "—"; width: 110; height: 44; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: 12; font.weight: Font.Normal; color: Theme.textSecondary }
-                            Text { text: model.paymentMethod || "—"; width: 100; height: 44; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: 12; font.weight: Font.Normal; color: Theme.textSecondary }
-                            Text { text: model.purpose || "—"; width: 160; height: 44; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: 12; font.weight: Font.Normal; color: Theme.textSecondary; elide: Text.ElideRight }
+                            Text { text: model.receiptNumber; width: 120; height: 44; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeSm; font.weight: Font.DemiBold; color: Theme.textPrimary; elide: Text.ElideRight }
+                            Text { text: model.donorName; width: 180; height: 44; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeSm; font.weight: Font.Normal; color: Theme.textPrimary; elide: Text.ElideRight }
+                            Text { text: model.categoryName || "—"; width: 140; height: 44; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeSm; font.weight: Font.Normal; color: Theme.textSecondary; elide: Text.ElideRight }
+                            Text { text: "₹" + model.amount.toFixed(0); width: 100; height: 44; verticalAlignment: Text.AlignVCenter; horizontalAlignment: Text.AlignRight; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeSm; font.weight: Font.DemiBold; color: Theme.textPrimary }
+                            Text { text: model.donationDate || "—"; width: 110; height: 44; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeSm; font.weight: Font.Normal; color: Theme.textSecondary }
+                            Text { text: model.paymentMethod || "—"; width: 100; height: 44; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeSm; font.weight: Font.Normal; color: Theme.textSecondary }
+                            Text { text: model.purpose || "—"; width: 160; height: 44; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeSm; font.weight: Font.Normal; color: Theme.textSecondary; elide: Text.ElideRight }
                             Item { width: parent.width - 120 - 180 - 140 - 100 - 110 - 100 - 160 - 80; height: 44 }
                             Row {
                                 width: 80; height: 44; spacing: 4; layoutDirection: Qt.RightToLeft
@@ -195,8 +195,8 @@ Item {
                         anchors.centerIn: parent; spacing: 12
                         Rectangle { width: 56; height: 56; radius: 28; color: Theme.surfaceHover; border.width: 1; border.color: Theme.border; anchors.horizontalCenter: parent.horizontalCenter
                             Item { width: 28; height: 28; anchors.centerIn: parent; Image { id: emptyIcon; source: "qrc:/icons/svg/donations.svg"; sourceSize: Qt.size(28, 28); anchors.fill: parent; fillMode: Image.Pad; visible: false } MultiEffect { anchors.fill: parent; source: emptyIcon; colorizationColor: "#b2cfbd"; colorization: 1.0 } } }
-                        Text { text: "No donations found"; font.family: Theme.activeFontFamily; font.pixelSize: 14; font.weight: Font.DemiBold; color: Theme.textPrimary; anchors.horizontalCenter: parent.horizontalCenter }
-                        Text { text: "Click 'Add Donation' to create your first record"; font.family: Theme.activeFontFamily; font.pixelSize: 11; font.weight: Font.Normal; color: Theme.textTertiary; anchors.horizontalCenter: parent.horizontalCenter }
+                        Text { text: "No donations found"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; font.weight: Font.DemiBold; color: Theme.textPrimary; anchors.horizontalCenter: parent.horizontalCenter }
+                        Text { text: "Click 'Add Donation' to create your first record"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Normal; color: Theme.textTertiary; anchors.horizontalCenter: parent.horizontalCenter }
                     }
                 }
 
@@ -206,7 +206,7 @@ Item {
                     Rectangle { anchors.top: parent.top; anchors.left: parent.left; anchors.right: parent.right; height: 1; color: Theme.border }
                     RowLayout {
                         anchors.fill: parent; anchors.leftMargin: 16; anchors.rightMargin: 16; spacing: 8
-                        Text { text: "Page " + donationModel.currentPage + " of " + donationModel.totalPages; font.family: Theme.activeFontFamily; font.pixelSize: 11; color: Theme.textTertiary; Layout.alignment: Qt.AlignVCenter }
+                        Text { text: "Page " + donationModel.currentPage + " of " + donationModel.totalPages; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; color: Theme.textTertiary; Layout.alignment: Qt.AlignVCenter }
                         Item { Layout.fillWidth: true }
                         Rectangle { width: 28; height: 28; radius: 6; color: prevMA.containsMouse ? "#ffffff" : "transparent"; border.width: 1; border.color: prevMA.containsMouse ? "#b2cfbd" : "#d2e5d8"; Layout.alignment: Qt.AlignVCenter; opacity: donationModel.currentPage > 1 ? 1 : 0.4
                             Item { width: 14; height: 14; anchors.centerIn: parent; Image { id: prevIcon; source: "qrc:/icons/svg/chevron-left.svg"; sourceSize: Qt.size(14, 14); anchors.fill: parent; fillMode: Image.Pad; visible: false } MultiEffect { anchors.fill: parent; source: prevIcon; colorizationColor: "#4f6b5c"; colorization: 1.0 } }

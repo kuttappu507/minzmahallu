@@ -43,14 +43,14 @@ ScrollView {
                         Text {
                             text: "Good evening, Abdul Kareem"
                             font.family: Theme.activeFontFamily
-                            font.pixelSize: 21
+                            font.pixelSize: Theme.fontSizeXl
                             font.weight: Font.DemiBold
                             color: Theme.textPrimary
                         }
                         Text {
                             text: "Here is what is happening in your mahallu today."
                             font.family: Theme.activeFontFamily
-                            font.pixelSize: 12
+                            font.pixelSize: Theme.fontSizeSm
                             font.weight: Font.DemiBold
                             color: Theme.textSecondary
                         }
@@ -134,7 +134,7 @@ ScrollView {
                                         Text {
                                             text: model.label
                                             font.family: Theme.activeFontFamily
-                                            font.pixelSize: 13
+                                            font.pixelSize: Theme.fontSizeMd
                                             font.weight: Font.DemiBold
                                             color: Theme.textPrimary
                                             elide: Text.ElideRight
@@ -144,7 +144,7 @@ ScrollView {
                                         Text {
                                             text: model.sub
                                             font.family: Theme.activeFontFamily
-                                            font.pixelSize: 11
+                                            font.pixelSize: Theme.fontSizeXs
                                             font.weight: Font.Normal
                                             color: Theme.textTertiary
                                             elide: Text.ElideRight
@@ -286,7 +286,7 @@ ScrollView {
                                                 anchors.centerIn: parent
                                                 text: model.delta
                                                 font.family: Theme.activeFontFamily
-                                                font.pixelSize: 10
+                                                font.pixelSize: Theme.fontSizeXs
                                                 font.weight: Font.Medium
                                                 color: model.st
                                             }
@@ -297,7 +297,7 @@ ScrollView {
                                     Text {
                                         text: model.value
                                         font.family: Theme.activeFontFamily
-                                        font.pixelSize: 24
+                                        font.pixelSize: Theme.fontSize2xl
                                         font.weight: Font.Bold
                                         color: model.st
                                         topPadding: 9
@@ -310,7 +310,7 @@ ScrollView {
                                     Text {
                                         text: model.label
                                         font.family: Theme.activeFontFamily
-                                        font.pixelSize: 10
+                                        font.pixelSize: Theme.fontSizeXs
                                         font.weight: Font.Medium
                                         color: model.st
                                         opacity: 0.75
@@ -397,7 +397,7 @@ ScrollView {
                                         Text {
                                             text: model.title
                                             font.family: Theme.activeFontFamily
-                                            font.pixelSize: 14
+                                            font.pixelSize: Theme.fontSizeMd
                                             font.weight: Font.DemiBold
                                             color: Theme.textPrimary
                                             elide: Text.ElideRight
@@ -406,7 +406,7 @@ ScrollView {
                                         Text {
                                             text: model.sub
                                             font.family: Theme.activeFontFamily
-                                            font.pixelSize: 12
+                                            font.pixelSize: Theme.fontSizeSm
                                             font.weight: Font.Normal
                                             color: Theme.textSecondary
                                             elide: Text.ElideRight

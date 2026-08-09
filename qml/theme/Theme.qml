@@ -121,12 +121,13 @@ QtObject {
     readonly property string activeFontFamily: typeof I18NController !== "undefined" && I18NController.isMalayalam ? fontFamilyMalayalam : fontFamily
 
     // Font sizes (logical pixels — do NOT scale by DPI)
-    readonly property int fontSizeXs:   11
-    readonly property int fontSizeSm:   12
-    readonly property int fontSizeMd:   13
-    readonly property int fontSizeLg:   15
-    readonly property int fontSizeXl:   18
-    readonly property int fontSize2xl:  24
+    // Font sizes — larger for better readability on high-DPI screens
+    readonly property int fontSizeXs:   13
+    readonly property int fontSizeSm:   14
+    readonly property int fontSizeMd:   15
+    readonly property int fontSizeLg:   17
+    readonly property int fontSizeXl:   20
+    readonly property int fontSize2xl:  26
     readonly property int fontSize3xl:  30
     readonly property int fontSize4xl:  36
 

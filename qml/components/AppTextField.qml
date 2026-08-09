@@ -36,7 +36,7 @@ FocusScope {
             id: labelItem
             text: root.label
             font.family: Theme.activeFontFamily
-            font.pixelSize: 11
+            font.pixelSize: Theme.fontSizeXs
             font.weight: Font.Medium
             color: root.showError ? "#e11d48" : "#7e968a"
             visible: root.label !== ""
@@ -98,7 +98,7 @@ FocusScope {
                 placeholderText: root.placeholderText
                 placeholderTextColor: "#7e968a"
                 font.family: Theme.activeFontFamily
-                font.pixelSize: 13
+                font.pixelSize: Theme.fontSizeMd
                 color: Theme.textPrimary
                 background: Item {}
                 verticalAlignment: Text.AlignVCenter
@@ -122,7 +122,7 @@ FocusScope {
         Text {
             text: root.errorText
             font.family: Theme.activeFontFamily
-            font.pixelSize: 10
+            font.pixelSize: Theme.fontSizeXs
             color: Theme.danger
             visible: root.showError && root.errorText !== ""
             height: (root.showError && root.errorText !== "") ? implicitHeight : 0

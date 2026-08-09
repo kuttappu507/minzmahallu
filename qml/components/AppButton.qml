@@ -55,7 +55,7 @@ Button {
             Text {
                 text: root.text
                 font.family: Theme.activeFontFamily
-                font.pixelSize: 13
+                font.pixelSize: Theme.fontSizeMd
                 font.weight: Font.DemiBold
                 color: root.enabled ? _textColor : "#b2cfbd"
                 visible: root.text !== ""

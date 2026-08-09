@@ -177,7 +177,7 @@ ModalDialog {
                     Rectangle { anchors.bottom: parent.bottom; anchors.left: parent.left; anchors.right: parent.right; height: 1; color: Theme.surfacePressed }
                     Text {
                         text: dialog._dialogTitle
-                        font.family: Theme.activeFontFamily; font.pixelSize: 16; font.weight: Font.DemiBold; color: Theme.textPrimary
+                        font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeLg; font.weight: Font.DemiBold; color: Theme.textPrimary
                         anchors.left: parent.left; anchors.leftMargin: 24; anchors.verticalCenter: parent.verticalCenter
                     }
                     Rectangle {
@@ -185,7 +185,7 @@ ModalDialog {
                         width: 28; height: 28; radius: 6
                         color: closeMA.containsMouse ? "#f2faf4" : "transparent"
                         Behavior on color { ColorAnimation { duration: 120 } }
-                        Text { anchors.centerIn: parent; text: "\u00D7"; font.pixelSize: 18; font.weight: Font.Bold; color: closeMA.containsMouse ? "#12241b" : "#7e968a" }
+                        Text { anchors.centerIn: parent; text: "\u00D7"; font.pixelSize: Theme.fontSizeXl; font.weight: Font.Bold; color: closeMA.containsMouse ? "#12241b" : "#7e968a" }
                         MouseArea { id: closeMA; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: dialog.visible = false }
                     }
                 }
@@ -198,7 +198,7 @@ ModalDialog {
                     Text {
                         anchors.fill: parent; anchors.margins: 8
                         text: dialog._errorMessage
-                        font.family: Theme.activeFontFamily; font.pixelSize: 12; color: "#95102e"
+                        font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeSm; color: "#95102e"
                         verticalAlignment: Text.AlignVCenter; elide: Text.ElideRight
                     }
                 }
@@ -213,13 +213,13 @@ ModalDialog {
 
                         // Member Code (read-only)
                         ColumnLayout { Layout.fillWidth: true; spacing: 4
-                            Text { text: "MEMBER CODE"; font.family: Theme.activeFontFamily; font.pixelSize: 11; font.weight: Font.Medium; color: Theme.textTertiary }
+                            Text { text: "MEMBER CODE"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
                             Rectangle {
                                 Layout.fillWidth: true; height: 38; radius: 9; color: Theme.surfaceHover; border.width: 1; border.color: Theme.border
                                 Text {
                                     anchors.left: parent.left; anchors.leftMargin: 10; anchors.verticalCenter: parent.verticalCenter
                                     text: dialog._memberCode || "Auto-generated on save"
-                                    font.family: Theme.activeFontFamily; font.pixelSize: 13; color: dialog._memberCode ? "#12241b" : "#7e968a"
+                                    font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; color: dialog._memberCode ? "#12241b" : "#7e968a"
                                 }
                             }
                         }
@@ -237,7 +237,7 @@ ModalDialog {
 
                             // Family combo (custom — needs id+label)
                             ColumnLayout { Layout.fillWidth: true; spacing: 4
-                                Text { text: "Family *"; font.family: Theme.activeFontFamily; font.pixelSize: 11; font.weight: Font.Medium; color: dialog._errorField === "familyId" ? "#e11d48" : "#7e968a" }
+                                Text { text: "Family *"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: dialog._errorField === "familyId" ? "#e11d48" : "#7e968a" }
                                 Rectangle {
                                     Layout.fillWidth: true; height: 38; radius: 9; color: Theme.surfaceHover; border.width: 1
                                     border.color: dialog._errorField === "familyId" ? "#e11d48" : (familyMA.containsMouse ? "#b2cfbd" : "#d2e5d8")
@@ -253,7 +253,7 @@ ModalDialog {
                                             }
                                             return "Select family..."
                                         }
-                                        font.family: Theme.activeFontFamily; font.pixelSize: 13
+                                        font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd
                                         color: dialog._familyId !== "" ? "#12241b" : "#7e968a"
                                     }
                                     // Family popup
@@ -268,7 +268,7 @@ ModalDialog {
                                                 width: parent.width; height: 34; padding: 0
                                                 contentItem: Text {
                                                     text: modelData.familyNumber + " - " + modelData.houseName + (modelData.ward ? " (Ward " + modelData.ward + ")" : "")
-                                                    font.family: Theme.activeFontFamily; font.pixelSize: 13; color: Theme.textPrimary
+                                                    font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; color: Theme.textPrimary
                                                     anchors.left: parent.left; anchors.leftMargin: 8; anchors.verticalCenter: parent.verticalCenter
                                                 }
                                                 background: Rectangle { color: highlighted ? "#ecfdf5" : "transparent"; radius: 4 }
@@ -379,11 +379,11 @@ ModalDialog {
 
                         // Address (full width)
                         ColumnLayout { Layout.fillWidth: true; spacing: 4
-                            Text { text: "ADDRESS"; font.family: Theme.activeFontFamily; font.pixelSize: 11; font.weight: Font.Medium; color: Theme.textTertiary }
+                            Text { text: "ADDRESS"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
                             TextArea {
                                 Layout.fillWidth: true; Layout.preferredHeight: 56
                                 text: dialog._address; readOnly: dialog.readOnly
-                                font.family: Theme.activeFontFamily; font.pixelSize: 13; color: Theme.textPrimary
+                                font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; color: Theme.textPrimary
                                 placeholderText: "Member address (if different from family)..."; placeholderTextColor: "#7e968a"
                                 selectByMouse: true; wrapMode: TextArea.Wrap
                                 background: Rectangle { radius: 9; color: Theme.surfaceHover; border.width: 1; border.color: parent.activeFocus ? "#059669" : parent.hovered ? "#b2cfbd" : "#d2e5d8"; Behavior on border.color { ColorAnimation { duration: 120 } } }

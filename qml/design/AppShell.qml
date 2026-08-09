@@ -126,7 +126,7 @@ ApplicationWindow {
                 Text {
                     anchors.centerIn: parent
                     text: mainApp.sidebarCollapsed ? "\u203A" : "\u2039"
-                    font.pixelSize: 20; font.weight: Font.Bold
+                    font.pixelSize: Theme.fontSizeXl; font.weight: Font.Bold
                     color: collapseMA.containsMouse ? "#4a3606" : "#065f46"
                 }
                 MouseArea {
@@ -146,24 +146,24 @@ ApplicationWindow {
                         x: 18; y: 18; spacing: 11; visible: !mainApp.sidebarCollapsed
                         Rectangle {
                             width: 38; height: 38; radius: 14; color: Qt.rgba(255,255,255,0.14)
-                            Text { anchors.centerIn: parent; text: "M"; font.family: Theme.activeFontFamily; font.pixelSize: 16; font.weight: Font.Bold; color: Theme.surface }
+                            Text { anchors.centerIn: parent; text: "M"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeLg; font.weight: Font.Bold; color: Theme.surface }
                         }
                         Column {
                             spacing: 0
-                            Text { text: "MMS"; font.family: Theme.activeFontFamily; font.pixelSize: 17; font.weight: Font.Bold; color: Theme.surface }
-                            Text { text: "Minz Mahallu"; font.family: Theme.activeFontFamily; font.pixelSize: 10; font.weight: Font.DemiBold; color: Theme.sidebarSubTitle }
+                            Text { text: "MMS"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeLg; font.weight: Font.Bold; color: Theme.surface }
+                            Text { text: "Minz Mahallu"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.DemiBold; color: Theme.sidebarSubTitle }
                         }
                     }
                     // Collapsed logo (just M icon)
                     Rectangle {
                         anchors.centerIn: parent; visible: mainApp.sidebarCollapsed
                         width: 38; height: 38; radius: 14; color: Qt.rgba(255,255,255,0.14)
-                        Text { anchors.centerIn: parent; text: "M"; font.family: Theme.activeFontFamily; font.pixelSize: 16; font.weight: Font.Bold; color: Theme.surface }
+                        Text { anchors.centerIn: parent; text: "M"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeLg; font.weight: Font.Bold; color: Theme.surface }
                     }
                 }
 
                 Text {
-                    text: "OVERVIEW"; font.family: Theme.activeFontFamily; font.pixelSize: 9; font.weight: Font.Bold
+                    text: "OVERVIEW"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Bold
                     color: Qt.rgba(214/255, 240/255, 228/255, 0.42)
                     leftPadding: 24; topPadding: 15; bottomPadding: 5
                     visible: !mainApp.sidebarCollapsed
@@ -222,7 +222,7 @@ ApplicationWindow {
                             Text {
                                 // Depend on I18NController.currentLanguage so binding re-evaluates on language change
                                 text: { var _l = I18NController.currentLanguage; return I18NController.tr(model.i18nKey) }
-                                font.family: Theme.activeFontFamily; font.pixelSize: 13
+                                font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd
                                 font.weight: ListView.isCurrentItem ? Font.DemiBold : Font.Medium
                                 color: ListView.isCurrentItem ? "#ffffff" : (navMA.containsMouse ? "#ffffff" : "#ffffff")
                                 y: (34 - height) / 2
@@ -244,15 +244,15 @@ ApplicationWindow {
                     Row {
                         id: profileRow; x: 14; y: 13; spacing: 10; visible: !mainApp.sidebarCollapsed
                         Rectangle { width: 36; height: 36; radius: 9; color: Theme.gold; border.width: 2; border.color: Theme.goldBorder
-                            Text { anchors.centerIn: parent; text: AuthController.initials; font.family: Theme.activeFontFamily; font.pixelSize: 13; font.weight: Font.DemiBold; color: "#4a3606" } }
+                            Text { anchors.centerIn: parent; text: AuthController.initials; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; font.weight: Font.DemiBold; color: "#4a3606" } }
                         Column { spacing: 0
-                            Text { text: AuthController.fullName; font.family: Theme.activeFontFamily; font.pixelSize: 13; font.weight: Font.DemiBold; color: Theme.surface }
-                            Text { text: AuthController.role; font.family: Theme.activeFontFamily; font.pixelSize: 11; font.weight: Font.Normal; color: Theme.sidebarSubTitle }
+                            Text { text: AuthController.fullName; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; font.weight: Font.DemiBold; color: Theme.surface }
+                            Text { text: AuthController.role; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Normal; color: Theme.sidebarSubTitle }
                         }
                     }
                     // Collapsed: just avatar
                     Rectangle { anchors.centerIn: parent; visible: mainApp.sidebarCollapsed; width: 36; height: 36; radius: 9; color: Theme.gold; border.width: 2; border.color: Theme.goldBorder
-                        Text { anchors.centerIn: parent; text: AuthController.initials; font.family: Theme.activeFontFamily; font.pixelSize: 13; font.weight: Font.DemiBold; color: "#4a3606" } }
+                        Text { anchors.centerIn: parent; text: AuthController.initials; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; font.weight: Font.DemiBold; color: "#4a3606" } }
                 }
             }
         }
@@ -269,8 +269,8 @@ ApplicationWindow {
                 // Breadcrumb (left)
                 Row {
                     anchors.left: parent.left; anchors.leftMargin: 24; anchors.verticalCenter: parent.verticalCenter; spacing: 6
-                    Text { text: "MINZ MAHALLU /"; font.family: Theme.activeFontFamily; font.pixelSize: 11; font.weight: Font.Bold; color: Theme.textTertiary; anchors.verticalCenter: parent.verticalCenter }
-                    Text { text: { var _l = I18NController.currentLanguage; var item = navList.model.get(navList.currentIndex); return item ? I18NController.tr(item.i18nKey) : I18NController.tr("nav_dashboard") } font.family: Theme.activeFontFamily; font.pixelSize: 16; font.weight: Font.DemiBold; color: Theme.textPrimary; anchors.verticalCenter: parent.verticalCenter }
+                    Text { text: "MINZ MAHALLU /"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Bold; color: Theme.textTertiary; anchors.verticalCenter: parent.verticalCenter }
+                    Text { text: { var _l = I18NController.currentLanguage; var item = navList.model.get(navList.currentIndex); return item ? I18NController.tr(item.i18nKey) : I18NController.tr("nav_dashboard") } font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeLg; font.weight: Font.DemiBold; color: Theme.textPrimary; anchors.verticalCenter: parent.verticalCenter }
                 }
 
                 // Right side: language toggle + theme toggle + search
@@ -289,7 +289,7 @@ ApplicationWindow {
                                     SettingsController.save()
                                 }
                             } }
-                            Text { anchors.centerIn: parent; text: I18NController.isMalayalam ? "ML" : "EN"; font.family: Theme.activeFontFamily; font.pixelSize: 12; font.weight: Font.DemiBold; color: Theme.primary }
+                            Text { anchors.centerIn: parent; text: I18NController.isMalayalam ? "ML" : "EN"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeSm; font.weight: Font.DemiBold; color: Theme.primary }
                         }
 
                         // Theme toggle (sun/moon)
@@ -330,7 +330,7 @@ ApplicationWindow {
                             anchors.verticalCenter: parent.verticalCenter
                             placeholderText: { var _l = I18NController.currentLanguage; return I18NController.tr("search_placeholder") }
                             placeholderTextColor: "#7e968a"
-                            font.family: Theme.activeFontFamily; font.pixelSize: 13; color: Theme.textPrimary
+                            font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; color: Theme.textPrimary
                             background: Item {}
                             verticalAlignment: Text.AlignVCenter
                         }

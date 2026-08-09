@@ -40,7 +40,7 @@ Item {
         width: toastText.implicitWidth + 40; height: 40; radius: 9
         color: bgColor; z: 1000
         Behavior on anchors.topMargin { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
-        Text { id: toastText; anchors.centerIn: parent; text: toast.message; font.family: Theme.activeFontFamily; font.pixelSize: 13; font.weight: Font.DemiBold; color: Theme.surface }
+        Text { id: toastText; anchors.centerIn: parent; text: toast.message; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; font.weight: Font.DemiBold; color: Theme.surface }
         Timer { id: toastTimer; interval: 3000; onTriggered: toast.visible_ = false }
         function show(msg, color) { message = msg; bgColor = color || "#059669"; visible_ = true; toastTimer.restart() }
     }
@@ -51,8 +51,8 @@ Item {
         RowLayout {
             Layout.fillWidth: true; spacing: 16
             Column { Layout.fillWidth: true; spacing: 2
-                Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("nav_welfare") } font.family: Theme.activeFontFamily; font.pixelSize: 21; font.weight: Font.DemiBold; color: Theme.textPrimary }
-                Text { text: "Assistance requests and disbursements"; font.family: Theme.activeFontFamily; font.pixelSize: 12; color: Theme.textSecondary } }
+                Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("nav_welfare") } font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXl; font.weight: Font.DemiBold; color: Theme.textPrimary }
+                Text { text: "Assistance requests and disbursements"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeSm; color: Theme.textSecondary } }
             AppButton {
                 text: { var _l = I18NController.currentLanguage; return I18NController.tr("action_add") } variant: "primary"; iconName: "plus"
                 Layout.alignment: Qt.AlignTop
@@ -67,11 +67,11 @@ Item {
                 Item { width: 16; height: 16; anchors.left: parent.left; anchors.leftMargin: 10; anchors.verticalCenter: parent.verticalCenter
                     Image { id: searchIcon; source: "qrc:/icons/svg/search.svg"; sourceSize: Qt.size(16, 16); anchors.fill: parent; fillMode: Image.Pad; visible: false }
                     MultiEffect { anchors.fill: parent; source: searchIcon; colorizationColor: searchField.activeFocus ? "#059669" : "#7e968a"; colorization: 1.0 } }
-                TextField { id: searchField; anchors.left: parent.left; anchors.leftMargin: 32; anchors.right: parent.right; anchors.rightMargin: 10; anchors.verticalCenter: parent.verticalCenter; placeholderText: "Search by applicant, number..."; placeholderTextColor: "#7e968a"; font.family: Theme.activeFontFamily; font.pixelSize: 13; color: Theme.textPrimary; background: Item {} verticalAlignment: Text.AlignVCenter; onTextEdited: searchDebounce.restart() }
+                TextField { id: searchField; anchors.left: parent.left; anchors.leftMargin: 32; anchors.right: parent.right; anchors.rightMargin: 10; anchors.verticalCenter: parent.verticalCenter; placeholderText: "Search by applicant, number..."; placeholderTextColor: "#7e968a"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; color: Theme.textPrimary; background: Item {} verticalAlignment: Text.AlignVCenter; onTextEdited: searchDebounce.restart() }
                 Timer { id: searchDebounce; interval: 300; onTriggered: welfareModel.searchTerm = searchField.text } }
             AppComboBox { model: ["All Status", "Pending", "Approved", "Rejected", "Disbursed", "Closed"]; implicitHeight: 38; onActivated: function(index) { welfareModel.statusFilter = index === 0 ? "" : model[index] } }
             AppComboBox { model: ["All Categories", "Medical Aid", "Education Aid", "Marriage Assistance", "Financial Assistance"]; implicitHeight: 38; onActivated: function(index) { welfareModel.categoryFilter = index === 0 ? "" : model[index] } }
-            Text { text: "Showing " + welfareModel.rowCount + " of " + welfareModel.totalCount; font.family: Theme.activeFontFamily; font.pixelSize: 11; color: Theme.textTertiary; Layout.alignment: Qt.AlignVCenter }
+            Text { text: "Showing " + welfareModel.rowCount + " of " + welfareModel.totalCount; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; color: Theme.textTertiary; Layout.alignment: Qt.AlignVCenter }
         }
 
         Rectangle {
@@ -80,25 +80,25 @@ Item {
                 Rectangle { Layout.fillWidth: true; Layout.preferredHeight: 40; color: Theme.surfaceHover
                     Rectangle { anchors.bottom: parent.bottom; anchors.left: parent.left; anchors.right: parent.right; height: 1; color: Theme.border }
                     Row { x: 16; width: parent.width - 32; spacing: 0
-                        Text { text: "NUMBER"; width: 120; height: 40; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: 10; font.weight: Font.Medium; color: Theme.textTertiary }
-                        Text { text: "APPLICANT"; width: 180; height: 40; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: 10; font.weight: Font.Medium; color: Theme.textTertiary }
-                        Text { text: "CATEGORY"; width: 160; height: 40; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: 10; font.weight: Font.Medium; color: Theme.textTertiary }
-                        Text { text: "REQUESTED"; width: 100; height: 40; verticalAlignment: Text.AlignVCenter; horizontalAlignment: Text.AlignRight; font.family: Theme.activeFontFamily; font.pixelSize: 10; font.weight: Font.Medium; color: Theme.textTertiary }
-                        Text { text: "APPROVED"; width: 100; height: 40; verticalAlignment: Text.AlignVCenter; horizontalAlignment: Text.AlignRight; font.family: Theme.activeFontFamily; font.pixelSize: 10; font.weight: Font.Medium; color: Theme.textTertiary }
-                        Text { text: "STATUS"; width: 100; height: 40; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: 10; font.weight: Font.Medium; color: Theme.textTertiary }
-                        Text { text: "REASON"; width: parent.width - 120 - 180 - 160 - 100 - 100 - 100 - 80; height: 40; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: 10; font.weight: Font.Medium; color: Theme.textTertiary }
-                        Text { text: "ACTIONS"; width: 80; height: 40; verticalAlignment: Text.AlignVCenter; horizontalAlignment: Text.AlignHCenter; font.family: Theme.activeFontFamily; font.pixelSize: 10; font.weight: Font.Medium; color: Theme.textTertiary } } }
+                        Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("family_number") }; width: 120; height: 40; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
+                        Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("wel_applicant") }; width: 180; height: 40; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
+                        Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("ui_category") }; width: 160; height: 40; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
+                        Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("wel_amount_requested") }; width: 100; height: 40; verticalAlignment: Text.AlignVCenter; horizontalAlignment: Text.AlignRight; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
+                        Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("wel_amount_approved") }; width: 100; height: 40; verticalAlignment: Text.AlignVCenter; horizontalAlignment: Text.AlignRight; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
+                        Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("family_status") }; width: 100; height: 40; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
+                        Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("wel_reason") }; width: parent.width - 120 - 180 - 160 - 100 - 100 - 100 - 80; height: 40; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
+                        Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("action_edit") }; width: 80; height: 40; verticalAlignment: Text.AlignVCenter; horizontalAlignment: Text.AlignHCenter; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary } } }
                 ListView { id: table; Layout.fillWidth: true; Layout.fillHeight: true; clip: true; spacing: 0; model: welfareModel
                     delegate: Rectangle { width: table.width; height: 44; color: rowMA.containsMouse ? "#f2faf4" : (index % 2 === 0 ? "#ffffff" : "#fafdfa")
                         Rectangle { anchors.bottom: parent.bottom; anchors.left: parent.left; anchors.right: parent.right; height: 1; color: Theme.surfacePressed }
                         Row { x: 16; width: parent.width - 32; spacing: 0
-                            Text { text: model.requestNumber; width: 120; height: 44; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: 12; font.weight: Font.DemiBold; color: Theme.textPrimary; elide: Text.ElideRight }
-                            Text { text: model.applicantName; width: 180; height: 44; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: 12; color: Theme.textPrimary; elide: Text.ElideRight }
-                            Text { text: model.category || "—"; width: 160; height: 44; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: 12; color: Theme.textSecondary; elide: Text.ElideRight }
-                            Text { text: "₹" + model.amountRequested.toFixed(0); width: 100; height: 44; verticalAlignment: Text.AlignVCenter; horizontalAlignment: Text.AlignRight; font.family: Theme.activeFontFamily; font.pixelSize: 12; font.weight: Font.DemiBold; color: Theme.textPrimary }
-                            Text { text: model.amountApproved > 0 ? "₹" + model.amountApproved.toFixed(0) : "—"; width: 100; height: 44; verticalAlignment: Text.AlignVCenter; horizontalAlignment: Text.AlignRight; font.family: Theme.activeFontFamily; font.pixelSize: 12; color: Theme.textSecondary }
+                            Text { text: model.requestNumber; width: 120; height: 44; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeSm; font.weight: Font.DemiBold; color: Theme.textPrimary; elide: Text.ElideRight }
+                            Text { text: model.applicantName; width: 180; height: 44; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeSm; color: Theme.textPrimary; elide: Text.ElideRight }
+                            Text { text: model.category || "—"; width: 160; height: 44; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeSm; color: Theme.textSecondary; elide: Text.ElideRight }
+                            Text { text: "₹" + model.amountRequested.toFixed(0); width: 100; height: 44; verticalAlignment: Text.AlignVCenter; horizontalAlignment: Text.AlignRight; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeSm; font.weight: Font.DemiBold; color: Theme.textPrimary }
+                            Text { text: model.amountApproved > 0 ? "₹" + model.amountApproved.toFixed(0) : "—"; width: 100; height: 44; verticalAlignment: Text.AlignVCenter; horizontalAlignment: Text.AlignRight; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeSm; color: Theme.textSecondary }
                             Item { width: 100; height: 44; StatusBadge { anchors.centerIn: parent; text: model.status; variant: { var s = model.status.toLowerCase(); if (s === "approved" || s === "disbursed") return "active"; if (s === "rejected") return "overdue"; if (s === "pending") return "pending"; return "inactive" } } }
-                            Text { text: model.reason || "—"; width: parent.width - 120 - 180 - 160 - 100 - 100 - 100 - 80; height: 44; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: 12; color: Theme.textSecondary; elide: Text.ElideRight }
+                            Text { text: model.reason || "—"; width: parent.width - 120 - 180 - 160 - 100 - 100 - 100 - 80; height: 44; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeSm; color: Theme.textSecondary; elide: Text.ElideRight }
                             Row { width: 80; height: 44; spacing: 4; layoutDirection: Qt.RightToLeft
                                 TableActionButton { iconSource: "qrc:/icons/svg/trash.svg"; variantColor: "#e11d48"; anchors.verticalCenter: parent.verticalCenter; onClicked: { deleteDialog._id = model.id; deleteDialog.warningText = "Welfare request " + model.requestNumber + " will be permanently deleted."; deleteDialog.visible = true } }
                                 TableActionButton { iconSource: "qrc:/icons/svg/edit.svg"; variantColor: "#059669"; anchors.verticalCenter: parent.verticalCenter; onClicked: { editDialog.requestId = model.id; editDialog.readOnly = false; editDialog.show() } }
@@ -106,12 +106,12 @@ Item {
                         MouseArea { id: rowMA; anchors.fill: parent; hoverEnabled: true; acceptedButtons: Qt.NoButton } } }
                 Item { Layout.fillWidth: true; Layout.fillHeight: true; visible: welfareModel.rowCount === 0
                     Column { anchors.centerIn: parent; spacing: 8
-                        Text { text: "No welfare requests found"; font.family: Theme.activeFontFamily; font.pixelSize: 14; font.weight: Font.DemiBold; color: Theme.textPrimary; anchors.horizontalCenter: parent.horizontalCenter }
-                        Text { text: "Requests will appear here once added"; font.family: Theme.activeFontFamily; font.pixelSize: 11; color: Theme.textTertiary; anchors.horizontalCenter: parent.horizontalCenter } } }
+                        Text { text: "No welfare requests found"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; font.weight: Font.DemiBold; color: Theme.textPrimary; anchors.horizontalCenter: parent.horizontalCenter }
+                        Text { text: "Requests will appear here once added"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; color: Theme.textTertiary; anchors.horizontalCenter: parent.horizontalCenter } } }
                 Rectangle { Layout.fillWidth: true; Layout.preferredHeight: 44; color: Theme.surfaceHover
                     Rectangle { anchors.top: parent.top; anchors.left: parent.left; anchors.right: parent.right; height: 1; color: Theme.border }
                     RowLayout { anchors.fill: parent; anchors.leftMargin: 16; anchors.rightMargin: 16; spacing: 8
-                        Text { text: "Page " + welfareModel.currentPage + " of " + welfareModel.totalPages; font.family: Theme.activeFontFamily; font.pixelSize: 11; color: Theme.textTertiary; Layout.alignment: Qt.AlignVCenter }
+                        Text { text: "Page " + welfareModel.currentPage + " of " + welfareModel.totalPages; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; color: Theme.textTertiary; Layout.alignment: Qt.AlignVCenter }
                         Item { Layout.fillWidth: true }
                         Rectangle { width: 28; height: 28; radius: 6; color: prevMA.containsMouse ? "#ffffff" : "transparent"; border.width: 1; border.color: prevMA.containsMouse ? "#b2cfbd" : "#d2e5d8"; Layout.alignment: Qt.AlignVCenter; opacity: welfareModel.currentPage > 1 ? 1 : 0.4
                             Item { width: 14; height: 14; anchors.centerIn: parent; Image { id: prevIcon; source: "qrc:/icons/svg/chevron-left.svg"; sourceSize: Qt.size(14, 14); anchors.fill: parent; fillMode: Image.Pad; visible: false } MultiEffect { anchors.fill: parent; source: prevIcon; colorizationColor: "#4f6b5c"; colorization: 1.0 } }

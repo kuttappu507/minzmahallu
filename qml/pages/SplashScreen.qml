@@ -51,7 +51,7 @@ Item {
             // App name
             Text {
                 text: { var _l = I18NController.currentLanguage; return I18NController.tr("app_name") }
-                font.family: Theme.activeFontFamily; font.pixelSize: 14; font.weight: Font.Bold; color: "#ffffff"
+                font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; font.weight: Font.Bold; color: "#ffffff"
                 anchors.horizontalCenter: parent.horizontalCenter
             }
 

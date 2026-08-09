@@ -55,7 +55,7 @@ Item {
             id: toastText
             anchors.centerIn: parent
             text: toast.message
-            font.family: Theme.activeFontFamily; font.pixelSize: 13; font.weight: Font.DemiBold; color: Theme.surface
+            font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; font.weight: Font.DemiBold; color: Theme.surface
         }
 
         Timer { id: toastTimer; interval: 3000; onTriggered: toast.visible_ = false }
@@ -85,11 +85,11 @@ Item {
                 spacing: 2
                 Text {
                     text: { var _l = I18NController.currentLanguage; return I18NController.tr("nav_members") }
-                    font.family: Theme.activeFontFamily; font.pixelSize: 21; font.weight: Font.DemiBold; color: Theme.textPrimary
+                    font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXl; font.weight: Font.DemiBold; color: Theme.textPrimary
                 }
                 Text {
                     text: { var _l = I18NController.currentLanguage; return I18NController.tr("member_subtitle") }
-                    font.family: Theme.activeFontFamily; font.pixelSize: 12; font.weight: Font.Normal; color: Theme.textSecondary
+                    font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeSm; font.weight: Font.Normal; color: Theme.textSecondary
                 }
             }
 
@@ -125,7 +125,7 @@ Item {
                     anchors.verticalCenter: parent.verticalCenter
                     placeholderText: "Search by name, member code, mobile..."
                     placeholderTextColor: "#7e968a"
-                    font.family: Theme.activeFontFamily; font.pixelSize: 13; color: Theme.textPrimary
+                    font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; color: Theme.textPrimary
                     background: Item {} verticalAlignment: Text.AlignVCenter
                     onTextEdited: searchDebounce.restart()
                 }
@@ -154,7 +154,7 @@ Item {
 
             Text {
                 text: { var _l = I18NController.currentLanguage; return I18NController.tr("ui_records") + ": " + memberModel.rowCount + " / " + memberModel.totalCount }
-                font.family: Theme.activeFontFamily; font.pixelSize: 11; color: Theme.textTertiary
+                font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; color: Theme.textTertiary
                 Layout.alignment: Qt.AlignVCenter
             }
         }
@@ -173,16 +173,16 @@ Item {
                     Rectangle { anchors.bottom: parent.bottom; anchors.left: parent.left; anchors.right: parent.right; height: 1; color: Theme.border }
                     Row {
                         x: 16; width: parent.width - 32; spacing: 0
-                        Text { text: "CODE"; width: 100; height: 40; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: 10; font.weight: Font.Medium; color: Theme.textTertiary }
-                        Text { text: "NAME"; width: 180; height: 40; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: 10; font.weight: Font.Medium; color: Theme.textTertiary }
-                        Text { text: "FAMILY"; width: 150; height: 40; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: 10; font.weight: Font.Medium; color: Theme.textTertiary }
-                        Text { text: "GENDER"; width: 80; height: 40; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: 10; font.weight: Font.Medium; color: Theme.textTertiary }
-                        Text { text: "AGE"; width: 50; height: 40; verticalAlignment: Text.AlignVCenter; horizontalAlignment: Text.AlignHCenter; font.family: Theme.activeFontFamily; font.pixelSize: 10; font.weight: Font.Medium; color: Theme.textTertiary }
-                        Text { text: "RELATION"; width: 100; height: 40; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: 10; font.weight: Font.Medium; color: Theme.textTertiary }
-                        Text { text: "MOBILE"; width: 120; height: 40; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: 10; font.weight: Font.Medium; color: Theme.textTertiary }
-                        Text { text: "STATUS"; width: 100; height: 40; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: 10; font.weight: Font.Medium; color: Theme.textTertiary }
+                        Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("member_code") }; width: 100; height: 40; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
+                        Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("member_name") }; width: 180; height: 40; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
+                        Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("nav_families") }; width: 150; height: 40; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
+                        Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("member_gender") }; width: 80; height: 40; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
+                        Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("member_age") }; width: 50; height: 40; verticalAlignment: Text.AlignVCenter; horizontalAlignment: Text.AlignHCenter; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
+                        Text { text: "RELATION"; width: 100; height: 40; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
+                        Text { text: "MOBILE"; width: 120; height: 40; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
+                        Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("family_status") }; width: 100; height: 40; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
                         Item { width: parent.width - 100 - 180 - 150 - 80 - 50 - 100 - 120 - 100 - 80; height: 40 }
-                        Text { text: "ACTIONS"; width: 80; height: 40; verticalAlignment: Text.AlignVCenter; horizontalAlignment: Text.AlignHCenter; font.family: Theme.activeFontFamily; font.pixelSize: 10; font.weight: Font.Medium; color: Theme.textTertiary }
+                        Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("action_edit") }; width: 80; height: 40; verticalAlignment: Text.AlignVCenter; horizontalAlignment: Text.AlignHCenter; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
                     }
                 }
 
@@ -199,13 +199,13 @@ Item {
                         Rectangle { anchors.bottom: parent.bottom; anchors.left: parent.left; anchors.right: parent.right; height: 1; color: Theme.surfacePressed }
                         Row {
                             x: 16; width: parent.width - 32; spacing: 0
-                            Text { text: model.memberCode; width: 100; height: 44; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: 12; font.weight: Font.DemiBold; color: Theme.textPrimary; elide: Text.ElideRight }
-                            Text { text: model.name; width: 180; height: 44; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: 12; font.weight: Font.Normal; color: Theme.textPrimary; elide: Text.ElideRight }
-                            Text { text: (model.familyNumber || "") + " " + (model.houseName || ""); width: 150; height: 44; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: 12; font.weight: Font.Normal; color: Theme.textSecondary; elide: Text.ElideRight }
-                            Text { text: model.gender || "—"; width: 80; height: 44; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: 12; font.weight: Font.Normal; color: Theme.textSecondary }
-                            Text { text: model.age || "—"; width: 50; height: 44; verticalAlignment: Text.AlignVCenter; horizontalAlignment: Text.AlignHCenter; font.family: Theme.activeFontFamily; font.pixelSize: 12; font.weight: Font.DemiBold; color: Theme.textPrimary }
-                            Text { text: model.relationship || "—"; width: 100; height: 44; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: 12; font.weight: Font.Normal; color: Theme.textSecondary }
-                            Text { text: model.mobile; width: 120; height: 44; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: 12; font.weight: Font.Normal; color: Theme.textSecondary }
+                            Text { text: model.memberCode; width: 100; height: 44; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeSm; font.weight: Font.DemiBold; color: Theme.textPrimary; elide: Text.ElideRight }
+                            Text { text: model.name; width: 180; height: 44; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeSm; font.weight: Font.Normal; color: Theme.textPrimary; elide: Text.ElideRight }
+                            Text { text: (model.familyNumber || "") + " " + (model.houseName || ""); width: 150; height: 44; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeSm; font.weight: Font.Normal; color: Theme.textSecondary; elide: Text.ElideRight }
+                            Text { text: model.gender || "—"; width: 80; height: 44; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeSm; font.weight: Font.Normal; color: Theme.textSecondary }
+                            Text { text: model.age || "—"; width: 50; height: 44; verticalAlignment: Text.AlignVCenter; horizontalAlignment: Text.AlignHCenter; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeSm; font.weight: Font.DemiBold; color: Theme.textPrimary }
+                            Text { text: model.relationship || "—"; width: 100; height: 44; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeSm; font.weight: Font.Normal; color: Theme.textSecondary }
+                            Text { text: model.mobile; width: 120; height: 44; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeSm; font.weight: Font.Normal; color: Theme.textSecondary }
                             Item { width: 100; height: 44; StatusBadge { anchors.centerIn: parent; text: model.status; variant: model.status.toLowerCase() } }
                             Item { width: parent.width - 100 - 180 - 150 - 80 - 50 - 100 - 120 - 100 - 80; height: 44 }
                             Row {
@@ -251,8 +251,8 @@ Item {
                                 MultiEffect { anchors.fill: parent; source: emptyIcon; colorizationColor: "#b2cfbd"; colorization: 1.0 }
                             }
                         }
-                        Text { text: "No members found"; font.family: Theme.activeFontFamily; font.pixelSize: 14; font.weight: Font.DemiBold; color: Theme.textPrimary; anchors.horizontalCenter: parent.horizontalCenter }
-                        Text { text: "Click 'Add Member' to create your first member record"; font.family: Theme.activeFontFamily; font.pixelSize: 11; font.weight: Font.Normal; color: Theme.textTertiary; anchors.horizontalCenter: parent.horizontalCenter }
+                        Text { text: "No members found"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; font.weight: Font.DemiBold; color: Theme.textPrimary; anchors.horizontalCenter: parent.horizontalCenter }
+                        Text { text: "Click 'Add Member' to create your first member record"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Normal; color: Theme.textTertiary; anchors.horizontalCenter: parent.horizontalCenter }
                     }
                 }
 
@@ -262,7 +262,7 @@ Item {
                     Rectangle { anchors.top: parent.top; anchors.left: parent.left; anchors.right: parent.right; height: 1; color: Theme.border }
                     RowLayout {
                         anchors.fill: parent; anchors.leftMargin: 16; anchors.rightMargin: 16; spacing: 8
-                        Text { text: "Page " + memberModel.currentPage + " of " + memberModel.totalPages; font.family: Theme.activeFontFamily; font.pixelSize: 11; color: Theme.textTertiary; Layout.alignment: Qt.AlignVCenter }
+                        Text { text: "Page " + memberModel.currentPage + " of " + memberModel.totalPages; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; color: Theme.textTertiary; Layout.alignment: Qt.AlignVCenter }
                         Item { Layout.fillWidth: true }
                         Rectangle { width: 28; height: 28; radius: 6; color: prevMA.containsMouse ? "#ffffff" : "transparent"; border.width: 1; border.color: prevMA.containsMouse ? "#b2cfbd" : "#d2e5d8"; Layout.alignment: Qt.AlignVCenter; opacity: memberModel.currentPage > 1 ? 1 : 0.4
                             Item { width: 14; height: 14; anchors.centerIn: parent; Image { id: prevIcon; source: "qrc:/icons/svg/chevron-left.svg"; sourceSize: Qt.size(14, 14); anchors.fill: parent; fillMode: Image.Pad; visible: false } MultiEffect { anchors.fill: parent; source: prevIcon; colorizationColor: "#4f6b5c"; colorization: 1.0 } }

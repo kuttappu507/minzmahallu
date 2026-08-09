@@ -51,7 +51,7 @@ Rectangle {
         anchors.centerIn: parent
         text: root.text
         font.family: Theme.activeFontFamily
-        font.pixelSize: 10
+        font.pixelSize: Theme.fontSizeXs
         font.weight: Font.Medium
         color: root._mainColor
     }

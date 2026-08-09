@@ -43,7 +43,7 @@ Item {
         width: toastText.implicitWidth + 40; height: 40; radius: 9
         color: bgColor; z: 1000
         Behavior on anchors.topMargin { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
-        Text { id: toastText; anchors.centerIn: parent; text: toast.message; font.family: Theme.activeFontFamily; font.pixelSize: 13; font.weight: Font.DemiBold; color: Theme.surface }
+        Text { id: toastText; anchors.centerIn: parent; text: toast.message; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; font.weight: Font.DemiBold; color: Theme.surface }
         Timer { id: toastTimer; interval: 3000; onTriggered: toast.visible_ = false }
         function show(msg, color) { message = msg; bgColor = color || "#059669"; visible_ = true; toastTimer.restart() }
     }
@@ -58,8 +58,8 @@ Item {
             Layout.fillWidth: true; spacing: 16
             Column {
                 Layout.fillWidth: true; spacing: 2
-                Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("nav_accounting") } font.family: Theme.activeFontFamily; font.pixelSize: 21; font.weight: Font.DemiBold; color: Theme.textPrimary }
-                Text { text: "Manage ledger accounts and transactions"; font.family: Theme.activeFontFamily; font.pixelSize: 12; font.weight: Font.Normal; color: Theme.textSecondary }
+                Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("nav_accounting") } font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXl; font.weight: Font.DemiBold; color: Theme.textPrimary }
+                Text { text: "Manage ledger accounts and transactions"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeSm; font.weight: Font.Normal; color: Theme.textSecondary }
             }
             AppButton {
                 text: { var _l = I18NController.currentLanguage; return I18NController.tr("action_add") + " " + I18NController.tr("nav_accounting") } variant: "primary"; iconName: "plus"
@@ -73,16 +73,16 @@ Item {
             Layout.fillWidth: true; spacing: 12
             Rectangle { Layout.fillWidth: true; height: 60; radius: 9; color: Theme.primarySubtleAlt; border.width: 1; border.color: Theme.primary
                 Column { anchors.centerIn: parent; spacing: 0
-                    Text { text: "Total Income"; font.family: Theme.activeFontFamily; font.pixelSize: 10; font.weight: Font.Medium; color: "#04543c"; anchors.horizontalCenter: parent.horizontalCenter }
-                    Text { text: { var _r = accountingController.summaryRevision; return "₹" + accountingController.totalIncome("", "").toFixed(0); } font.family: Theme.activeFontFamily; font.pixelSize: 18; font.weight: Font.Bold; color: "#04543c"; anchors.horizontalCenter: parent.horizontalCenter } } }
+                    Text { text: "Total Income"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: "#04543c"; anchors.horizontalCenter: parent.horizontalCenter }
+                    Text { text: { var _r = accountingController.summaryRevision; return "₹" + accountingController.totalIncome("", "").toFixed(0); } font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXl; font.weight: Font.Bold; color: "#04543c"; anchors.horizontalCenter: parent.horizontalCenter } } }
             Rectangle { Layout.fillWidth: true; height: 60; radius: 9; color: Theme.coralSubtle; border.width: 1; border.color: Theme.danger
                 Column { anchors.centerIn: parent; spacing: 0
-                    Text { text: "Total Expense"; font.family: Theme.activeFontFamily; font.pixelSize: 10; font.weight: Font.Medium; color: "#95102e"; anchors.horizontalCenter: parent.horizontalCenter }
-                    Text { text: { var _r = accountingController.summaryRevision; return "₹" + accountingController.totalExpense("", "").toFixed(0); } font.family: Theme.activeFontFamily; font.pixelSize: 18; font.weight: Font.Bold; color: "#95102e"; anchors.horizontalCenter: parent.horizontalCenter } } }
+                    Text { text: "Total Expense"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: "#95102e"; anchors.horizontalCenter: parent.horizontalCenter }
+                    Text { text: { var _r = accountingController.summaryRevision; return "₹" + accountingController.totalExpense("", "").toFixed(0); } font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXl; font.weight: Font.Bold; color: "#95102e"; anchors.horizontalCenter: parent.horizontalCenter } } }
             Rectangle { Layout.fillWidth: true; height: 60; radius: 9; color: Theme.violetSubtleAlt; border.width: 1; border.color: "#2563eb"
                 Column { anchors.centerIn: parent; spacing: 0
-                    Text { text: "Balance"; font.family: Theme.activeFontFamily; font.pixelSize: 10; font.weight: Font.Medium; color: "#1e3fae"; anchors.horizontalCenter: parent.horizontalCenter }
-                    Text { text: { var _r = accountingController.summaryRevision; return "₹" + accountingController.balance("", "").toFixed(0); } font.family: Theme.activeFontFamily; font.pixelSize: 18; font.weight: Font.Bold; color: "#1e3fae"; anchors.horizontalCenter: parent.horizontalCenter } } }
+                    Text { text: "Balance"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: "#1e3fae"; anchors.horizontalCenter: parent.horizontalCenter }
+                    Text { text: { var _r = accountingController.summaryRevision; return "₹" + accountingController.balance("", "").toFixed(0); } font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXl; font.weight: Font.Bold; color: "#1e3fae"; anchors.horizontalCenter: parent.horizontalCenter } } }
         }
 
         // Toolbar
@@ -98,7 +98,7 @@ Item {
             Item { Layout.fillWidth: true }
             Text {
                 text: { var _l = I18NController.currentLanguage; return I18NController.tr("ui_records") + ": " + transactionModel.rowCount + " / " + transactionModel.totalCount }
-                font.family: Theme.activeFontFamily; font.pixelSize: 11; color: Theme.textTertiary
+                font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; color: Theme.textTertiary
                 Layout.alignment: Qt.AlignVCenter
             }
         }
@@ -116,13 +116,13 @@ Item {
                     Rectangle { anchors.bottom: parent.bottom; anchors.left: parent.left; anchors.right: parent.right; height: 1; color: Theme.border }
                     Row {
                         x: 16; width: parent.width - 32; spacing: 0
-                        Text { text: "DATE"; width: 110; height: 40; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: 10; font.weight: Font.Medium; color: Theme.textTertiary }
-                        Text { text: "ACCOUNT"; width: 200; height: 40; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: 10; font.weight: Font.Medium; color: Theme.textTertiary }
-                        Text { text: "TYPE"; width: 90; height: 40; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: 10; font.weight: Font.Medium; color: Theme.textTertiary }
-                        Text { text: "AMOUNT"; width: 110; height: 40; verticalAlignment: Text.AlignVCenter; horizontalAlignment: Text.AlignRight; font.family: Theme.activeFontFamily; font.pixelSize: 10; font.weight: Font.Medium; color: Theme.textTertiary }
-                        Text { text: "METHOD"; width: 100; height: 40; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: 10; font.weight: Font.Medium; color: Theme.textTertiary }
-                        Text { text: "DESCRIPTION"; width: parent.width - 110 - 200 - 90 - 110 - 100 - 80; height: 40; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: 10; font.weight: Font.Medium; color: Theme.textTertiary }
-                        Text { text: "ACTIONS"; width: 80; height: 40; verticalAlignment: Text.AlignVCenter; horizontalAlignment: Text.AlignHCenter; font.family: Theme.activeFontFamily; font.pixelSize: 10; font.weight: Font.Medium; color: Theme.textTertiary }
+                        Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("don_date") }; width: 110; height: 40; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
+                        Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("acc_account") }; width: 200; height: 40; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
+                        Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("acc_type") }; width: 90; height: 40; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
+                        Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("sub_amount") }; width: 110; height: 40; verticalAlignment: Text.AlignVCenter; horizontalAlignment: Text.AlignRight; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
+                        Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("sub_method") }; width: 100; height: 40; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
+                        Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("acc_description") }; width: parent.width - 110 - 200 - 90 - 110 - 100 - 80; height: 40; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
+                        Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("action_edit") }; width: 80; height: 40; verticalAlignment: Text.AlignVCenter; horizontalAlignment: Text.AlignHCenter; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
                     }
                 }
 
@@ -137,12 +137,12 @@ Item {
                         Rectangle { anchors.bottom: parent.bottom; anchors.left: parent.left; anchors.right: parent.right; height: 1; color: Theme.surfacePressed }
                         Row {
                             x: 16; width: parent.width - 32; spacing: 0
-                            Text { text: model.txnDate || "—"; width: 110; height: 44; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: 12; font.weight: Font.Normal; color: Theme.textSecondary }
-                            Text { text: (model.accountCode || "") + " - " + (model.accountName || "—"); width: 200; height: 44; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: 12; font.weight: Font.Normal; color: Theme.textPrimary; elide: Text.ElideRight }
+                            Text { text: model.txnDate || "—"; width: 110; height: 44; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeSm; font.weight: Font.Normal; color: Theme.textSecondary }
+                            Text { text: (model.accountCode || "") + " - " + (model.accountName || "—"); width: 200; height: 44; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeSm; font.weight: Font.Normal; color: Theme.textPrimary; elide: Text.ElideRight }
                             Item { width: 90; height: 44; StatusBadge { anchors.centerIn: parent; text: model.type; variant: model.type.toLowerCase() === "income" ? "active" : "overdue" } }
-                            Text { text: (model.type === "Expense" ? "-" : "+") + "₹" + model.amount.toFixed(0); width: 110; height: 44; verticalAlignment: Text.AlignVCenter; horizontalAlignment: Text.AlignRight; font.family: Theme.activeFontFamily; font.pixelSize: 12; font.weight: Font.DemiBold; color: model.type === "Income" ? "#059669" : "#e11d48" }
-                            Text { text: model.paymentMethod || "—"; width: 100; height: 44; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: 12; font.weight: Font.Normal; color: Theme.textSecondary }
-                            Text { text: model.description || "—"; width: parent.width - 110 - 200 - 90 - 110 - 100 - 80; height: 44; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: 12; font.weight: Font.Normal; color: Theme.textSecondary; elide: Text.ElideRight }
+                            Text { text: (model.type === "Expense" ? "-" : "+") + "₹" + model.amount.toFixed(0); width: 110; height: 44; verticalAlignment: Text.AlignVCenter; horizontalAlignment: Text.AlignRight; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeSm; font.weight: Font.DemiBold; color: model.type === "Income" ? "#059669" : "#e11d48" }
+                            Text { text: model.paymentMethod || "—"; width: 100; height: 44; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeSm; font.weight: Font.Normal; color: Theme.textSecondary }
+                            Text { text: model.description || "—"; width: parent.width - 110 - 200 - 90 - 110 - 100 - 80; height: 44; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeSm; font.weight: Font.Normal; color: Theme.textSecondary; elide: Text.ElideRight }
                             Row {
                                 width: 80; height: 44; spacing: 4; layoutDirection: Qt.RightToLeft
                                 TableActionButton { iconSource: "qrc:/icons/svg/trash.svg"; variantColor: "#e11d48"; anchors.verticalCenter: parent.verticalCenter
@@ -165,8 +165,8 @@ Item {
                         anchors.centerIn: parent; spacing: 12
                         Rectangle { width: 56; height: 56; radius: 28; color: Theme.surfaceHover; border.width: 1; border.color: Theme.border; anchors.horizontalCenter: parent.horizontalCenter
                             Item { width: 28; height: 28; anchors.centerIn: parent; Image { id: emptyIcon; source: "qrc:/icons/svg/accounting.svg"; sourceSize: Qt.size(28, 28); anchors.fill: parent; fillMode: Image.Pad; visible: false } MultiEffect { anchors.fill: parent; source: emptyIcon; colorizationColor: "#b2cfbd"; colorization: 1.0 } } }
-                        Text { text: "No transactions found"; font.family: Theme.activeFontFamily; font.pixelSize: 14; font.weight: Font.DemiBold; color: Theme.textPrimary; anchors.horizontalCenter: parent.horizontalCenter }
-                        Text { text: "Click 'Add Transaction' to create your first record"; font.family: Theme.activeFontFamily; font.pixelSize: 11; font.weight: Font.Normal; color: Theme.textTertiary; anchors.horizontalCenter: parent.horizontalCenter }
+                        Text { text: "No transactions found"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; font.weight: Font.DemiBold; color: Theme.textPrimary; anchors.horizontalCenter: parent.horizontalCenter }
+                        Text { text: "Click 'Add Transaction' to create your first record"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Normal; color: Theme.textTertiary; anchors.horizontalCenter: parent.horizontalCenter }
                     }
                 }
 
@@ -176,7 +176,7 @@ Item {
                     Rectangle { anchors.top: parent.top; anchors.left: parent.left; anchors.right: parent.right; height: 1; color: Theme.border }
                     RowLayout {
                         anchors.fill: parent; anchors.leftMargin: 16; anchors.rightMargin: 16; spacing: 8
-                        Text { text: "Page " + transactionModel.currentPage + " of " + transactionModel.totalPages; font.family: Theme.activeFontFamily; font.pixelSize: 11; color: Theme.textTertiary; Layout.alignment: Qt.AlignVCenter }
+                        Text { text: "Page " + transactionModel.currentPage + " of " + transactionModel.totalPages; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; color: Theme.textTertiary; Layout.alignment: Qt.AlignVCenter }
                         Item { Layout.fillWidth: true }
                         Rectangle { width: 28; height: 28; radius: 6; color: prevMA.containsMouse ? "#ffffff" : "transparent"; border.width: 1; border.color: prevMA.containsMouse ? "#b2cfbd" : "#d2e5d8"; Layout.alignment: Qt.AlignVCenter; opacity: transactionModel.currentPage > 1 ? 1 : 0.4
                             Item { width: 14; height: 14; anchors.centerIn: parent; Image { id: prevIcon; source: "qrc:/icons/svg/chevron-left.svg"; sourceSize: Qt.size(14, 14); anchors.fill: parent; fillMode: Image.Pad; visible: false } MultiEffect { anchors.fill: parent; source: prevIcon; colorizationColor: "#4f6b5c"; colorization: 1.0 } }

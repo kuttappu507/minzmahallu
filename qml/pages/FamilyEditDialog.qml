@@ -165,7 +165,7 @@ ModalDialog {
 
                     Text {
                         text: dialog._dialogTitle
-                        font.family: Theme.activeFontFamily; font.pixelSize: 16; font.weight: Font.DemiBold; color: Theme.textPrimary
+                        font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeLg; font.weight: Font.DemiBold; color: Theme.textPrimary
                         anchors.left: parent.left; anchors.leftMargin: 24; anchors.verticalCenter: parent.verticalCenter
                     }
 
@@ -174,7 +174,7 @@ ModalDialog {
                         width: 28; height: 28; radius: 6
                         color: closeMA.containsMouse ? "#f2faf4" : "transparent"
                         Behavior on color { ColorAnimation { duration: 120 } }
-                        Text { anchors.centerIn: parent; text: "\u00D7"; font.pixelSize: 18; font.weight: Font.Bold; color: closeMA.containsMouse ? "#12241b" : "#7e968a" }
+                        Text { anchors.centerIn: parent; text: "\u00D7"; font.pixelSize: Theme.fontSizeXl; font.weight: Font.Bold; color: closeMA.containsMouse ? "#12241b" : "#7e968a" }
                         MouseArea { id: closeMA; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: dialog.visible = false }
                     }
                 }
@@ -191,7 +191,7 @@ ModalDialog {
                     Text {
                         anchors.fill: parent; anchors.margins: 8
                         text: dialog._errorMessage
-                        font.family: Theme.activeFontFamily; font.pixelSize: 12; color: "#95102e"
+                        font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeSm; color: "#95102e"
                         verticalAlignment: Text.AlignVCenter
                         elide: Text.ElideRight
                     }
@@ -207,13 +207,13 @@ ModalDialog {
 
                         // ===== Family Number (read-only) =====
                         ColumnLayout { Layout.fillWidth: true; spacing: 4
-                            Text { text: "FAMILY NUMBER"; font.family: Theme.activeFontFamily; font.pixelSize: 11; font.weight: Font.Medium; color: Theme.textTertiary }
+                            Text { text: "FAMILY NUMBER"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
                             Rectangle {
                                 Layout.fillWidth: true; height: 38; radius: 9; color: Theme.surfaceHover; border.width: 1; border.color: Theme.border
                                 Text {
                                     anchors.left: parent.left; anchors.leftMargin: 10; anchors.verticalCenter: parent.verticalCenter
                                     text: dialog._familyNumber || "Auto-generated on save"
-                                    font.family: Theme.activeFontFamily; font.pixelSize: 13; color: dialog._familyNumber ? "#12241b" : "#7e968a"
+                                    font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; color: dialog._familyNumber ? "#12241b" : "#7e968a"
                                 }
                             }
                         }
@@ -305,11 +305,11 @@ ModalDialog {
 
                         // ===== Address (full width) =====
                         ColumnLayout { Layout.fillWidth: true; spacing: 4
-                            Text { text: "ADDRESS"; font.family: Theme.activeFontFamily; font.pixelSize: 11; font.weight: Font.Medium; color: Theme.textTertiary }
+                            Text { text: "ADDRESS"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
                             TextArea {
                                 Layout.fillWidth: true; Layout.preferredHeight: 64
                                 text: dialog._address; readOnly: dialog.readOnly
-                                font.family: Theme.activeFontFamily; font.pixelSize: 13; color: Theme.textPrimary
+                                font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; color: Theme.textPrimary
                                 placeholderText: "Enter full address..."; placeholderTextColor: "#7e968a"
                                 selectByMouse: true; wrapMode: TextArea.Wrap
                                 background: Rectangle {
@@ -324,11 +324,11 @@ ModalDialog {
 
                         // ===== Notes (full width) =====
                         ColumnLayout { Layout.fillWidth: true; spacing: 4
-                            Text { text: "NOTES"; font.family: Theme.activeFontFamily; font.pixelSize: 11; font.weight: Font.Medium; color: Theme.textTertiary }
+                            Text { text: "NOTES"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
                             TextArea {
                                 Layout.fillWidth: true; Layout.preferredHeight: 56
                                 text: dialog._notes; readOnly: dialog.readOnly
-                                font.family: Theme.activeFontFamily; font.pixelSize: 13; color: Theme.textPrimary
+                                font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; color: Theme.textPrimary
                                 placeholderText: "Internal notes (optional)..."; placeholderTextColor: "#7e968a"
                                 selectByMouse: true; wrapMode: TextArea.Wrap
                                 background: Rectangle {

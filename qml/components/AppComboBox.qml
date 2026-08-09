@@ -29,7 +29,7 @@ FocusScope {
             id: labelItem
             text: root.label
             font.family: Theme.activeFontFamily
-            font.pixelSize: 11
+            font.pixelSize: Theme.fontSizeXs
             font.weight: Font.Medium
             color: Theme.textTertiary
             visible: root.label !== ""
@@ -43,7 +43,7 @@ FocusScope {
             model: root.model
             currentIndex: root.currentIndex
             font.family: Theme.activeFontFamily
-            font.pixelSize: 13
+            font.pixelSize: Theme.fontSizeMd
             padding: 0
 
             indicator: Item { width: 0; height: 0; visible: false }
@@ -60,7 +60,7 @@ FocusScope {
                 Text {
                     text: combo.displayText
                     font.family: Theme.activeFontFamily
-                    font.pixelSize: 13
+                    font.pixelSize: Theme.fontSizeMd
                     color: combo.enabled ? "#12241b" : "#b2cfbd"
                     anchors.left: parent.left
                     anchors.leftMargin: 10
@@ -134,7 +134,7 @@ FocusScope {
                 contentItem: Text {
                     text: modelData
                     font.family: Theme.activeFontFamily
-                    font.pixelSize: 13
+                    font.pixelSize: Theme.fontSizeMd
                     color: highlighted ? "#059669" : "#12241b"
                     anchors.left: parent.left
                     anchors.leftMargin: 8

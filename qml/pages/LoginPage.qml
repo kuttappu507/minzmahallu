@@ -54,12 +54,12 @@ Item {
             // Title
             Text {
                 text: { var _l = I18NController.currentLanguage; return I18NController.tr("app_name") }
-                font.family: "Anek Malayalam"; font.pixelSize: 20; font.weight: Font.Bold; color: Theme.textPrimary
+                font.family: "Anek Malayalam"; font.pixelSize: Theme.fontSizeXl; font.weight: Font.Bold; color: Theme.textPrimary
                 Layout.alignment: Qt.AlignHCenter
             }
             Text {
                 text: { var _l = I18NController.currentLanguage; return I18NController.tr("app_subtitle") }
-                font.family: Theme.activeFontFamily; font.pixelSize: 12; color: Theme.textTertiary
+                font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeSm; color: Theme.textTertiary
                 Layout.alignment: Qt.AlignHCenter
                 Layout.topMargin: -12
             }
@@ -68,7 +68,7 @@ Item {
             Rectangle {
                 Layout.fillWidth: true; visible: errorText.text !== ""
                 height: 36; radius: 8; color: Theme.coralSubtle; border.width: 1; border.color: Theme.danger
-                Text { id: errorText; anchors.fill: parent; anchors.margins: 8; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: 12; color: "#95102e"; elide: Text.ElideRight }
+                Text { id: errorText; anchors.fill: parent; anchors.margins: 8; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeSm; color: "#95102e"; elide: Text.ElideRight }
             }
 
             // Username field
@@ -83,7 +83,7 @@ Item {
             // Password field
             ColumnLayout {
                 Layout.fillWidth: true; spacing: 4
-                Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("login_password") } font.family: Theme.activeFontFamily; font.pixelSize: 11; font.weight: Font.Medium; color: Theme.textTertiary }
+                Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("login_password") } font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
                 Rectangle {
                     Layout.fillWidth: true; height: 38; radius: 9; color: Theme.surfaceHover; border.width: 1
                     border.color: passwordField.activeFocus ? "#059669" : (pwdHover.containsMouse ? "#b2cfbd" : "#d2e5d8")
@@ -94,7 +94,7 @@ Item {
                         anchors.fill: parent; anchors.leftMargin: 10; anchors.rightMargin: 38
                         verticalAlignment: Text.AlignVCenter
                         placeholderText: { var _l = I18NController.currentLanguage; return I18NController.tr("login_password") } placeholderTextColor: "#7e968a"
-                        font.family: Theme.activeFontFamily; font.pixelSize: 13; color: Theme.textPrimary
+                        font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; color: Theme.textPrimary
                         echoMode: showPassword.checked ? TextInput.Normal : TextInput.Password
                         background: Item {}
                         onTextChanged: errorText.text = ""
@@ -111,7 +111,7 @@ Item {
                             width: 18; height: 18; radius: 4; anchors.centerIn: parent
                             color: showPassword.checked ? "#059669" : "transparent"
                             border.width: 1; border.color: showPassword.checked ? "#059669" : "#d2e5d8"
-                            Text { anchors.centerIn: parent; text: showPassword.checked ? "\u{1F441}" : "\u25CF"; font.pixelSize: 10; color: Theme.surface; visible: showPassword.checked }
+                            Text { anchors.centerIn: parent; text: showPassword.checked ? "\u{1F441}" : "\u25CF"; font.pixelSize: Theme.fontSizeXs; color: Theme.surface; visible: showPassword.checked }
                         }
                     }
                 }
@@ -138,7 +138,7 @@ Item {
             // Hint text
             Text {
                 text: { var _l = I18NController.currentLanguage; return I18NController.tr("login_default_hint") }
-                font.family: Theme.activeFontFamily; font.pixelSize: 10; color: Theme.textDisabled
+                font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; color: Theme.textDisabled
                 Layout.alignment: Qt.AlignHCenter
             }
 
