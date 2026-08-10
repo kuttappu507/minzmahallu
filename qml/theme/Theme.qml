@@ -18,8 +18,10 @@ import QtQuick
 
 QtObject {
     // ===== THEME STATE =====
-    // Driven by SettingsController.theme — ONE source of truth.
-    readonly property bool dark: typeof SettingsController !== "undefined" && SettingsController.theme === "dark"
+    // Theme is set externally by AppShell when SettingsController.theme changes.
+    // This avoids binding loops with context properties.
+    property string theme: "light"
+    readonly property bool dark: theme === "dark"
 
     // ===== CANVAS =====
     readonly property color canvas:          dark ? "#0a1a12" : "#e7f4ea"

@@ -36,6 +36,10 @@ ApplicationWindow {
         anchors.fill: parent
         visible: !splashScreen.visible && AuthController.isLoggedIn
 
+    // Bind Theme.theme to SettingsController.theme — ONE source of truth
+    // This avoids binding loops in the Theme singleton
+    Binding { target: Theme; property: "theme"; value: SettingsController.theme }
+
     property int currentNavIndex: 0
     property bool sidebarCollapsed: false
     property int sidebarWidth: sidebarCollapsed ? 64 : 260
