@@ -248,6 +248,11 @@ int main(int argc, char* argv[]) {
     AuthController* authController = new AuthController(&app);
     I18NController* i18NController = new I18NController(&app);
     DashboardController* dashboardController = new DashboardController(&app);
+    // Connect dashboard to all controllers' CRUD signals for auto-refresh
+    dashboardController->connectToSignals(
+        familyController, memberController, subscriptionController,
+        donationController, accountingController,
+        marriageController, deathController, welfareController);
     logMsg("  Controllers OK");
 
     // Create QML engine
