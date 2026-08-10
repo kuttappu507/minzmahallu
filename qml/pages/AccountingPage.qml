@@ -73,15 +73,15 @@ Item {
             Layout.fillWidth: true; spacing: 12
             Rectangle { Layout.fillWidth: true; height: 60; radius: 9; color: Theme.primarySubtleAlt; border.width: 1; border.color: Theme.primary
                 Column { anchors.centerIn: parent; spacing: 0
-                    Text { text: "Total Income"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: "#04543c"; anchors.horizontalCenter: parent.horizontalCenter }
+                    Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("acc_income") } font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: "#04543c"; anchors.horizontalCenter: parent.horizontalCenter }
                     Text { text: { var _r = accountingController.summaryRevision; return "₹" + accountingController.totalIncome("", "").toFixed(0); } font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXl; font.weight: Font.Bold; color: "#04543c"; anchors.horizontalCenter: parent.horizontalCenter } } }
             Rectangle { Layout.fillWidth: true; height: 60; radius: 9; color: Theme.coralSubtle; border.width: 1; border.color: Theme.danger
                 Column { anchors.centerIn: parent; spacing: 0
-                    Text { text: "Total Expense"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: "#95102e"; anchors.horizontalCenter: parent.horizontalCenter }
+                    Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("acc_expense") } font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: "#95102e"; anchors.horizontalCenter: parent.horizontalCenter }
                     Text { text: { var _r = accountingController.summaryRevision; return "₹" + accountingController.totalExpense("", "").toFixed(0); } font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXl; font.weight: Font.Bold; color: "#95102e"; anchors.horizontalCenter: parent.horizontalCenter } } }
             Rectangle { Layout.fillWidth: true; height: 60; radius: 9; color: Theme.violetSubtleAlt; border.width: 1; border.color: "#2563eb"
                 Column { anchors.centerIn: parent; spacing: 0
-                    Text { text: "Balance"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: "#1e3fae"; anchors.horizontalCenter: parent.horizontalCenter }
+                    Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("acc_balance") } font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: "#1e3fae"; anchors.horizontalCenter: parent.horizontalCenter }
                     Text { text: { var _r = accountingController.summaryRevision; return "₹" + accountingController.balance("", "").toFixed(0); } font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXl; font.weight: Font.Bold; color: "#1e3fae"; anchors.horizontalCenter: parent.horizontalCenter } } }
         }
 

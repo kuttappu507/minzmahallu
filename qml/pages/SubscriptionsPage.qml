@@ -79,14 +79,14 @@ Item {
         RowLayout {
             Layout.fillWidth: true; spacing: 10
 
-            // Summary cards — reference summaryRevision so they re-evaluate on data change
-            Rectangle { Layout.fillWidth: true; height: 48; radius: 9; color: Theme.primarySubtleAlt; border.width: 1; border.color: Theme.primary
+            // Summary cards — fixed width so they don't compete with filter combo
+            Rectangle { Layout.preferredWidth: 180; height: 48; radius: 9; color: Theme.primarySubtleAlt; border.width: 1; border.color: Theme.primary
                 Column { anchors.centerIn: parent; spacing: 0
-                    Text { text: "Total Collected"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: "#04543c"; anchors.horizontalCenter: parent.horizontalCenter }
+                    Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("sub_title") } font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: "#04543c"; anchors.horizontalCenter: parent.horizontalCenter }
                     Text { text: { var _r = subscriptionController.summaryRevision; return "₹" + subscriptionController.totalCollected("", "").toFixed(0); } font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeLg; font.weight: Font.Bold; color: "#04543c"; anchors.horizontalCenter: parent.horizontalCenter } } }
-            Rectangle { Layout.fillWidth: true; height: 48; radius: 9; color: Theme.warningSubtle; border.width: 1; border.color: Theme.warning
+            Rectangle { Layout.preferredWidth: 180; height: 48; radius: 9; color: Theme.warningSubtle; border.width: 1; border.color: Theme.warning
                 Column { anchors.centerIn: parent; spacing: 0
-                    Text { text: "Total Pending"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: "#7c4403"; anchors.horizontalCenter: parent.horizontalCenter }
+                    Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("sub_pending") } font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: "#7c4403"; anchors.horizontalCenter: parent.horizontalCenter }
                     Text { text: { var _r = subscriptionController.summaryRevision; return "₹" + subscriptionController.totalPending().toFixed(0); } font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeLg; font.weight: Font.Bold; color: "#7c4403"; anchors.horizontalCenter: parent.horizontalCenter } } }
 
             AppComboBox {
