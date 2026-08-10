@@ -14,10 +14,26 @@ ApplicationWindow {
     title: "Minz Mahallu Management System"
     color: Theme.canvas
 
-    // Bind Theme.theme to SettingsController.theme at window level (always active)
-    // This avoids binding loops in the Theme singleton
-    Binding { target: Theme; property: "theme"; value: SettingsController.theme }
-    Binding { target: Theme; property: "activeFontFamily"; value: I18NController.isMalayalam ? Theme.fontFamilyMalayalam : Theme.fontFamily }
+    // Sync Theme.dark with SettingsController — NO binding, use function calls
+    // This completely avoids binding loops
+    Component.onCompleted: {
+        Theme.setDark(SettingsController.theme === "dark")
+        Theme.activeFontFamily = I18NController.isMalayalam ? Theme.fontFamilyMalayalam : Theme.fontFamily
+    }
+    // Listen for settings changes
+    Connections {
+        target: SettingsController
+        function onSettingsChanged() {
+            Theme.setDark(SettingsController.theme === "dark")
+        }
+    }
+    // Listen for language changes
+    Connections {
+        target: I18NController
+        function onLanguageChanged() {
+            Theme.activeFontFamily = I18NController.isMalayalam ? Theme.fontFamilyMalayalam : Theme.fontFamily
+        }
+    }
 
     // ===== Splash screen (shown for 2s on startup) =====
     SplashScreen {
