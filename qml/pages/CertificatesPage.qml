@@ -156,7 +156,7 @@ Item {
                         Item { width: parent.width - 150 - 120 - 250 - 120 - 150 - 80; height: 40 }
                         Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("action_edit") } width: 80; height: 40; verticalAlignment: Text.AlignVCenter; horizontalAlignment: Text.AlignHCenter; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary } } }
                 ListView { id: table; Layout.fillWidth: true; Layout.fillHeight: true; clip: true; spacing: 0; model: page.certificates
-                    delegate: Rectangle { width: table.width; height: 44; color: rowMA.containsMouse ? "#f2faf4" : (index % 2 === 0 ? "#ffffff" : "#fafdfa")
+                    delegate: Rectangle { width: table.width; height: 44; color: rowMA.containsMouse ? Theme.surfaceHover : (index % 2 === 0 ? Theme.surface : Theme.surfaceSubtle)
                         Rectangle { anchors.bottom: parent.bottom; anchors.left: parent.left; anchors.right: parent.right; height: 1; color: Theme.surfacePressed }
                         Row { x: 16; width: parent.width - 32; spacing: 0
                             Text { text: modelData.certificateNumber; width: 150; height: 44; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeSm; font.weight: Font.DemiBold; color: Theme.textPrimary; elide: Text.ElideRight }

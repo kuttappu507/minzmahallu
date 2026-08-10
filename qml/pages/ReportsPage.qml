@@ -108,7 +108,7 @@ Item {
                     id: table; Layout.fillWidth: true; Layout.fillHeight: true; clip: true; spacing: 0
                     model: page.reportData ? page.reportData.rows : []
                     delegate: Rectangle {
-                        width: table.width; height: 36; color: index % 2 === 0 ? "#ffffff" : "#fafdfa"
+                        width: table.width; height: 36; color: index % 2 === 0 ? Theme.surface : Theme.surfaceSubtle
                         Rectangle { anchors.bottom: parent.bottom; anchors.left: parent.left; anchors.right: parent.right; height: 1; color: Theme.surfacePressed }
                         Row {
                             x: 16; width: parent.width - 32; spacing: 0

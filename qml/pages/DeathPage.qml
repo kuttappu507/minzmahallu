@@ -89,7 +89,7 @@ Item {
                         Item { width: parent.width - 120 - 180 - 160 - 80 - 50 - 120 - 120 - 120 - 80; height: 40 }
                         Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("action_edit") } width: 80; height: 40; verticalAlignment: Text.AlignVCenter; horizontalAlignment: Text.AlignHCenter; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary } } }
                 ListView { id: table; Layout.fillWidth: true; Layout.fillHeight: true; clip: true; spacing: 0; model: deathModel
-                    delegate: Rectangle { width: table.width; height: 44; color: rowMA.containsMouse ? "#f2faf4" : (index % 2 === 0 ? "#ffffff" : "#fafdfa")
+                    delegate: Rectangle { width: table.width; height: 44; color: rowMA.containsMouse ? Theme.surfaceHover : (index % 2 === 0 ? Theme.surface : Theme.surfaceSubtle)
                         Rectangle { anchors.bottom: parent.bottom; anchors.left: parent.left; anchors.right: parent.right; height: 1; color: Theme.surfacePressed }
                         Row { x: 16; width: parent.width - 32; spacing: 0
                             Text { text: model.deathNumber; width: 120; height: 44; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeSm; font.weight: Font.DemiBold; color: Theme.textPrimary; elide: Text.ElideRight }
@@ -115,10 +115,10 @@ Item {
                     RowLayout { anchors.fill: parent; anchors.leftMargin: 16; anchors.rightMargin: 16; spacing: 8
                         Text { text: "Page " + deathModel.currentPage + " of " + deathModel.totalPages; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; color: Theme.textTertiary; Layout.alignment: Qt.AlignVCenter }
                         Item { Layout.fillWidth: true }
-                        Rectangle { width: 28; height: 28; radius: 6; color: prevMA.containsMouse ? "#ffffff" : "transparent"; border.width: 1; border.color: prevMA.containsMouse ? "#b2cfbd" : "#d2e5d8"; Layout.alignment: Qt.AlignVCenter; opacity: deathModel.currentPage > 1 ? 1 : 0.4
+                        Rectangle { width: 28; height: 28; radius: 6; color: prevMA.containsMouse ? Theme.surface : "transparent"; border.width: 1; border.color: prevMA.containsMouse ? Theme.borderHover : Theme.border; Layout.alignment: Qt.AlignVCenter; opacity: deathModel.currentPage > 1 ? 1 : 0.4
                             Item { width: 14; height: 14; anchors.centerIn: parent; Image { id: prevIcon; source: "qrc:/icons/svg/chevron-left.svg"; sourceSize: Qt.size(14, 14); anchors.fill: parent; fillMode: Image.Pad; visible: false } MultiEffect { anchors.fill: parent; source: prevIcon; colorizationColor: "#4f6b5c"; colorization: 1.0 } }
                             MouseArea { id: prevMA; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: if (deathModel.currentPage > 1) deathModel.currentPage = deathModel.currentPage - 1 } }
-                        Rectangle { width: 28; height: 28; radius: 6; color: nextMA.containsMouse ? "#ffffff" : "transparent"; border.width: 1; border.color: nextMA.containsMouse ? "#b2cfbd" : "#d2e5d8"; Layout.alignment: Qt.AlignVCenter; opacity: deathModel.currentPage < deathModel.totalPages ? 1 : 0.4
+                        Rectangle { width: 28; height: 28; radius: 6; color: nextMA.containsMouse ? Theme.surface : "transparent"; border.width: 1; border.color: nextMA.containsMouse ? Theme.borderHover : Theme.border; Layout.alignment: Qt.AlignVCenter; opacity: deathModel.currentPage < deathModel.totalPages ? 1 : 0.4
                             Item { width: 14; height: 14; anchors.centerIn: parent; Image { id: nextIcon; source: "qrc:/icons/svg/chevron-right.svg"; sourceSize: Qt.size(14, 14); anchors.fill: parent; fillMode: Image.Pad; visible: false } MultiEffect { anchors.fill: parent; source: nextIcon; colorizationColor: "#4f6b5c"; colorization: 1.0 } }
                             MouseArea { id: nextMA; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: if (deathModel.currentPage < deathModel.totalPages) deathModel.currentPage = deathModel.currentPage + 1 } } } }
             }

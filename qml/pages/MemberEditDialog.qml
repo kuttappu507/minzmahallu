@@ -183,7 +183,7 @@ ModalDialog {
                     Rectangle {
                         anchors.right: parent.right; anchors.rightMargin: 16; anchors.verticalCenter: parent.verticalCenter
                         width: 28; height: 28; radius: 6
-                        color: closeMA.containsMouse ? "#f2faf4" : "transparent"
+                        color: closeMA.containsMouse ? Theme.surfaceHover : "transparent"
                         Behavior on color { ColorAnimation { duration: 120 } }
                         Text { anchors.centerIn: parent; text: "\u00D7"; font.pixelSize: Theme.fontSizeXl; font.weight: Font.Bold; color: closeMA.containsMouse ? "#12241b" : "#7e968a" }
                         MouseArea { id: closeMA; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: dialog.visible = false }

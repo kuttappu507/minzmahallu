@@ -50,7 +50,7 @@ Item {
                         Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("audit_module") } width: 120; height: 40; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
                         Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("acc_description") } width: parent.width - 180 - 150 - 100 - 120; height: 40; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary } } }
                 ListView { id: table; Layout.fillWidth: true; Layout.fillHeight: true; clip: true; spacing: 0; model: page.entries
-                    delegate: Rectangle { width: table.width; height: 44; color: index % 2 === 0 ? "#ffffff" : "#fafdfa"
+                    delegate: Rectangle { width: table.width; height: 44; color: index % 2 === 0 ? Theme.surface : Theme.surfaceSubtle
                         Rectangle { anchors.bottom: parent.bottom; anchors.left: parent.left; anchors.right: parent.right; height: 1; color: Theme.surfacePressed }
                         Row { x: 16; width: parent.width - 32; spacing: 0
                             Text { text: modelData.createdAt; width: 180; height: 44; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; color: Theme.textSecondary }

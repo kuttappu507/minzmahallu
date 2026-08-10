@@ -181,143 +181,78 @@ ScrollView {
                         columnSpacing: 12
                         rowSpacing: 12
 
+                        // Stat card component — accepts dynamic values via properties
                         Repeater {
-                            model: ListModel {
-                                ListElement { label: "FAMILIES";    value: DashboardController.totalFamilies; delta: ""; sc: "#059669"; sb: "#d3f5e6"; st: "#04543c"; icon: "families"; up: 1 }
-                                ListElement { label: "MEMBERS";     value: DashboardController.totalMembers; delta: ""; sc: "#0d9488"; sb: "#c8f6f1"; st: "#0f5e54"; icon: "members"; up: 1 }
-                                ListElement { label: "ACTIVE";      value: DashboardController.activeMembers; delta: ""; sc: "#0284c7"; sb: "#d7edfb"; st: "#0a5480"; icon: "user"; up: 1 }
-                                ListElement { label: "COLLECTION";  value: "₹" + DashboardController.monthlyCollection.toFixed(0); delta: ""; sc: "#d97706"; sb: "#fcebc8"; st: "#7c4403"; icon: "dollar"; up: 1 }
-                                ListElement { label: "DUES";        value: "₹" + DashboardController.pendingDues.toFixed(0); delta: ""; sc: "#e11d48"; sb: "#fddfe5"; st: "#95102e"; icon: "alert"; up: 0 }
-                                ListElement { label: "DONATIONS";   value: "₹" + DashboardController.monthlyDonations.toFixed(0); delta: ""; sc: "#db2777"; sb: "#fadfeb"; st: "#93184f"; icon: "donations"; up: 1 }
-                                ListElement { label: "WELFARE";     value: "₹1,45,000"; delta: "▲ 14 beneficiaries";  sc: "#7c3aed"; sb: "#e7defc"; st: "#5423b7"; icon: "welfare"; up: 1 }
-                                ListElement { label: "MARRIAGES";   value: DashboardController.marriagesThisYear; delta: ""; sc: "#ea580c"; sb: "#ffe4cf"; st: "#8f3708"; icon: "marriage"; up: 1 }
-                                ListElement { label: "DEATHS";      value: DashboardController.deathsThisYear; delta: ""; sc: "#64748b"; sb: "#e6ebf2"; st: "#33415c"; icon: "death"; up: 0 }
-                                ListElement { label: "BALANCE";     value: "₹" + DashboardController.balance.toFixed(0); delta: ""; sc: "#2563eb"; sb: "#dbe7fd"; st: "#1e3fae"; icon: "accounting"; up: 1 }
-                            }
-
+                            model: 10
                             delegate: Rectangle {
                                 id: statCard
                                 Layout.fillWidth: true
                                 Layout.minimumWidth: 180
                                 implicitHeight: statContent.implicitHeight + 25
                                 radius: 10
-                                color: model.sb
+                                property string cardLabel: ["FAMILIES","MEMBERS","ACTIVE","COLLECTION","DUES","DONATIONS","WELFARE","MARRIAGES","DEATHS","BALANCE"][index]
+                                property string cardValue: [
+                                    DashboardController.totalFamilies,
+                                    DashboardController.totalMembers,
+                                    DashboardController.activeMembers,
+                                    "₹" + DashboardController.monthlyCollection.toFixed(0),
+                                    "₹" + DashboardController.pendingDues.toFixed(0),
+                                    "₹" + DashboardController.monthlyDonations.toFixed(0),
+                                    "—",
+                                    DashboardController.marriagesThisYear,
+                                    DashboardController.deathsThisYear,
+                                    "₹" + DashboardController.balance.toFixed(0)
+                                ][index]
+                                property string cardSc: ["#059669","#0d9488","#0284c7","#d97706","#e11d48","#db2777","#7c3aed","#ea580c","#64748b","#2563eb"][index]
+                                property string cardSb: ["#d3f5e6","#c8f6f1","#d7edfb","#fcebc8","#fddfe5","#fadfeb","#e7defc","#ffe4cf","#e6ebf2","#dbe7fd"][index]
+                                property string cardSt: ["#04543c","#0f5e54","#0a5480","#7c4403","#95102e","#93184f","#5423b7","#8f3708","#33415c","#1e3fae"][index]
+                                property string cardIcon: ["families","members","user","dollar","alert","donations","welfare","marriage","death","accounting"][index]
+                                color: Theme.dark ? Qt.darker(cardSb, 3) : cardSb
                                 border.width: 1
-                                border.color: statHover.containsMouse ? model.sc : Qt.lighter(model.sc, 1.15)
+                                border.color: statHover.containsMouse ? cardSc : Qt.lighter(cardSc, 1.15)
                                 z: statHover.hovered ? 10 : 0
                                 transform: Translate { id: statLift; y: statHover.hovered ? -2 : 0; Behavior on y { NumberAnimation { duration: 160; easing.type: Easing.OutCubic } } }
                                 Behavior on border.color { ColorAnimation { duration: 160 } }
 
-                                HoverHandler {
-                                    id: statHover
-                                    cursorShape: Qt.PointingHandCursor
-                                }
+                                HoverHandler { id: statHover; cursorShape: Qt.PointingHandCursor }
 
-
-
-                                // Decorative circle — fully INSIDE card, bottom-right corner
-                                // Positioned with small margins so nothing extends past the card
                                 Rectangle {
-                                    id: decorCircle
-                                    anchors.right: parent.right
-                                    anchors.bottom: parent.bottom
-                                    anchors.rightMargin: 4
-                                    anchors.bottomMargin: 4
-                                    width: statHover.hovered ? 52 : 46
-                                    height: width
-                                    radius: width / 2
-                                    color: model.sc
-                                    opacity: 0.12
+                                    anchors.right: parent.right; anchors.bottom: parent.bottom
+                                    anchors.rightMargin: 4; anchors.bottomMargin: 4
+                                    width: statHover.hovered ? 52 : 46; height: width; radius: width / 2
+                                    color: cardSc; opacity: 0.12
                                     Behavior on width { NumberAnimation { duration: 160; easing.type: Easing.OutCubic } }
                                     Behavior on opacity { NumberAnimation { duration: 160 } }
                                 }
 
                                 Column {
                                     id: statContent
-                                    x: 14; y: 13  // CSS: padding:13px 14px
-                                    width: parent.width - 28
-                                    spacing: 0
+                                    x: 14; y: 13; width: parent.width - 28; spacing: 0
 
-                                    // Top row: icon + delta
                                     Item {
-                                        width: parent.width
-                                        height: 37
-
-                                        // CSS: .stat .sic
+                                        width: parent.width; height: 37
                                         Rectangle {
-                                            width: 37; height: 37; radius: 9
-                                            color: model.sc
-                                            Behavior on scale { NumberAnimation { duration: 180; easing.type: Easing.OutCubic } }
-
+                                            width: 37; height: 37; radius: 9; color: cardSc
                                             Item {
-                                                width: 18; height: 18
-                                                anchors.centerIn: parent
-
-                                                Image {
-                                                    id: statIcon
-                                                    source: "qrc:/icons/svg/" + model.icon + ".svg"
-                                                    sourceSize: Qt.size(18, 18)
-                                                    anchors.fill: parent
-                                                    fillMode: Image.Pad
-                                                    visible: false
-                                                }
-                                                MultiEffect {
-                                                    anchors.fill: parent
-                                                    source: statIcon
-                                                    colorizationColor: "#ffffff"
-                                                    colorization: 1.0
-                                                }
-                                            }
-                                        }
-
-                                        // CSS: .stat .delta
-                                        Rectangle {
-                                            x: parent.width - width
-                                            y: (37 - height) / 2
-                                            height: 18
-                                            width: deltaText.implicitWidth + 16  // 3.5*2 padding + border
-                                            radius: 99
-                                            color: Theme.surface
-                                            border.width: 1
-                                            border.color: model.sc
-
-                                            Text {
-                                                id: deltaText
-                                                anchors.centerIn: parent
-                                                text: model.delta
-                                                font.family: Theme.activeFontFamily
-                                                font.pixelSize: Theme.fontSizeXs
-                                                font.weight: Font.Medium
-                                                color: model.st
+                                                width: 18; height: 18; anchors.centerIn: parent
+                                                Image { id: statIcon; source: "qrc:/icons/svg/" + statCard.cardIcon + ".svg"; sourceSize: Qt.size(18, 18); anchors.fill: parent; fillMode: Image.Pad; visible: false }
+                                                MultiEffect { anchors.fill: parent; source: statIcon; colorizationColor: "#ffffff"; colorization: 1.0 }
                                             }
                                         }
                                     }
 
-                                    // CSS: .stat .val { font:700 24px/1 "Space Grotesk"; color:var(--st); }
                                     Text {
-                                        text: model.value
-                                        font.family: Theme.activeFontFamily
-                                        font.pixelSize: Theme.fontSize2xl
-                                        font.weight: Font.Bold
-                                        color: model.st
-                                        topPadding: 9
-                                        elide: Text.ElideRight
-                                        maximumLineCount: 1
-                                        width: parent.width  // CSS: margin-bottom:9px on .srow
+                                        text: statCard.cardValue
+                                        font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSize2xl; font.weight: Font.Bold
+                                        color: Theme.dark ? Qt.lighter(cardSt, 1.5) : cardSt
+                                        topPadding: 9; elide: Text.ElideRight; maximumLineCount: 1; width: parent.width
                                     }
 
-                                    // CSS: .stat .slab { font:800 10px Manrope; letter-spacing:.09em; text-transform:uppercase; color:var(--st); opacity:.75; margin-top:6px; }
                                     Text {
-                                        text: model.label
-                                        font.family: Theme.activeFontFamily
-                                        font.pixelSize: Theme.fontSizeXs
-                                        font.weight: Font.Medium
-                                        color: model.st
-                                        opacity: 0.75
-                                        topPadding: 6
-                                        elide: Text.ElideRight
-                                        maximumLineCount: 1
-                                        width: parent.width
+                                        text: statCard.cardLabel
+                                        font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium
+                                        color: Theme.dark ? Qt.lighter(cardSt, 1.5) : cardSt
+                                        opacity: 0.75; topPadding: 6; elide: Text.ElideRight; maximumLineCount: 1; width: parent.width
                                     }
                                 }
                             }

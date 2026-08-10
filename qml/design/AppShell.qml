@@ -61,7 +61,7 @@ ApplicationWindow {
             id: sidebar
             Layout.fillHeight: true; Layout.fillWidth: false
             implicitWidth: mainApp.sidebarWidth
-            clip: true
+            clip: false  // Must be false so flap button (extends beyond right edge) is visible
 
             gradient: Gradient {
                 orientation: Gradient.Vertical
