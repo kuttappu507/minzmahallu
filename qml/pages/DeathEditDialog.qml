@@ -123,8 +123,8 @@ ModalDialog {
 
                         // Deceased Name | Father's Name
                         RowLayout { Layout.fillWidth: true; spacing: 16
-                            AppTextField { Layout.fillWidth: true; label: "Deceased Name *"; placeholderText: "Full name"; text: dialog._deceasedName; readOnly: dialog.readOnly; showError: dialog._errorField === "deceasedName"; errorText: dialog._errorMessage; onTextChanged: dialog._deceasedName = text }
-                            AppTextField { Layout.fillWidth: true; label: "Father's Name"; placeholderText: "Father's name"; text: dialog._fatherName; readOnly: dialog.readOnly; onTextChanged: dialog._fatherName = text } }
+                            AppTextField { Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("dth_deceased") + " *" } placeholderText: "Full name"; text: dialog._deceasedName; readOnly: dialog.readOnly; showError: dialog._errorField === "deceasedName"; errorText: dialog._errorMessage; onTextChanged: dialog._deceasedName = text }
+                            AppTextField { Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("dth_father") } placeholderText: "Father's name"; text: dialog._fatherName; readOnly: dialog.readOnly; onTextChanged: dialog._fatherName = text } }
 
                         // Family | Gender
                         RowLayout { Layout.fillWidth: true; spacing: 16
@@ -141,20 +141,20 @@ ModalDialog {
                                                 contentItem: Text { text: modelData.familyNumber + " - " + modelData.houseName; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; color: Theme.textPrimary; anchors.left: parent.left; anchors.leftMargin: 8; anchors.verticalCenter: parent.verticalCenter }
                                                 background: Rectangle { color: highlighted ? "#ecfdf5" : "transparent"; radius: 4 }
                                                 onClicked: { dialog._familyId = modelData.id.toString(); familyPopup.visible = false } } } } } }
-                            AppComboBox { Layout.fillWidth: true; label: "Gender"; model: ["Male", "Female", "Other"]; currentIndex: Math.max(0, ["Male", "Female", "Other"].indexOf(dialog._gender)); onActivated: function(index) { dialog._gender = model[index] } } }
+                            AppComboBox { Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("member_gender") } model: ["Male", "Female", "Other"]; currentIndex: Math.max(0, ["Male", "Female", "Other"].indexOf(dialog._gender)); onActivated: function(index) { dialog._gender = model[index] } } }
 
                         // Date of Death | Burial Date
                         RowLayout { Layout.fillWidth: true; spacing: 16
-                            AppTextField { Layout.fillWidth: true; label: "Date of Death *"; placeholderText: "YYYY-MM-DD"; text: dialog._dateOfDeath; readOnly: dialog.readOnly; showError: dialog._errorField === "dateOfDeath"; errorText: dialog._errorMessage; onTextChanged: dialog._dateOfDeath = text }
-                            AppTextField { Layout.fillWidth: true; label: "Burial Date"; placeholderText: "YYYY-MM-DD"; text: dialog._burialDate; readOnly: dialog.readOnly; onTextChanged: dialog._burialDate = text } }
+                            AppTextField { Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("dth_date_of_death") + " *" } placeholderText: "YYYY-MM-DD"; text: dialog._dateOfDeath; readOnly: dialog.readOnly; showError: dialog._errorField === "dateOfDeath"; errorText: dialog._errorMessage; onTextChanged: dialog._dateOfDeath = text }
+                            AppTextField { Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("dth_burial_date") } placeholderText: "YYYY-MM-DD"; text: dialog._burialDate; readOnly: dialog.readOnly; onTextChanged: dialog._burialDate = text } }
 
                         // Age | Cause of Death
                         RowLayout { Layout.fillWidth: true; spacing: 16
-                            AppTextField { Layout.fillWidth: true; label: "Age"; placeholderText: "e.g. 72"; text: dialog._age; readOnly: dialog.readOnly; onTextChanged: dialog._age = text }
-                            AppTextField { Layout.fillWidth: true; label: "Cause of Death"; placeholderText: "e.g. Old age"; text: dialog._causeOfDeath; readOnly: dialog.readOnly; onTextChanged: dialog._causeOfDeath = text } }
+                            AppTextField { Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("member_age") } placeholderText: "e.g. 72"; text: dialog._age; readOnly: dialog.readOnly; onTextChanged: dialog._age = text }
+                            AppTextField { Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("dth_cause") } placeholderText: "e.g. Old age"; text: dialog._causeOfDeath; readOnly: dialog.readOnly; onTextChanged: dialog._causeOfDeath = text } }
 
                         // Burial Place
-                        AppTextField { Layout.fillWidth: true; label: "Burial Place"; placeholderText: "e.g. Paravur Kabarsthan"; text: dialog._burialPlace; readOnly: dialog.readOnly; onTextChanged: dialog._burialPlace = text }
+                        AppTextField { Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("dth_burial_place") } placeholderText: "e.g. Paravur Kabarsthan"; text: dialog._burialPlace; readOnly: dialog.readOnly; onTextChanged: dialog._burialPlace = text }
 
                         // Remarks
                         ColumnLayout { Layout.fillWidth: true; spacing: 4

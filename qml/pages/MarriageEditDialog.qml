@@ -124,7 +124,7 @@ ModalDialog {
                         Text { text: "BRIDE DETAILS"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.DemiBold; color: "#db2777" }
                         RowLayout { Layout.fillWidth: true; spacing: 16
                             AppTextField { Layout.fillWidth: true; label: "Bride Name *"; placeholderText: "Full name"; text: dialog._brideName; readOnly: dialog.readOnly; showError: dialog._errorField === "brideName"; errorText: dialog._errorMessage; onTextChanged: dialog._brideName = text }
-                            AppTextField { Layout.fillWidth: true; label: "Father's Name"; placeholderText: "Father's name"; text: dialog._brideFather; readOnly: dialog.readOnly; onTextChanged: dialog._brideFather = text } }
+                            AppTextField { Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("dth_father") } placeholderText: "Father's name"; text: dialog._brideFather; readOnly: dialog.readOnly; onTextChanged: dialog._brideFather = text } }
                         ColumnLayout { Layout.fillWidth: true; spacing: 4
                             Text { text: "ADDRESS"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
                             TextArea { Layout.fillWidth: true; Layout.preferredHeight: 56; text: dialog._brideAddress; readOnly: dialog.readOnly; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; color: Theme.textPrimary; placeholderText: "Bride's address..."; placeholderTextColor: "#7e968a"; selectByMouse: true; wrapMode: TextArea.Wrap
@@ -135,7 +135,7 @@ ModalDialog {
                         Text { text: "GROOM DETAILS"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.DemiBold; color: Theme.blue }
                         RowLayout { Layout.fillWidth: true; spacing: 16
                             AppTextField { Layout.fillWidth: true; label: "Groom Name *"; placeholderText: "Full name"; text: dialog._groomName; readOnly: dialog.readOnly; showError: dialog._errorField === "groomName"; errorText: dialog._errorMessage; onTextChanged: dialog._groomName = text }
-                            AppTextField { Layout.fillWidth: true; label: "Father's Name"; placeholderText: "Father's name"; text: dialog._groomFather; readOnly: dialog.readOnly; onTextChanged: dialog._groomFather = text } }
+                            AppTextField { Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("dth_father") } placeholderText: "Father's name"; text: dialog._groomFather; readOnly: dialog.readOnly; onTextChanged: dialog._groomFather = text } }
                         ColumnLayout { Layout.fillWidth: true; spacing: 4
                             Text { text: "ADDRESS"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
                             TextArea { Layout.fillWidth: true; Layout.preferredHeight: 56; text: dialog._groomAddress; readOnly: dialog.readOnly; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; color: Theme.textPrimary; placeholderText: "Groom's address..."; placeholderTextColor: "#7e968a"; selectByMouse: true; wrapMode: TextArea.Wrap

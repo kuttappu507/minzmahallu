@@ -102,7 +102,7 @@ ModalDialog {
 
                         Text {
                             anchors.centerIn: parent
-                            text: "Delete"
+                            text: { var _l = I18NController.currentLanguage; return I18NController.tr("action_delete") }
                             font.family: Theme.activeFontFamily
                             font.pixelSize: Theme.fontSizeMd
                             font.weight: Font.DemiBold

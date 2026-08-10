@@ -129,12 +129,12 @@ ModalDialog {
 
                     // Amount | Date
                     RowLayout { Layout.fillWidth: true; spacing: 16
-                        AppTextField { Layout.fillWidth: true; label: "Amount *"; placeholderText: "0.00"; text: dialog._amount; readOnly: dialog.readOnly; showError: dialog._errorField === "amount"; errorText: dialog._errorMessage; onTextChanged: dialog._amount = text }
+                        AppTextField { Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("sub_amount") + " *" } placeholderText: "0.00"; text: dialog._amount; readOnly: dialog.readOnly; showError: dialog._errorField === "amount"; errorText: dialog._errorMessage; onTextChanged: dialog._amount = text }
                         AppTextField { Layout.fillWidth: true; label: "Date"; placeholderText: "YYYY-MM-DD"; text: dialog._txnDate; readOnly: dialog.readOnly; onTextChanged: dialog._txnDate = text } }
 
                     // Payment Method | Reference
                     RowLayout { Layout.fillWidth: true; spacing: 16
-                        AppComboBox { Layout.fillWidth: true; label: "Payment Method"; model: ["Cash", "Cheque", "UPI", "Bank Transfer", "Card", "Other"]; currentIndex: Math.max(0, ["Cash", "Cheque", "UPI", "Bank Transfer", "Card", "Other"].indexOf(dialog._paymentMethod)); onActivated: function(index) { dialog._paymentMethod = model[index] } }
+                        AppComboBox { Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("sub_method") } model: ["Cash", "Cheque", "UPI", "Bank Transfer", "Card", "Other"]; currentIndex: Math.max(0, ["Cash", "Cheque", "UPI", "Bank Transfer", "Card", "Other"].indexOf(dialog._paymentMethod)); onActivated: function(index) { dialog._paymentMethod = model[index] } }
                         AppTextField { Layout.fillWidth: true; label: "Reference"; placeholderText: "Optional"; text: dialog._reference; readOnly: dialog.readOnly; onTextChanged: dialog._reference = text } }
 
                     // Description

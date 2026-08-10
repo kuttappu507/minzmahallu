@@ -225,23 +225,23 @@ ModalDialog {
 
                         // Amount | Amount Paid
                         RowLayout { Layout.fillWidth: true; spacing: 16
-                            AppTextField { Layout.fillWidth: true; label: "Amount *"; placeholderText: "0.00"; text: dialog._amount; readOnly: dialog.readOnly; showError: dialog._errorField === "amount"; errorText: dialog._errorMessage; onTextChanged: dialog._amount = text }
-                            AppTextField { Layout.fillWidth: true; label: "Amount Paid"; placeholderText: "0.00"; text: dialog._amountPaid; readOnly: dialog.readOnly; showError: dialog._errorField === "amountPaid"; errorText: dialog._errorMessage; onTextChanged: dialog._amountPaid = text } }
+                            AppTextField { Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("sub_amount") + " *" } placeholderText: "0.00"; text: dialog._amount; readOnly: dialog.readOnly; showError: dialog._errorField === "amount"; errorText: dialog._errorMessage; onTextChanged: dialog._amount = text }
+                            AppTextField { Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("sub_amount_paid") } placeholderText: "0.00"; text: dialog._amountPaid; readOnly: dialog.readOnly; showError: dialog._errorField === "amountPaid"; errorText: dialog._errorMessage; onTextChanged: dialog._amountPaid = text } }
 
                         // Period Start | Period End
                         RowLayout { Layout.fillWidth: true; spacing: 16
-                            AppTextField { Layout.fillWidth: true; label: "Period Start"; placeholderText: "YYYY-MM-DD"; text: dialog._periodStart; readOnly: dialog.readOnly; onTextChanged: dialog._periodStart = text }
-                            AppTextField { Layout.fillWidth: true; label: "Period End"; placeholderText: "YYYY-MM-DD"; text: dialog._periodEnd; readOnly: dialog.readOnly; onTextChanged: dialog._periodEnd = text } }
+                            AppTextField { Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("sub_period_start") } placeholderText: "YYYY-MM-DD"; text: dialog._periodStart; readOnly: dialog.readOnly; onTextChanged: dialog._periodStart = text }
+                            AppTextField { Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("sub_period_end") } placeholderText: "YYYY-MM-DD"; text: dialog._periodEnd; readOnly: dialog.readOnly; onTextChanged: dialog._periodEnd = text } }
 
                         // Status | Payment Method
                         RowLayout { Layout.fillWidth: true; spacing: 16
-                            AppComboBox { Layout.fillWidth: true; label: "Status"; model: ["Pending", "Paid", "Partial", "Overdue"]; currentIndex: Math.max(0, ["Pending", "Paid", "Partial", "Overdue"].indexOf(dialog._status)); onActivated: function(index) { dialog._status = model[index] } }
-                            AppComboBox { Layout.fillWidth: true; label: "Payment Method"; model: ["Cash", "Cheque", "UPI", "Bank Transfer", "Card", "Other"]; currentIndex: Math.max(0, ["Cash", "Cheque", "UPI", "Bank Transfer", "Card", "Other"].indexOf(dialog._paymentMethod)); onActivated: function(index) { dialog._paymentMethod = model[index] } } }
+                            AppComboBox { Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("family_status") } model: ["Pending", "Paid", "Partial", "Overdue"]; currentIndex: Math.max(0, ["Pending", "Paid", "Partial", "Overdue"].indexOf(dialog._status)); onActivated: function(index) { dialog._status = model[index] } }
+                            AppComboBox { Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("sub_method") } model: ["Cash", "Cheque", "UPI", "Bank Transfer", "Card", "Other"]; currentIndex: Math.max(0, ["Cash", "Cheque", "UPI", "Bank Transfer", "Card", "Other"].indexOf(dialog._paymentMethod)); onActivated: function(index) { dialog._paymentMethod = model[index] } } }
 
                         // Payment Date | Transaction Ref
                         RowLayout { Layout.fillWidth: true; spacing: 16
-                            AppTextField { Layout.fillWidth: true; label: "Payment Date"; placeholderText: "YYYY-MM-DD"; text: dialog._paymentDate; readOnly: dialog.readOnly; onTextChanged: dialog._paymentDate = text }
-                            AppTextField { Layout.fillWidth: true; label: "Transaction Ref"; placeholderText: "Optional"; text: dialog._transactionRef; readOnly: dialog.readOnly; onTextChanged: dialog._transactionRef = text } }
+                            AppTextField { Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("sub_payment_date") } placeholderText: "YYYY-MM-DD"; text: dialog._paymentDate; readOnly: dialog.readOnly; onTextChanged: dialog._paymentDate = text }
+                            AppTextField { Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("acc_reference") } placeholderText: "Optional"; text: dialog._transactionRef; readOnly: dialog.readOnly; onTextChanged: dialog._transactionRef = text } }
 
                         // Remarks
                         ColumnLayout { Layout.fillWidth: true; spacing: 4

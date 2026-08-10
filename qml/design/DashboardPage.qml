@@ -41,14 +41,14 @@ ScrollView {
                         spacing: 2
 
                         Text {
-                            text: "Good evening, Abdul Kareem"
+                            text: { var _l = I18NController.currentLanguage; return I18NController.tr("dash_greeting") + ", " + AuthController.fullName }
                             font.family: Theme.activeFontFamily
                             font.pixelSize: Theme.fontSizeXl
                             font.weight: Font.DemiBold
                             color: Theme.textPrimary
                         }
                         Text {
-                            text: "Here is what is happening in your mahallu today."
+                            text: { var _l = I18NController.currentLanguage; return I18NController.tr("dash_subtitle") }
                             font.family: Theme.activeFontFamily
                             font.pixelSize: Theme.fontSizeSm
                             font.weight: Font.DemiBold
@@ -72,14 +72,7 @@ ScrollView {
                         rowSpacing: 12
 
                         Repeater {
-                            model: ListModel {
-                                ListElement { label: "Add Family";       sub: "F-0013 next";        sc: "#059669"; icon: "plus" }
-                                ListElement { label: "Add Member";       sub: "1,142 on record";    sc: "#0d9488"; icon: "user" }
-                                ListElement { label: "Receive Payment";  sub: "RCP-2026-048";       sc: "#d97706"; icon: "dollar" }
-                                ListElement { label: "Add Donation";     sub: "5 categories";       sc: "#db2777"; icon: "donations" }
-                                ListElement { label: "Generate Report";  sub: "15 report types";    sc: "#7c3aed"; icon: "reports" }
-                            }
-
+                            model: 5
                             delegate: Rectangle {
                                 id: qaCard
                                 Layout.fillWidth: true
@@ -87,24 +80,24 @@ ScrollView {
                                 implicitHeight: qaContent.implicitHeight + 24
                                 radius: 10
                                 color: Theme.surface
+                                property string qaLabel: { var _l = I18NController.currentLanguage; return [I18NController.tr("dash_quick_add_family"), I18NController.tr("dash_quick_add_member"), I18NController.tr("dash_quick_record_payment"), I18NController.tr("dash_quick_add_donation"), I18NController.tr("dash_quick_generate_report")][index] }
+                                property string qaSub: [DashboardController.totalFamilies + " families", DashboardController.totalMembers + " members", "RCP-" + (DashboardController.totalFamilies + 1), "5 categories", "15 report types"][index]
+                                property string qaSc: ["#059669","#0d9488","#d97706","#db2777","#7c3aed"][index]
+                                property string qaIcon: ["plus","user","dollar","donations","reports"][index]
                                 border.width: 1
-                                border.color: qaMA.containsMouse ? model.sc : "#d2e5d8"
+                                border.color: qaMA.containsMouse ? qaSc : Theme.border
                                 z: qaMA.containsMouse ? 10 : 0
                                 transform: Translate { y: qaMA.containsMouse ? -2 : 0; Behavior on y { NumberAnimation { duration: 160; easing.type: Easing.OutCubic } } }
                                 Behavior on border.color { ColorAnimation { duration: 160 } }
 
-
-
                                 Row {
                                     id: qaContent
-                                    x: 14; y: 12  // CSS: padding:12px 14px
-                                    spacing: 12   // CSS: gap:12px
+                                    x: 14; y: 12
+                                    spacing: 12
 
-                                    // Icon container
                                     Rectangle {
                                         width: 42; height: 42; radius: 9
-                                        color: model.sc
-                                        Behavior on scale { NumberAnimation { duration: 160; easing.type: Easing.OutCubic } }
+                                        color: qaCard.qaSc
 
                                         Item {
                                             width: 20; height: 20
@@ -112,7 +105,7 @@ ScrollView {
 
                                             Image {
                                                 id: qaIcon
-                                                source: "qrc:/icons/svg/" + model.icon + ".svg"
+                                                source: "qrc:/icons/svg/" + qaCard.qaIcon + ".svg"
                                                 sourceSize: Qt.size(20, 20)
                                                 anchors.fill: parent
                                                 fillMode: Image.Pad
@@ -132,7 +125,7 @@ ScrollView {
                                         y: (42 - height) / 2
 
                                         Text {
-                                            text: model.label
+                                            text: qaCard.qaLabel
                                             font.family: Theme.activeFontFamily
                                             font.pixelSize: Theme.fontSizeMd
                                             font.weight: Font.DemiBold
@@ -142,7 +135,7 @@ ScrollView {
                                             width: qaCard.width - 42 - 12 - 28
                                         }
                                         Text {
-                                            text: model.sub
+                                            text: qaCard.qaSub
                                             font.family: Theme.activeFontFamily
                                             font.pixelSize: Theme.fontSizeXs
                                             font.weight: Font.Normal

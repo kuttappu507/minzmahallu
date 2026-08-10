@@ -159,7 +159,7 @@ ModalDialog {
 
                         // Applicant Name | Family
                         RowLayout { Layout.fillWidth: true; spacing: 16
-                            AppTextField { Layout.fillWidth: true; label: "Applicant Name *"; placeholderText: "Full name"; text: dialog._applicantName; readOnly: dialog.readOnly; showError: dialog._errorField === "applicantName"; errorText: dialog._errorMessage; onTextChanged: dialog._applicantName = text }
+                            AppTextField { Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("wel_applicant") + " *" } placeholderText: "Full name"; text: dialog._applicantName; readOnly: dialog.readOnly; showError: dialog._errorField === "applicantName"; errorText: dialog._errorMessage; onTextChanged: dialog._applicantName = text }
                             ColumnLayout { Layout.fillWidth: true; spacing: 4
                                 Text { text: "Family (optional)"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
                                 Rectangle { Layout.fillWidth: true; height: 38; radius: 9; color: Theme.surfaceHover; border.width: 1; border.color: familyMA.containsMouse ? "#b2cfbd" : "#d2e5d8"; Behavior on border.color { ColorAnimation { duration: 120 } }
@@ -176,7 +176,7 @@ ModalDialog {
 
                         // Category | Amount Requested
                         RowLayout { Layout.fillWidth: true; spacing: 16
-                            AppComboBox { Layout.fillWidth: true; label: "Category *"; model: dialog._categories; currentIndex: Math.max(0, dialog._categories.indexOf(dialog._category)); onActivated: function(index) { dialog._category = model[index] } }
+                            AppComboBox { Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("ui_category") + " *" } model: dialog._categories; currentIndex: Math.max(0, dialog._categories.indexOf(dialog._category)); onActivated: function(index) { dialog._category = model[index] } }
                             AppTextField { Layout.fillWidth: true; label: "Amount Requested *"; placeholderText: "0.00"; text: dialog._amountRequested; readOnly: dialog.readOnly; showError: dialog._errorField === "amountRequested"; errorText: dialog._errorMessage; onTextChanged: dialog._amountRequested = text } }
 
                         // Amount Approved (read-only unless approving)
@@ -203,7 +203,7 @@ ModalDialog {
                         ColumnLayout { Layout.fillWidth: true; spacing: 4; visible: dialog.requestId > 0 && dialog._status === "Pending" && !dialog.readOnly
                             Text { text: "APPROVE REQUEST"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.DemiBold; color: "#04543c" }
                             RowLayout { Layout.fillWidth: true; spacing: 12
-                                AppTextField { id: approveAmountField; Layout.fillWidth: true; label: "Approved Amount"; placeholderText: "0.00"; text: dialog._amountRequested }
+                                AppTextField { id: approveAmountField; Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("wel_amount_approved") } placeholderText: "0.00"; text: dialog._amountRequested }
                                 AppTextField { id: approveRemarksField; Layout.fillWidth: true; label: "Approval Remarks"; placeholderText: "Optional" } }
                             AppButton { text: "Approve Request"; variant: "primary"; iconName: "check"; onClicked: dialog.doApprove() } }
 

@@ -229,7 +229,7 @@ ModalDialog {
                             Layout.fillWidth: true; spacing: 16
 
                             AppTextField {
-                                Layout.fillWidth: true; label: "Name *"; placeholderText: "Full name"
+                                Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("member_name") + " *" } placeholderText: "Full name"
                                 text: dialog._name; readOnly: dialog.readOnly
                                 showError: dialog._errorField === "name"; errorText: dialog._errorMessage
                                 onTextChanged: dialog._name = text
@@ -332,13 +332,13 @@ ModalDialog {
                         RowLayout {
                             Layout.fillWidth: true; spacing: 16
                             AppTextField {
-                                Layout.fillWidth: true; label: "Mobile"; placeholderText: "9847123456"
+                                Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("member_mobile") } placeholderText: "9847123456"
                                 text: dialog._mobile; readOnly: dialog.readOnly
                                 showError: dialog._errorField === "mobile"; errorText: dialog._errorMessage
                                 onTextChanged: dialog._mobile = text
                             }
                             AppTextField {
-                                Layout.fillWidth: true; label: "Email"; placeholderText: "name@example.com"
+                                Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("member_email") } placeholderText: "name@example.com"
                                 text: dialog._email; readOnly: dialog.readOnly
                                 showError: dialog._errorField === "email"; errorText: dialog._errorMessage
                                 onTextChanged: dialog._email = text
@@ -349,13 +349,13 @@ ModalDialog {
                         RowLayout {
                             Layout.fillWidth: true; spacing: 16
                             AppComboBox {
-                                Layout.fillWidth: true; label: "Relationship"
+                                Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("member_relationship") }
                                 model: MemberController ? MemberController.relationships() : ["Head","Spouse","Son","Daughter","Parent","Sibling","Other"]
                                 currentIndex: Math.max(0, (MemberController ? MemberController.relationships() : ["Head","Spouse","Son","Daughter","Parent","Sibling","Other"]).indexOf(dialog._relationship))
                                 onActivated: function(index) { dialog._relationship = model[index] }
                             }
                             AppComboBox {
-                                Layout.fillWidth: true; label: "Status"
+                                Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("family_status") }
                                 model: ["Active", "Inactive", "Deceased"]
                                 currentIndex: Math.max(0, ["Active", "Inactive", "Deceased"].indexOf(dialog._status))
                                 onActivated: function(index) { dialog._status = model[index] }

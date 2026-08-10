@@ -222,13 +222,13 @@ ModalDialog {
                         RowLayout {
                             Layout.fillWidth: true; spacing: 16
                             AppTextField {
-                                Layout.fillWidth: true; label: "House Name *"; placeholderText: "e.g. Manzil Manzoor"
+                                Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("family_house_name") + " *" } placeholderText: "e.g. Manzil Manzoor"
                                 text: dialog._houseName; readOnly: dialog.readOnly
                                 showError: dialog._errorField === "houseName"; errorText: dialog._errorMessage
                                 onTextChanged: dialog._houseName = text
                             }
                             AppTextField {
-                                Layout.fillWidth: true; label: "House Number"; placeholderText: "e.g. 14A"
+                                Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("family_house_number") } placeholderText: "e.g. 14A"
                                 text: dialog._houseNumber; readOnly: dialog.readOnly
                                 onTextChanged: dialog._houseNumber = text
                             }
@@ -239,7 +239,7 @@ ModalDialog {
                             Layout.fillWidth: true; spacing: 16
 
                             AppComboBox {
-                                Layout.fillWidth: true; label: "Ward"
+                                Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("family_ward") }
                                 model: {
                                     var w = ["(none)"]
                                     if (typeof FamilyController !== "undefined") {
@@ -264,7 +264,7 @@ ModalDialog {
                             }
 
                             AppTextField {
-                                Layout.fillWidth: true; label: "Phone *"; placeholderText: "9847123456"
+                                Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("family_phone") + " *" } placeholderText: "9847123456"
                                 text: dialog._phone; readOnly: dialog.readOnly
                                 showError: dialog._errorField === "phone"; errorText: dialog._errorMessage
                                 onTextChanged: dialog._phone = text
@@ -275,12 +275,12 @@ ModalDialog {
                         RowLayout {
                             Layout.fillWidth: true; spacing: 16
                             AppTextField {
-                                Layout.fillWidth: true; label: "Area"; placeholderText: "e.g. Kondotty"
+                                Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("family_area") } placeholderText: "e.g. Kondotty"
                                 text: dialog._area; readOnly: dialog.readOnly
                                 onTextChanged: dialog._area = text
                             }
                             AppTextField {
-                                Layout.fillWidth: true; label: "Pincode"; placeholderText: "673601"
+                                Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("family_pincode") } placeholderText: "673601"
                                 text: dialog._pincode; readOnly: dialog.readOnly
                                 showError: dialog._errorField === "pincode"; errorText: dialog._errorMessage
                                 onTextChanged: dialog._pincode = text
@@ -291,13 +291,13 @@ ModalDialog {
                         RowLayout {
                             Layout.fillWidth: true; spacing: 16
                             AppComboBox {
-                                Layout.fillWidth: true; label: "Status"
+                                Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("family_status") }
                                 model: ["Active", "Inactive", "Archived"]
                                 currentIndex: Math.max(0, ["Active", "Inactive", "Archived"].indexOf(dialog._status))
                                 onActivated: function(index) { dialog._status = model[index] }
                             }
                             AppTextField {
-                                Layout.fillWidth: true; label: "Alternative Phone"; placeholderText: "Optional second number"
+                                Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("family_alt_phone") } placeholderText: "Optional second number"
                                 text: dialog._altPhone; readOnly: dialog.readOnly
                                 onTextChanged: dialog._altPhone = text
                             }

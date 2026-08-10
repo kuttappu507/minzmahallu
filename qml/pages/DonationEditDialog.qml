@@ -126,8 +126,8 @@ ModalDialog {
 
                         // Donor Name | Donor Phone
                         RowLayout { Layout.fillWidth: true; spacing: 16
-                            AppTextField { Layout.fillWidth: true; label: "Donor Name *"; placeholderText: "Full name"; text: dialog._donorName; readOnly: dialog.readOnly; showError: dialog._errorField === "donorName"; errorText: dialog._errorMessage; onTextChanged: dialog._donorName = text }
-                            AppTextField { Layout.fillWidth: true; label: "Donor Phone"; placeholderText: "9847123456"; text: dialog._donorPhone; readOnly: dialog.readOnly; onTextChanged: dialog._donorPhone = text } }
+                            AppTextField { Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("don_donor_name") + " *" } placeholderText: "Full name"; text: dialog._donorName; readOnly: dialog.readOnly; showError: dialog._errorField === "donorName"; errorText: dialog._errorMessage; onTextChanged: dialog._donorName = text }
+                            AppTextField { Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("don_donor_phone") } placeholderText: "9847123456"; text: dialog._donorPhone; readOnly: dialog.readOnly; onTextChanged: dialog._donorPhone = text } }
 
                         // Category selector (popup) | Amount
                         RowLayout { Layout.fillWidth: true; spacing: 16
@@ -144,12 +144,12 @@ ModalDialog {
                                                 contentItem: Text { text: modelData.name; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; color: Theme.textPrimary; anchors.left: parent.left; anchors.leftMargin: 8; anchors.verticalCenter: parent.verticalCenter }
                                                 background: Rectangle { color: highlighted ? "#ecfdf5" : "transparent"; radius: 4 }
                                                 onClicked: { dialog._categoryId = modelData.id.toString(); catPopup.visible = false } } } } } }
-                            AppTextField { Layout.fillWidth: true; label: "Amount *"; placeholderText: "0.00"; text: dialog._amount; readOnly: dialog.readOnly; showError: dialog._errorField === "amount"; errorText: dialog._errorMessage; onTextChanged: dialog._amount = text } }
+                            AppTextField { Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("sub_amount") + " *" } placeholderText: "0.00"; text: dialog._amount; readOnly: dialog.readOnly; showError: dialog._errorField === "amount"; errorText: dialog._errorMessage; onTextChanged: dialog._amount = text } }
 
                         // Donation Date | Payment Method
                         RowLayout { Layout.fillWidth: true; spacing: 16
-                            AppTextField { Layout.fillWidth: true; label: "Donation Date"; placeholderText: "YYYY-MM-DD"; text: dialog._donationDate; readOnly: dialog.readOnly; onTextChanged: dialog._donationDate = text }
-                            AppComboBox { Layout.fillWidth: true; label: "Payment Method"; model: ["Cash", "Cheque", "UPI", "Bank Transfer", "Card", "Other"]; currentIndex: Math.max(0, ["Cash", "Cheque", "UPI", "Bank Transfer", "Card", "Other"].indexOf(dialog._paymentMethod)); onActivated: function(index) { dialog._paymentMethod = model[index] } } }
+                            AppTextField { Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("don_date") } placeholderText: "YYYY-MM-DD"; text: dialog._donationDate; readOnly: dialog.readOnly; onTextChanged: dialog._donationDate = text }
+                            AppComboBox { Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("sub_method") } model: ["Cash", "Cheque", "UPI", "Bank Transfer", "Card", "Other"]; currentIndex: Math.max(0, ["Cash", "Cheque", "UPI", "Bank Transfer", "Card", "Other"].indexOf(dialog._paymentMethod)); onActivated: function(index) { dialog._paymentMethod = model[index] } } }
 
                         // Donor Address (full width)
                         ColumnLayout { Layout.fillWidth: true; spacing: 4
@@ -159,7 +159,7 @@ ModalDialog {
                                 padding: 10; onTextChanged: dialog._donorAddress = text } }
 
                         // Purpose
-                        AppTextField { Layout.fillWidth: true; label: "Purpose"; placeholderText: "e.g. Ramadan contribution"; text: dialog._purpose; readOnly: dialog.readOnly; onTextChanged: dialog._purpose = text }
+                        AppTextField { Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("don_purpose") } placeholderText: "e.g. Ramadan contribution"; text: dialog._purpose; readOnly: dialog.readOnly; onTextChanged: dialog._purpose = text }
 
                         // Remarks
                         ColumnLayout { Layout.fillWidth: true; spacing: 4
