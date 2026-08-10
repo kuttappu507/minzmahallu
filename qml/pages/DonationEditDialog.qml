@@ -104,7 +104,7 @@ ModalDialog {
                     Rectangle { anchors.bottom: parent.bottom; anchors.left: parent.left; anchors.right: parent.right; height: 1; color: Theme.surfacePressed }
                     Text { text: dialog._dialogTitle; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeLg; font.weight: Font.DemiBold; color: Theme.textPrimary; anchors.left: parent.left; anchors.leftMargin: 24; anchors.verticalCenter: parent.verticalCenter }
                     Rectangle { anchors.right: parent.right; anchors.rightMargin: 16; anchors.verticalCenter: parent.verticalCenter; width: 28; height: 28; radius: 6; color: closeMA.containsMouse ? Theme.surfaceHover : "transparent"; Behavior on color { ColorAnimation { duration: 120 } }
-                        Text { anchors.centerIn: parent; text: "\u00D7"; font.pixelSize: Theme.fontSizeXl; font.weight: Font.Bold; color: closeMA.containsMouse ? "#12241b" : "#7e968a" }
+                        Text { anchors.centerIn: parent; text: "\u00D7"; font.pixelSize: Theme.fontSizeXl; font.weight: Font.Bold; color: closeMA.containsMouse ? Theme.textPrimary : Theme.textTertiary }
                         MouseArea { id: closeMA; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: dialog.visible = false } }
                 }
 
@@ -122,7 +122,7 @@ ModalDialog {
                         ColumnLayout { Layout.fillWidth: true; spacing: 4
                             Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("sub_receipt") } font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
                             Rectangle { Layout.fillWidth: true; height: 38; radius: 9; color: Theme.surfaceHover; border.width: 1; border.color: Theme.border
-                                Text { anchors.left: parent.left; anchors.leftMargin: 10; anchors.verticalCenter: parent.verticalCenter; text: dialog._receiptNumber || "Auto-generated on save"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; color: dialog._receiptNumber ? "#12241b" : "#7e968a" } } }
+                                Text { anchors.left: parent.left; anchors.leftMargin: 10; anchors.verticalCenter: parent.verticalCenter; text: dialog._receiptNumber || "Auto-generated on save"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; color: dialog._receiptNumber ? Theme.textPrimary : Theme.textTertiary } } }
 
                         // Donor Name | Donor Phone
                         RowLayout { Layout.fillWidth: true; spacing: 16
@@ -132,17 +132,17 @@ ModalDialog {
                         // Category selector (popup) | Amount
                         RowLayout { Layout.fillWidth: true; spacing: 16
                             ColumnLayout { Layout.fillWidth: true; spacing: 4
-                                Text { text: "Category *"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: dialog._errorField === "categoryId" ? "#e11d48" : "#7e968a" }
-                                Rectangle { Layout.fillWidth: true; height: 38; radius: 9; color: Theme.surfaceHover; border.width: 1; border.color: dialog._errorField === "categoryId" ? "#e11d48" : (catMA.containsMouse ? "#b2cfbd" : "#d2e5d8"); Behavior on border.color { ColorAnimation { duration: 120 } }
+                                Text { text: "Category *"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: dialog._errorField === "categoryId" ? Theme.danger : Theme.textTertiary }
+                                Rectangle { Layout.fillWidth: true; height: 38; radius: 9; color: Theme.surfaceHover; border.width: 1; border.color: dialog._errorField === "categoryId" ? Theme.danger : (catMA.containsMouse ? Theme.borderHover : Theme.border); Behavior on border.color { ColorAnimation { duration: 120 } }
                                     MouseArea { id: catMA; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: catPopup.visible = !catPopup.visible }
                                     Text { anchors.left: parent.left; anchors.leftMargin: 10; anchors.verticalCenter: parent.verticalCenter
                                         text: { if (dialog._categoryId === "") return "Select category..."; for (var i = 0; i < dialog._categories.length; i++) { if (dialog._categories[i].id === parseInt(dialog._categoryId)) return dialog._categories[i].name } return "Select category..." }
-                                        font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; color: dialog._categoryId !== "" ? "#12241b" : "#7e968a" }
+                                        font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; color: dialog._categoryId !== "" ? Theme.textPrimary : Theme.textTertiary }
                                     Popup { id: catPopup; y: parent.height + 4; width: parent.width; implicitHeight: 280; padding: 4; background: Rectangle { color: Theme.surface; border.width: 1; border.color: Theme.border; radius: 9 }
                                         ListView { anchors.fill: parent; clip: true; spacing: 2; model: dialog._categories
                                             delegate: ItemDelegate { width: parent.width; height: 34; padding: 0
                                                 contentItem: Text { text: modelData.name; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; color: Theme.textPrimary; anchors.left: parent.left; anchors.leftMargin: 8; anchors.verticalCenter: parent.verticalCenter }
-                                                background: Rectangle { color: highlighted ? "#ecfdf5" : "transparent"; radius: 4 }
+                                                background: Rectangle { color: highlighted ? Theme.primarySubtle : "transparent"; radius: 4 }
                                                 onClicked: { dialog._categoryId = modelData.id.toString(); catPopup.visible = false } } } } } }
                             AppTextField { Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("sub_amount") + " *" } placeholderText: "0.00"; text: dialog._amount; readOnly: dialog.readOnly; showError: dialog._errorField === "amount"; errorText: dialog._errorMessage; onTextChanged: dialog._amount = text } }
 
@@ -154,8 +154,8 @@ ModalDialog {
                         // Donor Address (full width)
                         ColumnLayout { Layout.fillWidth: true; spacing: 4
                             Text { text: "DONOR ADDRESS"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
-                            TextArea { Layout.fillWidth: true; Layout.preferredHeight: 56; text: dialog._donorAddress; readOnly: dialog.readOnly; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; color: Theme.textPrimary; placeholderText: "Donor address (optional)..."; placeholderTextColor: "#7e968a"; selectByMouse: true; wrapMode: TextArea.Wrap
-                                background: Rectangle { radius: 9; color: Theme.surfaceHover; border.width: 1; border.color: parent.activeFocus ? "#059669" : parent.hovered ? "#b2cfbd" : "#d2e5d8"; Behavior on border.color { ColorAnimation { duration: 120 } } }
+                            TextArea { Layout.fillWidth: true; Layout.preferredHeight: 56; text: dialog._donorAddress; readOnly: dialog.readOnly; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; color: Theme.textPrimary; placeholderText: "Donor address (optional)..."; placeholderTextColor: Theme.textTertiary; selectByMouse: true; wrapMode: TextArea.Wrap
+                                background: Rectangle { radius: 9; color: Theme.surfaceHover; border.width: 1; border.color: parent.activeFocus ? Theme.primary : parent.hovered ? Theme.borderHover : Theme.border; Behavior on border.color { ColorAnimation { duration: 120 } } }
                                 padding: 10; onTextChanged: dialog._donorAddress = text } }
 
                         // Purpose
@@ -164,8 +164,8 @@ ModalDialog {
                         // Remarks
                         ColumnLayout { Layout.fillWidth: true; spacing: 4
                             Text { text: "REMARKS"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
-                            TextArea { Layout.fillWidth: true; Layout.preferredHeight: 56; text: dialog._remarks; readOnly: dialog.readOnly; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; color: Theme.textPrimary; placeholderText: "Internal remarks..."; placeholderTextColor: "#7e968a"; selectByMouse: true; wrapMode: TextArea.Wrap
-                                background: Rectangle { radius: 9; color: Theme.surfaceHover; border.width: 1; border.color: parent.activeFocus ? "#059669" : parent.hovered ? "#b2cfbd" : "#d2e5d8"; Behavior on border.color { ColorAnimation { duration: 120 } } }
+                            TextArea { Layout.fillWidth: true; Layout.preferredHeight: 56; text: dialog._remarks; readOnly: dialog.readOnly; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; color: Theme.textPrimary; placeholderText: "Internal remarks..."; placeholderTextColor: Theme.textTertiary; selectByMouse: true; wrapMode: TextArea.Wrap
+                                background: Rectangle { radius: 9; color: Theme.surfaceHover; border.width: 1; border.color: parent.activeFocus ? Theme.primary : parent.hovered ? Theme.borderHover : Theme.border; Behavior on border.color { ColorAnimation { duration: 120 } } }
                                 padding: 10; onTextChanged: dialog._remarks = text } }
 
                         Item { Layout.fillWidth: true; Layout.preferredHeight: 4 }

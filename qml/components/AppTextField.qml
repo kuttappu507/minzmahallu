@@ -26,7 +26,7 @@ FocusScope {
     signal editingFinished()
 
     implicitHeight: label !== "" ? labelItem.implicitHeight + 4 + 38 : 38
-    implicitWidth: 240
+    // No implicitWidth — let Layout.fillWidth control width in RowLayout
 
     Column {
         anchors.fill: parent
@@ -38,7 +38,7 @@ FocusScope {
             font.family: Theme.activeFontFamily
             font.pixelSize: Theme.fontSizeXs
             font.weight: Font.Medium
-            color: root.showError ? "#e11d48" : "#7e968a"
+            color: root.showError ? Theme.danger : Theme.textTertiary
             visible: root.label !== ""
             height: root.label !== "" ? implicitHeight : 0
         }
@@ -49,9 +49,9 @@ FocusScope {
             radius: 9
             color: Theme.surfaceHover
             border.width: 1
-            border.color: root.showError ? "#e11d48" :
-                          input.activeFocus ? "#059669" :
-                          (hoverMA.containsMouse ? "#b2cfbd" : "#d2e5d8")
+            border.color: root.showError ? Theme.danger :
+                          input.activeFocus ? Theme.primary :
+                          (hoverMA.containsMouse ? Theme.borderHover : Theme.border)
             Behavior on border.color { ColorAnimation { duration: 120 } }
 
             // Focus glow
@@ -82,7 +82,7 @@ FocusScope {
                 MultiEffect {
                     anchors.fill: parent
                     source: parent.children[0]
-                    colorizationColor: input.activeFocus ? "#059669" : "#7e968a"
+                    colorizationColor: input.activeFocus ? Theme.primary : Theme.textTertiary
                     colorization: 1.0
                     Behavior on colorizationColor { ColorAnimation { duration: 120 } }
                 }
@@ -96,7 +96,7 @@ FocusScope {
                 anchors.rightMargin: 10
                 anchors.verticalCenter: parent.verticalCenter
                 placeholderText: root.placeholderText
-                placeholderTextColor: "#7e968a"
+                placeholderTextColor: Theme.textTertiary
                 font.family: Theme.activeFontFamily
                 font.pixelSize: Theme.fontSizeMd
                 color: Theme.textPrimary

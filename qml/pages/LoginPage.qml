@@ -86,14 +86,14 @@ Item {
                 Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("login_password") } font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
                 Rectangle {
                     Layout.fillWidth: true; height: 38; radius: 9; color: Theme.surfaceHover; border.width: 1
-                    border.color: passwordField.activeFocus ? "#059669" : (pwdHover.containsMouse ? "#b2cfbd" : "#d2e5d8")
+                    border.color: passwordField.activeFocus ? Theme.primary : (pwdHover.containsMouse ? Theme.borderHover : Theme.border)
                     Behavior on border.color { ColorAnimation { duration: 120 } }
                     HoverHandler { id: pwdHover; cursorShape: Qt.IBeamCursor }
                     TextField {
                         id: passwordField
                         anchors.fill: parent; anchors.leftMargin: 10; anchors.rightMargin: 38
                         verticalAlignment: Text.AlignVCenter
-                        placeholderText: { var _l = I18NController.currentLanguage; return I18NController.tr("login_password") } placeholderTextColor: "#7e968a"
+                        placeholderText: { var _l = I18NController.currentLanguage; return I18NController.tr("login_password") } placeholderTextColor: Theme.textTertiary
                         font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; color: Theme.textPrimary
                         echoMode: showPassword.checked ? TextInput.Normal : TextInput.Password
                         background: Item {}
@@ -109,8 +109,8 @@ Item {
                         text: ""; checked: false
                         indicator: Rectangle {
                             width: 18; height: 18; radius: 4; anchors.centerIn: parent
-                            color: showPassword.checked ? "#059669" : "transparent"
-                            border.width: 1; border.color: showPassword.checked ? "#059669" : "#d2e5d8"
+                            color: showPassword.checked ? Theme.primary : "transparent"
+                            border.width: 1; border.color: showPassword.checked ? Theme.primary : Theme.border
                             Text { anchors.centerIn: parent; text: showPassword.checked ? "\u{1F441}" : "\u25CF"; font.pixelSize: Theme.fontSizeXs; color: Theme.surface; visible: showPassword.checked }
                         }
                     }

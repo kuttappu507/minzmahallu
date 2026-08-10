@@ -61,14 +61,14 @@ Item {
                             else if (issueDialog.certType === "Death") result = CertificateController.issueDeath(codeInput.text)
 
                             if (result.success) {
-                                toast.show(issueDialog.certType + " certificate issued: " + result.certificateNumber, "#059669")
+                                toast.show(issueDialog.certType + " certificate issued: " + result.certificateNumber, Theme.primary)
                                 // Generate PDF
                                 var pdfPath = CertificateController.generatePdf(result.id)
-                                if (pdfPath && pdfPath.length > 0) toast.show("PDF generated: " + pdfPath, "#059669")
+                                if (pdfPath && pdfPath.length > 0) toast.show("PDF generated: " + pdfPath, Theme.primary)
                                 issueDialog.visible = false
                                 page.refresh()
                             } else {
-                                toast.show(result.error || "Issue failed", "#e11d48")
+                                toast.show(result.error || "Issue failed", Theme.danger)
                             }
                         } }
                     }
@@ -85,7 +85,7 @@ Item {
         onAccepted: {
             if (_id > 0) {
                 var ok = CertificateController.remove(_id)
-                toast.show(ok ? "Certificate deleted" : "Delete failed", ok ? "#059669" : "#e11d48")
+                toast.show(ok ? "Certificate deleted" : "Delete failed", ok ? Theme.primary : Theme.danger)
                 if (ok) page.refresh()
             }
         }
@@ -96,7 +96,7 @@ Item {
         property bool visible_: false
         visible: visible_
         property string message: ""
-        property color bgColor: "#059669"
+        property color bgColor: Theme.primary
         anchors.top: parent.top; anchors.horizontalCenter: parent.horizontalCenter
         anchors.topMargin: visible_ ? 18 : -60
         width: toastText.implicitWidth + 40; height: 40; radius: 9
@@ -104,7 +104,7 @@ Item {
         Behavior on anchors.topMargin { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
         Text { id: toastText; anchors.centerIn: parent; text: toast.message; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; font.weight: Font.DemiBold; color: Theme.surface }
         Timer { id: toastTimer; interval: 3000; onTriggered: toast.visible_ = false }
-        function show(msg, color) { message = msg; bgColor = color || "#059669"; visible_ = true; toastTimer.restart() }
+        function show(msg, color) { message = msg; bgColor = color || Theme.primary; visible_ = true; toastTimer.restart() }
     }
 
     ColumnLayout {
@@ -129,7 +129,7 @@ Item {
             AppButton { text: { var _l = I18NController.currentLanguage; return I18NController.tr("action_export") + " CSV" } variant: "secondary"; iconName: "download"; onClicked: {
                 var dir = CertificateController.exportDir()
                 var path = CertificateController.exportToCsv(dir + "/certificates.csv")
-                toast.show(path && path.length > 0 ? "Exported: " + path : "Export failed", path && path.length > 0 ? "#059669" : "#e11d48")
+                toast.show(path && path.length > 0 ? "Exported: " + path : "Export failed", path && path.length > 0 ? Theme.primary : Theme.danger)
             } }
         }
 
@@ -166,8 +166,8 @@ Item {
                             Text { text: modelData.issuedByName || "—"; width: 150; height: 44; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeSm; color: Theme.textSecondary; elide: Text.ElideRight }
                             Item { width: parent.width - 150 - 120 - 250 - 120 - 150 - 80; height: 44 }
                             Row { width: 80; height: 44; spacing: 4; layoutDirection: Qt.RightToLeft
-                                TableActionButton { iconSource: "qrc:/icons/svg/trash.svg"; variantColor: "#e11d48"; anchors.verticalCenter: parent.verticalCenter; onClicked: { deleteDialog._id = modelData.id; deleteDialog.warningText = "Certificate " + modelData.certificateNumber + " will be permanently deleted."; deleteDialog.visible = true } }
-                                TableActionButton { iconSource: "qrc:/icons/svg/print.svg"; variantColor: "#7c3aed"; anchors.verticalCenter: parent.verticalCenter; onClicked: { var p = CertificateController.generatePdf(modelData.id); toast.show(p && p.length > 0 ? "PDF: " + p : "PDF failed", p && p.length > 0 ? "#059669" : "#e11d48") } }
+                                TableActionButton { iconSource: "qrc:/icons/svg/trash.svg"; variantColor: Theme.danger; anchors.verticalCenter: parent.verticalCenter; onClicked: { deleteDialog._id = modelData.id; deleteDialog.warningText = "Certificate " + modelData.certificateNumber + " will be permanently deleted."; deleteDialog.visible = true } }
+                                TableActionButton { iconSource: "qrc:/icons/svg/print.svg"; variantColor: "#7c3aed"; anchors.verticalCenter: parent.verticalCenter; onClicked: { var p = CertificateController.generatePdf(modelData.id); toast.show(p && p.length > 0 ? "PDF: " + p : "PDF failed", p && p.length > 0 ? Theme.primary : Theme.danger) } }
                             } }
                         MouseArea { id: rowMA; anchors.fill: parent; hoverEnabled: true; acceptedButtons: Qt.NoButton } } }
                 Item { Layout.fillWidth: true; Layout.fillHeight: true; visible: page.certificates.length === 0

@@ -3,23 +3,22 @@ import QtQuick.Controls
 import MMS.Theme 1.0
 
 // ============================================================================
-// SplashScreen — small centered box (not full window)
-// Shows for 2 seconds then disappears.
+// SplashScreen — small centered box, NOT full window
+// The Item does NOT fill parent — only the card is shown.
 // ============================================================================
 
 Item {
     id: splash
-    anchors.fill: parent
     visible: true
+    // Do NOT anchors.fill: parent — this Item only contains the card
+    // positioned at center of the window
 
-    // Small centered box only — no full-window backdrop
     Rectangle {
         id: splashCard
-        anchors.centerIn: parent
+        x: (splash.parent ? splash.parent.width : 1600) / 2 - width / 2
+        y: (splash.parent ? splash.parent.height : 900) / 2 - height / 2
         width: 320; height: 200
         radius: Theme.radiusXl
-        color: Theme.sidebarBot
-
         gradient: Gradient {
             orientation: Gradient.Vertical
             GradientStop { position: 0.0; color: Theme.sidebarTop }
@@ -29,21 +28,18 @@ Item {
         Column {
             anchors.centerIn: parent; spacing: 12
 
-            // Logo circle
             Rectangle {
                 width: 48; height: 48; radius: 18; color: Qt.rgba(255, 255, 255, 0.14)
                 anchors.horizontalCenter: parent.horizontalCenter
-                Text { anchors.centerIn: parent; text: "M"; font.family: Theme.activeFontFamily; font.pixelSize: 22; font.weight: Font.Bold; color: "#ffffff" }
+                Text { anchors.centerIn: parent; text: "M"; font.family: Theme.activeFontFamily; font.pixelSize: 22; font.weight: Font.Bold; color: Theme.surface }
             }
 
-            // App name
             Text {
                 text: { var _l = I18NController.currentLanguage; return I18NController.tr("app_name") }
-                font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; font.weight: Font.Bold; color: "#ffffff"
+                font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; font.weight: Font.Bold; color: Theme.surface
                 anchors.horizontalCenter: parent.horizontalCenter
             }
 
-            // Loading spinner
             BusyIndicator {
                 running: splash.visible; anchors.horizontalCenter: parent.horizontalCenter
                 width: 24; height: 24
@@ -66,25 +62,15 @@ Item {
             }
         }
 
-        // Entrance animation
-        scale: 0.9
-        opacity: 0
+        scale: 0.9; opacity: 0
         Behavior on scale { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
         Behavior on opacity { NumberAnimation { duration: 200 } }
         Component.onCompleted: { scale = 1; opacity = 1 }
     }
 
-    // Auto-dismiss after 2 seconds
     Timer {
         interval: 2000; running: true; repeat: false
-        onTriggered: {
-            splashCard.scale = 0.9
-            splashCard.opacity = 0
-            dismissTimer.start()
-        }
+        onTriggered: { splashCard.scale = 0.9; splashCard.opacity = 0; dismissTimer.start() }
     }
-    Timer {
-        id: dismissTimer
-        interval: 200; onTriggered: splash.visible = false
-    }
+    Timer { id: dismissTimer; interval: 200; onTriggered: splash.visible = false }
 }

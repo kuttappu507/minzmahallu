@@ -185,7 +185,7 @@ ModalDialog {
                         width: 28; height: 28; radius: 6
                         color: closeMA.containsMouse ? Theme.surfaceHover : "transparent"
                         Behavior on color { ColorAnimation { duration: 120 } }
-                        Text { anchors.centerIn: parent; text: "\u00D7"; font.pixelSize: Theme.fontSizeXl; font.weight: Font.Bold; color: closeMA.containsMouse ? "#12241b" : "#7e968a" }
+                        Text { anchors.centerIn: parent; text: "\u00D7"; font.pixelSize: Theme.fontSizeXl; font.weight: Font.Bold; color: closeMA.containsMouse ? Theme.textPrimary : Theme.textTertiary }
                         MouseArea { id: closeMA; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: dialog.visible = false }
                     }
                 }
@@ -219,7 +219,7 @@ ModalDialog {
                                 Text {
                                     anchors.left: parent.left; anchors.leftMargin: 10; anchors.verticalCenter: parent.verticalCenter
                                     text: dialog._memberCode || "Auto-generated on save"
-                                    font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; color: dialog._memberCode ? "#12241b" : "#7e968a"
+                                    font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; color: dialog._memberCode ? Theme.textPrimary : Theme.textTertiary
                                 }
                             }
                         }
@@ -237,10 +237,10 @@ ModalDialog {
 
                             // Family combo (custom — needs id+label)
                             ColumnLayout { Layout.fillWidth: true; spacing: 4
-                                Text { text: "Family *"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: dialog._errorField === "familyId" ? "#e11d48" : "#7e968a" }
+                                Text { text: "Family *"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: dialog._errorField === "familyId" ? Theme.danger : Theme.textTertiary }
                                 Rectangle {
                                     Layout.fillWidth: true; height: 38; radius: 9; color: Theme.surfaceHover; border.width: 1
-                                    border.color: dialog._errorField === "familyId" ? "#e11d48" : (familyMA.containsMouse ? "#b2cfbd" : "#d2e5d8")
+                                    border.color: dialog._errorField === "familyId" ? Theme.danger : (familyMA.containsMouse ? Theme.borderHover : Theme.border)
                                     Behavior on border.color { ColorAnimation { duration: 120 } }
                                     MouseArea { id: familyMA; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: familyPopup.visible = !familyPopup.visible }
                                     Text {
@@ -254,7 +254,7 @@ ModalDialog {
                                             return "Select family..."
                                         }
                                         font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd
-                                        color: dialog._familyId !== "" ? "#12241b" : "#7e968a"
+                                        color: dialog._familyId !== "" ? Theme.textPrimary : Theme.textTertiary
                                     }
                                     // Family popup
                                     Popup {
@@ -271,7 +271,7 @@ ModalDialog {
                                                     font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; color: Theme.textPrimary
                                                     anchors.left: parent.left; anchors.leftMargin: 8; anchors.verticalCenter: parent.verticalCenter
                                                 }
-                                                background: Rectangle { color: highlighted ? "#ecfdf5" : "transparent"; radius: 4 }
+                                                background: Rectangle { color: highlighted ? Theme.primarySubtle : "transparent"; radius: 4 }
                                                 onClicked: { dialog._familyId = modelData.id.toString(); familyPopup.visible = false }
                                             }
                                         }
@@ -384,9 +384,9 @@ ModalDialog {
                                 Layout.fillWidth: true; Layout.preferredHeight: 56
                                 text: dialog._address; readOnly: dialog.readOnly
                                 font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; color: Theme.textPrimary
-                                placeholderText: "Member address (if different from family)..."; placeholderTextColor: "#7e968a"
+                                placeholderText: "Member address (if different from family)..."; placeholderTextColor: Theme.textTertiary
                                 selectByMouse: true; wrapMode: TextArea.Wrap
-                                background: Rectangle { radius: 9; color: Theme.surfaceHover; border.width: 1; border.color: parent.activeFocus ? "#059669" : parent.hovered ? "#b2cfbd" : "#d2e5d8"; Behavior on border.color { ColorAnimation { duration: 120 } } }
+                                background: Rectangle { radius: 9; color: Theme.surfaceHover; border.width: 1; border.color: parent.activeFocus ? Theme.primary : parent.hovered ? Theme.borderHover : Theme.border; Behavior on border.color { ColorAnimation { duration: 120 } } }
                                 padding: 10
                                 onTextChanged: dialog._address = text
                             }

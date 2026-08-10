@@ -77,7 +77,7 @@ ApplicationWindow {
                 onPaint: {
                     var ctx = getContext("2d")
                     ctx.reset()
-                    ctx.strokeStyle = "#ffffff"
+                    ctx.strokeStyle = Theme.surface
                     ctx.lineWidth = 1
                     // Draw Islamic geometric star pattern
                     var tileSize = 40
@@ -116,7 +116,7 @@ ApplicationWindow {
             // Flap button — OUTSIDE Column, positioned on sidebar Rectangle
             Rectangle {
                 width: 24; height: 48; radius: 8
-                color: collapseMA.containsMouse ? "#f2c14e" : "#ffffff"
+                color: collapseMA.containsMouse ? "#f2c14e" : Theme.surface
                 border.width: 1; border.color: Theme.border
                 anchors.right: parent.right; anchors.rightMargin: -12
                 anchors.verticalCenter: parent.verticalCenter
@@ -127,7 +127,7 @@ ApplicationWindow {
                     anchors.centerIn: parent
                     text: mainApp.sidebarCollapsed ? "\u203A" : "\u2039"
                     font.pixelSize: Theme.fontSizeXl; font.weight: Font.Bold
-                    color: collapseMA.containsMouse ? "#4a3606" : "#065f46"
+                    color: collapseMA.containsMouse ? Theme.goldText : Theme.primaryPressed
                 }
                 MouseArea {
                     id: collapseMA; anchors.fill: parent; hoverEnabled: true
@@ -214,7 +214,7 @@ ApplicationWindow {
                                 Image { id: navIcon; source: "qrc:/icons/svg/" + model.icon + ".svg"; sourceSize: Qt.size(17, 17); anchors.fill: parent; fillMode: Image.Pad; visible: false }
                                 MultiEffect {
                                     anchors.fill: parent; source: navIcon
-                                    colorizationColor: ListView.isCurrentItem ? "#ffffff" : (navMA.containsMouse ? "#ffffff" : "#ffffff")
+                                    colorizationColor: ListView.isCurrentItem ? Theme.surface : (navMA.containsMouse ? Theme.surface : Theme.surface)
                                     colorization: 1.0
                                     Behavior on colorizationColor { ColorAnimation { duration: 140 } }
                                 }
@@ -224,7 +224,7 @@ ApplicationWindow {
                                 text: { var _l = I18NController.currentLanguage; return I18NController.tr(model.i18nKey) }
                                 font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd
                                 font.weight: ListView.isCurrentItem ? Font.DemiBold : Font.Medium
-                                color: ListView.isCurrentItem ? "#ffffff" : (navMA.containsMouse ? "#ffffff" : "#ffffff")
+                                color: ListView.isCurrentItem ? Theme.surface : (navMA.containsMouse ? Theme.surface : Theme.surface)
                                 y: (34 - height) / 2
                                 visible: !mainApp.sidebarCollapsed
                                 Behavior on color { ColorAnimation { duration: 140 } }
@@ -244,7 +244,7 @@ ApplicationWindow {
                     Row {
                         id: profileRow; x: 14; y: 13; spacing: 10; visible: !mainApp.sidebarCollapsed
                         Rectangle { width: 36; height: 36; radius: 9; color: Theme.gold; border.width: 2; border.color: Theme.goldBorder
-                            Text { anchors.centerIn: parent; text: AuthController.initials; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; font.weight: Font.DemiBold; color: "#4a3606" } }
+                            Text { anchors.centerIn: parent; text: AuthController.initials; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; font.weight: Font.DemiBold; color: Theme.goldText } }
                         Column { spacing: 0
                             Text { text: AuthController.fullName; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; font.weight: Font.DemiBold; color: Theme.surface }
                             Text { text: AuthController.role; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Normal; color: Theme.sidebarSubTitle }
@@ -252,7 +252,7 @@ ApplicationWindow {
                     }
                     // Collapsed: just avatar
                     Rectangle { anchors.centerIn: parent; visible: mainApp.sidebarCollapsed; width: 36; height: 36; radius: 9; color: Theme.gold; border.width: 2; border.color: Theme.goldBorder
-                        Text { anchors.centerIn: parent; text: AuthController.initials; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; font.weight: Font.DemiBold; color: "#4a3606" } }
+                        Text { anchors.centerIn: parent; text: AuthController.initials; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; font.weight: Font.DemiBold; color: Theme.goldText } }
                 }
             }
         }
@@ -279,7 +279,7 @@ ApplicationWindow {
 
                         // Language toggle (EN/ML) — uses I18NController
                         Rectangle {
-                            width: 44; height: 38; radius: 9; color: langToggleMA.containsMouse ? "#f2faf4" : "#ffffff"; border.width: 1; border.color: langToggleMA.containsMouse ? "#b2cfbd" : "#d2e5d8"
+                            width: 44; height: 38; radius: 9; color: langToggleMA.containsMouse ? Theme.surfaceHover : Theme.surface; border.width: 1; border.color: langToggleMA.containsMouse ? Theme.borderHover : Theme.border
                             Behavior on color { ColorAnimation { duration: 120 } }
                             HoverHandler { id: langToggleMA; cursorShape: Qt.PointingHandCursor }
                             MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: {
@@ -294,7 +294,7 @@ ApplicationWindow {
 
                         // Theme toggle (sun/moon)
                         Rectangle {
-                            width: 38; height: 38; radius: 9; color: themeToggleMA.containsMouse ? "#f2faf4" : "#ffffff"; border.width: 1; border.color: themeToggleMA.containsMouse ? "#b2cfbd" : "#d2e5d8"
+                            width: 38; height: 38; radius: 9; color: themeToggleMA.containsMouse ? Theme.surfaceHover : Theme.surface; border.width: 1; border.color: themeToggleMA.containsMouse ? Theme.borderHover : Theme.border
                             Behavior on color { ColorAnimation { duration: 120 } }
                             HoverHandler { id: themeToggleMA; cursorShape: Qt.PointingHandCursor }
                             MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: {
@@ -305,7 +305,7 @@ ApplicationWindow {
                             } }
                             Item { width: 16; height: 16; anchors.centerIn: parent
                                 Image { id: themeIcon; source: "qrc:/icons/svg/" + (typeof SettingsController !== "undefined" && SettingsController.theme === "dark" ? "sun" : "moon") + ".svg"; sourceSize: Qt.size(16, 16); anchors.fill: parent; fillMode: Image.Pad; visible: false }
-                                MultiEffect { anchors.fill: parent; source: themeIcon; colorizationColor: "#7e968a"; colorization: 1.0 }
+                                MultiEffect { anchors.fill: parent; source: themeIcon; colorizationColor: Theme.textTertiary; colorization: 1.0 }
                             }
                         }
 
@@ -313,7 +313,7 @@ ApplicationWindow {
                     Rectangle {
                         width: 250; height: 38; radius: 9
                         color: Theme.surfaceHover; border.width: 1
-                        border.color: searchInput.activeFocus ? "#059669" : (searchHover.containsMouse ? "#b2cfbd" : "#d2e5d8")
+                        border.color: searchInput.activeFocus ? Theme.primary : (searchHover.containsMouse ? Theme.borderHover : Theme.border)
                         Behavior on border.color { ColorAnimation { duration: 120 } }
                         HoverHandler { id: searchHover; cursorShape: Qt.IBeamCursor }
                         Item {
@@ -321,7 +321,7 @@ ApplicationWindow {
                             anchors.left: parent.left; anchors.leftMargin: 10
                             anchors.verticalCenter: parent.verticalCenter
                             Image { id: shellSearchIcon; source: "qrc:/icons/svg/search.svg"; sourceSize: Qt.size(16, 16); anchors.fill: parent; fillMode: Image.Pad; visible: false }
-                            MultiEffect { anchors.fill: parent; source: shellSearchIcon; colorizationColor: searchInput.activeFocus ? "#059669" : "#7e968a"; colorization: 1.0; Behavior on colorizationColor { ColorAnimation { duration: 120 } } }
+                            MultiEffect { anchors.fill: parent; source: shellSearchIcon; colorizationColor: searchInput.activeFocus ? Theme.primary : Theme.textTertiary; colorization: 1.0; Behavior on colorizationColor { ColorAnimation { duration: 120 } } }
                         }
                         TextField {
                             id: searchInput
@@ -329,7 +329,7 @@ ApplicationWindow {
                             anchors.right: parent.right; anchors.rightMargin: 10
                             anchors.verticalCenter: parent.verticalCenter
                             placeholderText: { var _l = I18NController.currentLanguage; return I18NController.tr("search_placeholder") }
-                            placeholderTextColor: "#7e968a"
+                            placeholderTextColor: Theme.textTertiary
                             font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; color: Theme.textPrimary
                             background: Item {}
                             verticalAlignment: Text.AlignVCenter

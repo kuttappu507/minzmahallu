@@ -32,9 +32,9 @@ Item {
             if (_familyId > 0) {
                 var result = familyController.remove(_familyId)
                 if (!result.success) {
-                    toast.show(result.error || "Delete failed", "#e11d48")
+                    toast.show(result.error || "Delete failed", Theme.danger)
                 } else {
-                    toast.show("Family deleted", "#059669")
+                    toast.show("Family deleted", Theme.primary)
                 }
             }
         }
@@ -46,7 +46,7 @@ Item {
         property bool visible_: false
         visible: visible_
         property string message: ""
-        property color bgColor: "#059669"
+        property color bgColor: Theme.primary
         anchors.top: parent.top; anchors.horizontalCenter: parent.horizontalCenter
         anchors.topMargin: visible_ ? 18 : -60
         width: toastText.implicitWidth + 40; height: 40; radius: 9
@@ -64,7 +64,7 @@ Item {
 
         function show(msg, color) {
             message = msg
-            bgColor = color || "#059669"
+            bgColor = color || Theme.primary
             visible_ = true
             toastTimer.restart()
         }
@@ -112,14 +112,14 @@ Item {
                 Layout.fillWidth: true; Layout.minimumWidth: 180
                 height: 38; radius: 9
                 color: Theme.surfaceHover; border.width: 1
-                border.color: searchField.activeFocus ? "#059669" : (searchHover.containsMouse ? "#b2cfbd" : "#d2e5d8")
+                border.color: searchField.activeFocus ? Theme.primary : (searchHover.containsMouse ? Theme.borderHover : Theme.border)
                 Behavior on border.color { ColorAnimation { duration: 120 } }
                 HoverHandler { id: searchHover; cursorShape: Qt.IBeamCursor }
                 Item {
                     width: 16; height: 16
                     anchors.left: parent.left; anchors.leftMargin: 10; anchors.verticalCenter: parent.verticalCenter
                     Image { id: famSearchIcon; source: "qrc:/icons/svg/search.svg"; sourceSize: Qt.size(16, 16); anchors.fill: parent; fillMode: Image.Pad; visible: false }
-                    MultiEffect { anchors.fill: parent; source: famSearchIcon; colorizationColor: searchField.activeFocus ? "#059669" : "#7e968a"; colorization: 1.0; Behavior on colorizationColor { ColorAnimation { duration: 120 } } }
+                    MultiEffect { anchors.fill: parent; source: famSearchIcon; colorizationColor: searchField.activeFocus ? Theme.primary : Theme.textTertiary; colorization: 1.0; Behavior on colorizationColor { ColorAnimation { duration: 120 } } }
                 }
                 TextField {
                     id: searchField
@@ -127,7 +127,7 @@ Item {
                     anchors.right: parent.right; anchors.rightMargin: 10
                     anchors.verticalCenter: parent.verticalCenter
                     placeholderText: "Search by family #, house name, phone..."
-                    placeholderTextColor: "#7e968a"
+                    placeholderTextColor: Theme.textTertiary
                     font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; color: Theme.textPrimary
                     background: Item {} verticalAlignment: Text.AlignVCenter
                     onTextEdited: searchDebounce.restart()
@@ -226,7 +226,7 @@ Item {
                                 // Delete — momentary action, red only on hover
                                 TableActionButton {
                                     iconSource: "qrc:/icons/svg/trash.svg"
-                                    variantColor: "#e11d48"
+                                    variantColor: Theme.danger
                                     anchors.verticalCenter: parent.verticalCenter
                                     onClicked: {
                                         deleteDialog._familyId = model.id
@@ -237,7 +237,7 @@ Item {
                                 // Edit — momentary action, emerald only on hover
                                 TableActionButton {
                                     iconSource: "qrc:/icons/svg/edit.svg"
-                                    variantColor: "#059669"
+                                    variantColor: Theme.primary
                                     anchors.verticalCenter: parent.verticalCenter
                                     onClicked: {
                                         editDialog.familyId = model.id
@@ -248,7 +248,7 @@ Item {
                                 // View — momentary action, blue only on hover
                                 TableActionButton {
                                     iconSource: "qrc:/icons/svg/search.svg"
-                                    variantColor: "#0284c7"
+                                    variantColor: Theme.blue
                                     anchors.verticalCenter: parent.verticalCenter
                                     onClicked: {
                                         editDialog.familyId = model.id
@@ -274,7 +274,7 @@ Item {
                             Item {
                                 width: 28; height: 28; anchors.centerIn: parent
                                 Image { id: emptyIcon; source: "qrc:/icons/svg/families.svg"; sourceSize: Qt.size(28, 28); anchors.fill: parent; fillMode: Image.Pad; visible: false }
-                                MultiEffect { anchors.fill: parent; source: emptyIcon; colorizationColor: "#b2cfbd"; colorization: 1.0 }
+                                MultiEffect { anchors.fill: parent; source: emptyIcon; colorizationColor: Theme.borderHover; colorization: 1.0 }
                             }
                         }
                         Text { text: "No families found"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; font.weight: Font.DemiBold; color: Theme.textPrimary; anchors.horizontalCenter: parent.horizontalCenter }
@@ -291,11 +291,11 @@ Item {
                         Text { text: "Page " + familyModel.currentPage + " of " + familyModel.totalPages; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; color: Theme.textTertiary; Layout.alignment: Qt.AlignVCenter }
                         Item { Layout.fillWidth: true }
                         Rectangle { width: 28; height: 28; radius: 6; color: prevMA.containsMouse ? Theme.surface : "transparent"; border.width: 1; border.color: prevMA.containsMouse ? Theme.borderHover : Theme.border; Layout.alignment: Qt.AlignVCenter; opacity: familyModel.currentPage > 1 ? 1 : 0.4
-                            Item { width: 14; height: 14; anchors.centerIn: parent; Image { id: prevIcon; source: "qrc:/icons/svg/chevron-left.svg"; sourceSize: Qt.size(14, 14); anchors.fill: parent; fillMode: Image.Pad; visible: false } MultiEffect { anchors.fill: parent; source: prevIcon; colorizationColor: "#4f6b5c"; colorization: 1.0 } }
+                            Item { width: 14; height: 14; anchors.centerIn: parent; Image { id: prevIcon; source: "qrc:/icons/svg/chevron-left.svg"; sourceSize: Qt.size(14, 14); anchors.fill: parent; fillMode: Image.Pad; visible: false } MultiEffect { anchors.fill: parent; source: prevIcon; colorizationColor: Theme.textSecondary; colorization: 1.0 } }
                             MouseArea { id: prevMA; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: if (familyModel.currentPage > 1) familyModel.currentPage = familyModel.currentPage - 1 }
                         }
                         Rectangle { width: 28; height: 28; radius: 6; color: nextMA.containsMouse ? Theme.surface : "transparent"; border.width: 1; border.color: nextMA.containsMouse ? Theme.borderHover : Theme.border; Layout.alignment: Qt.AlignVCenter; opacity: familyModel.currentPage < familyModel.totalPages ? 1 : 0.4
-                            Item { width: 14; height: 14; anchors.centerIn: parent; Image { id: nextIcon; source: "qrc:/icons/svg/chevron-right.svg"; sourceSize: Qt.size(14, 14); anchors.fill: parent; fillMode: Image.Pad; visible: false } MultiEffect { anchors.fill: parent; source: nextIcon; colorizationColor: "#4f6b5c"; colorization: 1.0 } }
+                            Item { width: 14; height: 14; anchors.centerIn: parent; Image { id: nextIcon; source: "qrc:/icons/svg/chevron-right.svg"; sourceSize: Qt.size(14, 14); anchors.fill: parent; fillMode: Image.Pad; visible: false } MultiEffect { anchors.fill: parent; source: nextIcon; colorizationColor: Theme.textSecondary; colorization: 1.0 } }
                             MouseArea { id: nextMA; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: if (familyModel.currentPage < familyModel.totalPages) familyModel.currentPage = familyModel.currentPage + 1 }
                         }
                     }

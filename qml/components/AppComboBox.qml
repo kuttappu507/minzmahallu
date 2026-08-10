@@ -61,7 +61,7 @@ FocusScope {
                     text: combo.displayText
                     font.family: Theme.activeFontFamily
                     font.pixelSize: Theme.fontSizeMd
-                    color: combo.enabled ? "#12241b" : "#b2cfbd"
+                    color: combo.enabled ? Theme.textPrimary : Theme.borderHover
                     anchors.left: parent.left
                     anchors.leftMargin: 10
                     anchors.verticalCenter: parent.verticalCenter
@@ -86,7 +86,7 @@ FocusScope {
                     MultiEffect {
                         anchors.fill: parent
                         source: chevron
-                        colorizationColor: combo.popup.visible ? "#059669" : "#7e968a"
+                        colorizationColor: combo.popup.visible ? Theme.primary : Theme.textTertiary
                         colorization: 1.0
                         rotation: combo.popup.visible ? 180 : 0
                         Behavior on rotation { NumberAnimation { duration: 150; easing.type: Easing.OutCubic } }
@@ -98,8 +98,8 @@ FocusScope {
                 radius: 9
                 color: Theme.surfaceHover
                 border.width: 1
-                border.color: combo.popup.visible || combo.activeFocus ? "#059669" :
-                              combo.hovered ? "#b2cfbd" : "#d2e5d8"
+                border.color: combo.popup.visible || combo.activeFocus ? Theme.primary :
+                              combo.hovered ? Theme.borderHover : Theme.border
                 Behavior on border.color { ColorAnimation { duration: 120 } }
             }
 
@@ -135,14 +135,14 @@ FocusScope {
                     text: modelData
                     font.family: Theme.activeFontFamily
                     font.pixelSize: Theme.fontSizeMd
-                    color: highlighted ? "#059669" : "#12241b"
+                    color: highlighted ? Theme.primary : Theme.textPrimary
                     anchors.left: parent.left
                     anchors.leftMargin: 8
                     anchors.verticalCenter: parent.verticalCenter
                 }
 
                 background: Rectangle {
-                    color: highlighted ? "#ecfdf5" : "transparent"
+                    color: highlighted ? Theme.primarySubtle : "transparent"
                     radius: 4
                     Behavior on color { ColorAnimation { duration: 100 } }
                 }

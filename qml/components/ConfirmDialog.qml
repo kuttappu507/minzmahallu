@@ -96,7 +96,7 @@ ModalDialog {
                     // Delete button
                     Rectangle {
                         width: 90; height: 36; radius: 9
-                        color: deleteMA.containsMouse ? "#be123c" : "#e11d48"
+                        color: deleteMA.containsMouse ? "#be123c" : Theme.danger
                         border.width: 0
                         Behavior on color { ColorAnimation { duration: 120 } }
 
@@ -124,9 +124,9 @@ ModalDialog {
                     // Cancel button
                     Rectangle {
                         width: 90; height: 36; radius: 9
-                        color: cancelMA.containsMouse ? "#f2faf4" : "#ffffff"
+                        color: cancelMA.containsMouse ? Theme.surfaceHover : Theme.surface
                         border.width: 1
-                        border.color: cancelMA.containsMouse ? "#b2cfbd" : "#d2e5d8"
+                        border.color: cancelMA.containsMouse ? Theme.borderHover : Theme.border
                         Behavior on color { ColorAnimation { duration: 120 } }
 
                         Text {

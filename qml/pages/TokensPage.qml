@@ -22,7 +22,7 @@ Item {
                 Rectangle { width: 64; height: 64; radius: 32; color: Theme.surfaceHover; border.width: 1; border.color: Theme.border; anchors.horizontalCenter: parent.horizontalCenter
                     Item { width: 32; height: 32; anchors.centerIn: parent
                         Image { id: tokIcon; source: "qrc:/icons/svg/token.svg"; sourceSize: Qt.size(32, 32); anchors.fill: parent; fillMode: Image.Pad; visible: false }
-                        MultiEffect { anchors.fill: parent; source: tokIcon; colorizationColor: "#b2cfbd"; colorization: 1.0 } } }
+                        MultiEffect { anchors.fill: parent; source: tokIcon; colorizationColor: Theme.borderHover; colorization: 1.0 } } }
                 Column { spacing: 4; anchors.horizontalCenter: parent.horizontalCenter
                     Text { text: "Token Distribution"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeLg; font.weight: Font.DemiBold; color: Theme.textPrimary; anchors.horizontalCenter: parent.horizontalCenter }
                     Text { text: "Token events with per-family unique codes"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeSm; color: Theme.textTertiary; anchors.horizontalCenter: parent.horizontalCenter }

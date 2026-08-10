@@ -28,7 +28,7 @@ Item {
         onAccepted: {
             if (_path.length > 0) {
                 var ok = BackupController.restoreBackup(_path)
-                toast.show(ok ? "Restored. Please restart the application." : "Restore failed", ok ? "#059669" : "#e11d48")
+                toast.show(ok ? "Restored. Please restart the application." : "Restore failed", ok ? Theme.primary : Theme.danger)
                 if (ok) page.refresh()
             }
         }
@@ -42,7 +42,7 @@ Item {
         onAccepted: {
             if (_path.length > 0) {
                 var ok = BackupController.deleteBackup(_path)
-                toast.show(ok ? "Backup deleted" : "Delete failed", ok ? "#059669" : "#e11d48")
+                toast.show(ok ? "Backup deleted" : "Delete failed", ok ? Theme.primary : Theme.danger)
                 if (ok) page.refresh()
             }
         }
@@ -53,7 +53,7 @@ Item {
         property bool visible_: false
         visible: visible_
         property string message: ""
-        property color bgColor: "#059669"
+        property color bgColor: Theme.primary
         anchors.top: parent.top; anchors.horizontalCenter: parent.horizontalCenter
         anchors.topMargin: visible_ ? 18 : -60
         width: toastText.implicitWidth + 40; height: 40; radius: 9
@@ -61,7 +61,7 @@ Item {
         Behavior on anchors.topMargin { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
         Text { id: toastText; anchors.centerIn: parent; text: toast.message; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; font.weight: Font.DemiBold; color: Theme.surface }
         Timer { id: toastTimer; interval: 3000; onTriggered: toast.visible_ = false }
-        function show(msg, color) { message = msg; bgColor = color || "#059669"; visible_ = true; toastTimer.restart() }
+        function show(msg, color) { message = msg; bgColor = color || Theme.primary; visible_ = true; toastTimer.restart() }
     }
 
     ColumnLayout {
@@ -80,12 +80,12 @@ Item {
             Layout.fillWidth: true; spacing: 10
             AppButton { text: { var _l = I18NController.currentLanguage; return I18NController.tr("bak_create_now") } variant: "primary"; iconName: "backup"; onClicked: {
                 var path = BackupController.createBackup()
-                toast.show(path && path.length > 0 ? "Backup created: " + path : "Backup failed", path && path.length > 0 ? "#059669" : "#e11d48")
+                toast.show(path && path.length > 0 ? "Backup created: " + path : "Backup failed", path && path.length > 0 ? Theme.primary : Theme.danger)
                 if (path && path.length > 0) page.refresh()
             } }
             AppButton { text: { var _l = I18NController.currentLanguage; return I18NController.tr("bak_prune") } variant: "secondary"; iconName: "trash"; onClicked: {
                 var n = BackupController.pruneOldBackups(10)
-                toast.show("Removed " + n + " old backup(s)", "#059669")
+                toast.show("Removed " + n + " old backup(s)", Theme.primary)
                 page.refresh()
             } }
             AppButton { text: { var _l = I18NController.currentLanguage; return I18NController.tr("action_refresh") } variant: "secondary"; iconName: "refresh"; onClicked: page.refresh() }
@@ -113,8 +113,8 @@ Item {
                             Text { text: modelData.sizeDisplay; width: 100; height: 44; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeSm; color: Theme.textSecondary }
                             Text { text: modelData.fullPath; width: parent.width - 200 - 160 - 100 - 120; height: 44; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; color: Theme.textTertiary; elide: Text.ElideRight }
                             Row { width: 120; height: 44; spacing: 4; layoutDirection: Qt.RightToLeft
-                                TableActionButton { iconSource: "qrc:/icons/svg/trash.svg"; variantColor: "#e11d48"; anchors.verticalCenter: parent.verticalCenter; onClicked: { deleteDialog._path = modelData.fullPath; deleteDialog.warningText = "Backup file " + modelData.fileName + " will be permanently deleted."; deleteDialog.visible = true } }
-                                TableActionButton { iconSource: "qrc:/icons/svg/check.svg"; variantColor: "#059669"; anchors.verticalCenter: parent.verticalCenter; onClicked: { var ok = BackupController.verifyBackup(modelData.fullPath); toast.show(ok ? "Backup is valid" : "Invalid backup", ok ? "#059669" : "#e11d48") } }
+                                TableActionButton { iconSource: "qrc:/icons/svg/trash.svg"; variantColor: Theme.danger; anchors.verticalCenter: parent.verticalCenter; onClicked: { deleteDialog._path = modelData.fullPath; deleteDialog.warningText = "Backup file " + modelData.fileName + " will be permanently deleted."; deleteDialog.visible = true } }
+                                TableActionButton { iconSource: "qrc:/icons/svg/check.svg"; variantColor: Theme.primary; anchors.verticalCenter: parent.verticalCenter; onClicked: { var ok = BackupController.verifyBackup(modelData.fullPath); toast.show(ok ? "Backup is valid" : "Invalid backup", ok ? Theme.primary : Theme.danger) } }
                                 TableActionButton { iconSource: "qrc:/icons/svg/backup.svg"; variantColor: "#7c3aed"; anchors.verticalCenter: parent.verticalCenter; onClicked: { restoreDialog._path = modelData.fullPath; restoreDialog.visible = true } } }
                         }
                         MouseArea { id: rowMA; anchors.fill: parent; hoverEnabled: true; acceptedButtons: Qt.NoButton } } }

@@ -11,8 +11,8 @@ Rectangle {
 
     property string text: ""
     property string variant: "active"    // active|inactive|archived|overdue|paid|pending|custom
-    property color customColor: "#059669"
-    property color customBg: "#ecfdf5"
+    property color customColor: Theme.primary
+    property color customBg: Theme.primarySubtle
 
     implicitHeight: 22
     implicitWidth: badgeText.implicitWidth + 16
@@ -22,27 +22,27 @@ Rectangle {
 
     readonly property color _mainColor: {
         switch (variant) {
-            case "active":   return "#059669"
-            case "inactive": return "#64748b"
-            case "archived": return "#64748b"
-            case "overdue":  return "#e11d48"
-            case "paid":     return "#059669"
-            case "pending":  return "#d97706"
+            case "active":   return Theme.primary
+            case "inactive": return Theme.textTertiary
+            case "archived": return Theme.textTertiary
+            case "overdue":  return Theme.danger
+            case "paid":     return Theme.primary
+            case "pending":  return Theme.warning
             case "custom":   return customColor
-            default:         return "#059669"
+            default:         return Theme.primary
         }
     }
 
     readonly property color _bgColor: {
         switch (variant) {
-            case "active":   return "#d3f5e6"
+            case "active":   return Theme.primarySubtleAlt
             case "inactive": return "#e6ebf2"
             case "archived": return "#e6ebf2"
-            case "overdue":  return "#fddfe5"
-            case "paid":     return "#d3f5e6"
-            case "pending":  return "#fcebc8"
+            case "overdue":  return Theme.coralSubtle
+            case "paid":     return Theme.primarySubtleAlt
+            case "pending":  return Theme.warningSubtle
             case "custom":   return customBg
-            default:         return "#d3f5e6"
+            default:         return Theme.primarySubtleAlt
         }
     }
 

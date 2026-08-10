@@ -115,7 +115,7 @@ Item {
             Row { Layout.fillWidth: true; Layout.leftMargin: 24; Layout.rightMargin: 24; Layout.bottomMargin: 24; layoutDirection: Qt.RightToLeft
                 AppButton { text: { var _l = I18NController.currentLanguage; return I18NController.tr("action_save") } variant: "primary"; iconName: "check"; onClicked: {
                     var ok = SettingsController.save()
-                    toast.show(ok ? "Settings saved successfully" : "Save failed", ok ? Theme.primary : "#e11d48")
+                    toast.show(ok ? "Settings saved successfully" : "Save failed", ok ? Theme.primary : Theme.danger)
                 } }
             }
         }

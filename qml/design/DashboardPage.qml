@@ -82,7 +82,7 @@ ScrollView {
                                 color: Theme.surface
                                 property string qaLabel: { var _l = I18NController.currentLanguage; return [I18NController.tr("dash_quick_add_family"), I18NController.tr("dash_quick_add_member"), I18NController.tr("dash_quick_record_payment"), I18NController.tr("dash_quick_add_donation"), I18NController.tr("dash_quick_generate_report")][index] }
                                 property string qaSub: [DashboardController.totalFamilies + " families", DashboardController.totalMembers + " members", "RCP-" + (DashboardController.totalFamilies + 1), "5 categories", "15 report types"][index]
-                                property string qaSc: ["#059669","#0d9488","#d97706","#db2777","#7c3aed"][index]
+                                property string qaSc: [Theme.primary,"#0d9488","#d97706","#db2777","#7c3aed"][index]
                                 property string qaIcon: ["plus","user","dollar","donations","reports"][index]
                                 border.width: 1
                                 border.color: qaMA.containsMouse ? qaSc : Theme.border
@@ -114,7 +114,7 @@ ScrollView {
                                             MultiEffect {
                                                 anchors.fill: parent
                                                 source: qaIcon
-                                                colorizationColor: "#ffffff"
+                                                colorizationColor: Theme.surface
                                                 colorization: 1.0
                                             }
                                         }
@@ -196,7 +196,7 @@ ScrollView {
                                     DashboardController.deathsThisYear,
                                     "₹" + DashboardController.balance.toFixed(0)
                                 ][index]
-                                property string cardSc: ["#059669","#0d9488","#0284c7","#d97706","#e11d48","#db2777","#7c3aed","#ea580c","#64748b","#2563eb"][index]
+                                property string cardSc: [Theme.primary,"#0d9488","#0284c7","#d97706",Theme.danger,"#db2777","#7c3aed","#ea580c","#64748b","#2563eb"][index]
                                 property string cardSb: ["#d3f5e6","#c8f6f1","#d7edfb","#fcebc8","#fddfe5","#fadfeb","#e7defc","#ffe4cf","#e6ebf2","#dbe7fd"][index]
                                 property string cardSt: ["#04543c","#0f5e54","#0a5480","#7c4403","#95102e","#93184f","#5423b7","#8f3708","#33415c","#1e3fae"][index]
                                 property string cardIcon: ["families","members","user","dollar","alert","donations","welfare","marriage","death","accounting"][index]
@@ -229,7 +229,7 @@ ScrollView {
                                             Item {
                                                 width: 18; height: 18; anchors.centerIn: parent
                                                 Image { id: statIcon; source: "qrc:/icons/svg/" + statCard.cardIcon + ".svg"; sourceSize: Qt.size(18, 18); anchors.fill: parent; fillMode: Image.Pad; visible: false }
-                                                MultiEffect { anchors.fill: parent; source: statIcon; colorizationColor: "#ffffff"; colorization: 1.0 }
+                                                MultiEffect { anchors.fill: parent; source: statIcon; colorizationColor: Theme.surface; colorization: 1.0 }
                                             }
                                         }
                                     }
@@ -277,7 +277,7 @@ ScrollView {
                                 radius: 10
                                 color: Theme.surface
                                 border.width: 1
-                                border.color: evHover.containsMouse ? "#059669" : "#d2e5d8"
+                                border.color: evHover.containsMouse ? Theme.primary : Theme.border
                                 z: evHover.containsMouse ? 10 : 0
                                 transform: Translate { y: evHover.containsMouse ? -2 : 0; Behavior on y { NumberAnimation { duration: 150; easing.type: Easing.OutCubic } } }
                                 Behavior on border.color { ColorAnimation { duration: 150 } }
@@ -312,7 +312,7 @@ ScrollView {
                                             MultiEffect {
                                                 anchors.fill: parent
                                                 source: evIcon
-                                                colorizationColor: "#ffffff"
+                                                colorizationColor: Theme.surface
                                                 colorization: 1.0
                                             }
                                         }

@@ -174,7 +174,7 @@ ModalDialog {
                         width: 28; height: 28; radius: 6
                         color: closeMA.containsMouse ? Theme.surfaceHover : "transparent"
                         Behavior on color { ColorAnimation { duration: 120 } }
-                        Text { anchors.centerIn: parent; text: "\u00D7"; font.pixelSize: Theme.fontSizeXl; font.weight: Font.Bold; color: closeMA.containsMouse ? "#12241b" : "#7e968a" }
+                        Text { anchors.centerIn: parent; text: "\u00D7"; font.pixelSize: Theme.fontSizeXl; font.weight: Font.Bold; color: closeMA.containsMouse ? Theme.textPrimary : Theme.textTertiary }
                         MouseArea { id: closeMA; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: dialog.visible = false }
                     }
                 }
@@ -213,7 +213,7 @@ ModalDialog {
                                 Text {
                                     anchors.left: parent.left; anchors.leftMargin: 10; anchors.verticalCenter: parent.verticalCenter
                                     text: dialog._familyNumber || "Auto-generated on save"
-                                    font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; color: dialog._familyNumber ? "#12241b" : "#7e968a"
+                                    font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; color: dialog._familyNumber ? Theme.textPrimary : Theme.textTertiary
                                 }
                             }
                         }
@@ -238,29 +238,10 @@ ModalDialog {
                         RowLayout {
                             Layout.fillWidth: true; spacing: 16
 
-                            AppComboBox {
-                                Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("family_ward") }
-                                model: {
-                                    var w = ["(none)"]
-                                    if (typeof FamilyController !== "undefined") {
-                                        var wards = FamilyController.wards()
-                                        for (var i = 0; i < wards.length; i++) w.push(wards[i])
-                                    }
-                                    return w
-                                }
-                                currentIndex: {
-                                    if (dialog._ward === "") return 0
-                                    var w = ["(none)"]
-                                    if (typeof FamilyController !== "undefined") {
-                                        var wards = FamilyController.wards()
-                                        for (var i = 0; i < wards.length; i++) w.push(wards[i])
-                                    }
-                                    var idx = w.indexOf(dialog._ward)
-                                    return idx >= 0 ? idx : 0
-                                }
-                                onActivated: function(index) {
-                                    dialog._ward = index === 0 ? "" : model[index]
-                                }
+                            AppTextField {
+                                Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("family_ward") } placeholderText: "e.g. 1"
+                                text: dialog._ward; readOnly: dialog.readOnly
+                                onTextChanged: dialog._ward = text
                             }
 
                             AppTextField {
@@ -310,11 +291,11 @@ ModalDialog {
                                 Layout.fillWidth: true; Layout.preferredHeight: 64
                                 text: dialog._address; readOnly: dialog.readOnly
                                 font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; color: Theme.textPrimary
-                                placeholderText: "Enter full address..."; placeholderTextColor: "#7e968a"
+                                placeholderText: "Enter full address..."; placeholderTextColor: Theme.textTertiary
                                 selectByMouse: true; wrapMode: TextArea.Wrap
                                 background: Rectangle {
                                     radius: 9; color: Theme.surfaceHover; border.width: 1
-                                    border.color: parent.activeFocus ? "#059669" : parent.hovered ? "#b2cfbd" : "#d2e5d8"
+                                    border.color: parent.activeFocus ? Theme.primary : parent.hovered ? Theme.borderHover : Theme.border
                                     Behavior on border.color { ColorAnimation { duration: 120 } }
                                 }
                                 padding: 10
@@ -329,11 +310,11 @@ ModalDialog {
                                 Layout.fillWidth: true; Layout.preferredHeight: 56
                                 text: dialog._notes; readOnly: dialog.readOnly
                                 font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; color: Theme.textPrimary
-                                placeholderText: "Internal notes (optional)..."; placeholderTextColor: "#7e968a"
+                                placeholderText: "Internal notes (optional)..."; placeholderTextColor: Theme.textTertiary
                                 selectByMouse: true; wrapMode: TextArea.Wrap
                                 background: Rectangle {
                                     radius: 9; color: Theme.surfaceHover; border.width: 1
-                                    border.color: parent.activeFocus ? "#059669" : parent.hovered ? "#b2cfbd" : "#d2e5d8"
+                                    border.color: parent.activeFocus ? Theme.primary : parent.hovered ? Theme.borderHover : Theme.border
                                     Behavior on border.color { ColorAnimation { duration: 120 } }
                                 }
                                 padding: 10

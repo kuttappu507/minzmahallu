@@ -102,7 +102,7 @@ ModalDialog {
                     Rectangle { anchors.bottom: parent.bottom; anchors.left: parent.left; anchors.right: parent.right; height: 1; color: Theme.surfacePressed }
                     Text { text: dialog._dialogTitle; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeLg; font.weight: Font.DemiBold; color: Theme.textPrimary; anchors.left: parent.left; anchors.leftMargin: 24; anchors.verticalCenter: parent.verticalCenter }
                     Rectangle { anchors.right: parent.right; anchors.rightMargin: 16; anchors.verticalCenter: parent.verticalCenter; width: 28; height: 28; radius: 6; color: closeMA.containsMouse ? Theme.surfaceHover : "transparent"; Behavior on color { ColorAnimation { duration: 120 } }
-                        Text { anchors.centerIn: parent; text: "\u00D7"; font.pixelSize: Theme.fontSizeXl; font.weight: Font.Bold; color: closeMA.containsMouse ? "#12241b" : "#7e968a" }
+                        Text { anchors.centerIn: parent; text: "\u00D7"; font.pixelSize: Theme.fontSizeXl; font.weight: Font.Bold; color: closeMA.containsMouse ? Theme.textPrimary : Theme.textTertiary }
                         MouseArea { id: closeMA; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: dialog.visible = false } }
                 }
 
@@ -114,17 +114,17 @@ ModalDialog {
 
                     // Account selector (popup)
                     ColumnLayout { Layout.fillWidth: true; spacing: 4
-                        Text { text: "Account *"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: dialog._errorField === "accountId" ? "#e11d48" : "#7e968a" }
-                        Rectangle { Layout.fillWidth: true; height: 38; radius: 9; color: Theme.surfaceHover; border.width: 1; border.color: dialog._errorField === "accountId" ? "#e11d48" : (accMA.containsMouse ? "#b2cfbd" : "#d2e5d8"); Behavior on border.color { ColorAnimation { duration: 120 } }
+                        Text { text: "Account *"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: dialog._errorField === "accountId" ? Theme.danger : Theme.textTertiary }
+                        Rectangle { Layout.fillWidth: true; height: 38; radius: 9; color: Theme.surfaceHover; border.width: 1; border.color: dialog._errorField === "accountId" ? Theme.danger : (accMA.containsMouse ? Theme.borderHover : Theme.border); Behavior on border.color { ColorAnimation { duration: 120 } }
                             MouseArea { id: accMA; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: accPopup.visible = !accPopup.visible }
                             Text { anchors.left: parent.left; anchors.leftMargin: 10; anchors.verticalCenter: parent.verticalCenter
                                 text: { if (dialog._accountId === "") return "Select account..."; for (var i = 0; i < dialog._accounts.length; i++) { if (dialog._accounts[i].id === parseInt(dialog._accountId)) return dialog._accounts[i].code + " - " + dialog._accounts[i].name + " (" + dialog._accounts[i].type + ")" } return "Select account..." }
-                                font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; color: dialog._accountId !== "" ? "#12241b" : "#7e968a" }
+                                font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; color: dialog._accountId !== "" ? Theme.textPrimary : Theme.textTertiary }
                             Popup { id: accPopup; y: parent.height + 4; width: parent.width; implicitHeight: 280; padding: 4; background: Rectangle { color: Theme.surface; border.width: 1; border.color: Theme.border; radius: 9 }
                                 ListView { anchors.fill: parent; clip: true; spacing: 2; model: dialog._accounts
                                     delegate: ItemDelegate { width: parent.width; height: 34; padding: 0
                                         contentItem: Text { text: modelData.code + " - " + modelData.name + " (" + modelData.type + ")"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; color: Theme.textPrimary; anchors.left: parent.left; anchors.leftMargin: 8; anchors.verticalCenter: parent.verticalCenter }
-                                        background: Rectangle { color: highlighted ? "#ecfdf5" : "transparent"; radius: 4 }
+                                        background: Rectangle { color: highlighted ? Theme.primarySubtle : "transparent"; radius: 4 }
                                         onClicked: { dialog._accountId = modelData.id.toString(); accPopup.visible = false } } } } } }
 
                     // Amount | Date
@@ -140,8 +140,8 @@ ModalDialog {
                     // Description
                     ColumnLayout { Layout.fillWidth: true; spacing: 4
                         Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("acc_description") } font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
-                        TextArea { Layout.fillWidth: true; Layout.preferredHeight: 56; text: dialog._description; readOnly: dialog.readOnly; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; color: Theme.textPrimary; placeholderText: "Transaction description..."; placeholderTextColor: "#7e968a"; selectByMouse: true; wrapMode: TextArea.Wrap
-                            background: Rectangle { radius: 9; color: Theme.surfaceHover; border.width: 1; border.color: parent.activeFocus ? "#059669" : parent.hovered ? "#b2cfbd" : "#d2e5d8"; Behavior on border.color { ColorAnimation { duration: 120 } } }
+                        TextArea { Layout.fillWidth: true; Layout.preferredHeight: 56; text: dialog._description; readOnly: dialog.readOnly; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; color: Theme.textPrimary; placeholderText: "Transaction description..."; placeholderTextColor: Theme.textTertiary; selectByMouse: true; wrapMode: TextArea.Wrap
+                            background: Rectangle { radius: 9; color: Theme.surfaceHover; border.width: 1; border.color: parent.activeFocus ? Theme.primary : parent.hovered ? Theme.borderHover : Theme.border; Behavior on border.color { ColorAnimation { duration: 120 } } }
                             padding: 10; onTextChanged: dialog._description = text } }
 
                     Item { Layout.fillWidth: true; Layout.fillHeight: true }

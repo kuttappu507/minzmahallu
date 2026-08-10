@@ -29,7 +29,7 @@ Item {
         property bool visible_: false
         visible: visible_
         property string message: ""
-        property color bgColor: "#059669"
+        property color bgColor: Theme.primary
         anchors.top: parent.top; anchors.horizontalCenter: parent.horizontalCenter
         anchors.topMargin: visible_ ? 18 : -60
         width: toastText.implicitWidth + 40; height: 40; radius: 9
@@ -37,7 +37,7 @@ Item {
         Behavior on anchors.topMargin { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
         Text { id: toastText; anchors.centerIn: parent; text: toast.message; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; font.weight: Font.DemiBold; color: Theme.surface }
         Timer { id: toastTimer; interval: 3000; onTriggered: toast.visible_ = false }
-        function show(msg, color) { message = msg; bgColor = color || "#059669"; visible_ = true; toastTimer.restart() }
+        function show(msg, color) { message = msg; bgColor = color || Theme.primary; visible_ = true; toastTimer.restart() }
     }
 
     ColumnLayout {
@@ -67,17 +67,17 @@ Item {
             AppButton { text: "CSV"; variant: "secondary"; iconName: "download"; onClicked: {
                 var path = ReportController.ensureExportPath("report.csv")
                 var result = ReportController.exportToCsv(selectedReport, dateFrom, dateTo, path)
-                toast.show(result && result.length > 0 ? "Exported: " + result : "Export failed", result && result.length > 0 ? "#059669" : "#e11d48")
+                toast.show(result && result.length > 0 ? "Exported: " + result : "Export failed", result && result.length > 0 ? Theme.primary : Theme.danger)
             } }
             AppButton { text: "PDF"; variant: "secondary"; iconName: "print"; onClicked: {
                 var path = ReportController.ensureExportPath("report.pdf")
                 var result = ReportController.exportToPdf(selectedReport, dateFrom, dateTo, path)
-                toast.show(result && result.length > 0 ? "Exported: " + result : "Export failed", result && result.length > 0 ? "#059669" : "#e11d48")
+                toast.show(result && result.length > 0 ? "Exported: " + result : "Export failed", result && result.length > 0 ? Theme.primary : Theme.danger)
             } }
             AppButton { text: "Excel"; variant: "secondary"; iconName: "download"; onClicked: {
                 var path = ReportController.ensureExportPath("report.xlsx")
                 var result = ReportController.exportToExcel(selectedReport, dateFrom, dateTo, path)
-                toast.show(result && result.length > 0 ? "Exported: " + result : "Export failed", result && result.length > 0 ? "#059669" : "#e11d48")
+                toast.show(result && result.length > 0 ? "Exported: " + result : "Export failed", result && result.length > 0 ? Theme.primary : Theme.danger)
             } }
         }
 

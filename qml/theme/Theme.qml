@@ -25,10 +25,10 @@ QtObject {
     readonly property color canvas:          dark ? "#0a1a12" : "#e7f4ea"
 
     // ===== SURFACES =====
-    readonly property color surface:         dark ? "#13221a" : "#ffffff"
-    readonly property color surfaceHover:     dark ? "#1a2e22" : "#f2faf4"
-    readonly property color surfacePressed:  dark ? "#1e3327" : "#eef8f1"
-    readonly property color surfaceSubtle:   dark ? "#0f1e16" : "#f2faf4"
+    readonly property color surface:         dark ? "#13221a" : Theme.surface
+    readonly property color surfaceHover:     dark ? "#1a2e22" : Theme.surfaceHover
+    readonly property color surfacePressed:  dark ? "#1e3327" : Theme.surfacePressed
+    readonly property color surfaceSubtle:   dark ? "#0f1e16" : Theme.surfaceHover
 
     // ===== GREEN SIDEBAR (same in both themes — sidebar is always dark green) =====
     readonly property color sidebarTop:      "#0a7f5d"
@@ -37,7 +37,7 @@ QtObject {
     readonly property color sidebarHover:    Qt.rgba(255/255, 255/255, 255/255, 0.06)
     readonly property color sidebarActive:   Qt.rgba(255/255, 255/255, 255/255, 0.14)
     readonly property color sidebarText:     dark ? "#a5dcc6" : "#a5dcc6"
-    readonly property color sidebarTextActive: "#ffffff"
+    readonly property color sidebarTextActive: Theme.surface
     readonly property color sidebarTextMuted: Qt.rgba(214/255, 240/255, 228/255, 0.42)
     readonly property color sidebarSubTitle: "#a5dcc6"
     readonly property color sidebarTextHover: dark ? "#d6f5e7" : "#d6f5e7"
@@ -55,12 +55,12 @@ QtObject {
     readonly property color pinkSubtle:        "#fadfeb"
 
     // ===== BRAND — Emerald =====
-    readonly property color primary:         "#059669"
+    readonly property color primary:         Theme.primary
     readonly property color primaryHover:    "#047857"
     readonly property color primaryPressed:  "#036049"
     readonly property color primarySubtle:   dark ? "#0a2e22" : "#ecfdf5"
     readonly property color primarySubtleAlt: dark ? "#0d3b2c" : "#d1fae5"
-    readonly property color primaryOn:       "#ffffff"
+    readonly property color primaryOn:       Theme.surface
 
     // ===== ACCENT — Blue =====
     readonly property color blue:            "#3b82f6"
@@ -85,7 +85,7 @@ QtObject {
 
     // ===== ACCENT — Coral/Red =====
     readonly property color coral:           "#f43f5e"
-    readonly property color coralHover:     "#e11d48"
+    readonly property color coralHover:     Theme.danger
     readonly property color coralSubtle:    dark ? "#2a0f15" : "#fff1f2"
 
     // ===== SEMANTIC =====
@@ -100,16 +100,16 @@ QtObject {
     readonly property color infoSubtle:      dark ? "#0a1f2a" : "#f0f9ff"
 
     // ===== TEXT =====
-    readonly property color textPrimary:     dark ? "#e6f2ea" : "#12241b"
-    readonly property color textSecondary:   dark ? "#9fb8aa" : "#4f6b5c"
-    readonly property color textTertiary:    dark ? "#6d8878" : "#7e968a"
-    readonly property color textDisabled:    dark ? "#3a5048" : "#b2cfbd"
+    readonly property color textPrimary:     dark ? "#e6f2ea" : Theme.textPrimary
+    readonly property color textSecondary:   dark ? "#9fb8aa" : Theme.textSecondary
+    readonly property color textTertiary:    dark ? "#6d8878" : Theme.textTertiary
+    readonly property color textDisabled:    dark ? "#3a5048" : Theme.borderHover
 
     // ===== BORDERS =====
-    readonly property color border:          dark ? "#23402f" : "#d2e5d8"
-    readonly property color borderHover:     dark ? "#335944" : "#b2cfbd"
-    readonly property color borderFocused:   "#059669"
-    readonly property color borderSubtle:    dark ? "#1a3020" : "#d2e5d8"
+    readonly property color border:          dark ? "#23402f" : Theme.border
+    readonly property color borderHover:     dark ? "#335944" : Theme.borderHover
+    readonly property color borderFocused:   Theme.primary
+    readonly property color borderSubtle:    dark ? "#1a3020" : Theme.border
 
     // ===== TYPOGRAPHY =====
     readonly property string fontFamily:     "Poppins"

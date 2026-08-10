@@ -22,7 +22,7 @@ Item {
         onAccepted: {
             if (_id > 0) {
                 var r = UserController.remove(_id)
-                toast.show(r.success ? "User deleted" : (r.error || "Delete failed"), r.success ? "#059669" : "#e11d48")
+                toast.show(r.success ? "User deleted" : (r.error || "Delete failed"), r.success ? Theme.primary : Theme.danger)
                 if (r.success) refreshUsers()
             }
         }
@@ -33,7 +33,7 @@ Item {
         property bool visible_: false
         visible: visible_
         property string message: ""
-        property color bgColor: "#059669"
+        property color bgColor: Theme.primary
         anchors.top: parent.top; anchors.horizontalCenter: parent.horizontalCenter
         anchors.topMargin: visible_ ? 18 : -60
         width: toastText.implicitWidth + 40; height: 40; radius: 9
@@ -41,7 +41,7 @@ Item {
         Behavior on anchors.topMargin { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
         Text { id: toastText; anchors.centerIn: parent; text: toast.message; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; font.weight: Font.DemiBold; color: Theme.surface }
         Timer { id: toastTimer; interval: 3000; onTriggered: toast.visible_ = false }
-        function show(msg, color) { message = msg; bgColor = color || "#059669"; visible_ = true; toastTimer.restart() }
+        function show(msg, color) { message = msg; bgColor = color || Theme.primary; visible_ = true; toastTimer.restart() }
     }
 
     ColumnLayout {
@@ -83,8 +83,8 @@ Item {
                             Text { text: modelData.lastLoginAt || "Never"; width: 160; height: 44; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeSm; color: Theme.textSecondary }
                             Item { width: parent.width - 140 - 200 - 140 - 200 - 130 - 100 - 160 - 80; height: 44 }
                             Row { width: 80; height: 44; spacing: 4; layoutDirection: Qt.RightToLeft
-                                TableActionButton { iconSource: "qrc:/icons/svg/trash.svg"; variantColor: "#e11d48"; anchors.verticalCenter: parent.verticalCenter; onClicked: { deleteDialog._id = modelData.id; deleteDialog.warningText = "User '" + modelData.username + "' will be permanently deleted."; deleteDialog.visible = true } }
-                                TableActionButton { iconSource: "qrc:/icons/svg/search.svg"; variantColor: "#0284c7"; anchors.verticalCenter: parent.verticalCenter; onClicked: toast.show("User profile - " + modelData.fullName, "#7e968a") } } }
+                                TableActionButton { iconSource: "qrc:/icons/svg/trash.svg"; variantColor: Theme.danger; anchors.verticalCenter: parent.verticalCenter; onClicked: { deleteDialog._id = modelData.id; deleteDialog.warningText = "User '" + modelData.username + "' will be permanently deleted."; deleteDialog.visible = true } }
+                                TableActionButton { iconSource: "qrc:/icons/svg/search.svg"; variantColor: Theme.blue; anchors.verticalCenter: parent.verticalCenter; onClicked: toast.show("User profile - " + modelData.fullName, Theme.textTertiary) } } }
                         MouseArea { id: rowMA; anchors.fill: parent; hoverEnabled: true; acceptedButtons: Qt.NoButton } } }
                 Item { Layout.fillWidth: true; Layout.fillHeight: true; visible: page.users.length === 0
                     Column { anchors.centerIn: parent; spacing: 8

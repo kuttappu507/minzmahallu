@@ -21,7 +21,7 @@ import QtQuick.Effects
 // Usage:
 //   TableActionButton {
 //       iconSource: "qrc:/icons/svg/edit.svg"
-//       variantColor: "#059669"   // emerald for Edit, blue for View, red for Delete
+//       variantColor: Theme.primary   // emerald for Edit, blue for View, red for Delete
 //       onClicked: { ... }
 //   }
 // ============================================================================
@@ -30,7 +30,7 @@ Item {
     id: root
 
     property string iconSource: ""
-    property color variantColor: "#059669"
+    property color variantColor: Theme.primary
     property int iconSize: 14
     property int buttonSize: 28
 
@@ -57,7 +57,7 @@ Item {
         // Border color: pressed > hover > normal
         border.color: ma.pressed ? root.variantColor :
                       ma.containsMouse ? root.variantColor :
-                      "#d2e5d8"
+                      Theme.border
 
         Behavior on color { ColorAnimation { duration: 100 } }
         Behavior on border.color { ColorAnimation { duration: 100 } }
@@ -82,7 +82,7 @@ Item {
             // Icon color: pressed/hover = variant color, normal = neutral grey
             colorizationColor: ma.pressed ? root.variantColor :
                                ma.containsMouse ? root.variantColor :
-                               "#7e968a"
+                               Theme.textTertiary
             colorization: 1.0
             Behavior on colorizationColor { ColorAnimation { duration: 100 } }
         }

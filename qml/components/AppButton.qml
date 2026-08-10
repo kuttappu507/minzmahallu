@@ -47,7 +47,7 @@ Button {
                 MultiEffect {
                     anchors.fill: parent
                     source: btnIcon
-                    colorizationColor: root.enabled ? _iconColor : "#b2cfbd"
+                    colorizationColor: root.enabled ? _iconColor : Theme.borderHover
                     colorization: 1.0
                 }
             }
@@ -57,7 +57,7 @@ Button {
                 font.family: Theme.activeFontFamily
                 font.pixelSize: Theme.fontSizeMd
                 font.weight: Font.DemiBold
-                color: root.enabled ? _textColor : "#b2cfbd"
+                color: root.enabled ? _textColor : Theme.borderHover
                 visible: root.text !== ""
             }
         }
@@ -65,58 +65,58 @@ Button {
 
     background: Rectangle {
         radius: 9
-        color: !root.enabled ? "#d2e5d8" :
+        color: !root.enabled ? Theme.border :
                root.pressed ? _pressedColor :
                root.hovered ? _hoverColor : _baseColor
         border.width: root.variant === "secondary" || root.variant === "ghost" ? 1 : 0
-        border.color: root.variant === "secondary" ? (root.hovered ? "#b2cfbd" : "#d2e5d8") : "transparent"
+        border.color: root.variant === "secondary" ? (root.hovered ? Theme.borderHover : Theme.border) : "transparent"
         Behavior on color { ColorAnimation { duration: 120 } }
         Behavior on border.color { ColorAnimation { duration: 120 } }
     }
 
     readonly property color _baseColor: {
         switch (variant) {
-            case "primary":   return "#059669"
-            case "secondary": return "#ffffff"
-            case "danger":    return "#e11d48"
+            case "primary":   return Theme.primary
+            case "secondary": return Theme.surface
+            case "danger":    return Theme.danger
             case "ghost":     return "transparent"
-            default:          return "#059669"
+            default:          return Theme.primary
         }
     }
     readonly property color _hoverColor: {
         switch (variant) {
             case "primary":   return "#047857"
-            case "secondary": return "#f2faf4"
+            case "secondary": return Theme.surfaceHover
             case "danger":    return "#be123c"
-            case "ghost":     return "#f2faf4"
+            case "ghost":     return Theme.surfaceHover
             default:          return "#047857"
         }
     }
     readonly property color _pressedColor: {
         switch (variant) {
-            case "primary":   return "#065f46"
-            case "secondary": return "#eef8f1"
+            case "primary":   return Theme.primaryPressed
+            case "secondary": return Theme.surfacePressed
             case "danger":    return "#9f1239"
-            case "ghost":     return "#eef8f1"
-            default:          return "#065f46"
+            case "ghost":     return Theme.surfacePressed
+            default:          return Theme.primaryPressed
         }
     }
     readonly property color _textColor: {
         switch (variant) {
-            case "primary":   return "#ffffff"
-            case "secondary": return "#12241b"
-            case "danger":    return "#ffffff"
-            case "ghost":     return "#4f6b5c"
-            default:          return "#ffffff"
+            case "primary":   return Theme.surface
+            case "secondary": return Theme.textPrimary
+            case "danger":    return Theme.surface
+            case "ghost":     return Theme.textSecondary
+            default:          return Theme.surface
         }
     }
     readonly property color _iconColor: {
         switch (variant) {
-            case "primary":   return "#ffffff"
-            case "secondary": return "#4f6b5c"
-            case "danger":    return "#ffffff"
-            case "ghost":     return "#4f6b5c"
-            default:          return "#ffffff"
+            case "primary":   return Theme.surface
+            case "secondary": return Theme.textSecondary
+            case "danger":    return Theme.surface
+            case "ghost":     return Theme.textSecondary
+            default:          return Theme.surface
         }
     }
 }
