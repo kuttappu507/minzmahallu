@@ -120,7 +120,8 @@ QtObject {
     readonly property string fontFamilyMono:  "Cascadia Code"
 
     // Active font family — switches based on language
-    readonly property string activeFontFamily: typeof I18NController !== "undefined" && I18NController.isMalayalam ? fontFamilyMalayalam : fontFamily
+    // Active font family — set externally by AppShell Binding (avoids context property loop)
+    property string activeFontFamily: "Poppins"
 
     // Font sizes (logical pixels — do NOT scale by DPI)
     // Font sizes — larger for better readability on high-DPI screens

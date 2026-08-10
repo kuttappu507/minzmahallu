@@ -14,6 +14,11 @@ ApplicationWindow {
     title: "Minz Mahallu Management System"
     color: Theme.canvas
 
+    // Bind Theme.theme to SettingsController.theme at window level (always active)
+    // This avoids binding loops in the Theme singleton
+    Binding { target: Theme; property: "theme"; value: SettingsController.theme }
+    Binding { target: Theme; property: "activeFontFamily"; value: I18NController.isMalayalam ? Theme.fontFamilyMalayalam : Theme.fontFamily }
+
     // ===== Splash screen (shown for 2s on startup) =====
     SplashScreen {
         id: splashScreen
@@ -35,10 +40,6 @@ ApplicationWindow {
         id: mainApp
         anchors.fill: parent
         visible: !splashScreen.visible && AuthController.isLoggedIn
-
-    // Bind Theme.theme to SettingsController.theme — ONE source of truth
-    // This avoids binding loops in the Theme singleton
-    Binding { target: Theme; property: "theme"; value: SettingsController.theme }
 
     property int currentNavIndex: 0
     property bool sidebarCollapsed: false
