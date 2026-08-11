@@ -320,6 +320,44 @@ int main(int argc, char* argv[]) {
     }
 
     logMsg("SUCCESS: AppShell loaded. Running event loop.");
+
+    // Set Theme.dark from C++ using QQmlProperty on the root object.
+    // Theme singleton is accessed via "Theme" property of root.
+    // This completely avoids QML binding loops — no QML bindings or Connections.
+    auto rootObj = engine.rootObjects().value(0);
+    auto setThemeDark = [rootObj, settingsController]() {
+        if (!rootObj) return;
+        // Access Theme singleton via QQmlProperty
+        QVariant themeVar = rootObj->property("Theme");
+        if (themeVar.isValid()) {
+            QObject* themeObj = themeVar.value<QObject*>();
+            if (themeObj) {
+                themeObj->setProperty("dark", settingsController->theme() == "dark");
+            }
+        }
+    };
+    setThemeDark();
+    QObject::connect(settingsController, &SettingsController::settingsChanged, [setThemeDark]() {
+        setThemeDark();
+    });
+    auto setThemeFont = [rootObj, i18NController]() {
+        if (!rootObj) return;
+        QVariant themeVar = rootObj->property("Theme");
+        if (themeVar.isValid()) {
+            QObject* themeObj = themeVar.value<QObject*>();
+            if (themeObj) {
+                themeObj->setProperty("activeFontFamily",
+                    i18NController->isMalayalam() ?
+                    themeObj->property("fontFamilyMalayalam").toString() :
+                    themeObj->property("fontFamily").toString());
+            }
+        }
+    };
+    setThemeFont();
+    QObject::connect(i18NController, &I18NController::languageChanged, [setThemeFont]() {
+        setThemeFont();
+    });
+
     int ret = app.exec();
     logMsg(QString("Exited with code %1").arg(ret));
     if (g_logFile.is_open()) g_logFile.close();

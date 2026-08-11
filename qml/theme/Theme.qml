@@ -18,16 +18,8 @@ import QtQuick
 
 QtObject {
     // ===== THEME STATE =====
-    // Use a simple bool — set once from C++ and updated via signal
-    // DO NOT bind to SettingsController here (causes binding loops)
+    // Simple writable property — set from C++ only, no QML bindings
     property bool dark: false
-
-    // Called from AppShell.Component.onCompleted to sync with settings
-    function setDark(isDark) {
-        if (dark !== isDark) {
-            dark = isDark
-        }
-    }
 
     // ===== CANVAS =====
     readonly property color canvas:          dark ? "#0a1a12" : "#e7f4ea"
