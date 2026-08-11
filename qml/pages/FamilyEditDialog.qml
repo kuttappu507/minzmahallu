@@ -207,7 +207,7 @@ ModalDialog {
 
                         // ===== Family Number (read-only) =====
                         ColumnLayout { Layout.fillWidth: true; spacing: 4
-                            Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("section_family_number") }; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
+                            Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("section_family_number") } font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
                             Rectangle {
                                 Layout.fillWidth: true; height: 38; radius: 9; color: Theme.surfaceHover; border.width: 1; border.color: Theme.border
                                 Text {
@@ -286,12 +286,12 @@ ModalDialog {
 
                         // ===== Address (full width) =====
                         ColumnLayout { Layout.fillWidth: true; spacing: 4
-                            Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("section_address") }; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
+                            Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("section_address") } font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
                             TextArea {
                                 Layout.fillWidth: true; Layout.preferredHeight: 64
                                 text: dialog._address; readOnly: dialog.readOnly
                                 font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; color: Theme.textPrimary
-                                placeholderText: { var _l = I18NController.currentLanguage; return I18NController.tr("fam_address_placeholder") }; placeholderTextColor: Theme.textTertiary
+                                placeholderText: { var _l = I18NController.currentLanguage; return I18NController.tr("fam_address_placeholder") } placeholderTextColor: Theme.textTertiary
                                 selectByMouse: true; wrapMode: TextArea.Wrap
                                 background: Rectangle {
                                     radius: 9; color: Theme.surfaceHover; border.width: 1
@@ -305,12 +305,12 @@ ModalDialog {
 
                         // ===== Notes (full width) =====
                         ColumnLayout { Layout.fillWidth: true; spacing: 4
-                            Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("section_notes") }; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
+                            Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("section_notes") } font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
                             TextArea {
                                 Layout.fillWidth: true; Layout.preferredHeight: 56
                                 text: dialog._notes; readOnly: dialog.readOnly
                                 font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; color: Theme.textPrimary
-                                placeholderText: { var _l = I18NController.currentLanguage; return I18NController.tr("wel_remarks_placeholder") }; placeholderTextColor: Theme.textTertiary
+                                placeholderText: { var _l = I18NController.currentLanguage; return I18NController.tr("wel_remarks_placeholder") } placeholderTextColor: Theme.textTertiary
                                 selectByMouse: true; wrapMode: TextArea.Wrap
                                 background: Rectangle {
                                     radius: 9; color: Theme.surfaceHover; border.width: 1

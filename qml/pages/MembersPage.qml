@@ -251,8 +251,8 @@ Item {
                                 MultiEffect { anchors.fill: parent; source: emptyIcon; colorizationColor: Theme.borderHover; colorization: 1.0 }
                             }
                         }
-                        Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("ui_no_records") }; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; font.weight: Font.DemiBold; color: Theme.textPrimary; anchors.horizontalCenter: parent.horizontalCenter }
-                        Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("ui_click_add_to_create") }; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Normal; color: Theme.textTertiary; anchors.horizontalCenter: parent.horizontalCenter }
+                        Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("ui_no_records") } font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; font.weight: Font.DemiBold; color: Theme.textPrimary; anchors.horizontalCenter: parent.horizontalCenter }
+                        Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("ui_click_add_to_create") } font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Normal; color: Theme.textTertiary; anchors.horizontalCenter: parent.horizontalCenter }
                     }
                 }
 
@@ -262,7 +262,7 @@ Item {
                     Rectangle { anchors.top: parent.top; anchors.left: parent.left; anchors.right: parent.right; height: 1; color: Theme.border }
                     RowLayout {
                         anchors.fill: parent; anchors.leftMargin: 16; anchors.rightMargin: 16; spacing: 8
-                        Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("ui_page") + " " + memberModel.currentPage + " " + I18NController.tr("page_of") + " " + memberModel.totalPages }; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; color: Theme.textTertiary; Layout.alignment: Qt.AlignVCenter }
+                        Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("ui_page") + " " + memberModel.currentPage + " " + I18NController.tr("page_of") + " " + memberModel.totalPages } font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; color: Theme.textTertiary; Layout.alignment: Qt.AlignVCenter }
                         Item { Layout.fillWidth: true }
                         Rectangle { width: 28; height: 28; radius: 6; color: prevMA.containsMouse ? Theme.surface : "transparent"; border.width: 1; border.color: prevMA.containsMouse ? Theme.borderHover : Theme.border; Layout.alignment: Qt.AlignVCenter; opacity: memberModel.currentPage > 1 ? 1 : 0.4
                             Item { width: 14; height: 14; anchors.centerIn: parent; Image { id: prevIcon; source: "qrc:/icons/svg/chevron-left.svg"; sourceSize: Qt.size(14, 14); anchors.fill: parent; fillMode: Image.Pad; visible: false } MultiEffect { anchors.fill: parent; source: prevIcon; colorizationColor: Theme.textSecondary; colorization: 1.0 } }

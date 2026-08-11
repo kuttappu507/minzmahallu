@@ -41,13 +41,13 @@ Item {
                 ColumnLayout {
                     anchors.fill: parent; anchors.margins: 24; spacing: 16
 
-                    Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("cert_issue_label") + issueDialog.certType + " " + I18NController.tr("cert_certificate") }; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeLg; font.weight: Font.DemiBold; color: Theme.textPrimary }
-                    Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("cert_enter_to_issue") + issueDialog.labelText.toLowerCase() + I18NController.tr("cert_to_issue_a") + issueDialog.certType.toLowerCase() + I18NController.tr("cert_certificate").toLowerCase() + ":" }; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeSm; color: Theme.textTertiary; Layout.fillWidth: true; wrapMode: Text.Wrap }
+                    Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("cert_issue_label") + issueDialog.certType + " " + I18NController.tr("cert_certificate") } font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeLg; font.weight: Font.DemiBold; color: Theme.textPrimary }
+                    Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("cert_enter_to_issue") + issueDialog.labelText.toLowerCase() + I18NController.tr("cert_to_issue_a") + issueDialog.certType.toLowerCase() + I18NController.tr("cert_certificate").toLowerCase() + ":" } font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeSm; color: Theme.textTertiary; Layout.fillWidth: true; wrapMode: Text.Wrap }
 
                     AppTextField { id: codeInput; Layout.fillWidth: true; label: issueDialog.labelText; placeholderText: issueDialog.placeholderText }
 
                     // Extra field for Residence (issued to name)
-                    AppTextField { id: issuedToInput; Layout.fillWidth: true; visible: issueDialog.certType === "Residence"; label: { var _l = I18NController.currentLanguage; return I18NController.tr("cert_issued_to") }; placeholderText: { var _l = I18NController.currentLanguage; return I18NController.tr("cert_issued_to_placeholder") } }
+                    AppTextField { id: issuedToInput; Layout.fillWidth: true; visible: issueDialog.certType === "Residence"; label: { var _l = I18NController.currentLanguage; return I18NController.tr("cert_issued_to") } placeholderText: { var _l = I18NController.currentLanguage; return I18NController.tr("cert_issued_to_placeholder") } }
 
                     Item { Layout.fillHeight: true; Layout.fillWidth: true }
 
@@ -115,16 +115,16 @@ Item {
             Layout.fillWidth: true; spacing: 16
             Column { Layout.fillWidth: true; spacing: 2
                 Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("cert_title") } font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXl; font.weight: Font.DemiBold; color: Theme.textPrimary }
-                Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("cert_subtitle") }; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeSm; color: Theme.textSecondary } }
+                Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("cert_subtitle") } font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeSm; color: Theme.textSecondary } }
         }
 
         // Issue buttons row
         RowLayout {
             Layout.fillWidth: true; spacing: 10
-            AppButton { text: { var _l = I18NController.currentLanguage; return I18NController.tr("cert_membership") }; variant: "primary"; iconName: "certificates"; onClicked: { issueDialog.certType = "Membership"; issueDialog.labelText = I18NController.tr("cert_member_code"); issueDialog.placeholderText = "MBR-0001"; issueDialog.visible = true } }
-            AppButton { text: { var _l = I18NController.currentLanguage; return I18NController.tr("cert_residence") }; variant: "secondary"; iconName: "families"; onClicked: { issueDialog.certType = "Residence"; issueDialog.labelText = I18NController.tr("cert_family_number"); issueDialog.placeholderText = "FAM-0001"; issueDialog.visible = true } }
-            AppButton { text: { var _l = I18NController.currentLanguage; return I18NController.tr("cert_marriage") }; variant: "secondary"; iconName: "marriage"; onClicked: { issueDialog.certType = "Marriage"; issueDialog.labelText = I18NController.tr("cert_marriage_number"); issueDialog.placeholderText = "MRG-2026-001"; issueDialog.visible = true } }
-            AppButton { text: { var _l = I18NController.currentLanguage; return I18NController.tr("cert_death") }; variant: "secondary"; iconName: "death"; onClicked: { issueDialog.certType = "Death"; issueDialog.labelText = I18NController.tr("cert_death_number"); issueDialog.placeholderText = "DTH-2026-001"; issueDialog.visible = true } }
+            AppButton { text: { var _l = I18NController.currentLanguage; return I18NController.tr("cert_membership") } variant: "primary"; iconName: "certificates"; onClicked: { issueDialog.certType = "Membership"; issueDialog.labelText = I18NController.tr("cert_member_code"); issueDialog.placeholderText = "MBR-0001"; issueDialog.visible = true } }
+            AppButton { text: { var _l = I18NController.currentLanguage; return I18NController.tr("cert_residence") } variant: "secondary"; iconName: "families"; onClicked: { issueDialog.certType = "Residence"; issueDialog.labelText = I18NController.tr("cert_family_number"); issueDialog.placeholderText = "FAM-0001"; issueDialog.visible = true } }
+            AppButton { text: { var _l = I18NController.currentLanguage; return I18NController.tr("cert_marriage") } variant: "secondary"; iconName: "marriage"; onClicked: { issueDialog.certType = "Marriage"; issueDialog.labelText = I18NController.tr("cert_marriage_number"); issueDialog.placeholderText = "MRG-2026-001"; issueDialog.visible = true } }
+            AppButton { text: { var _l = I18NController.currentLanguage; return I18NController.tr("cert_death") } variant: "secondary"; iconName: "death"; onClicked: { issueDialog.certType = "Death"; issueDialog.labelText = I18NController.tr("cert_death_number"); issueDialog.placeholderText = "DTH-2026-001"; issueDialog.visible = true } }
             Item { Layout.fillWidth: true }
             AppButton { text: { var _l = I18NController.currentLanguage; return I18NController.tr("action_export") + " CSV" } variant: "secondary"; iconName: "download"; onClicked: {
                 var dir = CertificateController.exportDir()
@@ -138,7 +138,7 @@ Item {
             Layout.fillWidth: true; spacing: 10
             AppComboBox { model: ["All Types", "Membership", "Residence", "Marriage", "Death", "Character", "Income"]; implicitHeight: 38; onActivated: function(index) { typeFilter = index === 0 ? "" : model[index]; currentPage = 1; refresh() } }
             Item { Layout.fillWidth: true }
-            Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("ui_showing") + " " + certificates.length + " " + I18NController.tr("cert_showing") }; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; color: Theme.textTertiary; Layout.alignment: Qt.AlignVCenter }
+            Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("ui_showing") + " " + certificates.length + " " + I18NController.tr("cert_showing") } font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; color: Theme.textTertiary; Layout.alignment: Qt.AlignVCenter }
         }
 
         // Table
@@ -172,8 +172,8 @@ Item {
                         MouseArea { id: rowMA; anchors.fill: parent; hoverEnabled: true; acceptedButtons: Qt.NoButton } } }
                 Item { Layout.fillWidth: true; Layout.fillHeight: true; visible: page.certificates.length === 0
                     Column { anchors.centerIn: parent; spacing: 8
-                        Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("cert_no_certificates") }; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; font.weight: Font.DemiBold; color: Theme.textPrimary; anchors.horizontalCenter: parent.horizontalCenter }
-                        Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("cert_click_issue") }; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; color: Theme.textTertiary; anchors.horizontalCenter: parent.horizontalCenter } } }
+                        Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("cert_no_certificates") } font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; font.weight: Font.DemiBold; color: Theme.textPrimary; anchors.horizontalCenter: parent.horizontalCenter }
+                        Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("cert_click_issue") } font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; color: Theme.textTertiary; anchors.horizontalCenter: parent.horizontalCenter } } }
             }
         }
     }
