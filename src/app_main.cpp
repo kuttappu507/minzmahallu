@@ -321,41 +321,38 @@ int main(int argc, char* argv[]) {
 
     logMsg("SUCCESS: AppShell loaded. Running event loop.");
 
-    // Set Theme.dark from C++ using QQmlProperty on the root object.
-    // Theme singleton is accessed via "Theme" property of root.
-    // This completely avoids QML binding loops — no QML bindings or Connections.
+    // Set Theme from C++ — call applyTheme() and applyFont() on the Theme singleton.
+    // This sets ALL color properties imperatively — NO QML bindings, NO binding loops.
     auto rootObj = engine.rootObjects().value(0);
-    auto setThemeDark = [rootObj, settingsController]() {
+    auto applyThemeFromCpp = [rootObj, settingsController]() {
         if (!rootObj) return;
-        // Access Theme singleton via QQmlProperty
         QVariant themeVar = rootObj->property("Theme");
         if (themeVar.isValid()) {
             QObject* themeObj = themeVar.value<QObject*>();
             if (themeObj) {
-                themeObj->setProperty("dark", settingsController->theme() == "dark");
+                QMetaObject::invokeMethod(themeObj, "applyTheme",
+                    Q_ARG(QVariant, QVariant(settingsController->theme() == "dark")));
             }
         }
     };
-    setThemeDark();
-    QObject::connect(settingsController, &SettingsController::settingsChanged, [setThemeDark]() {
-        setThemeDark();
+    applyThemeFromCpp();
+    QObject::connect(settingsController, &SettingsController::settingsChanged, [applyThemeFromCpp]() {
+        applyThemeFromCpp();
     });
-    auto setThemeFont = [rootObj, i18NController]() {
+    auto applyFontFromCpp = [rootObj, i18NController]() {
         if (!rootObj) return;
         QVariant themeVar = rootObj->property("Theme");
         if (themeVar.isValid()) {
             QObject* themeObj = themeVar.value<QObject*>();
             if (themeObj) {
-                themeObj->setProperty("activeFontFamily",
-                    i18NController->isMalayalam() ?
-                    themeObj->property("fontFamilyMalayalam").toString() :
-                    themeObj->property("fontFamily").toString());
+                QMetaObject::invokeMethod(themeObj, "applyFont",
+                    Q_ARG(QVariant, QVariant(i18NController->isMalayalam())));
             }
         }
     };
-    setThemeFont();
-    QObject::connect(i18NController, &I18NController::languageChanged, [setThemeFont]() {
-        setThemeFont();
+    applyFontFromCpp();
+    QObject::connect(i18NController, &I18NController::languageChanged, [applyFontFromCpp]() {
+        applyFontFromCpp();
     });
 
     int ret = app.exec();
