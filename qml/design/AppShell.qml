@@ -238,15 +238,12 @@ ApplicationWindow {
                     }
                 }
 
-                // User profile (bottom) — uses AuthController for real user data
+                // User profile + logout (bottom)
                 Item {
-                    width: parent.width; height: 80
+                    width: parent.width; height: 90
                     Rectangle { anchors.top: parent.top; anchors.left: parent.left; anchors.right: parent.right; height: 1; color: Qt.rgba(255,255,255,0.14) }
-                    Rectangle { x: 10; y: 9; width: profileRow.width + 8; height: profileRow.height + 8; radius: 9; color: Qt.rgba(255,255,255, profileHover.containsMouse ? 0.06 : 0); Behavior on color { ColorAnimation { duration: 120 } } z: -1; visible: !mainApp.sidebarCollapsed }
-                    HoverHandler { id: profileHover; cursorShape: Qt.PointingHandCursor }
-                    MouseArea { anchors.fill: parent; onClicked: AuthController.logout() }
                     Row {
-                        id: profileRow; x: 14; y: 13; spacing: 10; visible: !mainApp.sidebarCollapsed
+                        id: profileRow; x: 14; y: 10; spacing: 10; visible: !mainApp.sidebarCollapsed
                         Rectangle { width: 36; height: 36; radius: 9; color: Theme.gold; border.width: 2; border.color: Theme.goldBorder
                             Text { anchors.centerIn: parent; text: AuthController.initials; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; font.weight: Font.DemiBold; color: Theme.goldText } }
                         Column { spacing: 0
@@ -255,8 +252,33 @@ ApplicationWindow {
                         }
                     }
                     // Collapsed: just avatar
-                    Rectangle { anchors.centerIn: parent; visible: mainApp.sidebarCollapsed; width: 36; height: 36; radius: 9; color: Theme.gold; border.width: 2; border.color: Theme.goldBorder
+                    Rectangle { x: 14; y: 10; visible: mainApp.sidebarCollapsed; width: 36; height: 36; radius: 9; color: Theme.gold; border.width: 2; border.color: Theme.goldBorder
                         Text { anchors.centerIn: parent; text: AuthController.initials; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; font.weight: Font.DemiBold; color: Theme.goldText } }
+                    // Logout button
+                    Rectangle {
+                        x: 14; y: 54; width: parent.width - 28; height: 28; radius: 6
+                        visible: !mainApp.sidebarCollapsed
+                        color: logoutMA.containsMouse ? Qt.rgba(255,255,255,0.08) : "transparent"
+                        Behavior on color { ColorAnimation { duration: 120 } }
+                        Row { anchors.centerIn: parent; spacing: 6
+                            Item { width: 14; height: 14; y: (20 - 14) / 2
+                                Image { id: logoutIcon; source: "qrc:/icons/svg/log-out.svg"; sourceSize: Qt.size(14, 14); anchors.fill: parent; fillMode: Image.Pad; visible: false }
+                                MultiEffect { anchors.fill: parent; source: logoutIcon; colorizationColor: Theme.sidebarSubTitle; colorization: 1.0 }
+                            }
+                            Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("action_logout") } font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.sidebarSubTitle; y: (20 - height) / 2 }
+                        }
+                        MouseArea { id: logoutMA; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: AuthController.logout() }
+                    }
+                    // Collapsed: logout icon only
+                    Rectangle { x: parent.width/2 - 14; y: 54; width: 28; height: 28; radius: 6; visible: mainApp.sidebarCollapsed
+                        color: logoutMA2.containsMouse ? Qt.rgba(255,255,255,0.08) : "transparent"
+                        Behavior on color { ColorAnimation { duration: 120 } }
+                        Item { width: 14; height: 14; anchors.centerIn: parent
+                            Image { id: logoutIcon2; source: "qrc:/icons/svg/log-out.svg"; sourceSize: Qt.size(14, 14); anchors.fill: parent; fillMode: Image.Pad; visible: false }
+                            MultiEffect { anchors.fill: parent; source: logoutIcon2; colorizationColor: Theme.sidebarSubTitle; colorization: 1.0 }
+                        }
+                        MouseArea { id: logoutMA2; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: AuthController.logout() }
+                    }
                 }
             }
         }

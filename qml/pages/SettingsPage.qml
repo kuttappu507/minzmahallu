@@ -5,12 +5,6 @@ import QtQuick.Layouts
 import QtQuick.Effects
 import "../components"
 
-// ============================================================================
-// SettingsPage — Organization info, logo/seal, theme, backup config
-// Uses Component.onCompleted to avoid binding loops (text:onTextChanged creates
-// a loop — load once, then only write back on user edit).
-// ============================================================================
-
 Item {
     id: page
 
@@ -35,40 +29,41 @@ Item {
         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
 
         ColumnLayout {
-            width: parent.width; spacing: 16
+            width: Math.min(parent.width, 700); anchors.horizontalCenter: parent.horizontalCenter
+            spacing: 20
 
             // Header
-            Column { Layout.fillWidth: true; Layout.leftMargin: 24; Layout.rightMargin: 24; Layout.topMargin: 24; spacing: 2
+            Column { Layout.fillWidth: true; Layout.topMargin: 24; spacing: 2
                 Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("set_title") } font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXl; font.weight: Font.DemiBold; color: Theme.textPrimary }
-                Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("set_title") } font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeSm; color: Theme.textSecondary } }
+            }
 
-            // Organization info
-            Rectangle { Layout.fillWidth: true; Layout.leftMargin: 24; Layout.rightMargin: 24; radius: 10; color: Theme.surface; border.width: 1; border.color: Theme.border
-                ColumnLayout { anchors.fill: parent; anchors.margins: 20; spacing: 14
+            // Organization
+            Rectangle { Layout.fillWidth: true; radius: 10; color: Theme.surface; border.width: 1; border.color: Theme.border
+                ColumnLayout { anchors.fill: parent; anchors.margins: 24; spacing: 16
 
-                    Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("set_title") } font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; font.weight: Font.DemiBold; color: Theme.textPrimary }
+                    AppTextField { id: mahalluNameField; Layout.fillWidth: true; onTextChanged: SettingsController.mahalluName = text }
 
-                    AppTextField { id: mahalluNameField; Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("app_name") } onTextChanged: SettingsController.mahalluName = text }
                     RowLayout { Layout.fillWidth: true; spacing: 16
-                        AppTextField { id: phoneField; Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("family_phone") } onTextChanged: SettingsController.phone = text }
-                        AppTextField { id: emailField; Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("member_email") } onTextChanged: SettingsController.email = text } }
+                        AppTextField { id: phoneField; Layout.fillWidth: true; onTextChanged: SettingsController.phone = text }
+                        AppTextField { id: emailField; Layout.fillWidth: true; onTextChanged: SettingsController.email = text } }
+
                     RowLayout { Layout.fillWidth: true; spacing: 16
-                        AppTextField { id: fysField; Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("set_title") } placeholderText: "04-01"; onTextChanged: SettingsController.financialYearStart = text }
-                        AppTextField { id: currencyField; Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("set_title") } onTextChanged: SettingsController.currencySymbol = text }
-                        AppTextField { id: receiptPrefixField; Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("set_title") } onTextChanged: SettingsController.receiptPrefix = text } }
+                        AppTextField { id: fysField; Layout.fillWidth: true; placeholderText: "04-01"; onTextChanged: SettingsController.financialYearStart = text }
+                        AppTextField { id: currencyField; Layout.fillWidth: true; onTextChanged: SettingsController.currencySymbol = text }
+                        AppTextField { id: receiptPrefixField; Layout.fillWidth: true; onTextChanged: SettingsController.receiptPrefix = text } }
 
                     ColumnLayout { Layout.fillWidth: true; spacing: 4
                         Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("family_address") } font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
-                        TextArea { id: addressField; Layout.fillWidth: true; Layout.preferredHeight: 56; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; color: Theme.textPrimary; placeholderText: { var _l = I18NController.currentLanguage; return I18NController.tr("family_address") } placeholderTextColor: Theme.textTertiary; selectByMouse: true; wrapMode: TextArea.Wrap
+                        TextArea { id: addressField; Layout.fillWidth: true; Layout.preferredHeight: 56; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; color: Theme.textPrimary; selectByMouse: true; wrapMode: TextArea.Wrap
                             background: Rectangle { radius: 9; color: Theme.surfaceHover; border.width: 1; border.color: parent.activeFocus ? Theme.primary : parent.hovered ? Theme.borderHover : Theme.border; Behavior on border.color { ColorAnimation { duration: 120 } } }
                             padding: 10; onTextChanged: SettingsController.address = text } }
                 }
             }
 
-            // User Interface
-            Rectangle { Layout.fillWidth: true; Layout.leftMargin: 24; Layout.rightMargin: 24; radius: 10; color: Theme.surface; border.width: 1; border.color: Theme.border
-                ColumnLayout { anchors.fill: parent; anchors.margins: 20; spacing: 14
-                    Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("ui_type") } font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; font.weight: Font.DemiBold; color: Theme.textPrimary }
+            // Theme + Language
+            Rectangle { Layout.fillWidth: true; radius: 10; color: Theme.surface; border.width: 1; border.color: Theme.border
+                ColumnLayout { anchors.fill: parent; anchors.margins: 24; spacing: 16
+
                     RowLayout { Layout.fillWidth: true; spacing: 16
                         ColumnLayout { Layout.fillWidth: true; spacing: 4
                             Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("set_theme") } font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
@@ -82,7 +77,7 @@ Item {
                                             delegate: ItemDelegate { width: parent.width; height: 34; padding: 0
                                                 contentItem: Text { text: modelData; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; color: Theme.textPrimary; anchors.left: parent.left; anchors.leftMargin: 8; anchors.verticalCenter: parent.verticalCenter }
                                                 background: Rectangle { color: highlighted ? Theme.primarySubtle : "transparent"; radius: 4 }
-                                                onClicked: { SettingsController.theme = modelData; themePopup.visible = false } } } } } } }
+                                                onClicked: { SettingsController.theme = modelData; SettingsController.save(); themePopup.visible = false } } } } } }
                         ColumnLayout { Layout.fillWidth: true; spacing: 4
                             Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("set_language") } font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
                             Rectangle { Layout.fillWidth: true; height: 38; radius: 9; color: Theme.surfaceHover; border.width: 1; border.color: langMA.containsMouse ? Theme.borderHover : Theme.border
@@ -95,33 +90,31 @@ Item {
                                             delegate: ItemDelegate { width: parent.width; height: 34; padding: 0
                                                 contentItem: Text { text: modelData.l; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; color: Theme.textPrimary; anchors.left: parent.left; anchors.leftMargin: 8; anchors.verticalCenter: parent.verticalCenter }
                                                 background: Rectangle { color: highlighted ? Theme.primarySubtle : "transparent"; radius: 4 }
-                                                onClicked: { SettingsController.language = modelData.v; langPopup.visible = false } } } } } } }
+                                                onClicked: { SettingsController.language = modelData.v; SettingsController.save(); I18NController.setLanguage(modelData.v); langPopup.visible = false } } } } } }
                     }
                 }
             }
 
             // Backup config
-            Rectangle { Layout.fillWidth: true; Layout.leftMargin: 24; Layout.rightMargin: 24; radius: 10; color: Theme.surface; border.width: 1; border.color: Theme.border
-                ColumnLayout { anchors.fill: parent; anchors.margins: 20; spacing: 14
-                    Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("bak_title") } font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; font.weight: Font.DemiBold; color: Theme.textPrimary }
+            Rectangle { Layout.fillWidth: true; radius: 10; color: Theme.surface; border.width: 1; border.color: Theme.border
+                ColumnLayout { anchors.fill: parent; anchors.margins: 24; spacing: 16
                     RowLayout { Layout.fillWidth: true; spacing: 16
-                        Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("set_title") } font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeSm; color: Theme.textSecondary; Layout.alignment: Qt.AlignVCenter }
+                        Text { text: "Auto Backup"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeSm; color: Theme.textSecondary; Layout.alignment: Qt.AlignVCenter }
                         Switch { id: autoBackupSwitch; onCheckedChanged: SettingsController.autoBackup = checked }
-                        AppTextField { id: intervalField; Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("set_title") } onTextChanged: { var v = parseInt(text); if (!isNaN(v) && v > 0) SettingsController.backupIntervalHours = v } } }
+                        AppTextField { id: intervalField; Layout.fillWidth: true; onTextChanged: { var v = parseInt(text); if (!isNaN(v) && v > 0) SettingsController.backupIntervalHours = v } } }
                 }
             }
 
-            // Save button
-            Row { Layout.fillWidth: true; Layout.leftMargin: 24; Layout.rightMargin: 24; Layout.bottomMargin: 24; layoutDirection: Qt.RightToLeft
+            // Save
+            Row { Layout.fillWidth: true; Layout.bottomMargin: 24; layoutDirection: Qt.RightToLeft
                 AppButton { text: { var _l = I18NController.currentLanguage; return I18NController.tr("action_save") } variant: "primary"; iconName: "check"; onClicked: {
                     var ok = SettingsController.save()
-                    toast.show(ok ? "Settings saved successfully" : "Save failed", ok ? Theme.primary : Theme.danger)
+                    toast.show(ok ? "OK" : "Fail", ok ? Theme.primary : Theme.danger)
                 } }
             }
         }
     }
 
-    // Load settings ONCE on completed — avoids binding loops
     Component.onCompleted: {
         mahalluNameField.text = SettingsController.mahalluName
         phoneField.text = SettingsController.phone
@@ -132,5 +125,7 @@ Item {
         addressField.text = SettingsController.address
         intervalField.text = SettingsController.backupIntervalHours.toString()
         autoBackupSwitch.checked = SettingsController.autoBackup
+    }
+    }
     }
 }

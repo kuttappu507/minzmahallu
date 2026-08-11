@@ -200,7 +200,7 @@ ScrollView {
                                 property string cardSb: ["#d3f5e6","#c8f6f1","#d7edfb","#fcebc8","#fddfe5","#fadfeb","#e7defc","#ffe4cf","#e6ebf2","#dbe7fd"][index]
                                 property string cardSt: ["#04543c","#0f5e54","#0a5480","#7c4403","#95102e","#93184f","#5423b7","#8f3708","#33415c","#1e3fae"][index]
                                 property string cardIcon: ["families","members","user","dollar","alert","donations","welfare","marriage","death","accounting"][index]
-                                color: Theme.dark ? Qt.darker(cardSb, 3) : cardSb
+                                color: cardSb
                                 border.width: 1
                                 border.color: statHover.containsMouse ? cardSc : Qt.lighter(cardSc, 1.15)
                                 z: statHover.hovered ? 10 : 0
@@ -237,14 +237,14 @@ ScrollView {
                                     Text {
                                         text: statCard.cardValue
                                         font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSize2xl; font.weight: Font.Bold
-                                        color: Theme.dark ? Qt.lighter(cardSt, 1.5) : cardSt
+                                        color: cardSt
                                         topPadding: 9; elide: Text.ElideRight; maximumLineCount: 1; width: parent.width
                                     }
 
                                     Text {
                                         text: statCard.cardLabel
                                         font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium
-                                        color: Theme.dark ? Qt.lighter(cardSt, 1.5) : cardSt
+                                        color: cardSt
                                         opacity: 0.75; topPadding: 6; elide: Text.ElideRight; maximumLineCount: 1; width: parent.width
                                     }
                                 }
