@@ -323,32 +323,31 @@ int main(int argc, char* argv[]) {
 
     // Set Theme from C++ — call applyTheme() and applyFont() on the Theme singleton.
     // This sets ALL color properties imperatively — NO QML bindings, NO binding loops.
-    auto rootObj = engine.rootObjects().value(0);
-    auto applyThemeFromCpp = [rootObj, settingsController]() {
-        if (!rootObj) return;
-        QVariant themeVar = rootObj->property("Theme");
-        if (themeVar.isValid()) {
-            QObject* themeObj = themeVar.value<QObject*>();
-            if (themeObj) {
-                QMetaObject::invokeMethod(themeObj, "applyTheme",
-                    Q_ARG(QVariant, QVariant(settingsController->theme() == "dark")));
-            }
-        }
+    //
+    // CRITICAL: Theme is a QML singleton (qmlRegisterSingletonType), NOT a property
+    // of the root object. We must use engine.singletonInstance<>() to fetch it.
+    // Using rootObj->property("Theme") returns an invalid QVariant and the call
+    // silently does nothing — this was the root cause of the dark mode toggle
+    // not working.
+    QObject* themeObj = engine.singletonInstance<QObject*>("MMS.Theme", "Theme");
+    if (!themeObj) {
+        logMsg("WARNING: Failed to fetch Theme singleton — dark mode toggle will not work!");
+    } else {
+        logMsg("  Theme singleton fetched OK");
+    }
+    auto applyThemeFromCpp = [themeObj, settingsController]() {
+        if (!themeObj) return;
+        QMetaObject::invokeMethod(themeObj, "applyTheme",
+            Q_ARG(QVariant, QVariant(settingsController->theme() == "dark")));
     };
     applyThemeFromCpp();
     QObject::connect(settingsController, &SettingsController::settingsChanged, [applyThemeFromCpp]() {
         applyThemeFromCpp();
     });
-    auto applyFontFromCpp = [rootObj, i18NController]() {
-        if (!rootObj) return;
-        QVariant themeVar = rootObj->property("Theme");
-        if (themeVar.isValid()) {
-            QObject* themeObj = themeVar.value<QObject*>();
-            if (themeObj) {
-                QMetaObject::invokeMethod(themeObj, "applyFont",
-                    Q_ARG(QVariant, QVariant(i18NController->isMalayalam())));
-            }
-        }
+    auto applyFontFromCpp = [themeObj, i18NController]() {
+        if (!themeObj) return;
+        QMetaObject::invokeMethod(themeObj, "applyFont",
+            Q_ARG(QVariant, QVariant(i18NController->isMalayalam())));
     };
     applyFontFromCpp();
     QObject::connect(i18NController, &I18NController::languageChanged, [applyFontFromCpp]() {

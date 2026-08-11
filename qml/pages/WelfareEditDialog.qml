@@ -137,7 +137,7 @@ ModalDialog {
 
                 // Status badge (when editing)
                 Rectangle { Layout.fillWidth: true; Layout.leftMargin: 24; Layout.rightMargin: 24; Layout.topMargin: 8; visible: dialog.requestId > 0; height: 32; radius: 6; color: { var s = dialog._status.toLowerCase(); if (s === "approved" || s === "disbursed") return Theme.primarySubtleAlt; if (s === "rejected") return Theme.coralSubtle; return Theme.warningSubtle }
-                    Text { anchors.centerIn: parent; text: "Status: " + dialog._status; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeSm; font.weight: Font.DemiBold; color: { var s = dialog._status.toLowerCase(); if (s === "approved" || s === "disbursed") return "#04543c"; if (s === "rejected") return "#95102e"; return "#7c4403" } } }
+                    Text { anchors.centerIn: parent; text: { var _l = I18NController.currentLanguage; return I18NController.tr("wel_status_label") + dialog._status }; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeSm; font.weight: Font.DemiBold; color: { var s = dialog._status.toLowerCase(); if (s === "approved" || s === "disbursed") return Theme.primary; if (s === "rejected") return Theme.danger; return Theme.warning } } }
 
                 // Error banner
                 Rectangle { Layout.fillWidth: true; Layout.leftMargin: 24; Layout.rightMargin: 24; Layout.topMargin: 8; visible: dialog._errorMessage !== ""; height: 36; radius: 8; color: Theme.coralSubtle; border.width: 1; border.color: Theme.danger
@@ -159,13 +159,13 @@ ModalDialog {
 
                         // Applicant Name | Family
                         RowLayout { Layout.fillWidth: true; spacing: 16
-                            AppTextField { Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("wel_applicant") + " *" } placeholderText: "Full name"; text: dialog._applicantName; readOnly: dialog.readOnly; showError: dialog._errorField === "applicantName"; errorText: dialog._errorMessage; onTextChanged: dialog._applicantName = text }
+                            AppTextField { Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("wel_applicant") + " *" }; placeholderText: { var _l = I18NController.currentLanguage; return I18NController.tr("mrg_name_placeholder") }; text: dialog._applicantName; readOnly: dialog.readOnly; showError: dialog._errorField === "applicantName"; errorText: dialog._errorMessage; onTextChanged: dialog._applicantName = text }
                             ColumnLayout { Layout.fillWidth: true; spacing: 4
-                                Text { text: "Family (optional)"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
+                                Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("section_family_optional") }; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
                                 Rectangle { Layout.fillWidth: true; height: 38; radius: 9; color: Theme.surfaceHover; border.width: 1; border.color: familyMA.containsMouse ? Theme.borderHover : Theme.border; Behavior on border.color { ColorAnimation { duration: 120 } }
                                     MouseArea { id: familyMA; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: familyPopup.visible = !familyPopup.visible }
                                     Text { anchors.left: parent.left; anchors.leftMargin: 10; anchors.verticalCenter: parent.verticalCenter
-                                        text: { if (dialog._familyId === "") return "(none)"; for (var i = 0; i < dialog._families.length; i++) { if (dialog._families[i].id === parseInt(dialog._familyId)) return dialog._families[i].familyNumber + " - " + dialog._families[i].houseName } return "(none)" }
+                                        text: { if (dialog._familyId === "") return I18NController.tr("form_none"); for (var i = 0; i < dialog._families.length; i++) { if (dialog._families[i].id === parseInt(dialog._familyId)) return dialog._families[i].familyNumber + " - " + dialog._families[i].houseName } return I18NController.tr("form_none") }
                                         font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; color: dialog._familyId !== "" ? Theme.textPrimary : Theme.textTertiary }
                                     Popup { id: familyPopup; y: parent.height + 4; width: parent.width; implicitHeight: 280; padding: 4; background: Rectangle { color: Theme.surface; border.width: 1; border.color: Theme.border; radius: 9 }
                                         ListView { anchors.fill: parent; clip: true; spacing: 2; model: dialog._families
@@ -177,22 +177,22 @@ ModalDialog {
                         // Category | Amount Requested
                         RowLayout { Layout.fillWidth: true; spacing: 16
                             AppComboBox { Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("ui_category") + " *" } model: dialog._categories; currentIndex: Math.max(0, dialog._categories.indexOf(dialog._category)); onActivated: function(index) { dialog._category = model[index] } }
-                            AppTextField { Layout.fillWidth: true; label: "Amount Requested *"; placeholderText: "0.00"; text: dialog._amountRequested; readOnly: dialog.readOnly; showError: dialog._errorField === "amountRequested"; errorText: dialog._errorMessage; onTextChanged: dialog._amountRequested = text } }
+                            AppTextField { Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("wel_amount_requested") + " *" }; placeholderText: "0.00"; text: dialog._amountRequested; readOnly: dialog.readOnly; showError: dialog._errorField === "amountRequested"; errorText: dialog._errorMessage; onTextChanged: dialog._amountRequested = text } }
 
                         // Amount Approved (read-only unless approving)
-                        AppTextField { Layout.fillWidth: true; label: "Amount Approved"; placeholderText: "0.00"; text: dialog._amountApproved; readOnly: dialog.readOnly; onTextChanged: dialog._amountApproved = text }
+                        AppTextField { Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("wel_amount_approved") }; placeholderText: "0.00"; text: dialog._amountApproved; readOnly: dialog.readOnly; onTextChanged: dialog._amountApproved = text }
 
                         // Reason (full width)
                         ColumnLayout { Layout.fillWidth: true; spacing: 4
                             Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("wel_reason") } font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
-                            TextArea { Layout.fillWidth: true; Layout.preferredHeight: 64; text: dialog._reason; readOnly: dialog.readOnly; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; color: Theme.textPrimary; placeholderText: "Reason for request..."; placeholderTextColor: Theme.textTertiary; selectByMouse: true; wrapMode: TextArea.Wrap
+                            TextArea { Layout.fillWidth: true; Layout.preferredHeight: 64; text: dialog._reason; readOnly: dialog.readOnly; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; color: Theme.textPrimary; placeholderText: { var _l = I18NController.currentLanguage; return I18NController.tr("wel_reason_placeholder") }; placeholderTextColor: Theme.textTertiary; selectByMouse: true; wrapMode: TextArea.Wrap
                                 background: Rectangle { radius: 9; color: Theme.surfaceHover; border.width: 1; border.color: parent.activeFocus ? Theme.primary : parent.hovered ? Theme.borderHover : Theme.border; Behavior on border.color { ColorAnimation { duration: 120 } } }
                                 padding: 10; onTextChanged: dialog._reason = text } }
 
                         // Remarks
                         ColumnLayout { Layout.fillWidth: true; spacing: 4
-                            Text { text: "REMARKS"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
-                            TextArea { Layout.fillWidth: true; Layout.preferredHeight: 56; text: dialog._remarks; readOnly: dialog.readOnly; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; color: Theme.textPrimary; placeholderText: "Internal remarks..."; placeholderTextColor: Theme.textTertiary; selectByMouse: true; wrapMode: TextArea.Wrap
+                            Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("section_remarks") }; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
+                            TextArea { Layout.fillWidth: true; Layout.preferredHeight: 56; text: dialog._remarks; readOnly: dialog.readOnly; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; color: Theme.textPrimary; placeholderText: { var _l = I18NController.currentLanguage; return I18NController.tr("wel_remarks_placeholder") }; placeholderTextColor: Theme.textTertiary; selectByMouse: true; wrapMode: TextArea.Wrap
                                 background: Rectangle { radius: 9; color: Theme.surfaceHover; border.width: 1; border.color: parent.activeFocus ? Theme.primary : parent.hovered ? Theme.borderHover : Theme.border; Behavior on border.color { ColorAnimation { duration: 120 } } }
                                 padding: 10; onTextChanged: dialog._remarks = text } }
 
@@ -201,23 +201,23 @@ ModalDialog {
 
                         // Approve section
                         ColumnLayout { Layout.fillWidth: true; spacing: 4; visible: dialog.requestId > 0 && dialog._status === "Pending" && !dialog.readOnly
-                            Text { text: "APPROVE REQUEST"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.DemiBold; color: "#04543c" }
+                            Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("section_approve_request") }; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.DemiBold; color: Theme.primary }
                             RowLayout { Layout.fillWidth: true; spacing: 12
                                 AppTextField { id: approveAmountField; Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("wel_amount_approved") } placeholderText: "0.00"; text: dialog._amountRequested }
-                                AppTextField { id: approveRemarksField; Layout.fillWidth: true; label: "Approval Remarks"; placeholderText: "Optional" } }
-                            AppButton { text: "Approve Request"; variant: "primary"; iconName: "check"; onClicked: dialog.doApprove() } }
+                                AppTextField { id: approveRemarksField; Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("wel_approval_remarks") }; placeholderText: { var _l = I18NController.currentLanguage; return I18NController.tr("form_none") } } }
+                            AppButton { text: { var _l = I18NController.currentLanguage; return I18NController.tr("wel_approve_request") }; variant: "primary"; iconName: "check"; onClicked: dialog.doApprove() } }
 
                         // Reject section
                         ColumnLayout { Layout.fillWidth: true; spacing: 4; visible: dialog.requestId > 0 && dialog._status === "Pending" && !dialog.readOnly
-                            Text { text: "REJECT REQUEST"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.DemiBold; color: "#95102e" }
-                            AppTextField { id: rejectReasonField; Layout.fillWidth: true; label: "Rejection Reason"; placeholderText: "Reason for rejection" }
-                            AppButton { text: "Reject Request"; variant: "danger"; iconName: "alert"; onClicked: dialog.doReject() } }
+                            Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("section_reject_request") }; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.DemiBold; color: Theme.danger }
+                            AppTextField { id: rejectReasonField; Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("wel_rejection_reason") }; placeholderText: { var _l = I18NController.currentLanguage; return I18NController.tr("wel_rejection_placeholder") } }
+                            AppButton { text: { var _l = I18NController.currentLanguage; return I18NController.tr("wel_reject_request") }; variant: "danger"; iconName: "alert"; onClicked: dialog.doReject() } }
 
                         // Disburse section (visible when status=Approved)
                         ColumnLayout { Layout.fillWidth: true; spacing: 4; visible: dialog.requestId > 0 && dialog._status === "Approved" && !dialog.readOnly
-                            Text { text: "DISBURSE FUNDS"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.DemiBold; color: "#7c4403" }
-                            Text { text: "Click below to mark this request as disbursed with today's date."; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; color: Theme.textTertiary; Layout.fillWidth: true; wrapMode: Text.Wrap }
-                            AppButton { text: "Mark as Disbursed"; variant: "primary"; iconName: "dollar"; onClicked: dialog.doDisburse() } }
+                            Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("section_disburse_funds") }; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.DemiBold; color: Theme.warning }
+                            Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("wel_disburse_hint") }; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; color: Theme.textTertiary; Layout.fillWidth: true; wrapMode: Text.Wrap }
+                            AppButton { text: { var _l = I18NController.currentLanguage; return I18NController.tr("wel_mark_disbursed") }; variant: "primary"; iconName: "dollar"; onClicked: dialog.doDisburse() } }
 
                         Item { Layout.fillWidth: true; Layout.preferredHeight: 4 }
                     }
@@ -228,7 +228,7 @@ ModalDialog {
                     Rectangle { anchors.top: parent.top; anchors.left: parent.left; anchors.right: parent.right; height: 1; color: Theme.surfacePressed }
                     Row { anchors.right: parent.right; anchors.rightMargin: 24; anchors.verticalCenter: parent.verticalCenter; spacing: 10
                         AppButton { text: { var _l = I18NController.currentLanguage; return I18NController.tr("action_cancel") } variant: "secondary"; onClicked: dialog.visible = false }
-                        AppButton { text: dialog.readOnly ? "Close" : (dialog.requestId > 0 ? "Save Changes" : "Add Request"); variant: "primary"; iconName: dialog.readOnly ? "" : "check"; visible: !dialog.readOnly || true; onClicked: dialog.submit() } } }
+                        AppButton { text: { var _l = I18NController.currentLanguage; if (dialog.readOnly) return I18NController.tr("ui_close"); if (dialog.requestId > 0) return I18NController.tr("ui_save_changes"); return I18NController.tr("wel_new_request") } variant: "primary"; iconName: dialog.readOnly ? "" : "check"; visible: !dialog.readOnly || true; onClicked: dialog.submit() } } }
             }
         }
     }

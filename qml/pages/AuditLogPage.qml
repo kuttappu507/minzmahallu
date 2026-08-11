@@ -35,7 +35,7 @@ Item {
             Layout.fillWidth: true; spacing: 10
             AppComboBox { model: ["All Actions", "LOGIN", "LOGOUT", "ADD", "EDIT", "DELETE", "PRINT", "EXPORT", "BACKUP", "RESTORE"]; implicitHeight: 38; onActivated: function(index) { actionFilter = index === 0 ? "" : model[index]; currentPage = 1; refresh() } }
             Item { Layout.fillWidth: true }
-            Text { text: "Showing " + entries.length + " entries"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; color: Theme.textTertiary; Layout.alignment: Qt.AlignVCenter }
+            Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("ui_showing") + " " + entries.length + " " + I18NController.tr("ui_records") } font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; color: Theme.textTertiary; Layout.alignment: Qt.AlignVCenter }
         }
 
         Rectangle {
@@ -60,7 +60,7 @@ Item {
                             Text { text: modelData.description; width: parent.width - 180 - 150 - 100 - 120; height: 44; verticalAlignment: Text.AlignVCenter; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeSm; color: Theme.textSecondary; elide: Text.ElideRight } } } }
                 Item { Layout.fillWidth: true; Layout.fillHeight: true; visible: page.entries.length === 0
                     Column { anchors.centerIn: parent; spacing: 8
-                        Text { text: "No audit entries found"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; font.weight: Font.DemiBold; color: Theme.textPrimary; anchors.horizontalCenter: parent.horizontalCenter } } }
+                        Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("ui_no_records") } font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; font.weight: Font.DemiBold; color: Theme.textPrimary; anchors.horizontalCenter: parent.horizontalCenter } } }
             }
         }
     }

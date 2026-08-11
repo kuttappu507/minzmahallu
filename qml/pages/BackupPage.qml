@@ -72,7 +72,7 @@ Item {
             Layout.fillWidth: true; spacing: 16
             Column { Layout.fillWidth: true; spacing: 2
                 Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("bak_title") } font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXl; font.weight: Font.DemiBold; color: Theme.textPrimary }
-                Text { text: "Database backup and restore (" + backups.length + " backups)"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeSm; color: Theme.textSecondary } }
+                Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("bak_subtitle_count") + " (" + backups.length + ")" } font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeSm; color: Theme.textSecondary } }
         }
 
         // Action buttons
@@ -120,8 +120,8 @@ Item {
                         MouseArea { id: rowMA; anchors.fill: parent; hoverEnabled: true; acceptedButtons: Qt.NoButton } } }
                 Item { Layout.fillWidth: true; Layout.fillHeight: true; visible: page.backups.length === 0
                     Column { anchors.centerIn: parent; spacing: 8
-                        Text { text: "No backups found"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; font.weight: Font.DemiBold; color: Theme.textPrimary; anchors.horizontalCenter: parent.horizontalCenter }
-                        Text { text: "Click 'Create Backup' to create your first backup"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; color: Theme.textTertiary; anchors.horizontalCenter: parent.horizontalCenter } } }
+                        Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("bak_no_backups") } font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; font.weight: Font.DemiBold; color: Theme.textPrimary; anchors.horizontalCenter: parent.horizontalCenter }
+                        Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("bak_create_first") } font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; color: Theme.textTertiary; anchors.horizontalCenter: parent.horizontalCenter } } }
             }
         }
     }

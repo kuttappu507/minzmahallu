@@ -52,7 +52,7 @@ Item {
             Layout.fillWidth: true; spacing: 16
             Column { Layout.fillWidth: true; spacing: 2
                 Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("nav_welfare") } font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXl; font.weight: Font.DemiBold; color: Theme.textPrimary }
-                Text { text: "Assistance requests and disbursements"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeSm; color: Theme.textSecondary } }
+                Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("wel_subtitle") } font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeSm; color: Theme.textSecondary } }
             AppButton {
                 text: { var _l = I18NController.currentLanguage; return I18NController.tr("action_add") } variant: "primary"; iconName: "plus"
                 Layout.alignment: Qt.AlignTop
@@ -71,7 +71,7 @@ Item {
                 Timer { id: searchDebounce; interval: 300; onTriggered: welfareModel.searchTerm = searchField.text } }
             AppComboBox { model: ["All Status", "Pending", "Approved", "Rejected", "Disbursed", "Closed"]; implicitHeight: 38; onActivated: function(index) { welfareModel.statusFilter = index === 0 ? "" : model[index] } }
             AppComboBox { model: ["All Categories", "Medical Aid", "Education Aid", "Marriage Assistance", "Financial Assistance"]; implicitHeight: 38; onActivated: function(index) { welfareModel.categoryFilter = index === 0 ? "" : model[index] } }
-            Text { text: "Showing " + welfareModel.rowCount + " of " + welfareModel.totalCount; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; color: Theme.textTertiary; Layout.alignment: Qt.AlignVCenter }
+            Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("ui_showing") + " " + welfareModel.rowCount + " " + I18NController.tr("ui_of") + " " + welfareModel.totalCount } font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; color: Theme.textTertiary; Layout.alignment: Qt.AlignVCenter }
         }
 
         Rectangle {
@@ -106,12 +106,12 @@ Item {
                         MouseArea { id: rowMA; anchors.fill: parent; hoverEnabled: true; acceptedButtons: Qt.NoButton } } }
                 Item { Layout.fillWidth: true; Layout.fillHeight: true; visible: welfareModel.rowCount === 0
                     Column { anchors.centerIn: parent; spacing: 8
-                        Text { text: "No welfare requests found"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; font.weight: Font.DemiBold; color: Theme.textPrimary; anchors.horizontalCenter: parent.horizontalCenter }
-                        Text { text: "Requests will appear here once added"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; color: Theme.textTertiary; anchors.horizontalCenter: parent.horizontalCenter } } }
+                        Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("ui_no_records") } font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; font.weight: Font.DemiBold; color: Theme.textPrimary; anchors.horizontalCenter: parent.horizontalCenter }
+                        Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("ui_click_add_to_create") } font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; color: Theme.textTertiary; anchors.horizontalCenter: parent.horizontalCenter } } }
                 Rectangle { Layout.fillWidth: true; Layout.preferredHeight: 44; color: Theme.surfaceHover
                     Rectangle { anchors.top: parent.top; anchors.left: parent.left; anchors.right: parent.right; height: 1; color: Theme.border }
                     RowLayout { anchors.fill: parent; anchors.leftMargin: 16; anchors.rightMargin: 16; spacing: 8
-                        Text { text: "Page " + welfareModel.currentPage + " of " + welfareModel.totalPages; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; color: Theme.textTertiary; Layout.alignment: Qt.AlignVCenter }
+                        Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("ui_page") + " " + welfareModel.currentPage + " " + I18NController.tr("page_of") + " " + welfareModel.totalPages } font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; color: Theme.textTertiary; Layout.alignment: Qt.AlignVCenter }
                         Item { Layout.fillWidth: true }
                         Rectangle { width: 28; height: 28; radius: 6; color: prevMA.containsMouse ? Theme.surface : "transparent"; border.width: 1; border.color: prevMA.containsMouse ? Theme.borderHover : Theme.border; Layout.alignment: Qt.AlignVCenter; opacity: welfareModel.currentPage > 1 ? 1 : 0.4
                             Item { width: 14; height: 14; anchors.centerIn: parent; Image { id: prevIcon; source: "qrc:/icons/svg/chevron-left.svg"; sourceSize: Qt.size(14, 14); anchors.fill: parent; fillMode: Image.Pad; visible: false } MultiEffect { anchors.fill: parent; source: prevIcon; colorizationColor: Theme.textSecondary; colorization: 1.0 } }

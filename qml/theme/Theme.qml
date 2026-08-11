@@ -50,6 +50,7 @@ QtObject {
     property color primaryHover:    "#047857"
     property color primaryPressed:  "#036049"
     property color primarySubtle:   "#ecfdf5"
+    property color primarySubtleAlt: "#d1fae5"   // Slightly more saturated subtle for badges/summary cards
     property color primaryOn:       "#ffffff"
 
     // ===== ACCENTS =====
@@ -172,7 +173,7 @@ QtObject {
             canvas = "#0a1a12"; canvasAlt = "#0f1e16"
             surface = "#13221a"; surfaceHover = "#1a2e22"; surfacePressed = "#1e3327"; surfaceSubtle = "#0f1e16"
             primary = "#059669"; primaryHover = "#047857"; primaryPressed = "#036049"
-            primarySubtle = "#0a2e22"; primaryOn = "#ffffff"
+            primarySubtle = "#0a2e22"; primarySubtleAlt = "#0f3a2a"; primaryOn = "#ffffff"
             successSubtle = "#0a2e22"; warningSubtle = "#2a1f0a"; dangerSubtle = "#2a0f0f"
             textPrimary = "#e6f2ea"; textSecondary = "#9fb8aa"; textTertiary = "#6d8878"; textDisabled = "#3a5048"
             border = "#23402f"; borderHover = "#335944"
@@ -185,7 +186,7 @@ QtObject {
             canvas = "#e7f4ea"; canvasAlt = "#eef8f1"
             surface = "#ffffff"; surfaceHover = "#f2faf4"; surfacePressed = "#eef8f1"; surfaceSubtle = "#f2faf4"
             primary = "#059669"; primaryHover = "#047857"; primaryPressed = "#036049"
-            primarySubtle = "#ecfdf5"; primaryOn = "#ffffff"
+            primarySubtle = "#ecfdf5"; primarySubtleAlt = "#d1fae5"; primaryOn = "#ffffff"
             successSubtle = "#ecfdf5"; warningSubtle = "#fffbeb"; dangerSubtle = "#fef2f2"
             textPrimary = "#12241b"; textSecondary = "#4f6b5c"; textTertiary = "#7e968a"; textDisabled = "#b2cfbd"
             border = "#d2e5d8"; borderHover = "#b2cfbd"

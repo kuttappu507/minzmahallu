@@ -183,7 +183,22 @@ ScrollView {
                                 Layout.minimumWidth: 180
                                 implicitHeight: statContent.implicitHeight + 25
                                 radius: 10
-                                property string cardLabel: ["FAMILIES","MEMBERS","ACTIVE","COLLECTION","DUES","DONATIONS","WELFARE","MARRIAGES","DEATHS","BALANCE"][index]
+                                property string cardLabel: {
+                                    var _l = I18NController.currentLanguage;
+                                    var labels = [
+                                        I18NController.tr("dash_total_families").toUpperCase(),
+                                        I18NController.tr("dash_total_members").toUpperCase(),
+                                        I18NController.tr("dash_active_members").toUpperCase(),
+                                        I18NController.tr("dash_monthly_collection").toUpperCase(),
+                                        I18NController.tr("dash_pending_dues").toUpperCase(),
+                                        I18NController.tr("dash_donations_month").toUpperCase(),
+                                        I18NController.tr("dash_welfare_disbursed").toUpperCase(),
+                                        I18NController.tr("dash_marriages_year").toUpperCase(),
+                                        I18NController.tr("dash_deaths_year").toUpperCase(),
+                                        I18NController.tr("dash_balance_month").toUpperCase()
+                                    ];
+                                    return labels[index] || ""
+                                }
                                 property string cardValue: [
                                     DashboardController.totalFamilies,
                                     DashboardController.totalMembers,

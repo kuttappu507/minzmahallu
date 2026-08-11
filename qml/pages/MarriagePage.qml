@@ -52,7 +52,7 @@ Item {
             Layout.fillWidth: true; spacing: 16
             Column { Layout.fillWidth: true; spacing: 2
                 Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("mrg_title") } font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXl; font.weight: Font.DemiBold; color: Theme.textPrimary }
-                Text { text: "Nikah records and registrations"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeSm; color: Theme.textSecondary } }
+                Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("mrg_register") } font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeSm; color: Theme.textSecondary } }
             AppButton {
                 text: { var _l = I18NController.currentLanguage; return I18NController.tr("action_add") } variant: "primary"; iconName: "plus"
                 Layout.alignment: Qt.AlignTop
@@ -69,7 +69,7 @@ Item {
                     MultiEffect { anchors.fill: parent; source: searchIcon; colorizationColor: searchField.activeFocus ? Theme.primary : Theme.textTertiary; colorization: 1.0 } }
                 TextField { id: searchField; anchors.left: parent.left; anchors.leftMargin: 32; anchors.right: parent.right; anchors.rightMargin: 10; anchors.verticalCenter: parent.verticalCenter; placeholderText: "Search by bride, groom, number..."; placeholderTextColor: Theme.textTertiary; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; color: Theme.textPrimary; background: Item {} verticalAlignment: Text.AlignVCenter; onTextEdited: searchDebounce.restart() }
                 Timer { id: searchDebounce; interval: 300; onTriggered: marriageModel.searchTerm = searchField.text } }
-            Text { text: "Showing " + marriageModel.rowCount + " of " + marriageModel.totalCount; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; color: Theme.textTertiary; Layout.alignment: Qt.AlignVCenter }
+            Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("ui_showing") + " " + marriageModel.rowCount + " " + I18NController.tr("ui_of") + " " + marriageModel.totalCount }; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; color: Theme.textTertiary; Layout.alignment: Qt.AlignVCenter }
         }
 
         Rectangle {
@@ -104,12 +104,12 @@ Item {
                         MouseArea { id: rowMA; anchors.fill: parent; hoverEnabled: true; acceptedButtons: Qt.NoButton } } }
                 Item { Layout.fillWidth: true; Layout.fillHeight: true; visible: marriageModel.rowCount === 0
                     Column { anchors.centerIn: parent; spacing: 8
-                        Text { text: "No marriage records found"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; font.weight: Font.DemiBold; color: Theme.textPrimary; anchors.horizontalCenter: parent.horizontalCenter }
-                        Text { text: "Records will appear here once added"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; color: Theme.textTertiary; anchors.horizontalCenter: parent.horizontalCenter } } }
+                        Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("ui_no_records") }; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; font.weight: Font.DemiBold; color: Theme.textPrimary; anchors.horizontalCenter: parent.horizontalCenter }
+                        Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("ui_click_add_to_create") }; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; color: Theme.textTertiary; anchors.horizontalCenter: parent.horizontalCenter } } }
                 Rectangle { Layout.fillWidth: true; Layout.preferredHeight: 44; color: Theme.surfaceHover
                     Rectangle { anchors.top: parent.top; anchors.left: parent.left; anchors.right: parent.right; height: 1; color: Theme.border }
                     RowLayout { anchors.fill: parent; anchors.leftMargin: 16; anchors.rightMargin: 16; spacing: 8
-                        Text { text: "Page " + marriageModel.currentPage + " of " + marriageModel.totalPages; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; color: Theme.textTertiary; Layout.alignment: Qt.AlignVCenter }
+                        Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("ui_page") + " " + marriageModel.currentPage + " " + I18NController.tr("page_of") + " " + marriageModel.totalPages }; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; color: Theme.textTertiary; Layout.alignment: Qt.AlignVCenter }
                         Item { Layout.fillWidth: true }
                         Rectangle { width: 28; height: 28; radius: 6; color: prevMA.containsMouse ? Theme.surface : "transparent"; border.width: 1; border.color: prevMA.containsMouse ? Theme.borderHover : Theme.border; Layout.alignment: Qt.AlignVCenter; opacity: marriageModel.currentPage > 1 ? 1 : 0.4
                             Item { width: 14; height: 14; anchors.centerIn: parent; Image { id: prevIcon; source: "qrc:/icons/svg/chevron-left.svg"; sourceSize: Qt.size(14, 14); anchors.fill: parent; fillMode: Image.Pad; visible: false } MultiEffect { anchors.fill: parent; source: prevIcon; colorizationColor: Theme.textSecondary; colorization: 1.0 } }

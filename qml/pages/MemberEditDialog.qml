@@ -213,7 +213,7 @@ ModalDialog {
 
                         // Member Code (read-only)
                         ColumnLayout { Layout.fillWidth: true; spacing: 4
-                            Text { text: "MEMBER CODE"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
+                            Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("section_member_code") }; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
                             Rectangle {
                                 Layout.fillWidth: true; height: 38; radius: 9; color: Theme.surfaceHover; border.width: 1; border.color: Theme.border
                                 Text {
@@ -229,7 +229,7 @@ ModalDialog {
                             Layout.fillWidth: true; spacing: 16
 
                             AppTextField {
-                                Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("member_name") + " *" } placeholderText: "Full name"
+                                Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("member_name") + " *" }; placeholderText: { var _l = I18NController.currentLanguage; return I18NController.tr("mrg_name_placeholder") }
                                 text: dialog._name; readOnly: dialog.readOnly
                                 showError: dialog._errorField === "name"; errorText: dialog._errorMessage
                                 onTextChanged: dialog._name = text
@@ -237,7 +237,7 @@ ModalDialog {
 
                             // Family combo (custom — needs id+label)
                             ColumnLayout { Layout.fillWidth: true; spacing: 4
-                                Text { text: "Family *"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: dialog._errorField === "familyId" ? Theme.danger : Theme.textTertiary }
+                                Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("mem_family_required") }; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: dialog._errorField === "familyId" ? Theme.danger : Theme.textTertiary }
                                 Rectangle {
                                     Layout.fillWidth: true; height: 38; radius: 9; color: Theme.surfaceHover; border.width: 1
                                     border.color: dialog._errorField === "familyId" ? Theme.danger : (familyMA.containsMouse ? Theme.borderHover : Theme.border)
@@ -246,12 +246,12 @@ ModalDialog {
                                     Text {
                                         anchors.left: parent.left; anchors.leftMargin: 10; anchors.verticalCenter: parent.verticalCenter
                                         text: {
-                                            if (dialog._familyId === "") return "Select family..."
+                                            if (dialog._familyId === "") return I18NController.tr("ui_select_family")
                                             for (var i = 0; i < dialog._families.length; i++) {
                                                 if (dialog._families[i].id === parseInt(dialog._familyId))
                                                     return dialog._families[i].familyNumber + " - " + dialog._families[i].houseName
                                             }
-                                            return "Select family..."
+                                            return I18NController.tr("ui_select_family")
                                         }
                                         font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd
                                         color: dialog._familyId !== "" ? Theme.textPrimary : Theme.textTertiary
@@ -284,13 +284,13 @@ ModalDialog {
                         RowLayout {
                             Layout.fillWidth: true; spacing: 16
                             AppComboBox {
-                                Layout.fillWidth: true; label: "Gender *"
-                                model: ["Male", "Female", "Other"]
+                                Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("member_gender") + " *" }
+                                model: [I18NController.tr("member_male"), I18NController.tr("member_female"), I18NController.tr("member_other")]
                                 currentIndex: Math.max(0, ["Male", "Female", "Other"].indexOf(dialog._gender))
-                                onActivated: function(index) { dialog._gender = model[index] }
+                                onActivated: function(index) { dialog._gender = ["Male", "Female", "Other"][index] }
                             }
                             AppTextField {
-                                Layout.fillWidth: true; label: "Date of Birth"; placeholderText: "YYYY-MM-DD"
+                                Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("mem_dob_label") }; placeholderText: "YYYY-MM-DD"
                                 text: dialog._dateOfBirth; readOnly: dialog.readOnly
                                 onTextChanged: dialog._dateOfBirth = text
                             }
@@ -306,7 +306,7 @@ ModalDialog {
                                 onActivated: function(index) { dialog._bloodGroup = model[index] }
                             }
                             AppTextField {
-                                Layout.fillWidth: true; label: "Occupation"; placeholderText: "e.g. Engineer"
+                                Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("mem_occupation_label") }; placeholderText: { var _l = I18NController.currentLanguage; return I18NController.tr("mem_occupation_placeholder") }
                                 text: dialog._occupation; readOnly: dialog.readOnly
                                 onTextChanged: dialog._occupation = text
                             }
@@ -316,7 +316,7 @@ ModalDialog {
                         RowLayout {
                             Layout.fillWidth: true; spacing: 16
                             AppTextField {
-                                Layout.fillWidth: true; label: "Education"; placeholderText: "e.g. B.Tech"
+                                Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("mem_education_label") }; placeholderText: { var _l = I18NController.currentLanguage; return I18NController.tr("mem_education_placeholder") }
                                 text: dialog._education; readOnly: dialog.readOnly
                                 onTextChanged: dialog._education = text
                             }
@@ -366,12 +366,12 @@ ModalDialog {
                         RowLayout {
                             Layout.fillWidth: true; spacing: 16
                             AppTextField {
-                                Layout.fillWidth: true; label: "Nationality"; placeholderText: "Indian"
+                                Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("mem_nationality_label") }; placeholderText: { var _l = I18NController.currentLanguage; return I18NController.tr("mem_nationality_placeholder") }
                                 text: dialog._nationality; readOnly: dialog.readOnly
                                 onTextChanged: dialog._nationality = text
                             }
                             AppTextField {
-                                Layout.fillWidth: true; label: "Emergency Contact"; placeholderText: "9847123456"
+                                Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("mem_emergency_contact_label") }; placeholderText: { var _l = I18NController.currentLanguage; return I18NController.tr("mem_emergency_placeholder") }
                                 text: dialog._emergencyContact; readOnly: dialog.readOnly
                                 onTextChanged: dialog._emergencyContact = text
                             }
@@ -379,12 +379,12 @@ ModalDialog {
 
                         // Address (full width)
                         ColumnLayout { Layout.fillWidth: true; spacing: 4
-                            Text { text: "ADDRESS"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
+                            Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("section_address") }; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
                             TextArea {
                                 Layout.fillWidth: true; Layout.preferredHeight: 56
                                 text: dialog._address; readOnly: dialog.readOnly
                                 font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; color: Theme.textPrimary
-                                placeholderText: "Member address (if different from family)..."; placeholderTextColor: Theme.textTertiary
+                                placeholderText: { var _l = I18NController.currentLanguage; return I18NController.tr("mem_address_placeholder") }; placeholderTextColor: Theme.textTertiary
                                 selectByMouse: true; wrapMode: TextArea.Wrap
                                 background: Rectangle { radius: 9; color: Theme.surfaceHover; border.width: 1; border.color: parent.activeFocus ? Theme.primary : parent.hovered ? Theme.borderHover : Theme.border; Behavior on border.color { ColorAnimation { duration: 120 } } }
                                 padding: 10
@@ -404,7 +404,7 @@ ModalDialog {
                         anchors.right: parent.right; anchors.rightMargin: 24; anchors.verticalCenter: parent.verticalCenter; spacing: 10
                         AppButton { text: { var _l = I18NController.currentLanguage; return I18NController.tr("action_cancel") } variant: "secondary"; onClicked: dialog.visible = false }
                         AppButton {
-                            text: dialog.readOnly ? "Close" : (dialog.memberId > 0 ? "Save Changes" : "Add Member")
+                            text: { var _l = I18NController.currentLanguage; if (dialog.readOnly) return I18NController.tr("ui_close"); if (dialog.memberId > 0) return I18NController.tr("ui_save_changes"); return I18NController.tr("add_member") }
                             variant: "primary"; iconName: dialog.readOnly ? "" : "check"
                             onClicked: dialog.submit()
                         }

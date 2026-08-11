@@ -59,7 +59,7 @@ Item {
             Column {
                 Layout.fillWidth: true; spacing: 2
                 Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("nav_accounting") } font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXl; font.weight: Font.DemiBold; color: Theme.textPrimary }
-                Text { text: "Manage ledger accounts and transactions"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeSm; font.weight: Font.Normal; color: Theme.textSecondary }
+                Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("acc_subtitle") } font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeSm; font.weight: Font.Normal; color: Theme.textSecondary }
             }
             AppButton {
                 text: { var _l = I18NController.currentLanguage; return I18NController.tr("action_add") + " " + I18NController.tr("nav_accounting") } variant: "primary"; iconName: "plus"
@@ -79,7 +79,7 @@ Item {
                 Column { anchors.centerIn: parent; spacing: 0
                     Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("acc_expense") } font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: "#95102e"; anchors.horizontalCenter: parent.horizontalCenter }
                     Text { text: { var _r = accountingController.summaryRevision; return "₹" + accountingController.totalExpense("", "").toFixed(0); } font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXl; font.weight: Font.Bold; color: "#95102e"; anchors.horizontalCenter: parent.horizontalCenter } } }
-            Rectangle { Layout.fillWidth: true; height: 60; radius: 9; color: Theme.violetSubtleAlt; border.width: 1; border.color: "#2563eb"
+            Rectangle { Layout.fillWidth: true; height: 60; radius: 9; color: Theme.violetSubtle; border.width: 1; border.color: Theme.blue
                 Column { anchors.centerIn: parent; spacing: 0
                     Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("acc_balance") } font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: "#1e3fae"; anchors.horizontalCenter: parent.horizontalCenter }
                     Text { text: { var _r = accountingController.summaryRevision; return "₹" + accountingController.balance("", "").toFixed(0); } font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXl; font.weight: Font.Bold; color: "#1e3fae"; anchors.horizontalCenter: parent.horizontalCenter } } }
@@ -165,8 +165,8 @@ Item {
                         anchors.centerIn: parent; spacing: 12
                         Rectangle { width: 56; height: 56; radius: 28; color: Theme.surfaceHover; border.width: 1; border.color: Theme.border; anchors.horizontalCenter: parent.horizontalCenter
                             Item { width: 28; height: 28; anchors.centerIn: parent; Image { id: emptyIcon; source: "qrc:/icons/svg/accounting.svg"; sourceSize: Qt.size(28, 28); anchors.fill: parent; fillMode: Image.Pad; visible: false } MultiEffect { anchors.fill: parent; source: emptyIcon; colorizationColor: Theme.borderHover; colorization: 1.0 } } }
-                        Text { text: "No transactions found"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; font.weight: Font.DemiBold; color: Theme.textPrimary; anchors.horizontalCenter: parent.horizontalCenter }
-                        Text { text: "Click 'Add Transaction' to create your first record"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Normal; color: Theme.textTertiary; anchors.horizontalCenter: parent.horizontalCenter }
+                        Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("ui_no_records") } font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; font.weight: Font.DemiBold; color: Theme.textPrimary; anchors.horizontalCenter: parent.horizontalCenter }
+                        Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("ui_click_add_to_create") } font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Normal; color: Theme.textTertiary; anchors.horizontalCenter: parent.horizontalCenter }
                     }
                 }
 
@@ -176,7 +176,7 @@ Item {
                     Rectangle { anchors.top: parent.top; anchors.left: parent.left; anchors.right: parent.right; height: 1; color: Theme.border }
                     RowLayout {
                         anchors.fill: parent; anchors.leftMargin: 16; anchors.rightMargin: 16; spacing: 8
-                        Text { text: "Page " + transactionModel.currentPage + " of " + transactionModel.totalPages; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; color: Theme.textTertiary; Layout.alignment: Qt.AlignVCenter }
+                        Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("ui_page") + " " + transactionModel.currentPage + " " + I18NController.tr("page_of") + " " + transactionModel.totalPages } font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; color: Theme.textTertiary; Layout.alignment: Qt.AlignVCenter }
                         Item { Layout.fillWidth: true }
                         Rectangle { width: 28; height: 28; radius: 6; color: prevMA.containsMouse ? Theme.surface : "transparent"; border.width: 1; border.color: prevMA.containsMouse ? Theme.borderHover : Theme.border; Layout.alignment: Qt.AlignVCenter; opacity: transactionModel.currentPage > 1 ? 1 : 0.4
                             Item { width: 14; height: 14; anchors.centerIn: parent; Image { id: prevIcon; source: "qrc:/icons/svg/chevron-left.svg"; sourceSize: Qt.size(14, 14); anchors.fill: parent; fillMode: Image.Pad; visible: false } MultiEffect { anchors.fill: parent; source: prevIcon; colorizationColor: Theme.textSecondary; colorization: 1.0 } }

@@ -354,6 +354,10 @@ bool SettingsController::save() {
     bool ok = mms::SettingsService::instance().save(s_);
     if (ok) {
         mms::SettingsService::instance().applyTheme(s_.theme);
+        // Re-emit so any C++ side that listens to settingsChanged (e.g. the
+        // lambda in app_main.cpp that calls Theme.applyTheme) is invoked
+        // even when save() is called without a preceding property setter.
+        emit settingsChanged();
     } else {
         lastError_ = "Failed to save settings";
         emit lastErrorChanged();

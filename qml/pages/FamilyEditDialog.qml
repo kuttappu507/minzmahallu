@@ -207,7 +207,7 @@ ModalDialog {
 
                         // ===== Family Number (read-only) =====
                         ColumnLayout { Layout.fillWidth: true; spacing: 4
-                            Text { text: "FAMILY NUMBER"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
+                            Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("section_family_number") }; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
                             Rectangle {
                                 Layout.fillWidth: true; height: 38; radius: 9; color: Theme.surfaceHover; border.width: 1; border.color: Theme.border
                                 Text {
@@ -286,12 +286,12 @@ ModalDialog {
 
                         // ===== Address (full width) =====
                         ColumnLayout { Layout.fillWidth: true; spacing: 4
-                            Text { text: "ADDRESS"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
+                            Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("section_address") }; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
                             TextArea {
                                 Layout.fillWidth: true; Layout.preferredHeight: 64
                                 text: dialog._address; readOnly: dialog.readOnly
                                 font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; color: Theme.textPrimary
-                                placeholderText: "Enter full address..."; placeholderTextColor: Theme.textTertiary
+                                placeholderText: { var _l = I18NController.currentLanguage; return I18NController.tr("fam_address_placeholder") }; placeholderTextColor: Theme.textTertiary
                                 selectByMouse: true; wrapMode: TextArea.Wrap
                                 background: Rectangle {
                                     radius: 9; color: Theme.surfaceHover; border.width: 1
@@ -305,12 +305,12 @@ ModalDialog {
 
                         // ===== Notes (full width) =====
                         ColumnLayout { Layout.fillWidth: true; spacing: 4
-                            Text { text: "NOTES"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
+                            Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("section_notes") }; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
                             TextArea {
                                 Layout.fillWidth: true; Layout.preferredHeight: 56
                                 text: dialog._notes; readOnly: dialog.readOnly
                                 font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; color: Theme.textPrimary
-                                placeholderText: "Internal notes (optional)..."; placeholderTextColor: Theme.textTertiary
+                                placeholderText: { var _l = I18NController.currentLanguage; return I18NController.tr("wel_remarks_placeholder") }; placeholderTextColor: Theme.textTertiary
                                 selectByMouse: true; wrapMode: TextArea.Wrap
                                 background: Rectangle {
                                     radius: 9; color: Theme.surfaceHover; border.width: 1
@@ -340,7 +340,7 @@ ModalDialog {
                         }
 
                         AppButton {
-                            text: dialog.readOnly ? "Close" : (dialog.familyId > 0 ? "Save Changes" : "Add Family")
+                            text: { var _l = I18NController.currentLanguage; if (dialog.readOnly) return I18NController.tr("ui_close"); if (dialog.familyId > 0) return I18NController.tr("ui_save_changes"); return I18NController.tr("add_family") }
                             variant: "primary"; iconName: dialog.readOnly ? "" : "check"
                             onClicked: dialog.submit()
                         }

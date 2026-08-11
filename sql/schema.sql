@@ -476,15 +476,19 @@ JOIN families f ON f.id = m.family_id;
 -- ----------------------------------------------------------------------------
 -- View: Dashboard summary
 -- ----------------------------------------------------------------------------
+DROP VIEW IF EXISTS v_dashboard_summary;
 CREATE VIEW IF NOT EXISTS v_dashboard_summary AS
 SELECT
     (SELECT COUNT(*) FROM families WHERE status='Active')      AS total_families,
     (SELECT COUNT(*) FROM members  WHERE status='Active')      AS total_members,
     (SELECT COUNT(*) FROM members  WHERE status='Active')      AS active_members,
+    -- COLLECTION card: total amount collected across all subscriptions (all-time)
     (SELECT COALESCE(SUM(amount_paid),0) FROM subscriptions
-        WHERE strftime('%Y-%m', payment_date) = strftime('%Y-%m','now')) AS monthly_collection,
+        WHERE status = 'Paid')                                 AS monthly_collection,
+    -- DUES card: total outstanding (amount - amount_paid) across all unpaid/partial subscriptions
     (SELECT COALESCE(SUM(amount-amount_paid),0) FROM subscriptions
-        WHERE status IN ('Pending','Overdue'))                AS pending_dues,
+        WHERE status IN ('Pending','Overdue','Partial')
+           OR amount_paid < amount)                            AS pending_dues,
     (SELECT COALESCE(SUM(amount),0) FROM donations
         WHERE strftime('%Y-%m', donation_date) = strftime('%Y-%m','now')) AS monthly_donations,
     (SELECT COUNT(*) FROM welfare_requests WHERE status='Disbursed'

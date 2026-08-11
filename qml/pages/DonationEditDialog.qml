@@ -132,11 +132,11 @@ ModalDialog {
                         // Category selector (popup) | Amount
                         RowLayout { Layout.fillWidth: true; spacing: 16
                             ColumnLayout { Layout.fillWidth: true; spacing: 4
-                                Text { text: "Category *"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: dialog._errorField === "categoryId" ? Theme.danger : Theme.textTertiary }
+                                Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("don_category_required") }; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: dialog._errorField === "categoryId" ? Theme.danger : Theme.textTertiary }
                                 Rectangle { Layout.fillWidth: true; height: 38; radius: 9; color: Theme.surfaceHover; border.width: 1; border.color: dialog._errorField === "categoryId" ? Theme.danger : (catMA.containsMouse ? Theme.borderHover : Theme.border); Behavior on border.color { ColorAnimation { duration: 120 } }
                                     MouseArea { id: catMA; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: catPopup.visible = !catPopup.visible }
                                     Text { anchors.left: parent.left; anchors.leftMargin: 10; anchors.verticalCenter: parent.verticalCenter
-                                        text: { if (dialog._categoryId === "") return "Select category..."; for (var i = 0; i < dialog._categories.length; i++) { if (dialog._categories[i].id === parseInt(dialog._categoryId)) return dialog._categories[i].name } return "Select category..." }
+                                        text: { if (dialog._categoryId === "") return I18NController.tr("form_select"); for (var i = 0; i < dialog._categories.length; i++) { if (dialog._categories[i].id === parseInt(dialog._categoryId)) return dialog._categories[i].name } return I18NController.tr("form_select") }
                                         font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; color: dialog._categoryId !== "" ? Theme.textPrimary : Theme.textTertiary }
                                     Popup { id: catPopup; y: parent.height + 4; width: parent.width; implicitHeight: 280; padding: 4; background: Rectangle { color: Theme.surface; border.width: 1; border.color: Theme.border; radius: 9 }
                                         ListView { anchors.fill: parent; clip: true; spacing: 2; model: dialog._categories
@@ -153,8 +153,8 @@ ModalDialog {
 
                         // Donor Address (full width)
                         ColumnLayout { Layout.fillWidth: true; spacing: 4
-                            Text { text: "DONOR ADDRESS"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
-                            TextArea { Layout.fillWidth: true; Layout.preferredHeight: 56; text: dialog._donorAddress; readOnly: dialog.readOnly; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; color: Theme.textPrimary; placeholderText: "Donor address (optional)..."; placeholderTextColor: Theme.textTertiary; selectByMouse: true; wrapMode: TextArea.Wrap
+                            Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("section_donor_address") }; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
+                            TextArea { Layout.fillWidth: true; Layout.preferredHeight: 56; text: dialog._donorAddress; readOnly: dialog.readOnly; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; color: Theme.textPrimary; placeholderText: { var _l = I18NController.currentLanguage; return I18NController.tr("wel_remarks_placeholder") }; placeholderTextColor: Theme.textTertiary; selectByMouse: true; wrapMode: TextArea.Wrap
                                 background: Rectangle { radius: 9; color: Theme.surfaceHover; border.width: 1; border.color: parent.activeFocus ? Theme.primary : parent.hovered ? Theme.borderHover : Theme.border; Behavior on border.color { ColorAnimation { duration: 120 } } }
                                 padding: 10; onTextChanged: dialog._donorAddress = text } }
 
@@ -163,8 +163,8 @@ ModalDialog {
 
                         // Remarks
                         ColumnLayout { Layout.fillWidth: true; spacing: 4
-                            Text { text: "REMARKS"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
-                            TextArea { Layout.fillWidth: true; Layout.preferredHeight: 56; text: dialog._remarks; readOnly: dialog.readOnly; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; color: Theme.textPrimary; placeholderText: "Internal remarks..."; placeholderTextColor: Theme.textTertiary; selectByMouse: true; wrapMode: TextArea.Wrap
+                            Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("section_remarks") }; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
+                            TextArea { Layout.fillWidth: true; Layout.preferredHeight: 56; text: dialog._remarks; readOnly: dialog.readOnly; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; color: Theme.textPrimary; placeholderText: { var _l = I18NController.currentLanguage; return I18NController.tr("wel_remarks_placeholder") }; placeholderTextColor: Theme.textTertiary; selectByMouse: true; wrapMode: TextArea.Wrap
                                 background: Rectangle { radius: 9; color: Theme.surfaceHover; border.width: 1; border.color: parent.activeFocus ? Theme.primary : parent.hovered ? Theme.borderHover : Theme.border; Behavior on border.color { ColorAnimation { duration: 120 } } }
                                 padding: 10; onTextChanged: dialog._remarks = text } }
 
@@ -176,7 +176,7 @@ ModalDialog {
                     Rectangle { anchors.top: parent.top; anchors.left: parent.left; anchors.right: parent.right; height: 1; color: Theme.surfacePressed }
                     Row { anchors.right: parent.right; anchors.rightMargin: 24; anchors.verticalCenter: parent.verticalCenter; spacing: 10
                         AppButton { text: { var _l = I18NController.currentLanguage; return I18NController.tr("action_cancel") } variant: "secondary"; onClicked: dialog.visible = false }
-                        AppButton { text: dialog.readOnly ? "Close" : (dialog.donationId > 0 ? "Save Changes" : "Add Donation"); variant: "primary"; iconName: dialog.readOnly ? "" : "check"; onClicked: dialog.submit() } } }
+                        AppButton { text: { var _l = I18NController.currentLanguage; if (dialog.readOnly) return I18NController.tr("ui_close"); if (dialog.donationId > 0) return I18NController.tr("ui_save_changes"); return I18NController.tr("add_donation") } variant: "primary"; iconName: dialog.readOnly ? "" : "check"; onClicked: dialog.submit() } } }
             }
         }
     }

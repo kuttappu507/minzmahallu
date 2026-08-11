@@ -36,8 +36,8 @@ Rectangle {
     readonly property color _bgColor: {
         switch (variant) {
             case "active":   return Theme.primarySubtleAlt
-            case "inactive": return "#e6ebf2"
-            case "archived": return "#e6ebf2"
+            case "inactive": return Theme.surfaceHover
+            case "archived": return Theme.surfaceHover
             case "overdue":  return Theme.coralSubtle
             case "paid":     return Theme.primarySubtleAlt
             case "pending":  return Theme.warningSubtle

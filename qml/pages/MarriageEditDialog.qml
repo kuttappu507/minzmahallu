@@ -121,50 +121,50 @@ ModalDialog {
                                 Text { anchors.left: parent.left; anchors.leftMargin: 10; anchors.verticalCenter: parent.verticalCenter; text: dialog._marriageNumber || "Auto-generated on save"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; color: dialog._marriageNumber ? Theme.textPrimary : Theme.textTertiary } } }
 
                         // Bride section
-                        Text { text: "BRIDE DETAILS"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.DemiBold; color: "#db2777" }
+                        Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("section_bride_details") } font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.DemiBold; color: Theme.pink }
                         RowLayout { Layout.fillWidth: true; spacing: 16
-                            AppTextField { Layout.fillWidth: true; label: "Bride Name *"; placeholderText: "Full name"; text: dialog._brideName; readOnly: dialog.readOnly; showError: dialog._errorField === "brideName"; errorText: dialog._errorMessage; onTextChanged: dialog._brideName = text }
-                            AppTextField { Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("dth_father") } placeholderText: "Father's name"; text: dialog._brideFather; readOnly: dialog.readOnly; onTextChanged: dialog._brideFather = text } }
+                            AppTextField { Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("mrg_bride_name") }; placeholderText: { var _l = I18NController.currentLanguage; return I18NController.tr("mrg_name_placeholder") }; text: dialog._brideName; readOnly: dialog.readOnly; showError: dialog._errorField === "brideName"; errorText: dialog._errorMessage; onTextChanged: dialog._brideName = text }
+                            AppTextField { Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("dth_father") }; placeholderText: { var _l = I18NController.currentLanguage; return I18NController.tr("mrg_name_placeholder") }; text: dialog._brideFather; readOnly: dialog.readOnly; onTextChanged: dialog._brideFather = text } }
                         ColumnLayout { Layout.fillWidth: true; spacing: 4
-                            Text { text: "ADDRESS"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
-                            TextArea { Layout.fillWidth: true; Layout.preferredHeight: 56; text: dialog._brideAddress; readOnly: dialog.readOnly; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; color: Theme.textPrimary; placeholderText: "Bride's address..."; placeholderTextColor: Theme.textTertiary; selectByMouse: true; wrapMode: TextArea.Wrap
+                            Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("section_address") }; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
+                            TextArea { Layout.fillWidth: true; Layout.preferredHeight: 56; text: dialog._brideAddress; readOnly: dialog.readOnly; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; color: Theme.textPrimary; placeholderText: { var _l = I18NController.currentLanguage; return I18NController.tr("mrg_bride_address_placeholder") }; placeholderTextColor: Theme.textTertiary; selectByMouse: true; wrapMode: TextArea.Wrap
                                 background: Rectangle { radius: 9; color: Theme.surfaceHover; border.width: 1; border.color: parent.activeFocus ? Theme.primary : parent.hovered ? Theme.borderHover : Theme.border; Behavior on border.color { ColorAnimation { duration: 120 } } }
                                 padding: 10; onTextChanged: dialog._brideAddress = text } }
 
                         // Groom section
-                        Text { text: "GROOM DETAILS"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.DemiBold; color: Theme.blue }
+                        Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("section_groom_details") } font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.DemiBold; color: Theme.blue }
                         RowLayout { Layout.fillWidth: true; spacing: 16
-                            AppTextField { Layout.fillWidth: true; label: "Groom Name *"; placeholderText: "Full name"; text: dialog._groomName; readOnly: dialog.readOnly; showError: dialog._errorField === "groomName"; errorText: dialog._errorMessage; onTextChanged: dialog._groomName = text }
-                            AppTextField { Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("dth_father") } placeholderText: "Father's name"; text: dialog._groomFather; readOnly: dialog.readOnly; onTextChanged: dialog._groomFather = text } }
+                            AppTextField { Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("mrg_groom_name") }; placeholderText: { var _l = I18NController.currentLanguage; return I18NController.tr("mrg_name_placeholder") }; text: dialog._groomName; readOnly: dialog.readOnly; showError: dialog._errorField === "groomName"; errorText: dialog._errorMessage; onTextChanged: dialog._groomName = text }
+                            AppTextField { Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("dth_father") }; placeholderText: { var _l = I18NController.currentLanguage; return I18NController.tr("mrg_name_placeholder") }; text: dialog._groomFather; readOnly: dialog.readOnly; onTextChanged: dialog._groomFather = text } }
                         ColumnLayout { Layout.fillWidth: true; spacing: 4
-                            Text { text: "ADDRESS"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
-                            TextArea { Layout.fillWidth: true; Layout.preferredHeight: 56; text: dialog._groomAddress; readOnly: dialog.readOnly; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; color: Theme.textPrimary; placeholderText: "Groom's address..."; placeholderTextColor: Theme.textTertiary; selectByMouse: true; wrapMode: TextArea.Wrap
+                            Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("section_address") }; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
+                            TextArea { Layout.fillWidth: true; Layout.preferredHeight: 56; text: dialog._groomAddress; readOnly: dialog.readOnly; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; color: Theme.textPrimary; placeholderText: { var _l = I18NController.currentLanguage; return I18NController.tr("mrg_groom_address_placeholder") }; placeholderTextColor: Theme.textTertiary; selectByMouse: true; wrapMode: TextArea.Wrap
                                 background: Rectangle { radius: 9; color: Theme.surfaceHover; border.width: 1; border.color: parent.activeFocus ? Theme.primary : parent.hovered ? Theme.borderHover : Theme.border; Behavior on border.color { ColorAnimation { duration: 120 } } }
                                 padding: 10; onTextChanged: dialog._groomAddress = text } }
 
                         // Witnesses
-                        Text { text: "WITNESSES"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.DemiBold; color: Theme.textTertiary }
+                        Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("section_witnesses") }; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.DemiBold; color: Theme.textTertiary }
                         RowLayout { Layout.fillWidth: true; spacing: 16
-                            AppTextField { Layout.fillWidth: true; label: "Witness 1"; placeholderText: "Name"; text: dialog._witness1; readOnly: dialog.readOnly; onTextChanged: dialog._witness1 = text }
-                            AppTextField { Layout.fillWidth: true; label: "Witness 2"; placeholderText: "Name"; text: dialog._witness2; readOnly: dialog.readOnly; onTextChanged: dialog._witness2 = text } }
+                            AppTextField { Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("mrg_witness_n") + "1" }; placeholderText: { var _l = I18NController.currentLanguage; return I18NController.tr("mrg_name_placeholder") }; text: dialog._witness1; readOnly: dialog.readOnly; onTextChanged: dialog._witness1 = text }
+                            AppTextField { Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("mrg_witness_n") + "2" }; placeholderText: { var _l = I18NController.currentLanguage; return I18NController.tr("mrg_name_placeholder") }; text: dialog._witness2; readOnly: dialog.readOnly; onTextChanged: dialog._witness2 = text } }
                         RowLayout { Layout.fillWidth: true; spacing: 16
-                            AppTextField { Layout.fillWidth: true; label: "Witness 3"; placeholderText: "Name"; text: dialog._witness3; readOnly: dialog.readOnly; onTextChanged: dialog._witness3 = text }
-                            AppTextField { Layout.fillWidth: true; label: "Witness 4"; placeholderText: "Name"; text: dialog._witness4; readOnly: dialog.readOnly; onTextChanged: dialog._witness4 = text } }
+                            AppTextField { Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("mrg_witness_n") + "3" }; placeholderText: { var _l = I18NController.currentLanguage; return I18NController.tr("mrg_name_placeholder") }; text: dialog._witness3; readOnly: dialog.readOnly; onTextChanged: dialog._witness3 = text }
+                            AppTextField { Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("mrg_witness_n") + "4" }; placeholderText: { var _l = I18NController.currentLanguage; return I18NController.tr("mrg_name_placeholder") }; text: dialog._witness4; readOnly: dialog.readOnly; onTextChanged: dialog._witness4 = text } }
 
                         // Mahar | Nikah Date
                         RowLayout { Layout.fillWidth: true; spacing: 16
-                            AppTextField { Layout.fillWidth: true; label: "Mahar"; placeholderText: "e.g. 10000"; text: dialog._mahar; readOnly: dialog.readOnly; onTextChanged: dialog._mahar = text }
-                            AppTextField { Layout.fillWidth: true; label: "Nikah Date *"; placeholderText: "YYYY-MM-DD"; text: dialog._nikahDate; readOnly: dialog.readOnly; showError: dialog._errorField === "nikahDate"; errorText: dialog._errorMessage; onTextChanged: dialog._nikahDate = text } }
+                            AppTextField { Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("mrg_mahar") }; placeholderText: { var _l = I18NController.currentLanguage; return I18NController.tr("mrg_mahar_placeholder") }; text: dialog._mahar; readOnly: dialog.readOnly; onTextChanged: dialog._mahar = text }
+                            AppTextField { Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("mrg_nikah_date") }; placeholderText: "YYYY-MM-DD"; text: dialog._nikahDate; readOnly: dialog.readOnly; showError: dialog._errorField === "nikahDate"; errorText: dialog._errorMessage; onTextChanged: dialog._nikahDate = text } }
 
                         // Registration Date | Place
                         RowLayout { Layout.fillWidth: true; spacing: 16
-                            AppTextField { Layout.fillWidth: true; label: "Registration Date"; placeholderText: "YYYY-MM-DD (auto)"; text: dialog._registrationDate; readOnly: dialog.readOnly; onTextChanged: dialog._registrationDate = text }
-                            AppTextField { Layout.fillWidth: true; label: "Place"; placeholderText: "Nikah place"; text: dialog._place; readOnly: dialog.readOnly; onTextChanged: dialog._place = text } }
+                            AppTextField { Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("mrg_registration_date_label") }; placeholderText: "YYYY-MM-DD (auto)"; text: dialog._registrationDate; readOnly: dialog.readOnly; onTextChanged: dialog._registrationDate = text }
+                            AppTextField { Layout.fillWidth: true; label: { var _l = I18NController.currentLanguage; return I18NController.tr("mrg_place_label") }; placeholderText: { var _l = I18NController.currentLanguage; return I18NController.tr("mrg_place_placeholder") }; text: dialog._place; readOnly: dialog.readOnly; onTextChanged: dialog._place = text } }
 
                         // Remarks
                         ColumnLayout { Layout.fillWidth: true; spacing: 4
-                            Text { text: "REMARKS"; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
-                            TextArea { Layout.fillWidth: true; Layout.preferredHeight: 56; text: dialog._remarks; readOnly: dialog.readOnly; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; color: Theme.textPrimary; placeholderText: "Internal remarks..."; placeholderTextColor: Theme.textTertiary; selectByMouse: true; wrapMode: TextArea.Wrap
+                            Text { text: { var _l = I18NController.currentLanguage; return I18NController.tr("section_remarks") }; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeXs; font.weight: Font.Medium; color: Theme.textTertiary }
+                            TextArea { Layout.fillWidth: true; Layout.preferredHeight: 56; text: dialog._remarks; readOnly: dialog.readOnly; font.family: Theme.activeFontFamily; font.pixelSize: Theme.fontSizeMd; color: Theme.textPrimary; placeholderText: { var _l = I18NController.currentLanguage; return I18NController.tr("mrg_remarks_placeholder") }; placeholderTextColor: Theme.textTertiary; selectByMouse: true; wrapMode: TextArea.Wrap
                                 background: Rectangle { radius: 9; color: Theme.surfaceHover; border.width: 1; border.color: parent.activeFocus ? Theme.primary : parent.hovered ? Theme.borderHover : Theme.border; Behavior on border.color { ColorAnimation { duration: 120 } } }
                                 padding: 10; onTextChanged: dialog._remarks = text } }
 
@@ -177,7 +177,7 @@ ModalDialog {
                     Rectangle { anchors.top: parent.top; anchors.left: parent.left; anchors.right: parent.right; height: 1; color: Theme.surfacePressed }
                     Row { anchors.right: parent.right; anchors.rightMargin: 24; anchors.verticalCenter: parent.verticalCenter; spacing: 10
                         AppButton { text: { var _l = I18NController.currentLanguage; return I18NController.tr("action_cancel") } variant: "secondary"; onClicked: dialog.visible = false }
-                        AppButton { text: dialog.readOnly ? "Close" : (dialog.marriageId > 0 ? "Save Changes" : "Add Record"); variant: "primary"; iconName: dialog.readOnly ? "" : "check"; onClicked: dialog.submit() } } }
+                        AppButton { text: { var _l = I18NController.currentLanguage; if (dialog.readOnly) return I18NController.tr("ui_close"); if (dialog.marriageId > 0) return I18NController.tr("ui_save_changes"); return I18NController.tr("ui_add_record") } variant: "primary"; iconName: dialog.readOnly ? "" : "check"; onClicked: dialog.submit() } } }
             }
         }
     }
